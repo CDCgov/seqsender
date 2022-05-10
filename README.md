@@ -1,32 +1,9 @@
-# CDCgov GitHub Organization Open Source Project Template
-
-**Template for clearance: This project serves as a template to aid projects in starting up and moving through clearance procedures. To start, create a new repository and implement the required [open practices](open_practices.md), train on and agree to adhere to the organization's [rules of behavior](rules_of_behavior.md), and [send a request through the create repo form](https://forms.office.com/Pages/ResponsePage.aspx?id=aQjnnNtg_USr6NJ2cHf8j44WSiOI6uNOvdWse4I-C2NUNk43NzMwODJTRzA4NFpCUk1RRU83RTFNVi4u) using language from this template as a Guide.**
+# Public Database Submission Pipeline
 
 **General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise. 
 
-## Access Request, Repo Creation Request
-
-* [CDC GitHub Open Project Request Form](https://forms.office.com/Pages/ResponsePage.aspx?id=aQjnnNtg_USr6NJ2cHf8j44WSiOI6uNOvdWse4I-C2NUNk43NzMwODJTRzA4NFpCUk1RRU83RTFNVi4u) _[Requires a CDC Office365 login, if you do not have a CDC Office365 please ask a friend who does to submit the request on your behalf. If you're looking for access to the CDCEnt private organization, please use the [GitHub Enterprise Cloud Access Request form](https://forms.office.com/Pages/ResponsePage.aspx?id=aQjnnNtg_USr6NJ2cHf8j44WSiOI6uNOvdWse4I-C2NUQjVJVDlKS1c0SlhQSUxLNVBaOEZCNUczVS4u).]_
-
-## Related documents
-
-* [Open Practices](open_practices.md)
-* [Rules of Behavior](rules_of_behavior.md)
-* [Thanks and Acknowledgements](thanks.md)
-* [Disclaimer](DISCLAIMER.md)
-* [Contribution Notice](CONTRIBUTING.md)
-* [Code of Conduct](code-of-conduct.md)
-
 ## Overview
-
-# Public Database Submission Pipeline
-
-## Prerequisites:
-- Python3.6+
-- Pandas
-- Argparse
-- Requests
-- Biopython
+"Title" is a pipeline that can generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
 		
 ## Setup:
 ### 1. Account Creation:
@@ -78,7 +55,7 @@
 - `--overwrite` Overwrites an existing submission on NCBI FTP. Used to update errored submissions. 
 
 ## Tips and Troubleshooting:
-- If you need to update a submissions metadata mid submission run `submission.py prep --unique_name <> --fasta <> --metadata <>". Then run "submission.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
+- If you need to update a submissions metadata mid submission run `submission.py prep --unique_name <> --fasta <> --metadata <>`. Then run `submission.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
 - If you receive an error for the config file it will notify you which line in the config file this is occurring. Common errors are missing quotes or having a comma after the last item.
 - Large GISAID submissions occassionally time-out. The automated pipeline will attempt to make the submission again the next time it is ran. 
 	
