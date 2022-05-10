@@ -22,7 +22,7 @@
 # Public Database Submission Pipeline
 
 ## Prerequisites:
-- Python3.7+
+- Python3.6+
 - Pandas
 - Argparse
 - Requests
@@ -78,7 +78,7 @@
 - `--overwrite` Overwrites an existing submission on NCBI FTP. Used to update errored submissions. 
 
 ## Tips and Troubleshooting:
-- If you need to update a submissions metadata mid submission run "submission.py prep --unique_name <> --fasta <> --metadata <>". Then run "submission.py <database> --unique_name <> --fasta <> --metadata <> --overwrite" to overwrite an existing submission with the new files on the FTP server.
+- If you need to update a submissions metadata mid submission run `submission.py prep --unique_name <> --fasta <> --metadata <>". Then run "submission.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
 - If you receive an error for the config file it will notify you which line in the config file this is occurring. Common errors are missing quotes or having a comma after the last item.
 - Large GISAID submissions occassionally time-out. The automated pipeline will attempt to make the submission again the next time it is ran. 
 	
