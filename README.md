@@ -3,7 +3,7 @@
 **General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise. 
 
 ## Overview
-"Title" is a pipeline that can generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
+Public Database Submission Pipeline is used to generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
 		
 ## Setup:
 ### 1. Account Creation:
@@ -15,7 +15,7 @@
 - Submission files will be created and processed here.
 		
 ### 3. Config File Creation:
-- The script will automatically default to the default_config.json. Multiple config files can be created and passed to the script via `--config <filename>.json`. 
+- The script will automatically default to the default_config.yaml. Multiple config files can be created and passed to the script via `--config <filename>.yaml`. 
 - To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to True or False. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`. 
 - You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields Genbank_sample_name_col, SRA_sample_name_col, BioSample_sample_name_col, and gisaid_sample_name_col. This is because the naming schema can vary between databases. 
 - Refer to the database for what fields are required for submission and what options are available. For a full list of what is required in the config file, see the table below. 
