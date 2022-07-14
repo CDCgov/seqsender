@@ -11,6 +11,28 @@ Genbank:
   - SeqID
   - StructuredCommentPrefix
   - StructuredCommentSuffix
-Gisaid: []
-BioSample: []
-SRA: []
+Gisaid:
+  - covv_virus_name
+  - covv_passage
+  - covv_collection_date
+  - covv_location
+  - covv_host
+  - covv_gender
+  - covv_patient_age
+  - covv_patient_status
+  - covv_seq_technology
+  - covv_orig_lab
+  - covv_orig_lab_addr
+BioSample:
+  - Isolate
+  - collected_by
+  - isolation_source
+  - geo_loc_name
+  - host
+  - host_disease
+SRA:
+  - library_strategy
+  - library_source
+  - library_selection
+  - library_layout
+  - instrument_model
