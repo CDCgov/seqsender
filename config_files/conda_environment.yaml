@@ -1,4 +1,4 @@
-name: reaper
+name: seqsender
 channels:
   - bioconda
   - conda-forge
