@@ -63,7 +63,7 @@ def submit_ftp(unique_name, config, test, overwrite):
                 print('submit.ready upload failed.', file=sys.stderr)
     except ftplib.all_errors as e:
         print('FTP error:', e)
-        sys.exit()
+        sys.exit(1)
 
 #zip files for cmdline submission
 def create_zip(unique_name):
@@ -73,5 +73,5 @@ def create_zip(unique_name):
         zip.write(os.path.join(config_dict["general"]["submission_directory"],unique_name, "genbank", unique_name + "_authorset.sbt"), unique_name + "_authorset.sbt")
         zip.write(os.path.join(config_dict["general"]["submission_directory"],unique_name, "genbank", unique_name + "_ncbi.fsa"), unique_name + "_ncbi.fsa")
         zip.write(os.path.join(config_dict["general"]["submission_directory"],unique_name, "genbank", unique_name + "_source.src"), unique_name + "_source.src")
-        if config_dict["genbank_cmt_metadata"]["create_cmt"].lower() == "true":
+        if config_dict["genbank_cmt_metadata"]["create_cmt"] == True:
             zip.write(os.path.join(config_dict["general"]["submission_directory"],unique_name, "genbank", unique_name + "_comment.cmt"), unique_name + "_comment.cmt")

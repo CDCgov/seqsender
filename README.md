@@ -1,64 +1,64 @@
 # Public Database Submission Pipeline
 
-**General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise. 
+**General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
 ## Overview
 Public Database Submission Pipeline is used to generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
-		
+
 ## Setup:
 ### 1. Account Creation:
 - **NCBI:** A NCBI account is required along with a center account approved for submitting via FTP. Contact NCBI at gb-admin@ncbi.nlm.nih.gov to get a center account created.
 - **GISAID:** A GISAID account is required for submitting, register at https://www.gisaid.org/. A test submission is required before production submissions are allowed. After making a test submission contact GISAID at hcov-19@gisaid.org to receive your personal CID.
-		
+
 ### 2. Environment Setup:
 - Clone files to working space and setup Python environment. Create a folder where you would like the program to generate the output to.
 - Submission files will be created and processed here.
-		
+
 ### 3. Config File Creation:
-- The script will automatically default to the default_config.yaml. Multiple config files can be created and passed to the script via `--config <filename>.yaml`. 
-- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to True or False. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`. 
-- You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields Genbank_sample_name_col, SRA_sample_name_col, BioSample_sample_name_col, and gisaid_sample_name_col. This is because the naming schema can vary between databases. 
-- Refer to the database for what fields are required for submission and what options are available. For a full list of what is required in the config file, see the table below. 
-	
+- The script will automatically default to the default_config.yaml. Multiple config files can be created and passed to the script via `--config <filename>.yaml`.
+- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to True or False. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`.
+- You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields Genbank_sample_name_col, SRA_sample_name_col, BioSample_sample_name_col, and gisaid_sample_name_col. This is because the naming schema can vary between databases.
+- Refer to the database for what fields are required for submission and what options are available. For a full list of what is required in the config file, see the table below.
+
 ### 4. Submission File Creation:
-- Create all the submission files by running `submission.py prep --unique_name <> --fasta <> --metadata <>`. Provide the full path to the fasta and metadata file and give a unique name which will be used for the submission. 
+- Create all the submission files by running `reaper.py prep --unique_name <> --fasta <> --metadata <>`. Provide the full path to the fasta and metadata file and give a unique name which will be used for the submission.
 - These cannot repeat as the submission name is what is used to upload to via FTP. Using a submission name again could result in your submission not processing.
 
 ### 5. GISAID Authentication (Required if submitting to GISAID):
-- GISAID requires the script to be authenticated with the CID. To authenticate your script run `gisaid_uploader.py COV authenticate --cid TEST-EA76875B00C3`. 
+- GISAID requires the script to be authenticated with the CID. To authenticate your script run `gisaid_uploader.py COV authenticate --cid TEST-EA76875B00C3`.
 - It will then ask you to provide your GISAID username and password. If this test CID no longer works refer to the GISAID upload CLI for the latest test CID on https://www.gisaid.org/.
 - After performing a test submission you will need to run this command again with your official production CID provided by GISAID.
 
 ### 6. Test Submission:
-- To perform your test submission run `submission.py submit --unique_name <> --fasta <> --metadata <> --test`. The flag `--test` will allow you to perform a test submission anytime to NCBI. However, this will not work for GISAID as submissions are based off the CID. This will submit the test submission to the automated pipeline using the test command. The automated pipeline will not submit test submissions to GISAID. To perform the test submission to GISAID run the command `submission.py gisaid --unique_name <> --test`, after running the submit command. 
-- After performing the test submission run the command `submission.py update_submissions` for the script to automatically check the progress of submissions and to continue submitting sequences to the next database after accessions are generated for linking BioSample, SRA, and Genbank submissions together.
-	
+- To perform your test submission run `reaper.py submit --unique_name <> --fasta <> --metadata <> --test`. The flag `--test` will allow you to perform a test submission anytime to NCBI. However, this will not work for GISAID as submissions are based off the CID. This will submit the test submission to the automated pipeline using the test command. The automated pipeline will not submit test submissions to GISAID. To perform the test submission to GISAID run the command `reaper.py gisaid --unique_name <> --test`, after running the submit command.
+- After performing the test submission run the command `reaper.py update_submissions` for the script to automatically check the progress of submissions and to continue submitting sequences to the next database after accessions are generated for linking BioSample, SRA, and Genbank submissions together.
+
 ### 7. Final Setup:
-- After successfully performing a test submission to every database you plan to submit to contact GISAID at hcov-19@gisaid.org to receive your production CID. Remember to update your config file to this new CID and authenticate the GISAID script with the new CID. 
-- Contact gb-admin@ncbi.nlm.nih.gov to begin production submissions to NCBI after performing test submissions. 
-- For production submissions run `submission.py submit --unique_name <> --fasta <> --metadata <>`, this will generate all the required file and place it in the automated pipeline. 
-- To progress the automated pipeline run `submission.py update_submissions` every couple hours to process submissions.
+- After successfully performing a test submission to every database you plan to submit to contact GISAID at hcov-19@gisaid.org to receive your production CID. Remember to update your config file to this new CID and authenticate the GISAID script with the new CID.
+- Contact gb-admin@ncbi.nlm.nih.gov to begin production submissions to NCBI after performing test submissions.
+- For production submissions run `reaper.py submit --unique_name <> --fasta <> --metadata <>`, this will generate all the required file and place it in the automated pipeline.
+- To progress the automated pipeline run `reaper.py update_submissions` every couple hours to process submissions.
 
 ## Commands:
-- `submission.py submit --unique_name <> --fasta <> --metadata <>` Creates the files for submission and adds to automated submission pipeline and starts submission process. 
-- `submission.py prep --unique_name <> --fasta <> --metadata <>` Creates the files for submission.
-- `submission.py update_submissions` Updates process of all sequences in submission pipeline, performs submission to subsequent databases based on submission status.
-- `submission.py gisaid --unique_name <>` Performs manual submission to GISAID.
-- `submission.py genbank --unique_name <>` Performs manual submission to Genbank.
-- `submission.py biosample --unique_name <>` Performs manual submission to BioSample.
-- `submission.py sra --unique_name <>` Performs manual submission to SRA.
-- `submission.py biosample_sra --unique_name <>` Performs manual joint submission to BioSample/SRA.
+- `reaper.py submit --unique_name <> --fasta <> --metadata <>` Creates the files for submission and adds to automated submission pipeline and starts submission process.
+- `reaper.py prep --unique_name <> --fasta <> --metadata <>` Creates the files for submission.
+- `reaper.py update_submissions` Updates process of all sequences in submission pipeline, performs submission to subsequent databases based on submission status.
+- `reaper.py gisaid --unique_name <>` Performs manual submission to GISAID.
+- `reaper.py genbank --unique_name <>` Performs manual submission to Genbank.
+- `reaper.py biosample --unique_name <>` Performs manual submission to BioSample.
+- `reaper.py sra --unique_name <>` Performs manual submission to SRA.
+- `reaper.py biosample_sra --unique_name <>` Performs manual joint submission to BioSample/SRA.
 
 **Optional flags:**
-- `--config <>` If using a different config file than the default config. Provide the full name of the config file stored in `config_files` folder. 
+- `--config <>` If using a different config file than the default config. Provide the full name of the config file stored in `config_files` folder.
 - `--test` Performs test submission to NCBI. Does not perform test submission to GISAID. You must used authenticated CID for test submission to GISAID.
-- `--overwrite` Overwrites an existing submission on NCBI FTP. Used to update errored submissions. 
+- `--overwrite` Overwrites an existing submission on NCBI FTP. Used to update errored submissions.
 
 ## Tips and Troubleshooting:
-- If you need to update a submissions metadata mid submission run `submission.py prep --unique_name <> --fasta <> --metadata <>`. Then run `submission.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
+- If you need to update a submissions metadata mid submission run `reaper.py prep --unique_name <> --fasta <> --metadata <>`. Then run `reaper.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
 - If you receive an error for the config file it will notify you which line in the config file this is occurring. Common errors are missing quotes or having a comma after the last item.
-- Large GISAID submissions occassionally time-out. The automated pipeline will attempt to make the submission again the next time it is ran. 
-	
+- Large GISAID submissions occassionally time-out. The automated pipeline will attempt to make the submission again the next time it is ran.
+
 ## Config File Fields:
 
 | Section:             | Name:                                      | Description:                                                                                                                   | Required:                                             |
@@ -115,7 +115,7 @@ Public Database Submission Pipeline is used to generate the files necessary to u
 | gisaid               | type                                       | Use betacoronavirus unless specified                                                                                           | Yes                                                   |
 | gisaid               | Update_sequences_on_Genbank_auto_removal   | If using Genbank auto-remove qc then use this to update the GISAID   submission based on what is accepted by Genbank           | Yes True/False                                        |
 
-  
+
 ## Public Domain Standard Notice
 This repository constitutes a work of the United States Government and is not
 subject to domestic copyright protection under 17 USC § 105. This repository is in

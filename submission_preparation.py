@@ -43,7 +43,8 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
     org = ET.SubElement(description, "Organization")
     org.set("role", "owner")
     org.set("type","institute")
-    org.set("org_id", config_dict["general"]["ncbi_org_id"])
+    if config_dict["general"]["ncbi_org_id"] != "":
+        org.set("org_id", config_dict["general"]["ncbi_org_id"])
     name = ET.SubElement(org, "Name")
     email = ET.SubElement(org, "Contact")
     email.set("email", config_dict["general"]["contact_email1"])
@@ -55,7 +56,8 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
     last.text = config_dict["general"]["submitter_info"]["last"]
     if generate_biosample == True:
         required = set(required_config["BioSample"])
-        if required.issubset(config_dict["BioSample_attributes"]["column_names"].values()) == False:
+        biosample_columns = set(config_dict["BioSample_attributes"]['column_names'].keys())
+        if required.issubset(biosample_columns) == False:
             print("Error: Metadata file is missing required columns for BioSample file. Required columns in config are: " + str(required_config["BioSample"]), file=sys.stderr)
             sys.exit(1)
         for index, row in main_df.iterrows():
@@ -91,7 +93,7 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
                 attr_str = ET.SubElement(attr, "Attribute")
                 attr_str.set("attribute_name", key)
                 attr_str.text = row[value]
-            if config_dict["general"]["baseline_surveillance"].lower() == "true":
+            if config_dict["general"]["baseline_surveillance"] == True:
                 attr_str = ET.SubElement(attr, "Attribute")
                 attr_str.set("attribute_name", "purpose_of_sequencing")
                 attr_str.text = "baseline surveillance (random sampling)"
@@ -101,7 +103,8 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
             spuid.text = row[config_dict["ncbi"]["BioSample_sample_name_col"]]
     if generate_sra == True:
         required = set(required_config["SRA"])
-        if required.issubset(config_dict["SRA_attributes"]["column_names"].values()) == False:
+        sra_columns = set(config_dict["SRA_attributes"]['column_names'].keys())
+        if required.issubset(sra_columns) == False:
             print("Error: Metadata file is missing required columns for SRA file. Required columns in config are: " + str(required_config["SRA"]), file=sys.stderr)
             sys.exit(1)
         for index, row in main_df.iterrows():
@@ -118,7 +121,7 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
                     file.set("cloud_url", row[config_dict["ncbi"]["SRA_file_column2"]])
                     datatype=ET.SubElement(file, "DataType")
                     datatype.text = "generic-data"
-            elif config_dict["ncbi"]["SRA_file_location"] == "file":
+            elif config_dict["ncbi"]["SRA_file_location"] == "local":
                 file = ET.SubElement(addfile, "File")
                 file.set("file_path", os.path.basename(row[config_dict["ncbi"]["SRA_file_column1"]]))
                 datatype=ET.SubElement(file, "DataType")
@@ -142,17 +145,22 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
             primid = ET.SubElement(refid, "PrimaryId")
             primid.text = config_dict["ncbi"]["BioProject"]
             Attr_ref = ET.SubElement(addfile, "AttributeRefId")
-            if generate_biosample == True:
-                Attr_ref.set("name","BioSample")
-                refid = ET.SubElement(Attr_ref, "RefId")
-                spuid = ET.SubElement(refid, "SPUID")
-                spuid.set("spuid_namespace",config_dict["ncbi"]["Center_title"])
-                spuid.text = row[config_dict["ncbi"]["BioSample_sample_name_col"]]
+            Attr_ref.set("name","BioSample")
+            refid = ET.SubElement(Attr_ref, "RefId")
+            spuid = ET.SubElement(refid, "SPUID")
+            spuid.set("spuid_namespace", config_dict["ncbi"]["Center_title"])
+            spuid.text = row[config_dict["ncbi"]["BioSample_sample_name_col"]]
             id = ET.SubElement(addfile, "Identifier")
             spuid = ET.SubElement(id, "SPUID")
             spuid.set("spuid_namespace",config_dict["ncbi"]["Center_title"])
             spuid.text = row[config_dict["ncbi"]["SRA_sample_name_col"]]
     xml_file = minidom.parseString(ET.tostring(submission, encoding="unicode", method="xml")).toprettyxml(indent = "   ")
+    if generate_sra == True and config_dict["ncbi"]["SRA_file_location"] == "local":
+        if config_dict["ncbi"]["SRA_file_column2"] != "":
+            file_frame = pd.concat([main_df[col] for col in [config_dict["ncbi"]["SRA_file_column1"], config_dict["ncbi"]["SRA_file_column2"]]])
+        else:
+            file_frame = main_df[config_dict["ncbi"]["SRA_file_column1"]]
+        file_frame.to_csv(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra", "sra_file_path.txt"), sep = '\t', header = False, index = False)
     if generate_sra == True and generate_biosample == True:
         with open(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra", unique_name + "_biosample_sra_submission.xml"),"w+") as f:
             f.write(xml_file)
@@ -209,7 +217,7 @@ def metadata_processing(metadata_file):
     if os.path.isfile(metadata_file) == False:
         print("Error: Metadata file does not exist at: \n" + metadata_file, file=sys.stderr)
         sys.exit(1)
-    metadata = pd.read_csv(metadata_file, header = 0, dtype = str, sep = config_dict["general"]["metadata_file_sep"], engine = "python", encoding="windows-1254")
+    metadata = pd.read_csv(metadata_file, header = 0, dtype = str, sep = config_dict["general"]["metadata_file_sep"], engine = "python", encoding="windows-1254", index_col=False)
     metadata = metadata.fillna("")
     return metadata
 
@@ -254,7 +262,7 @@ def gisaid_write(unique_name, main_df):
         else:
             author_list = author_list + "," + name["first"] + " " + name["last"]
     gisaid_df["covv_authors"] = author_list
-    if config_dict["general"]["baseline_surveillance"].lower() == "true":
+    if config_dict["general"]["baseline_surveillance"] == True:
         gisaid_df["covv_sampling_strategy"] = "Baseline surveillance"
     for col in all_columns:
         if col not in gisaid_df:
@@ -293,7 +301,7 @@ def write_metadata_files(unique_name, main_df):
         sys.exit(1)
     src_df.to_csv(os.path.join(config_dict["general"]["submission_directory"],unique_name,"genbank",unique_name + "_source.src"), header = True, index = False, sep = "\t")
     #Create optional cmt file
-    if config_dict["genbank_cmt_metadata"]['create_cmt'].lower() == "true":
+    if config_dict["genbank_cmt_metadata"]['create_cmt'] == True:
         cmt_df = pd.DataFrame()
         for key, val in config_dict["genbank_cmt_metadata"]["column_names"].items():
             cmt_df[key] = main_df[val]
@@ -329,7 +337,8 @@ def write_submission_files(unique_name, main_df):
         f.write("        <DataType>genbank-submission-package</DataType>\n")
         f.write("      </File>\n")
         f.write("      <Attribute name=\"wizard\">" + config_dict["ncbi"]["Genbank_wizard"] + "</Attribute>\n")
-        f.write("      <Attribute name=\"auto_remove_failed_seqs\">" + config_dict["ncbi"]["Genbank_auto_remove_sequences_that_fail_qc"] + "</Attribute>\n")
+        if config_dict["ncbi"]["Genbank_auto_remove_sequences_that_fail_qc"] == True:
+            f.write("      <Attribute name=\"auto_remove_failed_seqs\">yes</Attribute>\n")
         f.write("      <Identifier>\n")
         f.write("        <SPUID spuid_namespace=\"" + config_dict["ncbi"]["Genbank_spuid_namespace"] + "\">" + unique_name + "</SPUID>\n")
         f.write("      </Identifier>\n")
@@ -445,7 +454,7 @@ def write_submission_files(unique_name, main_df):
 
 # Write fasta files
 def ncbi_write(unique_name, main_df):
-    if config_dict["general"]["baseline_surveillance"].lower() == "true":
+    if config_dict["general"]["baseline_surveillance"] == True:
         main_df["final_ncbi_fasta_name"] = main_df[config_dict["ncbi"]["Genbank_sample_name_col"]] +  " [keyword=purposeofsampling:baselinesurveillance]"
     else:
         main_df["final_ncbi_fasta_name"] = main_df[config_dict["ncbi"]["Genbank_sample_name_col"]]
@@ -466,13 +475,13 @@ def write_sra_file_path(unique_name, main_df):
 #For updating sequences based on auto-remove
 def write_ncbi_names(unique_name, main_df):
     tmp = pd.DataFrame()
-    if config_dict["general"]["submit_SRA"].lower() == "true":
+    if config_dict["general"]["submit_SRA"] == True:
         tmp["SRA_sequence"] = main_df[config_dict["ncbi"]["SRA_sample_name_col"]]
-    if config_dict["general"]["submit_BioSample"].lower() == "true":
+    if config_dict["general"]["submit_BioSample"] == True:
         tmp["BioSample_sequence"] = main_df[config_dict["ncbi"]["BioSample_sample_name_col"]]
-    if config_dict["general"]["submit_Genbank"].lower() == "true":
+    if config_dict["general"]["submit_Genbank"] == True:
         tmp["Genbank_sequence"] = main_df[config_dict["ncbi"]["Genbank_sample_name_col"]]
-    if config_dict["general"]["submit_GISAID"].lower() == "true":
+    if config_dict["general"]["submit_GISAID"] == True:
         tmp["GISAID_sequence"] = main_df[config_dict["gisaid"]["gisaid_sample_name_col"]]
     tmp.to_csv(os.path.join(config_dict["general"]["submission_directory"], unique_name, "accessions.csv"), header = True, index = False, sep = ",")
 
@@ -483,31 +492,31 @@ def process_submission(unique_name, fasta_file, metadata_file, config):
     print("Processing Files.")
     main_df = merge(fasta_file, metadata_file)
     os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name), exist_ok = True)
-    if config_dict["general"]["submit_GISAID"].lower() == "true":
+    if config_dict["general"]["submit_GISAID"] == True:
         print("Creating GISAID files.")
         os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid"), exist_ok = True)
         gisaid_write(unique_name, main_df)
-    if config_dict["general"]["submit_Genbank"].lower() == "true":
+    if config_dict["general"]["submit_Genbank"] == True:
         print("Creating Genbank files.")
         os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name, "genbank"), exist_ok = True)
         write_metadata_files(unique_name, main_df)
         write_submission_files(unique_name, main_df)
         ncbi_write(unique_name, main_df)
-    if config_dict["general"]["submit_BioSample"].lower() == "true" and config_dict["general"]["submit_SRA"].lower() == "true" and config_dict["general"]["joint_SRA_BioSample_submission"].lower() == "true":
+    if config_dict["general"]["submit_BioSample"] == True and config_dict["general"]["submit_SRA"] == True and config_dict["general"]["joint_SRA_BioSample_submission"] == True:
         print("Creating BioSample/SRA files.")
         os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra"), exist_ok = True)
         generate_XML(unique_name = unique_name, main_df = main_df, generate_biosample = True, generate_sra = True)
         write_sra_file_path(unique_name, main_df)
     else:
-        if config_dict["general"]["submit_BioSample"].lower() == "true":
+        if config_dict["general"]["submit_BioSample"] == True:
             print("Creating BioSample files.")
             os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra"), exist_ok = True)
             generate_XML(unique_name = unique_name, main_df = main_df, generate_biosample = True, generate_sra = False)
-        if config_dict["general"]["submit_SRA"].lower() == "true":
+        if config_dict["general"]["submit_SRA"] == True:
             print("Creating SRA files.")
             os.makedirs(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra"), exist_ok = True)
             generate_XML(unique_name = unique_name, main_df = main_df, generate_biosample = False, generate_sra = True)
             write_sra_file_path(unique_name, main_df)
-    if config_dict["general"]["submit_BioSample"].lower() == "true" or config_dict["general"]["submit_SRA"].lower() == "true" or config_dict["general"]["submit_Genbank"].lower() == "true":
+    if config_dict["general"]["submit_BioSample"] == True or config_dict["general"]["submit_SRA"] == True or config_dict["general"]["submit_Genbank"] == True:
         write_ncbi_names(unique_name, main_df)
     print(unique_name + " complete.\n")
