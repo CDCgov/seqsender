@@ -56,7 +56,7 @@ def submit_ftp(unique_name, ncbi_sub_type, config, test, overwrite):
             if config_dict["ncbi"]["SRA_file_location"] == "local":
                 with open(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra", "sra_file_path.txt"), "r") as file:
                     for line in file:
-                        res = ftp.storlines("STOR " + os.path.basename(line.strip()), open(line.strip(), 'rb'))
+                        res = ftp.storbinary("STOR " + os.path.basename(line.strip()), open(line.strip(), 'rb'))
                         if not res.startswith('226 Transfer complete'):
                             print('SRA file upload failed. Try again.')
                             sys.exit(1)
