@@ -459,8 +459,6 @@ def submit_biosample_sra(unique_name, config, test, ncbi_sub_type, overwrite):
 #Start submission into automated pipeline
 def start_submission(unique_name, config, test, overwrite):
     initialize_global_variables(config)
-    if config == "test_config.yaml":
-        test = True
     if config_dict["general"]["submit_BioSample"] == True and config_dict["general"]["submit_SRA"] == True and config_dict["general"]["joint_SRA_BioSample_submission"] == True:
         submit_biosample_sra(unique_name, config, test, "biosample_sra", overwrite)
     elif config_dict["general"]["submit_BioSample"] == True and config_dict["general"]["submit_SRA"] == True and config_dict["general"]["joint_SRA_BioSample_submission"] == False:
