@@ -53,7 +53,7 @@ def submit_ftp(unique_name, ncbi_sub_type, config, test, overwrite):
             res = ftp.storlines("STOR " + "submission.xml", open(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra", unique_name + "_" + ncbi_sub_type + "_submission.xml"), 'rb'))
             if not res.startswith('226 Transfer complete'):
                 print('Submission.xml upload failed.')
-            if config_dict["ncbi"]["SRA_file_location"] == "local":
+            if config_dict["ncbi"]["SRA_file_location"] == "local" and "sra" in ncbi_sub_type:
                 with open(os.path.join(config_dict["general"]["submission_directory"], unique_name, "biosample_sra", "sra_file_path.txt"), "r") as file:
                     for line in file:
                         res = ftp.storbinary("STOR " + os.path.basename(line.strip()), open(line.strip(), 'rb'))
