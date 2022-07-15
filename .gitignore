@@ -1,2 +1,7 @@
 config_files/test_config_*yaml
-~$*
+~$*__pycache__
+__pycache__/biosample_sra_submission.cpython-36.pyc
+__pycache__/genbank_submission.cpython-36.pyc
+__pycache__/gisaid_submission.cpython-36.pyc
+__pycache__/submission_preparation.cpython-36.pyc
+test_input/~$st Submission Instructions.docx
