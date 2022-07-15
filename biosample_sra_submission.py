@@ -34,6 +34,7 @@ def submit_ftp(unique_name, ncbi_sub_type, config, test, overwrite):
         print(config_dict["ncbi"]["hostname"])
         print(config_dict["ncbi"]["username"])
         print(config_dict["ncbi"]["password"])
+        print(ftp.nlst())
         ftp.login(user=config_dict["ncbi"]["username"], passwd = config_dict["ncbi"]["password"])
         if config_dict["ncbi"]["ncbi_ftp_path_to_submission_folders"] != "":
             print("Should not be here")
