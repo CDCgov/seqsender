@@ -64,8 +64,8 @@ ncbi:
     email: ''
     phone: ''
   SRA_file_location: local
-  SRA_file_column1: sra_file_path_1
-  SRA_file_column2: sra_file_path_2
+  SRA_file_column1: 'sra_file_path_1'
+  SRA_file_column2: 'sra_file_path_2'
   SRA_file_loader: ''
 genbank_src_metadata:
   column_names:
