@@ -31,14 +31,19 @@ def submit_ftp(unique_name, ncbi_sub_type, config, test, overwrite):
     try:
         #Login to ftp
         ftp = ftplib.FTP(config_dict["ncbi"]["hostname"])
+        print(config_dict["ncbi"]["hostname"])
+        print(config_dict["ncbi"]["username"])
+        print(config_dict["ncbi"]["password"])
         ftp.login(user=config_dict["ncbi"]["username"], passwd = config_dict["ncbi"]["password"])
         if config_dict["ncbi"]["ncbi_ftp_path_to_submission_folders"] != "":
+            print("Should not be here")
             ftp.cwd(config_dict["ncbi"]["ncbi_ftp_path_to_submission_folders"])
         if test == False:
             ftp.cwd("Production")
         else:
             ftp.cwd("Test")
         dir = unique_name + "_" + ncbi_sub_type
+        print(ftp.nlst())
         if dir not in ftp.nlst():
             ftp.mkd(dir)
         ftp.cwd(dir)
