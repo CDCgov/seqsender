@@ -18,7 +18,7 @@ from Bio import SeqIO
 import xml.etree.ElementTree as ET
 
 config_dict = dict()
-version = "1.0"
+version = "0.1 (Beta)"
 
 #Initialize config file
 def initialize_global_variables(config):
