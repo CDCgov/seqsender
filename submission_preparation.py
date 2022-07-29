@@ -111,22 +111,22 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
             action3 = ET.SubElement(submission, "Action")
             addfile = ET.SubElement(action3, "AddFiles")
             addfile.set("target_db","SRA")
-            if config_dict["ncbi"]["SRA_file_location"] == "cloud":
+            if config_dict["ncbi"]["SRA_file_location"].lower() == "cloud":
                 file = ET.SubElement(addfile, "File")
                 file.set("cloud_url", row[config_dict["ncbi"]["SRA_file_column1"]])
                 datatype=ET.SubElement(file, "DataType")
                 datatype.text = "generic-data"
-                if config_dict["ncbi"]["SRA_file_column2"] != "":
+                if config_dict["ncbi"]["SRA_file_column2"] != "" and pd.isnull(row[config_dict["ncbi"]["SRA_file_column2"]]) == False:
                     file = ET.SubElement(addfile, "File")
                     file.set("cloud_url", row[config_dict["ncbi"]["SRA_file_column2"]])
                     datatype=ET.SubElement(file, "DataType")
                     datatype.text = "generic-data"
-            elif config_dict["ncbi"]["SRA_file_location"] == "local":
+            elif config_dict["ncbi"]["SRA_file_location"].lower() == "local":
                 file = ET.SubElement(addfile, "File")
                 file.set("file_path", os.path.basename(row[config_dict["ncbi"]["SRA_file_column1"]]))
                 datatype=ET.SubElement(file, "DataType")
                 datatype.text = "generic-data"
-                if config_dict["ncbi"]["SRA_file_column2"] != "":
+                if config_dict["ncbi"]["SRA_file_column2"] != "" and pd.isnull(row[config_dict["ncbi"]["SRA_file_column2"]]) == False:
                     file = ET.SubElement(addfile, "File")
                     file.set("file_path", os.path.basename(row[config_dict["ncbi"]["SRA_file_column2"]]))
                     datatype=ET.SubElement(file, "DataType")
@@ -155,7 +155,7 @@ def generate_XML(unique_name, main_df, generate_biosample, generate_sra):
             spuid.set("spuid_namespace",config_dict["ncbi"]["Center_title"])
             spuid.text = row[config_dict["ncbi"]["SRA_sample_name_col"]]
     xml_file = minidom.parseString(ET.tostring(submission, encoding="unicode", method="xml")).toprettyxml(indent = "   ")
-    if generate_sra == True and config_dict["ncbi"]["SRA_file_location"] == "local":
+    if generate_sra == True and config_dict["ncbi"]["SRA_file_location"].lower() == "local":
         if config_dict["ncbi"]["SRA_file_column2"] != "":
             file_frame = pd.concat([main_df[col] for col in [config_dict["ncbi"]["SRA_file_column1"], config_dict["ncbi"]["SRA_file_column2"]]])
         else:
