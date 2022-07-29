@@ -530,7 +530,7 @@ def main():
     parent_parser.add_argument('--test',
         help='Perform test submission.',
         required=False,
-        default="Test",
+        default="Production",
         action="store_const",
         const="Test")
     parent_parser.add_argument('--overwrite',
