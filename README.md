@@ -1,9 +1,13 @@
-# Public Database Submission Pipeline
+# SeqSender
+## Public Database Submission Pipeline
+Version: 0.1 (Beta)
+
+**Beta Version** This pipeline is currently in Beta testing and issues could appear during submission, use at your own risk. Feedback and suggestions are welcome! 
 
 **General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
 ## Overview
-Public Database Submission Pipeline is used to generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
+SeqSender is used to generate the files necessary to upload via FTP to NCBI's databases Genbank, BioSample, and SRA, as well as, GISAID. The pipeline then automatically performs the sequential upload to these databases to ensure proper linkage of data. The pipeline is dynamic in that the user creates a config file to select which databases they would like to upload and allows for any possible metadata fields by using a YAML to pair the database's metadata fields which your personal metadata field columns. This pipeline is currently tested with uploading SARS-COV2 data but the dynamic nature of this pipeline will allow for other organism's in future updates.
 
 ## Setup:
 ### 1. Account Creation:
