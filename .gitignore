@@ -10,3 +10,6 @@ submit.ready
 *report.xml
 test_input/test_metadata.tsv
 upload_log.csv
+test_input
+gisaid_uploader.log
+gisaid_uploader.authtoken
