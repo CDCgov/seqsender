@@ -6,10 +6,11 @@ __pycache__/genbank_submission.cpython-36.pyc
 __pycache__/gisaid_submission.cpython-36.pyc
 __pycache__/submission_preparation.cpython-36.pyc
 test_input/~$st Submission Instructions.docx
-submit.ready
 *report.xml
 test_input/test_metadata.tsv
 upload_log.csv
-test_input
 gisaid_uploader.log
 gisaid_uploader.authtoken
+submit.ready
+output
+docs

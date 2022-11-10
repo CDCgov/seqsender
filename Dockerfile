@@ -1,5 +1,18 @@
-# Get python docker image version 3.7
-FROM python:3.7
+
+# Start from a base image
+FROM --platform=linux/amd64 ubuntu:focal as base
+
+# Define a system argument
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install system libraries of general use
+RUN apt-get update --allow-releaseinfo-change && apt-get install --no-install-recommends -y \
+    build-essential \ 
+    python3.7\
+    python3-pip \
+    python3-setuptools \
+    python3-dev \
+    dos2unix
 
 # Create working directory variable
 ENV WORKDIR=/submissions-pipeline
@@ -10,84 +23,83 @@ VOLUME ${WORKDIR}
 # Set up working directory in docker
 WORKDIR ${WORKDIR}
 
-# Define a system argument
-ARG DEBIAN_FRONTEND=noninteractive
+# Allow permission to read and write files to current working directory
+RUN chmod -R a+rwx ${WORKDIR}
 
-# Install system libraries of general use and python v3.5 and odbc connector
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
-    dos2unix
+############# Install python packages ##################
 
 # Copy python requirements file to docker images
-COPY requirements.txt /opt/public-repository-submissions/requirements.txt
+COPY requirements.txt /seqsender/requirements.txt
 
 # Install python requirements
-RUN pip install --no-cache-dir -r /opt/public-repository-submissions/requirements.txt
+RUN pip3 install --no-cache-dir -r /seqsender/requirements.txt
 
-# Make the app available at port 3838
-EXPOSE 3838
+############# Create template directory ##################
 
-# Create a data directory to store metadata and fasta files
-RUN mkdir /opt/public-repository-submissions/data
-
-# Create a template directory to store sample config and metadata worksheet
-RUN mkdir /opt/public-repository-submissions/template
-
-# Create a test_input directory to testing files
-RUN mkdir /opt/public-repository-submissions/test_input
-
-# Copy config files to docker images
-COPY config_files/default_config.yaml /opt/public-repository-submissions/config_files/default_config.yaml
-COPY config_files/required_columns.yaml /opt/public-repository-submissions/config_files/required_columns.yaml
+# Create a template directory to store sample config file and metadata worksheet
+RUN mkdir /seqsender/template
 
 # Copy template files to docker images
-COPY config_files/default_config.yaml /opt/public-repository-submissions/template/default_config_template.yaml
-COPY config_files/required_columns.yaml /opt/public-repository-submissions/template/required_columns_template.yaml
-COPY test_input/test_metadata.tsv /opt/public-repository-submissions/template/metadata_template.tsv
+COPY config_files/default_config.yaml /seqsender/template/default_config_template.yaml
+COPY config_files/required_columns.yaml /seqsender/template/required_columns_template.yaml
+COPY test_input/test_metadata.tsv /seqsender/template/metadata_template.tsv
 
-# Copy submission.xml to pipeline in order to run test_bioproject function
-COPY test_input/submission.xml /opt/public-repository-submissions/test_input/submission.xml
+############# Create test_input directory ##################
 
-# Copy additional python scripts to docker images
-COPY singularity/extract_config.py /opt/public-repository-submissions/extract_config.py
-COPY singularity/extract_metadata.py /opt/public-repository-submissions/extract_metadata.py
-COPY singularity/update_upload_log.py /opt/public-repository-submissions/update_upload_log.py
-COPY singularity/check.py /opt/public-repository-submissions/check.py
-COPY singularity/retrieve.py /opt/public-repository-submissions/retrieve.py
+# Create a test_input directory to store testing files
+RUN mkdir /seqsender/test_input
 
-# Copy additional bash scripts to docker images
-COPY singularity/save_config.sh /opt/public-repository-submissions/save_config.sh
-COPY singularity/public-repository-submissions.sh /opt/public-repository-submissions/public-repository-submissions.sh
+# Copy submission.xml to test_input directory in order to run test_bioproject function
+COPY test_input/submission.xml /seqsender/test_input/submission.xml
 
-# Copy pipeline scripts to docker images
-COPY biosample_sra_submission.py /opt/public-repository-submissions/biosample_sra_submission.py
-COPY genbank_submission.py /opt/public-repository-submissions/genbank_submission.py
-COPY gisaid_submission.py /opt/public-repository-submissions/gisaid_submission.py
-COPY gisaid_uploader.py /opt/public-repository-submissions/gisaid_uploader.py
-COPY seqsender.py /opt/public-repository-submissions/seqsender.py
-COPY submission_preparation.py /opt/public-repository-submissions/submission_preparation.py
+############# Create config_files directory ##################
 
-# Convert public-repository-submissions.sh from Windows style line endings to Unix-like control characters
-RUN dos2unix /opt/public-repository-submissions/public-repository-submissions.sh
+# Create a config_files directory to store config files
+RUN mkdir /seqsender/config_files
+
+# Copy config files to docker images
+COPY config_files/default_config.yaml /seqsender/config_files/default_config.yaml
+COPY config_files/required_columns.yaml /seqsender/config_files/required_columns.yaml
+
+############# Create data directory ##################
+
+# Create a data directory to store metadata and fasta files
+RUN mkdir /seqsender/data
+
+############# Run seqsender ##################
+
+# Copy all scripts to docker images
+COPY . /seqsender
+
+# Copy bash script files to docker images
+COPY save_config.sh /seqsender/save_config.sh
+
+# Convert save_config.sh from Windows style line endings to Unix-like control characters
+RUN dos2unix /seqsender/save_config.sh
 
 # Allow permission to excute the bash scripts
-RUN chmod a+x /opt/public-repository-submissions/public-repository-submissions.sh
+RUN chmod a+x /seqsender/save_config.sh
 
-# Allow permission to read, write, and execute files in /opt/public-repository-submissions directory
-RUN chmod -R a+rwx /opt/public-repository-submissions
+# Copy bash script files to docker images
+COPY seqsender-kickoff /seqsender/seqsender-kickoff
 
-# Allow permission to read, write, and execute files in submissions-pipeline directory
-RUN chmod -R a+rwx ${WORKDIR}
+# Convert save_config.sh from Windows style line endings to Unix-like control characters
+RUN dos2unix /seqsender/seqsender-kickoff
+
+# Allow permission to excute the bash scripts
+RUN chmod a+x /seqsender/seqsender-kickoff
+
+# Allow permission to read, write, and execute files in /seqsender directory
+RUN chmod -R a+rwx /seqsender
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+# Export bash script to path
+ENV PATH "$PATH:/seqsender"
+
 # Execute the pipeline 
-ENTRYPOINT ["/bin/bash", "/opt/public-repository-submissions/public-repository-submissions.sh"]
-
-
-
-
-
+ENTRYPOINT ["bash", "seqsender-kickoff"]
 
 
 

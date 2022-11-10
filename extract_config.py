@@ -20,21 +20,18 @@ import pathlib
 work_dir = os.getcwd()
 home_dir = os.path.expanduser('~')
 
-# print(work_dir)
-# print(home_dir)
-
 def main():
 
 	parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter,
 		description='Making sure config file exists for submissions.')
 
-	parser.add_argument("--config",
+	parser.add_argument("--config_file",
 		help="Config file",
 		required=True)
 
 	args = parser.parse_args()
 
-	config_file = args.config	
+	config_file = args.config_file	
 
 	if os.path.exists(config_file):
 		
@@ -48,24 +45,15 @@ def main():
 		# If submission directory is empty, use 'output' as default directory
 		if submission_dir is None or submission_dir == "":
 			submission_dir = os.path.join(work_dir, "output")
+			submission_dir = os.path.abspath(submission_dir)
 		else:
 			submission_dir = re.sub("^~", home_dir, submission_dir)
 			submission_dir = os.path.abspath(submission_dir)
 		
-		# print(submission_dir)
-
-		# Save config file to pipeline directory
-		config_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files")
-
-		# Check if config_files directory exists in pipeline directory
-		if os.path.exists(config_dir) == False:
-			os.makedirs(config_dir)		
-
-		# Create a outfile for the pipeline
-		outfile = os.path.join(config_dir, os.path.basename(config_file))
+		# print(submission_dir)	
 
 		# Save config file to config_files directory
-		os.system("bash %s/save_config.sh %s %s %s" % (os.path.dirname(os.path.abspath(__file__)), config_file, submission_dir, outfile))
+		os.system("bash %s/save_config.sh %s %s" % (os.path.dirname(os.path.abspath(__file__)), config_file, submission_dir))
 
 	else:
 

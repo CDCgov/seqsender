@@ -28,13 +28,15 @@ def main():
 		help="Metadata file",
 		required=True)
 
-	parser.add_argument("--config",
-		help="Metadata file",
+	parser.add_argument("--config_file",
+		help="Config file",
 		required=True)
 
 	args = parser.parse_args()
 	
-	metadata_file = args.metadata; config_file = args.config;
+	metadata_file = args.metadata; config_file = args.config_file;
+
+	# print(metadata_file); print(config_file)
 
 	if os.path.exists(metadata_file) and os.path.exists(config_file):
 
@@ -46,19 +48,15 @@ def main():
 		metadata = pd.read_csv(metadata_file, header = 0, dtype = str, sep = config_dict["general"]["metadata_file_sep"], engine = "python", encoding="windows-1254", index_col=False)
 		metadata = metadata.fillna("")
 
-		metadata['sra_file_path_1'] = [os.path.abspath(re.sub("^~", home_dir, file)) for file in metadata['sra_file_path_1']]
-		metadata['sra_file_path_2'] = [os.path.abspath(re.sub("^~", home_dir, file)) for file in metadata['sra_file_path_2']]
+		sra_file_path_1 = [os.path.abspath(re.sub("^~", home_dir, file)) for file in metadata['sra_file_path_1']]
+		sra_file_path_2 = [os.path.abspath(re.sub("^~", home_dir, file)) for file in metadata['sra_file_path_2']]
 
-		# print(metadata['sra_file_path_1'])
-		# print(metadata['sra_file_path_2'])
+		# print(sra_file_path_1); print(sra_file_path_2);
 
-		# Save metadata to pipeline directory
-		metadata_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+		metadata['sra_file_path_1'] = sra_file_path_1
+		metadata['sra_file_path_2'] = sra_file_path_2
 
-		if os.path.exists(metadata_dir) == False:
-			os.makedirs(metadata_dir) 
-
-		metadata.to_csv(os.path.join(metadata_dir, "metadata.tsv"), header = True, index = False, sep = "\t")
+		metadata.to_csv(metadata_file, header = True, index = False, sep = "\t")
 
 	else:
 

@@ -1,0 +1,14 @@
+**/.git
+**/.gitignore
+**./gitattributes
+*.Rmd
+*.html
+*.md
+*.Rhistory
+LICENSE
+submit.ready
+upload_log.csv
+gisaid_uploader.log
+gisaid_uploader.authtoken
+output
+docs

@@ -1,0 +1,118 @@
+---
+general:
+  submission_directory: 
+  submit_Genbank: True
+  submit_GISAID: True
+  submit_SRA: True
+  submit_BioSample: True
+  joint_SRA_BioSample_submission: False
+  contact_email1: ''
+  contact_email2: ''
+  organization_name: Test Group
+  authorset:
+  - first: 'Reina'
+    last: 'Chau'
+    middle: ''
+    initials: ''
+    suffix: ''
+    title: ''
+  - first: ''
+    last: ''
+    middle: ''
+    initials: ''
+    suffix: ''
+    title: ''
+  ncbi_org_id: ''
+  submitter_info:
+    first: 'Reina2'
+    last: 'Chau2'
+    middle: ''
+    initials: ''
+    suffix: ''
+    title: ''
+  organism_name: Severe acute respiratory syndrome coronavirus 2
+  metadata_file_sep: \t
+  fasta_sample_name_col: fasta_name
+  collection_date_col: collection_date
+  baseline_surveillance: True
+ncbi:
+  hostname: ftp-private.ncbi.nlm.nih.gov
+  api_url: https://submit.ncbi.nlm.nih.gov/api/2.0/files/FILE_ID/?format=attachment
+  username: 'CDC-OAMD'
+  password: '6bWhawE9'
+  publication_title: SARS-CoV2 Test Submission
+  ncbi_ftp_path_to_submission_folders: ''
+  BioProject: ''
+  BioSample_sample_name_col: genbank_name
+  SRA_sample_name_col: sra_name
+  Genbank_sample_name_col: genbank_name
+  BioSample_package: SARS-CoV-2.cl.1.0
+  Center_title: SARS-CoV2 Test Submission
+  Genbank_organization_type: center
+  Genbank_organization_role: owner
+  Genbank_spuid_namespace: ncbi-sarscov2-genbank
+  Genbank_auto_remove_sequences_that_fail_qc: True
+  Genbank_wizard: BankIt_SARSCoV2_api
+  citation_address:
+    affil: 'CDC'
+    div: ''
+    city: ''
+    sub: ''
+    country: ''
+    street: ''
+    postal-code: ''
+    email: 'snu3@cdc.gov'
+    phone: '404-918-6193'
+  SRA_file_location: local
+  SRA_file_column1: 'sra_file_path_1'
+  SRA_file_column2: 'sra_file_path_2'
+  SRA_file_loader: ''
+genbank_src_metadata:
+  column_names:
+    isolate: genbank_name
+    host: host
+    country: location
+    isolation-source: isolation_source
+genbank_cmt_metadata:
+  create_cmt: True
+  column_names:
+    StructuredCommentPrefix: structured_comment
+    StructuredCommentSuffix: structured_comment
+    Assembly Method: assembly_method
+    Sequencing Technology: instrument
+BioSample_attributes:
+  column_names:
+    Isolate: genbank_name
+    collected_by: collected_by
+    host: host
+    host_disease: host_disease
+    isolation_source: isolation_source
+    geo_loc_name: location
+    host_sex: sex
+    host_age: age
+SRA_attributes:
+  column_names:
+    library_strategy: library_strategy
+    library_source: library_source
+    library_selection: library_selection
+    library_layout: library_layout
+    instrument_model: instrument
+    library_name: library
+gisaid:
+  column_names:
+    covv_passage: passage
+    covv_location: gisaid_location
+    covv_host: host
+    covv_gender: sex
+    covv_patient_age: age
+    covv_patient_status: patient_status
+    covv_seq_technology: instrument
+    covv_orig_lab: orig_lab
+    covv_orig_lab_addr: orig_lab_address
+  gisaid_sample_name_col: gisaid_name
+  cid: TEST-EA76875B00C3
+  username: 'rchau88'
+  password: 'TangIsAScientist!1987'
+  type: betacoronavirus
+  Update_sequences_on_Genbank_auto_removal: False
+

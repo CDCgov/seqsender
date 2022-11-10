@@ -3,14 +3,13 @@
 # Wrapper to run public-repository-submission pipeline
 
 WORK_DIR=$PWD
-RESOURCE_ROOT=/opt/public-repository-submissions
+RESOURCE_ROOT=/seqsender
 seqsender=$RESOURCE_ROOT/seqsender.py
 gisaid_uploader=$RESOURCE_ROOT/gisaid_uploader.py
 retrieve=$RESOURCE_ROOT/retrieve.py
 check=$RESOURCE_ROOT/check.py
 config_file=$RESOURCE_ROOT/config_files/default_config.yaml
-metadata_file=$RESOURCE_ROOT/data/metadata.tsv
-fasta_file=$RESOURCE_ROOT/data/fasta.fasta
+config_name=default_config.yaml
 
 seqsender_usage(){
 	echo ""
@@ -106,33 +105,33 @@ case $1 in
 	seqsender) 
 		api=$seqsender;
 		case $2 in
-			"") python $api -h; exit 1;;
+			"") python3 $api -h;;
 			*) ;;
 		esac
 		;;
 	gisaid_uploader) 
 		api=$gisaid_uploader;
 		case $2 in
-			"") python $api -h; exit 1;;
+			"") python3 $api -h;;
 			*) ;;
 		esac
 		;;
 	retrieve) 
 		api=$retrieve;
 		case $2 in
-			"") python $api -h; exit 1;;
+			"") python3 $api -h;;
 			*) ;;
 		esac
 		;;
 	check) 
 		api=$check;
 		case $2 in
-			"") python $api -h; exit 1;;
+			"") python3 $api -h;;
 			*) ;;
 		esac
 		;;
-	-h | --help | "") usage; exit 1;;
-	*) echo -e "\n$1 is not a valid command.\n"; usage; exit 1;;
+	-h | --help | "") usage;;
+	*) echo -e "\n$1 is not a valid command.\n"; usage;;
 esac
 
 # Check commands and flag options that user provided
@@ -161,23 +160,30 @@ do
 				"") echo "\nError: config file not provided\n"; exit 1;;
 				*) 
 					# Check if config file exists. If exists, copy it to pipeline directory
-					provided_config=`echo $config_path | sed "s,^./,$WORK_DIR/,g" | sed "s,//*,/,g"`
+					provided_config=`echo $config_path | sed "s,^./,$WORK_DIR/,g" | sed "s,//*,/,g"` 
 					# echo $provided_config
+					config_name=`echo "$provided_config" | awk -F "/" '{print $NF}'`
+					#echo $config_name
+					config_file=$RESOURCE_ROOT/config_files/$config_name
+					# echo $config_file
 					if [[ -f $provided_config ]]
 					then
+						# Get absolute path of the file
+						provided_config=`realpath $provided_config` 
+
 						# Copy file to pipeline directory
 						cp $provided_config $config_file 2>/dev/null
 
 						# Check if submission directory is provided, if not exist, create a default output directory
-						python $RESOURCE_ROOT/extract_config.py --config $config_file
+						python3 $RESOURCE_ROOT/extract_config.py --config_file $config_file
 						
-						# Check python exit code
+						# Check python3 exit code
 						if [[ $? != 0 ]]
 						then 
 							exit 1
 						fi
 						
-						arg_list+="--config default_config.yaml "
+						arg_list+="--config $config_name "
 						i=$(($i+2))
 					else
 						echo -e "\nError: Config file does not exist at: $provided_config\n"
@@ -199,10 +205,17 @@ do
 					# Check if metadata file exists. If exists, copy it to pipeline directory
 					provided_metadata=`echo $metadata_path | sed "s,^./,$WORK_DIR/,g" | sed "s,//*,/,g"`
 					# echo $provided_metadata
+					metadata_name=`echo "$provided_metadata" | awk -F "/" '{print $NF}'`
+					# echo $metadata_name
+					metadata_file=/tmp/$metadata_name
+					# echo $metadata_file
 					if [[ -f $provided_metadata ]]
 					then
+						# Get absolute path of the file
+						provided_metadata=`realpath $provided_metadata` 
+
 						# Copy file to pipeline directory
-						cp $provided_metadata $metadata_file 2>/dev/null
+						cp $provided_metadata $metadata_file 2>/dev/null						
 						arg_list+="--metadata $metadata_file "
 						i=$(($i+2))
 					else
@@ -225,8 +238,15 @@ do
 					# Check if fasta file exists. If exists, copy it to pipeline directory
 					provided_fasta=`echo $fasta_path | sed "s,^./,$WORK_DIR/,g" | sed "s,//*,/,g"`
 					# echo $provided_fasta
+					fasta_name=`echo "$provided_fasta" | awk -F "/" '{print $NF}'`
+					# echo $fasta_name
+					fasta_file=/tmp/$fasta_name
+					# echo $fasta_file
 					if [[ -f $provided_fasta ]]
 					then
+						# Get absolute path of the file
+						provided_fasta=`realpath $provided_fasta` 
+
 						# Copy file to pipeline directory
 						cp $provided_fasta $fasta_file 2>/dev/null
 						arg_list+="--fasta $fasta_file "
@@ -260,9 +280,9 @@ case $provided_metadata in
 	"") ;;
 	*)
 		# Update sra_file_path in metadata file
-		python $RESOURCE_ROOT/extract_metadata.py --metadata $provided_metadata --config $config_file
+		python3 $RESOURCE_ROOT/extract_metadata.py --metadata $metadata_file --config_file $config_file
 			
-		# Check python exit code
+		# Check python3 exit code
 		if [[ $? != 0 ]]
 		then 
 			exit 1
@@ -275,12 +295,6 @@ if [[ -f $WORK_DIR/upload_log.csv ]]
 then	
 	# Change directory and config paths in upload_log.csv to docker directory
 	cp $WORK_DIR/upload_log.csv $RESOURCE_ROOT/upload_log.csv 2>/dev/null
-fi
-
-# Check if required_columns.yaml exists. If exists, copy it to pipeline directory
-if [[ -f $WORK_DIR/required_columns.yaml ]]
-then
-    cp $WORK_DIR/required_columns.yaml $RESOURCE_ROOT/config_files/required_columns.yaml 2>/dev/null
 fi
 
 # Copy submit.ready to pipeline directory. If exists, copy it to pipeline directory
@@ -307,9 +321,9 @@ fi
 
 
 # Execute the submission pipeline
-python $api $arg_list
+python3 $api $arg_list
 
-# Check python exit code
+# Check python3 exit code
 if [[ $? != 0 ]]
 then 
 	exit 1
@@ -321,16 +335,16 @@ fi
 
 
 # Copy upload log back to working directory so users can access it
-case $provided_config in 
+case $unique_name in 
 	"") ;;
 	*)
 		# Check if upload_log.csv exists. If exists, copy it back to user directory
 		if [[ -f $RESOURCE_ROOT/upload_log.csv ]]
 		then
 			# Change directory and config paths in upload_log.csv to user directory
-			python $RESOURCE_ROOT/update_upload_log.py --log $RESOURCE_ROOT/upload_log.csv --config $provided_config --unique_name $unique_name
+			python3 $RESOURCE_ROOT/extract_upload_log.py --upload_log $RESOURCE_ROOT/upload_log.csv --unique_name $unique_name --user_config_file $provided_config
 			
-			# Check python exit code
+			# Check python3 exit code
 			if [[ $? != 0 ]]
 			then 
 				exit 1
@@ -345,7 +359,7 @@ then
     cp $RESOURCE_ROOT/submit.ready $WORK_DIR/submit.ready 2>/dev/null
 fi
 
-# Copy test_input directory back to working directory so users can access it
+# Copy Test_BioProject_report.xml directory back to working directory so users can access it
 if [[ -f $RESOURCE_ROOT/test_input/Test_BioProject_report.xml ]]
 then
     cp $RESOURCE_ROOT/test_input/Test_BioProject_report.xml $WORK_DIR/Test_BioProject_report.xml 2>/dev/null

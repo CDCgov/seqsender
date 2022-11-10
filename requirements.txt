@@ -1,4 +1,4 @@
-Bio
-requests
-pandas
-pyyaml
+biopython==1.79
+requests==2.12.5
+pandas==1.1.5
+pyyaml==5.4.1
