@@ -12,3 +12,4 @@ gisaid_uploader.log
 gisaid_uploader.authtoken
 output
 docs
+*.tar

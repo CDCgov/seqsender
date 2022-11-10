@@ -41,6 +41,7 @@ def main():
 
 	if output is None or output == "":
 		output = os.path.join(work_dir, "template")
+		output = os.path.abspath(output)
 	else:
 		output = re.sub("^~", home_dir, output)
 		output = os.path.abspath(output)

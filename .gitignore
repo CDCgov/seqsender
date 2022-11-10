@@ -14,3 +14,4 @@ gisaid_uploader.authtoken
 submit.ready
 output
 docs
+*.tar
