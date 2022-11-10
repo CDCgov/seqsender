@@ -105,33 +105,33 @@ case $1 in
 	seqsender) 
 		api=$seqsender;
 		case $2 in
-			"") python3 $api -h;;
+			"") python3 $api -h; exit 1;;
 			*) ;;
 		esac
 		;;
 	gisaid_uploader) 
 		api=$gisaid_uploader;
 		case $2 in
-			"") python3 $api -h;;
+			"") python3 $api -h; exit 1;;
 			*) ;;
 		esac
 		;;
 	retrieve) 
 		api=$retrieve;
 		case $2 in
-			"") python3 $api -h;;
+			"") python3 $api -h; exit 1;;
 			*) ;;
 		esac
 		;;
 	check) 
 		api=$check;
 		case $2 in
-			"") python3 $api -h;;
+			"") python3 $api -h; exit 1;;
 			*) ;;
 		esac
 		;;
-	-h | --help | "") usage;;
-	*) echo -e "\n$1 is not a valid command.\n"; usage;;
+	-h | --help | "") usage; exit 1;;
+	*) echo -e "\n$1 is not a valid command.\n"; usage; exit 1;;
 esac
 
 # Check commands and flag options that user provided
