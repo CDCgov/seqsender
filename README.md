@@ -1,4 +1,6 @@
 # SeqSender
+## Documentation: cdcgov.github.io/seqsender/
+
 ## Public Database Submission Pipeline
 Version: 0.1 (Beta)
 
