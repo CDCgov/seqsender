@@ -1,36 +1,66 @@
 ## Setup:
 ### 1. Account Creation:
-- **NCBI:** A NCBI account is required along with a center account approved for submitting via FTP. Contact NCBI at gb-admin@ncbi.nlm.nih.gov to get a center account created.
+- **NCBI:** A NCBI account is required along with a center account approved for submitting via FTP. Please see [here for details](https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#ftp-submissions) on acquiring an NCBI account.
 - **GISAID:** A GISAID account is required for submitting, register at https://www.gisaid.org/. A test submission is required before production submissions are allowed. After making a test submission contact GISAID at hcov-19@gisaid.org to receive your personal CID.
 
 ### 2. Environment Setup:
-1. Clone files to working space and setup Python environment. 
-    - We recommend [Miniconda](https://docs.conda.io/en/latest/miniconda.html#:~:text=Miniconda%20is%20a%20free%20minimal,zlib%20and%20a%20few%20others)
-    - ```bash
-        conda env create -f config_files/conda_environment.yaml
-        conda activate seqsender
+1. Clone files to working space 
+    ```
+    git clone https://github.com/CDCgov/seqsender
+    ```
+2. Setup Python virtual environment. We recommend [Miniconda](https://docs.conda.io/en/latest/miniconda.html#:~:text=Miniconda%20is%20a%20free%20minimal,zlib%20and%20a%20few%20others)
+    ```
+    bash
+    conda env create -f config_files/conda_environment.yaml
+    conda activate seqsender
+    ```
 2. Create a folder where you would like the program to generate the output to.
-3. Submission files will be created and processed here.
+4. Submission files will be created and processed here.
 ### 3. Config File Creation:
-- The script will automatically default to the default_config.yaml. Multiple config files can be created and passed to the script via `--config <filename>.yaml`.
-- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to True or False. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`.
-- You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields Genbank_sample_name_col, SRA_sample_name_col, BioSample_sample_name_col, and gisaid_sample_name_col. This is because the naming schema can vary between databases.
+- The script will automatically default to the `default_config.yaml`. Multiple config files can be created and passed to the script via `--config <filename>.yaml`.
+- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to `True` or `False`. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`.
+- You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields `Genbank_sample_name_col`, `SRA_sample_name_col`, `BioSample_sample_name_col`, and `gisaid_sample_name_col`. This is because the naming schema can vary between databases.
 - Refer to the database for what fields are required for submission and what options are available. For a full list of what is required in the config file, see the table below.
 ### 4. Submission File Creation:
-- Create all the submission files by running `seqsender.py prep --unique_name <> --fasta <> --metadata <>`. Provide the full path to the fasta and metadata file and give a unique name which will be used for the submission.
+- Create all the submission files by running 
+    ```
+    seqsender.py prep --unique_name <> --fasta <> --metadata <>
+    ```
+Provide the full path to the fasta and metadata file and give a unique name which will be used for the submission.
 - These cannot repeat as the submission name is what is used to upload to via FTP. Using a submission name again could result in your submission not processing.
 ### 5. GISAID Authentication (Required if submitting to GISAID):
-- GISAID requires the script to be authenticated with the CID. To authenticate your script run `gisaid_uploader.py COV authenticate --cid TEST-EA76875B00C3`.
+- GISAID requires the script to be authenticated with the CID. To authenticate your script run 
+    ```
+    gisaid_uploader.py COV authenticate --cid TEST-EA76875B00C3
+    ```
 - It will then ask you to provide your GISAID username and password. If this test CID no longer works refer to the GISAID upload CLI for the latest test CID on https://www.gisaid.org/.
 - After performing a test submission you will need to run this command again with your official production CID provided by GISAID.
 ### 6. Test Submission:
-- To perform your test submission run `seqsender.py submit --unique_name <> --fasta <> --metadata <> --test`. The flag `--test` will allow you to perform a test submission anytime to NCBI. However, this will not work for GISAID as submissions are based off the CID. This will submit the test submission to the automated pipeline using the test command. The automated pipeline will not submit test submissions to GISAID. To perform the test submission to GISAID run the command `seqsender.py gisaid --unique_name <> --test`, after running the submit command.
-- After performing the test submission run the command `seqsender.py update_submissions` for the script to automatically check the progress of submissions and to continue submitting sequences to the next database after accessions are generated for linking BioSample, SRA, and Genbank submissions together.
+- To perform your test submission run
+    ```
+    seqsender.py submit --unique_name <> --fasta <> --metadata <> --test
+    ```
+The flag `--test` will allow you to perform a test submission anytime to NCBI. However, this will not work for GISAID as submissions are based off the CID. This will submit the test submission to the automated pipeline using the test command. The automated pipeline will not submit test submissions to GISAID. To perform the test submission to GISAID run the command 
+    ```
+    seqsender.py gisaid --unique_name <> --test 
+    ```
+- After performing the test submission run the command 
+    ```
+    seqsender.py update_submissions
+    ```
+for the script to automatically check the progress of submissions and to continue submitting sequences to the next database after accessions are generated for linking BioSample, SRA, and Genbank submissions together.
 ### 7. Final Setup:
 - After successfully performing a test submission to every database you plan to submit to contact GISAID at hcov-19@gisaid.org to receive your production CID. Remember to update your config file to this new CID and authenticate the GISAID script with the new CID.
 - Contact gb-admin@ncbi.nlm.nih.gov to begin production submissions to NCBI after performing test submissions.
-- For production submissions run `seqsender.py submit --unique_name <> --fasta <> --metadata <>`, this will generate all the required file and place it in the automated pipeline.
-- To progress the automated pipeline run `seqsender.py update_submissions` every couple hours to process submissions.
+- For production submissions run 
+    ```
+    seqsender.py submit --unique_name <> --fasta <> --metadata <>
+    ``` 
+this will generate all the required file and place it in the automated pipeline.
+- To progress the automated pipeline run every couple hours to process submissions:
+    ```
+    seqsender.py update_submissions
+    ```
 ## Commands:
 - `seqsender.py submit --unique_name <> --fasta <> --metadata <>` Creates the files for submission and adds to automated submission pipeline and starts submission process.
 - `seqsender.py prep --unique_name <> --fasta <> --metadata <>` Creates the files for submission.
@@ -45,7 +75,17 @@
 - `--test` Performs test submission to NCBI. Does not perform test submission to GISAID. You must used authenticated CID for test submission to GISAID.
 - `--overwrite` Overwrites an existing submission on NCBI FTP. Used to update errored submissions.
 ## Tips and Troubleshooting:
-- If you need to update a submissions metadata mid submission run `seqsender.py prep --unique_name <> --fasta <> --metadata <>`. Then run `seqsender.py <database> --unique_name <> --fasta <> --metadata <> --overwrite` to overwrite an existing submission with the new files on the FTP server.
+- If you need to update a submissions metadata mid submission run 
+    
+    ```
+    seqsender.py prep --unique_name <> --fasta <> --metadata <>`
+    ```
+ 
+ Then run the following to overwrite an existing submission with the new files on the FTP server.
+    
+    seqsender.py <database> --unique_name <> --fasta <> --metadata <> --overwrite
+    
+
 - If you receive an error for the config file it will notify you which line in the config file this is occurring. Common errors are missing quotes or having a comma after the last item.
 - Large GISAID submissions occassionally time-out. The automated pipeline will attempt to make the submission again the next time it is ran.
 ## Config File Fields:
