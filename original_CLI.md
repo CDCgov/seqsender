@@ -18,7 +18,7 @@
 4. Submission files will be created and processed here.
 ### 3. Config File Creation:
 - The script will automatically default to the `config_files/default_config.yaml`. Multiple config files can be created and passed to the script via `--config <filename>.yaml`.
-- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to `True` or `False`. For the column_names sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example`{"Public repository field":"Your metadata column"}`.
+- To create your config file fill out the empty spaces in the config file. Place the full path for the output directory you created and set what databases you want to submit to, to `True` or `False`. For the sections of the config file place the corresponding datafield for the public repository to your metadata's column name for example `{"Public repository field":"Your metadata column"}`.
 - You must also create the naming schema for how you want the sequence to be named for the database and give the associated column name for the fields `Genbank_sample_name_col`, `SRA_sample_name_col`, `BioSample_sample_name_col`, and `gisaid_sample_name_col`. This is because the naming schema can vary between databases.
 - Refer to the database for what fields are required for submission and what options are available. For a full list of what is required in the config file, see the table below.
 ### 4. Submission File Creation:
