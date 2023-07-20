@@ -1,0 +1,29 @@
+Submission:
+  Action:
+    AddData:
+      '@target_db': BioSample
+      Data:
+        '@content_type': xml
+        XmlContent:
+          BioSample:
+            '@schema_version': '2.0'
+            Attributes:
+              Attribute:
+              - '#text': '2022-05-03'
+                '@attribute_name': collection_date
+            BioProject:
+              PrimaryId:
+                '@db': BioProject
+            Descriptor:
+              Title: SARS-CoV2 Test Submission
+            Organism:
+              OrganismName: Severe acute respiratory syndrome coronavirus 2
+            Package: SARS-CoV-2.cl.1.0
+            SampleId:
+              SPUID:
+                '#text': SARS-CoV-2/Human/USA/AR-sequence_1/2022
+                '@spuid_namespace': SARS-CoV2 Test Submission
+      Identifier:
+        SPUID:
+          '#text': SARS-CoV-2/Human/USA/AR-sequence_1/2022
+          '@spuid_namespace': SARS-CoV2 Test Submission

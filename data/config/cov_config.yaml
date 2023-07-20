@@ -1,0 +1,23 @@
+Submission:
+  NCBI:
+    Username: 'CDC-OAMD'
+    Password: '6bWhawE9'  
+    Description:
+      Title: quest_submission_biosample
+      Comment: New Submission
+      Organization:
+        '@role': owner
+        '@type': institute
+        Name: Institute Name
+        Contact:
+          '@email': 'snu3@cdc.gov'
+          Name:
+            First: Reina
+            Last: Chau
+      Hold:
+        '@release_date': "2017-01-01"
+  GISAID:
+    Client-Id: TEST-EA76875B00C3
+    Username: 'username'
+    Password: 'Password'
+ 

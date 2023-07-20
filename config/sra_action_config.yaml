@@ -1,0 +1,28 @@
+Submission:
+  Action:
+    AddFiles:
+      '@target_db': SRA
+      Attribute:
+      - '#text': Illumina HiSeq 2500
+        '@name': instrument_model
+      AttributeRefId:
+      - '@name': BioProject
+        RefId:
+          PrimaryId:
+            '#text': PRJNA217342
+            '@db': BioProject
+      - '@name': BioSample
+        RefId:
+          PrimaryId:
+            '#text': SAMN02335374
+            '@db': BioSample
+          SPUID:
+            '#text': SARS-CoV-2/Human/USA/AR-sequence_1/2022
+            '@spuid_namespace': SARS-CoV2 Test Submission  
+      File:
+      - '@file_path': file_name.fastq
+        DataType: generic-data
+      Identifier:
+        SPUID:
+          '#text': CFSAN006236_01:3
+          '@spuid_namespace': CFSAN

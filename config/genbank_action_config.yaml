@@ -1,0 +1,16 @@
+Submission:
+  Action:
+    AddFiles:
+      '@target_db': GenBank
+      Attribute:
+      - '#text': BankIt_SARSCoV2_api
+        '@name': wizard
+      - '#text': 'yes'
+        '@name': auto_remove_failed_seqs
+      File:
+        '@file_path': 230627_helix_primary.zip
+        DataType: genbank-submission-package
+      Identifier:
+        SPUID:
+          '#text': 230627_helix_primary
+          '@spuid_namespace': ncbi-sarscov2-genbank
