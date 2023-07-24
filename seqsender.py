@@ -564,6 +564,7 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 	submission_name = submission_dict["submission_name"]
 	# Extract submission directory
 	submission_dir = submission_dict["submission_dir"]
+	print(submission_dir)
 	# Extract user credentials
 	credentials = get_credentials(config_file=config_file, database="NCBI")
 	# Extract metadata file
@@ -737,13 +738,12 @@ def read_gisaid_log(organism, log_file, failed_file):
 		
 # Create submission log csv
 def create_submission_log(database, organism, submission_name, submisison_type, submission_status, submission_id, submitted_total, failed_total, submission_dir):
-	curr_time = datetime.now()
 	if os.path.isfile(os.path.join(work_dir, "submission_log.csv")) == True:
 		df = pd.read_csv(os.path.join(work_dir, "submission_log.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 	else:
 		df = pd.DataFrame(columns = ["database", "organism", "submission_name", "submisison_type", "submission_date", "submission_status", "submission_id", "submitted_total", "failed_total", "submission_dir"])
 	# Fill in the log if exist, otherwise create new
-	df_partial = df[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submisison_type'] == submisison_type)]
+	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submisison_type'] == submisison_type)]
 	# Update values or create new enty
 	if df_partial.shape[0] > 0:
 		df.loc[df_partial.index.values, 'submission_status'] = submission_status
@@ -756,12 +756,12 @@ def create_submission_log(database, organism, submission_name, submisison_type, 
 					 'organism': organism,
 					 'submission_name': submission_name,
 					 'submisison_type': submisison_type,
-					 'submission_date': curr_time.strftime("%Y-%m-%d"),
+					 'submission_date': datetime.now().strftime("%Y-%m-%d"),
 					 'submission_status': submission_status,
 					 'submission_id': submission_id,
 					 'submitted_total': submitted_total,
 					 'failed_total': failed_total,
-					 'submisison_dir': submission_dir
+					 'submission_dir': submission_dir
 					}
 		df.loc[len(df)] = new_entry
 	df.to_csv(os.path.join(work_dir, "submission_log.csv"), header = True, index = False)		
@@ -780,7 +780,7 @@ def check_submission_status(database, organism, submission_name, test=False):
 	else:
 		submisison_type = "Production"	
 	# Check if submission name is in the submission log
-	df_partial = df.loc[df["database"]==database, df["organism"]==organism, df['submission_name']==submission_name, df['submisison_type']==submisison_type]
+	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submisison_type'] == submisison_type)]
 	if df_partial.shape[0] > 0:
 		# Obtain submission directory
 		submission_dir = df_partial["submission_dir"]
