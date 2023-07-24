@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Submission>
+	<Description>
+		<Title>test_biosample_cov</Title>
+		<Organization role="owner" type="institute">
+			<Name>Institute Name</Name>
+			<Contact email="snu3@cdc.gov">
+				<Name>
+					<First>Reina</First>
+					<Last>Chau</Last>
+				</Name>
+			</Contact>
+		</Organization>
+	</Description>
+	<Action>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_1</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_1</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_1</Attribute>
+							<Attribute attribute_name="host"> host_1</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_1</Attribute>
+							<Attribute attribute_name="isolate"> isolate_1</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_1</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_1</Attribute>
+							<Attribute attribute_name="host_age">host_age_1</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_1"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_1</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_1</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_1">spuid_1</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_1">spuid_1</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_2</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_2</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_2</Attribute>
+							<Attribute attribute_name="host"> host_2</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_2</Attribute>
+							<Attribute attribute_name="isolate"> isolate_2</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_2</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_2</Attribute>
+							<Attribute attribute_name="host_age">host_age_2</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_2"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_2</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_2</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_2">spuid_2</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_2">spuid_2</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_3</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_3</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_3</Attribute>
+							<Attribute attribute_name="host"> host_3</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_3</Attribute>
+							<Attribute attribute_name="isolate"> isolate_3</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_3</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_3</Attribute>
+							<Attribute attribute_name="host_age">host_age_3</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_3"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_3</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_3</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_3">spuid_3</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_3">spuid_3</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_4</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_4</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_4</Attribute>
+							<Attribute attribute_name="host"> host_4</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_4</Attribute>
+							<Attribute attribute_name="isolate"> isolate_4</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_4</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_4</Attribute>
+							<Attribute attribute_name="host_age">host_age_4</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_4"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_4</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_4</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_4">spuid_4</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_4">spuid_4</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_5</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_5</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_5</Attribute>
+							<Attribute attribute_name="host"> host_5</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_5</Attribute>
+							<Attribute attribute_name="isolate"> isolate_5</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_5</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_5</Attribute>
+							<Attribute attribute_name="host_age">host_age_5</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_5"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_5</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_5</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_5">spuid_5</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_5">spuid_5</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_6</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_6</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_6</Attribute>
+							<Attribute attribute_name="host"> host_6</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_6</Attribute>
+							<Attribute attribute_name="isolate"> isolate_6</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_6</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_6</Attribute>
+							<Attribute attribute_name="host_age">host_age_6</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_6"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_6</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_6</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_6">spuid_6</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_6">spuid_6</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_7</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_7</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_7</Attribute>
+							<Attribute attribute_name="host"> host_7</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_7</Attribute>
+							<Attribute attribute_name="isolate"> isolate_7</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_7</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_7</Attribute>
+							<Attribute attribute_name="host_age">host_age_7</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_7"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_7</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_7</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_7">spuid_7</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_7">spuid_7</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_8</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_8</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_8</Attribute>
+							<Attribute attribute_name="host"> host_8</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_8</Attribute>
+							<Attribute attribute_name="isolate"> isolate_8</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_8</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_8</Attribute>
+							<Attribute attribute_name="host_age">host_age_8</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_8"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_8</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_8</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_8">spuid_8</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_8">spuid_8</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_9</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_9</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_9</Attribute>
+							<Attribute attribute_name="host"> host_9</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_9</Attribute>
+							<Attribute attribute_name="isolate"> isolate_9</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_9</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_9</Attribute>
+							<Attribute attribute_name="host_age">host_age_9</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_9"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_9</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_9</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_9">spuid_9</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_9">spuid_9</SPUID>
+			</Identifier>
+		</AddData>
+		<AddData target_db="BioSample">
+			<Data content_type="xml">
+				<XmlContent>
+					<BioSample schema_version="2.0">
+						<Attributes>
+							<Attribute attribute_name="collected_by">collected_by_10</Attribute>
+							<Attribute attribute_name="collection_date"> collection_date_10</Attribute>
+							<Attribute attribute_name="geo_loc_name"> geo_loc_name_10</Attribute>
+							<Attribute attribute_name="host"> host_10</Attribute>
+							<Attribute attribute_name="host_disease"> host_disease_10</Attribute>
+							<Attribute attribute_name="isolate"> isolate_10</Attribute>
+							<Attribute attribute_name="isolation_source"> isolation_source_10</Attribute>
+							<Attribute attribute_name="host_sex">host_sex_10</Attribute>
+							<Attribute attribute_name="host_age">host_age_10</Attribute>
+						</Attributes>
+						<BioProject>
+							<PrimaryId db="bioproject_10"></PrimaryId>
+						</BioProject>
+						<Descriptor>
+							<Title>description_title_10</Title>
+						</Descriptor>
+						<Organism>
+							<OrganismName>organism_name_10</OrganismName>
+						</Organism>
+						<Package>SARS-CoV-2.cl.1.0</Package>
+						<SampleId>
+							<SPUID spuid_namespace="spuid_namespace_10">spuid_10</SPUID>
+						</SampleId>
+					</BioSample>
+				</XmlContent>
+			</Data>
+			<Identifier>
+				<SPUID spuid_namespace="spuid_namespace_10">spuid_10</SPUID>
+			</Identifier>
+		</AddData>
+	</Action>
+</Submission>

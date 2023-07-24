@@ -1,0 +1,17 @@
+Submission:
+  NCBI:
+    Username: 'CDC-OAMD'
+    Password: '6bWhawE9'  
+    Description:
+      Title: test_biosample_cov
+      Organization:
+        '@role': owner
+        '@type': institute
+        Name: Institute Name
+        Contact:
+          '@email': 'snu3@cdc.gov'
+          Name:
+            First: Reina
+            Last: Chau
+
+ 

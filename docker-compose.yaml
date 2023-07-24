@@ -1,0 +1,33 @@
+version: "3.9"
+
+x-data-volumes:
+  &data-volume
+  type: bind
+  source: /c/Users/snu3-su/github/seqsender/data
+  target: /data
+
+x-seqsender-code:
+  &seqsender-code
+  type: bind
+  source: /c/Users/snu3-su/github/seqsender
+  target: /seqsender
+
+x-aws-credentials:
+  &aws-credentials
+  type: bind
+  source: /c/Users/snu3-su/github/seqsender/.aws
+  target: /root/.aws
+
+services:
+  seqsender: 
+    container_name: seqsender
+    image: seqender
+    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes: 
+      - *data-volume
+      - *seqsender-code
+      - *aws-credentials
+    command: tail -f /dev/null

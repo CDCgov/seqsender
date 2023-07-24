@@ -1,0 +1,10 @@
+
+#!/bin/bash
+# Wrapper to run public-repository-submission pipeline
+
+WORK_DIR=$PWD
+RESOURCE_ROOT=/seqsender
+PROGRAM=$RESOURCE_ROOT/seqsender.py
+
+# Execute the submission pipeline
+python3 $PROGRAM "$@"

@@ -10,7 +10,10 @@ import getpass, sys, requests, secrets, hashlib, json, time, csv, os
 from itertools import islice
 from epiflu_cli.utils import __st__
 from epiflu_cli.utils.dates_checker import formatdate
+from urllib3.exceptions import InsecureRequestWarning
 
+# Suppress only the single warning from urllib3 needed.
+requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 # global configuration
 GPS_SERVICE_URL_TEST = "https://gpsapi-test.epicov.org/epi3/gps_api"
