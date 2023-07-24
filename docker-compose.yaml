@@ -1,33 +1,36 @@
 version: "3.9"
 
+x-seqsender-git-version:
+  &seqsender-git-version  
+  https://github.com/CDCgov/seqsender.git#dev
+
 x-data-volumes:
   &data-volume
   type: bind
-  source: /c/Users/snu3-su/github/seqsender/data
+  source: /c/Users/snu3-su/github/mira-testdata
   target: /data
 
 x-seqsender-code:
   &seqsender-code
   type: bind
-  source: /c/Users/snu3-su/github/seqsender
+  source: /c/Users/snu3-su/github/CDCgov/seqsender
   target: /seqsender
 
 x-aws-credentials:
   &aws-credentials
   type: bind
-  source: /c/Users/snu3-su/github/seqsender/.aws
+  source: /c/Users/snu3-su/.aws
   target: /root/.aws
 
 services:
   seqsender: 
     container_name: seqsender
-    image: seqender
+    image: seqsender
     restart: always
     build: 
-      context: .
-      dockerfile: Dockerfile
+      context: *seqsender-git-version 
     volumes: 
       - *data-volume
       - *seqsender-code
       - *aws-credentials
-    command: tail -f /dev/null
+    command: tail -f /dev/null 

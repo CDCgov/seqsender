@@ -48,12 +48,10 @@ COPY . ${PROGRAM}
 
 ############# Install AWS CLI ##################
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "${PROGRAM}/aws_cli/awscliv2.zip" && \
-    unzip ${PROGRAM}/aws_cli/awscliv2.zip && \
-    sudo ./aws/install    
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip  && \
+    sudo ./aws/install 
     
-RUN rm -rf ${PROGRAM}/aws_cli
-
 RUN mkdir /root/.aws
 
 RUN chmod 755 /root/.aws
