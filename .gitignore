@@ -1,1 +1,4 @@
 *.aws
+/data/config/*.yaml
+!/data/config/default-cov-config.yaml
+!/daa/config/default-flu-config.yaml

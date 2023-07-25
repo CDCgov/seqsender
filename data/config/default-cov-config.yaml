@@ -1,7 +1,7 @@
 Submission:
   NCBI:
-    Username: 'CDC-OAMD'
-    Password: '6bWhawE9'  
+    Username:
+    Password:
     Description:
       Title: new_biosample_cov_submission
       Organization:
@@ -14,8 +14,8 @@ Submission:
             First: Reina
             Last: Chau
   GISAID:
-    Client-Id: TEST-EA76875B00C3
-    Username: 'rchau88'
-    Password: 'TangIsAScientist!1987'
+    Client-Id: 
+    Username:
+    Password:
     Description:
       Title: new_gisaid_cov_submission
