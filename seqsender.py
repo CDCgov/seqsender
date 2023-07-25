@@ -1040,23 +1040,23 @@ def create_zip_template(database, organism):
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
 			zip.write(os.path.join(prog_dir, "data", "fasta", database, "-" + organism.lower()+".fasta"), "sequence.fasta")
-			zip.write(os.path.join(prog_dir, "data", "config", organism.lower()+"-config.yaml"), "config.yaml")
+			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	elif database == "BioSample":
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
-			zip.write(os.path.join(prog_dir, "data", "config", organism.lower()+"-config.yaml"), "config.yaml")
+			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	elif database in ["SRA", "BioSample_SRA"]:
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
 			zip.write(os.path.join(prog_dir, "data", "fasta", "sample_1_fastq_R1.fastq.gz"), "sample_1_fastq_R1.fastq.gz")
 			zip.write(os.path.join(prog_dir, "data", "fasta", "sample_1_fastq_R2.fastq.gz"), "sample_1_fastq_R2.fastq.gz")
-			zip.write(os.path.join(prog_dir, "data", "config", organism.lower()+"-config.yaml"), "config.yaml")
+			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	elif database == "Genbank":
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
 			zip.write(os.path.join(prog_dir, "data", "fasta", database, "-" + organism.lower()+".fsa"), "sequence.fsa")
 			zip.write(os.path.join(prog_dir, "data", "config", "authorset.sbt"), "authorset.sbt")
-			zip.write(os.path.join(prog_dir, "data", "config", organism.lower()+"-config.yaml"), "config.yaml")
+			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	# Waiting for the zip file to write
 	while not os.path.exists(os.path.join(out_dir, database+"-"+organism+"-template.zip")):
 		time.sleep(10)
