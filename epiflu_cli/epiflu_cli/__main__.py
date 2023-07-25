@@ -12,7 +12,6 @@ STARTTIME = datetime.now()
 TAB = "\t"
 DATABASE = 'flu'
 
-
 def get_execution_time():
     "Print total runtime at end of run."
     print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
@@ -162,6 +161,7 @@ def main():
             sys.exit(1)
         get_execution_time()
         sys.exit(exit_code) 
+        
 if __name__ == "__main__":
 
     import doctest

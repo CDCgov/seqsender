@@ -15,7 +15,6 @@ import json
 STARTTIME = datetime.now()
 TAB = "\t"
 
-
 def get_execution_time():
     "Print total runtime at end of run."
     print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")

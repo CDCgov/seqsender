@@ -39,9 +39,9 @@ def call_api(params, proxy, debug, client_type):
     body = json.dumps(params)
     try:
         r = requests.post(get_service_url(client_type),
-                          data=body,
-                          proxies=proxy,
-                          verify=False)
+                          data = body,
+                          proxies = proxy,
+                          verify = False)
         time.sleep(0.1)
         return r.json()
     except requests.exceptions.ProxyError:

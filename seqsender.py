@@ -17,7 +17,8 @@ import json
 
 # Get working and program directory
 work_dir = os.getcwd()
-prog_dir = os.path.dirname(os.path.abspath(__file__))
+#prog_dir = os.path.dirname(os.path.abspath(__file__))
+prog_dir = "/seqsender"
 
 # Define version of seqsender
 version = "1.0 (Beta)"
@@ -28,6 +29,15 @@ STARTTIME = datetime.now()
 # Get execution time
 def get_execution_time():
     print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
+
+# Create a list of database dictionary
+database_dict = {
+	"BIOSAMPLE": "BioSample",
+	"SRA": "SRA",
+	"BIOSAMPLE_SRA": "BioSample_SRA",
+	"GENBANK": "Genbank",
+	"GISAID": "GISAID"	
+}
 
 # Define biosample package 
 biosample_packages = {"FLU": "Pathogen.cl.1.0", 
@@ -44,17 +54,7 @@ gisaid_logfile = {"FLU": "gisaid.flu.log",
 # Define gisaid failed csv file
 gisaid_failedfile = {"FLU": "gisaid.flu.failed.csv",
 				     "COV": "gisaid.cov.failed.csv"}
-
-# Read in the gisaid flu metadata fields
-with open(os.path.join(prog_dir, "config", "gisaid_flu_config.yaml"), "r") as f:
-	gisaid_flu = yaml.safe_load(f)
-	f.close()
-
-# Read in the gisaid covid metadata fields
-with open(os.path.join(prog_dir, "config", "gisaid_cov_config.yaml"), "r") as f:
-	gisaid_cov = yaml.safe_load(f)
-	f.close()				  
-
+				  
 # Define required column names for metadata file
 with open(os.path.join(prog_dir, "config", "all_required_colnames.yaml"), "r") as f:
 	all_required_colnames = yaml.safe_load(f)	
@@ -107,7 +107,7 @@ def get_config(config_file, database):
 					print("Error: there is no Submission > " + database + " information in config file.", file=sys.stderr)
 					sys.exit(1)
 		else:
-			print("Error: Config file is incorrect. File must be a yaml format.", file=sys.stderr)
+			print("Error: Config file is incorrect. File must be in a valid yaml format.", file=sys.stderr)
 			sys.exit(1)		
 
 # Read in metadata file
@@ -201,6 +201,9 @@ def authenticate(database, organism, config_file):
 	credentials = get_credentials(config_file=config_file, database=database)
 	if database == "GISAID":
 		log_file = os.path.join("/tmp", gisaid_logfile[organism])
+		# If log file exists, removes it
+		if os.path.isfile(log_file) == True:
+			os.remove(log_file)
 		if organism == "FLU":
 			command = "python3 %s/epiflu_cli/__main__.py authenticate --token gisaid.flu.authtoken --username %s --password %s --client_id %s --log %s --force > /dev/null" % (prog_dir, credentials["Username"], credentials["Password"], credentials["Client-Id"], log_file)
 		elif organism == "COV":
@@ -218,9 +221,9 @@ def authenticate(database, organism, config_file):
 			ftp = ftplib.FTP(NCBI_FTP_HOST)
 			ftp.login(user=credentials["Username"], passwd = credentials["Password"])
 			if organism == "FLU":
-				token_file = {"flu": {"Username": credentials["Username"], "Password": credentials["Password"]}}
+				token_file = {"flu": {"username": credentials["Username"], "password": credentials["Password"]}}
 			elif organism == "COV":
-				token_file = {"cov": {"Username": credentials["Username"], "Password": credentials["Password"]}}				
+				token_file = {"cov": {"username": credentials["Username"], "password": credentials["Password"]}}				
 			# Save an authentication file 
 			with open(os.path.join(work_dir, "ncbi."+organism.lower()+".authtoken"), "w") as f:
 				json.dump(token_file, f)
@@ -229,7 +232,7 @@ def authenticate(database, organism, config_file):
 			print("\n" + "User authenticated", file=sys.stdout)
 		except ftplib.all_errors as e:
 			print("\n" + "Authentication failed", file=sys.stderr)
-			print("\n" + 'Error: ' + str(e), file=sys.stderr)
+			print("\n" + "Error: " + str(e), file=sys.stderr)
 			sys.exit(1)
 	return credentials
 
@@ -291,7 +294,7 @@ def create_submission_description(config_dict, database):
 # Create action section in submission.xml for BioSample
 def create_biosample_submission(metadata, package):
 	# Create a dict to combine action for each submission
-	combined_action_dict = {'AddData': [""]*metadata.shape[0]}
+	combined_action_dict = {"AddData": [""]*metadata.shape[0]}
 	## Retrieve the attributes df
 	attributes_df = metadata.filter(regex="^bs-")
 	## Obtain the names of the attributes without the bs-
@@ -330,37 +333,37 @@ def create_biosample_submission(metadata, package):
 	return combined_action_dict
 
 # Check fasta files listed in metadata file
-def check_fasta_files(metadata, fasta_path):
+def check_rawread_files(metadata, raw_reads_path):
 	# Check fasta local location is local or stored on cloud
-	failed_fasta_location = list(filter(lambda x: (x in ["local", "cloud"])==False, metadata["file_location"]))
-	if len(failed_fasta_location) > 0:
+	failed_file_location= list(filter(lambda x: (x in ["local", "cloud"])==False, metadata["file_location"]))
+	if len(failed_file_location) > 0:
 		print("Error: the value of file_location in metatdata file can only be local/cloud.", file=sys.stderr)
 		sys.exit(1)	
 	# Separate samples stored in local and cloud 
-	local_fasta_files = []; cloud_fasta_files = [];
+	local_rawread_files = []; cloud_rawread_files = [];
 	for index, row in metadata.iterrows():
 		# Create an empty list to store all fasta files
 		if row["file_location"] == "local":
-			local_fasta_files += [os.path.join(fasta_path, g.strip()) for g in row["file_path"].split(",")]
+			local_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
 		elif row["file_location"] == "cloud":
-			cloud_fasta_files += [os.path.join(fasta_path, g.strip()) for g in row["file_path"].split(",")]
+			cloud_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
 	# Get a list of fasta paths that does not exist locally
-	if len(local_fasta_files) > 0:
-		failed_fasta = list(filter(lambda x: os.path.isfile(x)==False, local_fasta_files))
+	if len(local_rawread_files) > 0:
+		failed_fasta = list(filter(lambda x: os.path.exists(x)==False, local_rawread_files))
 		if len(failed_fasta) > 0:
-			print("Error: fasta files do not exist at " + ", ".join(failed_fasta) + ".", file=sys.stderr)
+			print("Error: Raw reads files do not exist at " + ", ".join(failed_fasta) + ".", file=sys.stderr)
 			sys.exit(1)	
 	# Get a list of fasta paths that does not exist on aws cloud
-	if len(cloud_fasta_files) > 0:
-		failed_fasta = list(filter(lambda x: os.path.isfile(x)==False, local_fasta_files))
+	if len(cloud_rawread_files) > 0:
+		failed_fasta = list(filter(lambda x: (subprocess.run("aws s3 ls %s" % x, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).returncode)==1, cloud_rawread_files))
 		if len(failed_fasta) > 0:
-			print("Error: fasta files do not exist at " + ", ".join(failed_fasta) + ".", file=sys.stderr)
+			print("Error: Raw reads files do not exist at " + ", ".join(failed_fasta) + ".", file=sys.stderr)
 			sys.exit(1)	
 
 # Create action section in submission.xml for SRA
-def create_sra_submission(metadata, fasta_path):	
+def create_sra_submission(metadata, raw_reads_path):	
 	# Check fasta files listed in metadata file exist local or on cloud given fasta path
-	check_fasta_files(metadata=metadata, fasta_path=fasta_path)
+	check_rawread_files(metadata=metadata, raw_reads_path=raw_reads_path)
 	# Create a dict to combine action for each submission
 	combined_action_dict = {"AddFiles": [""]*metadata.shape[0]}
 	## Retrieve the attributes df
@@ -428,19 +431,17 @@ def check_fasta_samples(metadata, fasta_file, sample_colnames):
 				command = subprocess.run("grep -c -w '>%s' %s" % (row[name], fasta_file), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 				if command.returncode == 0 and command.stdout is not None:
 					if int(command.stdout[:-1]) == 0:
-						print("Error: Cannot find " + name + " = " + row[name] + " in " + fasta_file + ". Make sure to start a sample with >[sample_name].", file=sys.stderr)
+						print("Error: Cannot find " + name + " = " + row[name] + " in " + fasta_file + ". Make sure to start a sample with >sample_name.", file=sys.stderr)
 						sys.exit(1)
 					elif int(command.stdout[:-1]) > 1:
-						print("Error: " + name + " = " + row[sample] + " is duplicated in " + fasta_file + ".", file=sys.stderr)
+						print("Error: " + name + " = " + row[name] + " is duplicated in " + fasta_file + ".", file=sys.stderr)
 						sys.exit(1)
 				else:
-					print("Error: Cannot find " + name + " = " + row[name] + " in " + fasta_file + ". Make sure to start a sample with >[sample_name].", file=sys.stderr)
+					print("Error: Cannot find " + name + " = " + row[name] + " in " + fasta_file + ". Make sure to start a sample with >sample_name.", file=sys.stderr)
 					sys.exit(1)
 
 # Create a zip file for genbank submission
-def create_genbank_zip(organism, metadata, fasta_file, authorset_file, submission_name, submission_dir, comment=False):
-	# Check each row to make sure each sample name exists in fasta file
-	check_fasta_samples(metadata=metadata, fasta_file=fasta_file, sample_colnames=sample_colnames[organism]["Genbank"])
+def create_genbank_zip(organism, database, metadata, fasta_file, authorset_file, submission_name, submission_dir, comment=False):
 	# Copy fasta to output directory
 	shutil.copyfile(fasta_file, os.path.join(submission_dir, "sequence.fsa"))
 	# Copy authorset to output directory
@@ -472,9 +473,11 @@ def create_genbank_zip(organism, metadata, fasta_file, authorset_file, submissio
 		time.sleep(10)
 
 # Create action section in submission.xml for Genbank
-def create_genbank_submission(organism, metadata, fasta_file, authorset_file, submission_name, submission_dir):
+def create_genbank_submission(organism, database, metadata, fasta_file, authorset_file, submission_name, submission_dir):
+	# Check each row to make sure each sample name exists in fasta file
+	check_fasta_samples(metadata=metadata, fasta_file=fasta_file, sample_colnames=sample_colnames[organism][database])
 	# Create a zip file for genbank submission
-	create_genbank_zip(organism=organism, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)
+	create_genbank_zip(organism=organism, database=database, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)
 	# Read in the action config file
 	action_config_path = os.path.join(prog_dir, "config", "genbank_action_config.yaml")
 	action_config_dict = get_config(action_config_path, database="NCBI")
@@ -487,7 +490,7 @@ def create_genbank_submission(organism, metadata, fasta_file, authorset_file, su
 	action_config_dict["Action"]["AddFiles"]["File"]["@file_path"] = submission_name + ".zip"
 	return action_config_dict["Action"]
 
-def create_submission_xml(organism, database, config_file, metadata_file, fasta_file=None, fasta_path=None, authorset_file=None):
+def create_submission_xml(organism, database, config_file, metadata_file, fasta_file=None, raw_reads_path=None, authorset_file=None):
 	# Get config file
 	config_dict = get_config(config_file=config_file, database="NCBI")
 	# Get metadata file
@@ -497,8 +500,8 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 		print("Error: fasta file does not exist at: " + fasta_file, file=sys.stderr)
 		sys.exit(1)	
 	# Check if fasta path is provided
-	if fasta_path is not None and os.path.isdir(fasta_path) == False:
-		print("Error: fasta path does not exist at: " + fasta_path, file=sys.stderr)
+	if raw_reads_path is not None and os.path.isdir(raw_reads_path) == False:
+		print("Error: fasta path does not exist at: " + raw_reads_path, file=sys.stderr)
 		sys.exit(1)	
 	# Check if authorset file is provided
 	if authorset_file is not None and  os.path.isfile(authorset_file) == False:
@@ -521,19 +524,19 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 		submission_xml = {"Submission": {"Description": description_dict, "Action1": bs_submission_dict}}				
 	elif database == "SRA":
 		# Create sra submission dict
-		sra_submission_dict = create_sra_submission(metadata=metadata, fasta_path=fasta_path)
+		sra_submission_dict = create_sra_submission(metadata=metadata, raw_reads_path=raw_reads_path)
 		# Create final submission file
 		submission_xml = {"Submission": {"Description": description_dict, "Action2": sra_submission_dict}}	
 	elif database == "BioSample_SRA":
 		# Create biosample submission dict
 		bs_submission_dict = create_biosample_submission(metadata=metadata, package=biosample_packages[organism])
 		# Create sra submission dict
-		sra_submission_dict = create_sra_submission(metadata=metadata, fasta_path=fasta_path)
+		sra_submission_dict = create_sra_submission(metadata=metadata, raw_reads_path=raw_reads_path)
 		# Combined biosample and sra as one final submission file
 		submission_xml = {"Submission": {"Description": description_dict, "Action1": bs_submission_dict, "Action2": sra_submission_dict}}				
 	elif database == "Genbank":
 		# Create genebank submission dict
-		genbank_submission_dict = create_genbank_submission(organism=organism, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)		
+		genbank_submission_dict = create_genbank_submission(organism=organism, database=database, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)		
 		# Create final submission file
 		submission_xml = {"Submission": {"Description": description_dict, "Action": genbank_submission_dict}}							
 	# Create submission string
@@ -557,14 +560,13 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 		sys.exit(1)			
 
 # Submit to NCBI
-def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None, fasta_path=None, authorset_file=None, test=False):
+def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None, raw_reads_path=None, authorset_file=None, test=True):
 	# Create submission.xml
-	submission_dict = create_submission_xml(database=database, organism=organism, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, fasta_path=fasta_path, authorset_file=authorset_file)				
+	submission_dict = create_submission_xml(database=database, organism=organism, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, raw_reads_path=raw_reads_path, authorset_file=authorset_file)				
 	# Extract submission name
 	submission_name = submission_dict["submission_name"]
 	# Extract submission directory
 	submission_dir = submission_dict["submission_dir"]
-	print(submission_dir)
 	# Extract user credentials
 	credentials = get_credentials(config_file=config_file, database="NCBI")
 	# Extract metadata file
@@ -578,16 +580,16 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 		ftp.login(user=credentials["Username"], passwd=credentials["Password"])
 		print("\n" + "User authenticated", file=sys.stdout)
 		# Submit to test or production ftp server
-		if test == "Test":
-			submisison_type = "Test"
+		if test == True:
+			submission_type = "Test"
 		else:
-			submisison_type = "Production"
-		print("Submitting to " + submisison_type + " server", file=sys.stdout)
+			submission_type = "Production"
+		print("\n"+"Submitting to FTP " + submission_type + " server", file=sys.stdout)
 		# Create test/production directory if it does not exist
-		if submisison_type not in ftp.nlst():
-			ftp.mkd(submisison_type)
+		if submission_type not in ftp.nlst():
+			ftp.mkd(submission_type)
 		# CD to to test/production folder
-		ftp.cwd(submisison_type)
+		ftp.cwd(submission_type)
 		# Create submission directory if it does not exist
 		if submission_name not in ftp.nlst():
 			ftp.mkd(submission_name)
@@ -601,8 +603,8 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 		if database in ["BioSample_SRA", "SRA"]:
 			for index, row in metadata.iterrows():
 				if row["file_location"] == "local":
-					local_fasta_files = [os.path.join(fasta_path, g.strip()) for g in row["file_path"].split(",")]
-					for file in local_fasta_files:
+					local_rawread_files = [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
+					for file in local_rawread_files:
 						res = ftp.storbinary("STOR " + os.path.basename(file.strip()), open(file.strip(), 'rb'))
 						if not res.startswith('226 Transfer complete'):
 							print('SRA file upload failed. Try again.', file=sys.stderr)
@@ -617,52 +619,52 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 			print('submit.ready upload failed.', file=sys.stderr)
 			sys.exit(1)
 		# Update submission log
-		create_submission_log(database=database, organism=organism, submission_name=submission_name, submisison_type=submisison_type, submission_status="Submitted", submission_id="", submitted_total=metadata.shape[0], failed_total=0, submission_dir=submission_dir)	
+		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=metadata.shape[0], failed_total=0, submission_dir=submission_dir)	
 	except ftplib.all_errors as e:
 		print("\n" + 'Error:' + str(e), file=sys.stderr)
 		sys.exit(1)
 
 # Submit to GISAID
-def submit_gisaid(organism, config_file, metadata_file, fasta_file, test=False):
+def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, test=True):
 	# Get config file
-	config_dict = get_config(config_file=config_file, database="GISAID")
+	config_dict = get_config(config_file=config_file, database=database)
 	# Get metadata file
-	metadata = get_metadata(organism=organism, database="GISAID", metadata_file=metadata_file)
+	metadata = get_metadata(organism=organism, database=database, metadata_file=metadata_file)
 	# Get fasta file
 	if os.path.isfile(fasta_file) == False:
 		print("Error: fasta file does not exist at: \n" + fasta_file, file=sys.stderr)
 		sys.exit(1)
 	# Extract submission description information
-	description_dict = create_submission_description(config_dict=config_dict, database="GISAID")	
+	description_dict = create_submission_description(config_dict=config_dict, database=database)	
 	# Extract description title to store as directory name to dump submission files
 	submission_name = description_dict["Title"]
 	# Create an output directory
-	submission_dir = os.path.join(work_dir, "submission", submission_name, "GISAID", organism)
+	submission_dir = os.path.join(work_dir, "submission", submission_name, database, organism)
 	# Check if output directory exists	
 	if os.path.exists(submission_dir) == False:
 		os.makedirs(submission_dir)	
 	# Check each row to make sure each sample name exists in fasta file
-	check_fasta_samples(metadata=metadata, fasta_file=fasta_file, sample_colnames=sample_colnames[organism]["GISAID"])
+	check_fasta_samples(metadata=metadata, fasta_file=fasta_file, sample_colnames=sample_colnames[organism][database])
 	# Authenticate to obtain the authentication token 
-	credentials = authenticate(database="GISAID", organism=organism, config_file=config_file)
+	credentials = authenticate(database=database, organism=organism, config_file=config_file)
 	# Upload the sequences to GISAID
-	if test == "Test":
-		submisison_type = "Test"
+	if test == True:
+		submission_type = "Test"
 	else:
-		submisison_type = "Production"
+		submission_type = "Production"
 	# Output message
-	print("Performing a " + submisison_type + " submission with Client-Id: " + credentials["Client-Id"], file=sys.stdout)
-	print("If this is not a " + submisison_type + " submission, interrupts submission immediately.", file=sys.stdout)
+	print("\n"+"Performing a " + submission_type + " submission with Client-Id: " + credentials["Client-Id"], file=sys.stdout)
+	print("If this is not a " + submission_type + " submission, interrupts submission immediately.", file=sys.stdout)
 	time.sleep(10)
 	# Create log file
 	log_file = os.path.join(submission_dir, gisaid_logfile[organism])
-	# if log file exists remove it
+	# If log file exists, removes it
 	if os.path.isfile(log_file) == True:
 		os.remove(log_file)
 	# Create failed file
 	failed_file = os.path.join(submission_dir, gisaid_failedfile[organism])
 	# Try submission two times before erroring out
-	print("\n" + "Submitting to " + "GISAID" + "-" + organism, file=sys.stdout)
+	print("\n" + "Submitting to " + database + "-" + organism, file=sys.stdout)
 	attempts = 1
 	complete = False
 	while attempts < 3 and complete == False:
@@ -685,65 +687,77 @@ def submit_gisaid(organism, config_file, metadata_file, fasta_file, test=False):
 		while not os.path.exists(os.path.join(submission_dir, log_file)):
 			time.sleep(10)
 		# Read in the log file
-		submitted_total, failed_total = read_gisaid_log(organism=organism, log_file=log_file, failed_file=failed_file)
+		submitted_total, failed_total = read_gisaid_log(organism=organism, database=database, log_file=log_file, submission_dir=submission_dir)
 		# Update submission log
-		create_submission_log(database="GISAID", organism=organism, submission_name=submission_name, submisison_type=submisison_type, submission_status="Submitted", submission_id="", submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
+		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
 	else:
 		print("Submission errored out.", file=sys.stderr)
+		print("Please check failed log file at: " + log_file, file=sys.stdout)
 		sys.exit(1)
 
 # Read output log from gisaid submission script
-def read_gisaid_log(organism, log_file, failed_file):
+def read_gisaid_log(organism, database, log_file, submission_dir):
 	if os.path.isfile(log_file) == False:
-		print("Error: gisaid log file does not exist at: " + log_file, file=sys.stderr)
-		print("Try uploading the sequences again.", file=sys.stderr)
+		print("Error: GISAID log file does not exist at: " + log_file, file=sys.stderr)
+		print("Try to re-upload the sequences again.", file=sys.stderr)
 		sys.exit(1)
 	else:
 		# Read in log file
 		with open(log_file) as f:
-			data = json.load(f)
+			gisaid_log = json.load(f)
 			f.close()
-		# Obtain number of samples submitted, failed, or already submitted
+		# Create variables to obtain total submitted and total failed
 		number_submitted = 0
 		number_failed = 0
-		already_submitted = []
-		for i in data:
-			# Sequence successfully uploaded
-			if i["code"] == "upload_count":
-				number_submitted = int(i["msg"].strip().split("uploaded: ")[1])
-			# Sequence failed upload
-			elif i["code"] == "failed_count":
-				number_failed = int(i["msg"].strip().split("failed: ")[1])
-			# Correct number of successfully uploaded for if a sequence fails for already existing
-			elif (i["code"] == "validation_error") and ("\"covv_virus_name\": \"already exists\"" in i["msg"]):
-				already_submitted.append(i["msg"].split("; validation_error;")[0])
-			elif i["code"] == "epi_isl_id":
-				continue
-		# Clean failed log
-		if number_failed == 0 or number_failed == len(already_submitted):
-			if os.path.exists(failed_file):
-				print("No failed sequences. Cleaning up files.", file=sys.stdout)
-				os.remove(failed_file)
-		else:
-			df = pd.read_csv(failed_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-			unique_colnames = sample_colnames[organism]["GISAID"]
-			for name in unique_colnames:
-				df = df[~df[name].isin(already_submitted)]
-			df.to_csv(faile_file, header = True, index = False)
-			print("Warnings: Some sequences failed to upload", file=sys.stdout)
-			print("Check log file at: " + log_file, file=sys.stdout)
-		number_failed = number_failed - len(already_submitted)
-		number_submitted = number_submitted + len(already_submitted)
+		sample_id = []
+		gisaid_status = []
+		gisaid_accession = []
+		gisaid_message = []
+		for i in range(len(gisaid_log)):
+			if gisaid_log[i]["code"].upper() == "epi_isl_id".upper():
+				msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")]
+				sample_id.append(msg[0])
+				gisaid_accession.append(msg[-1])
+				gisaid_status.append("proccessed-ok")
+				gisaid_message.append("")
+			elif gisaid_log[i]["code"].upper() == "upload_count".upper():
+				msg = [g.strip() for g in gisaid_log[i]["msg"].split("submissions uploaded:")]
+				number_submitted += int(msg[-1])
+			elif gisaid_log[i]["code"].upper() == "failed_count".upper():
+				msg = [g.strip() for g in gisaid_log[i]["msg"].split("submissions failed:")] 
+				number_failed += int(msg[-1])
+			elif gisaid_log[i]["code"].upper() == "validation_error".upper():
+				msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")] 
+				sample_id.append(msg[0])
+				gisaid_status.append("proccessed-error")
+				gisaid_message.append(gisaid_log[i]["msg"])
+			elif gisaid_log[i]["code"].upper() == "upload_error".upper():
+				msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")] 
+				sample_id.append(msg[0])
+				gisaid_status.append("proccessed-error")
+				gisaid_message.append(gisaid_log[i]["msg"])
+		# Create the submission status df for GISAID
+		gisaid_submission_df = pd.DataFrame().assign(
+			sample_id = sample_id, 
+			gisaid_status = gisaid_status,
+			gisaid_accession = gisaid_accession,
+			gisaid_message = gisaid_message
+		)
+		# Save a copy to submission status df
+		gisaid_submission_df.to_csv(os.path.join(submisison_dir, "submission_report_status.csv"), header = True, index = False)
+		if number_failed > 0:
+			print("Warnings: Some sequences failed to upload to GISAID", file=sys.stdout)
+			print("Please check failed log file at: " + log_file, file=sys.stdout)
 		return str(number_submitted), str(number_failed)
 		
 # Create submission log csv
-def create_submission_log(database, organism, submission_name, submisison_type, submission_status, submission_id, submitted_total, failed_total, submission_dir):
+def create_submission_log(database, organism, submission_name, submission_type, submission_status, submission_id, submitted_total, failed_total, submission_dir):
 	if os.path.isfile(os.path.join(work_dir, "submission_log.csv")) == True:
 		df = pd.read_csv(os.path.join(work_dir, "submission_log.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 	else:
-		df = pd.DataFrame(columns = ["database", "organism", "submission_name", "submisison_type", "submission_date", "submission_status", "submission_id", "submitted_total", "failed_total", "submission_dir"])
+		df = pd.DataFrame(columns = ["database", "organism", "submission_name", "submission_type", "submission_date", "submission_status", "submission_id", "submitted_total", "failed_total", "submission_dir", "updated_date"])
 	# Fill in the log if exist, otherwise create new
-	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submisison_type'] == submisison_type)]
+	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submission_type'] == submission_type)]
 	# Update values or create new enty
 	if df_partial.shape[0] > 0:
 		df.loc[df_partial.index.values, 'submission_status'] = submission_status
@@ -751,23 +765,25 @@ def create_submission_log(database, organism, submission_name, submisison_type, 
 		df.loc[df_partial.index.values, 'submitted_total'] = submitted_total
 		df.loc[df_partial.index.values, 'failed_total'] = failed_total
 		df.loc[df_partial.index.values, 'submission_dir'] = submission_dir
+		df.loc[df_partial.index.values, 'updated_date'] = datetime.now().strftime("%Y-%m-%d")		
 	else:
 		new_entry = {'database': database,
 					 'organism': organism,
 					 'submission_name': submission_name,
-					 'submisison_type': submisison_type,
+					 'submission_type': submission_type,
 					 'submission_date': datetime.now().strftime("%Y-%m-%d"),
 					 'submission_status': submission_status,
 					 'submission_id': submission_id,
 					 'submitted_total': submitted_total,
 					 'failed_total': failed_total,
-					 'submission_dir': submission_dir
+					 'submission_dir': submission_dir,
+					 'updated_date': datetime.now().strftime("%Y-%m-%d")
 					}
 		df.loc[len(df)] = new_entry
 	df.to_csv(os.path.join(work_dir, "submission_log.csv"), header = True, index = False)		
 
 # Update submission log
-def check_submission_status(database, organism, submission_name, test=False):
+def check_submission_status(database, organism, submission_name, test=True):
 	# Check if submission log exists
 	if os.path.isfile(os.path.join(work_dir, "submission_log.csv")):
 		df = pd.read_csv(os.path.join(work_dir, "submission_log.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
@@ -775,37 +791,34 @@ def check_submission_status(database, organism, submission_name, test=False):
 		print("Error: Either a submission has not been made or submission_log.csv has been moved.", file=sys.stderr)
 		sys.exit(1)
 	# Get the submission type: test/production
-	if test == "Test":
-		submisison_type = "Test"
+	if test == True:
+		submission_type = "Test"
 	else:
-		submisison_type = "Production"	
+		submission_type = "Production"	
 	# Check if submission name is in the submission log
-	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submisison_type'] == submisison_type)]
+	df_partial = df.loc[(df["database"] == database) & (df["organism"] == organism) & (df['submission_name'] == submission_name) & (df['submission_type'] == submission_type)]
 	if df_partial.shape[0] > 0:
 		# Obtain submission directory
-		submission_dir = df_partial["submission_dir"]
+		submission_dir = df_partial["submission_dir"].values[0]
 		# Check if output directory exists	
 		if os.path.exists(submission_dir) == False:
-			print("Error: submission directiory does not exit for "+submission_name+" at: "+submission_dir, file=sys.stderr)
+			print("Error: Submission directiory does not exit for '"+submission_name+"' at: "+submission_dir, file=sys.stderr)
 			print("Error: Either a submission has not been made or folder has been moved.", file=sys.stderr)
 			sys.exit(1)
 		# Obtain the authentication file
 		if database == "GISAID":
-			# Create log file
-			log_file = os.path.join(submission_dir, gisaid_logfile[organism])
-			# Create failed file
-			failed_file = os.path.join(submission_dir, gisaid_failedfile[organism])
-			# get gisaid log file
-			submitted_total, failed_total = read_gisaid_log(organism=organism, log_file=log_file, failed_file=failed_file)
+			# Get gisaid submission total and failed total
+			submitted_total = df_partial["submitted_total"].values[0]
+			failed_total = df_partial["failed_total"].values[0]
 			# Output message
-			print("Submission name:" + submission_name, file=sys.stdout)
-			print("Submission database:" + database, file=sys.stdout)
-			print("Submission organism:" + organism, file=sys.stdout)
-			print("Submission type:" + submission_type, file=sys.stdout)
-			print("Submitted total:" + submitted_total, file=sys.stdout)
-			print("Failed total:" + failed_total, file=sys.stdout)
+			print("Submission name: " + submission_name, file=sys.stdout)
+			print("Submission database: " + database, file=sys.stdout)
+			print("Submission organism: " + organism, file=sys.stdout)
+			print("Submission type: " + submission_type, file=sys.stdout)
+			print("Submitted total: " + submitted_total, file=sys.stdout)
+			print("Failed total: " + failed_total, file=sys.stdout)
 		else:
-			report_file = get_process_report(database=database, organism=organism, submission_name=submission_name, submission_dir=submission_dir)
+			report_file = get_process_report(database=database, organism=organism, submission_name=submission_name, submission_dir=submission_dir, submission_type=submission_type)
 			# Obtain submission.xml path
 			submission_file = os.path.join(submission_dir, "submission.xml")
 			# Check if submission_xml exists	
@@ -814,7 +827,18 @@ def check_submission_status(database, organism, submission_name, test=False):
 				print("Error: Either a submission has not been made or submission.xml has been moved.", file=sys.stderr)
 				sys.exit(1)
 			# Processing the report and output status of the submission
-			process_report(database=database, organism=organism, submission_name=submission_name, submission_type=submisison_type, submisison_dir=submission_dir, report_file=report_file, submission_file=submission_file)
+			submission_status, submission_id, submitted_total, failed_total = process_report(database=database, report_file=report_file, submission_file=submission_file)
+			# Update submission log
+			create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_status=submission_status, submission_id=submission_id, submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
+			# Output message
+			print("Submission name: " + submission_name, file=sys.stdout)
+			print("Submission database: " + database, file=sys.stdout)
+			print("Submission organism: " + organism, file=sys.stdout)
+			print("Submission type: " + submission_type, file=sys.stdout)
+			print("Submission id: " + submission_id, file=sys.stdout)
+			print("Submission status: " + submission_status, file=sys.stdout)
+			print("Submitted total: " + submitted_total, file=sys.stdout)
+			print("Failed total: " + failed_total, file=sys.stdout)
 	else:
 		print("\n" + "Error: " + submission_name + " is not in the submisison log file")
 
@@ -823,41 +847,41 @@ def get_token(token_file, organism):
 	if os.path.exists(token_file) == False:
 		print("Error: Authentication token does not exit at: "+token_file, file=sys.stderr)
 		print("Error: Either a submission has not been made or token has been moved.", file=sys.stderr)
-		print("Error: Re-authenticate the database to obtain the token again", file=sys.stderr)
+		print("Please re-authenticate the database to obtain the token again", file=sys.stderr)
 		sys.exit(1)
 	else:
 		with open(token_file) as f:
 			token_dict = json.load(f)
-			f.close()    		
+			f.close()    
 		# Extract user credentials
-		if type(config_dict) is dict:
+		if type(token_dict) is dict:
 			try:
-				token_dict = {k.title():v for k,v in token_dict[organism.lower()]}
+				token_dict = {k.title():v for k,v in token_dict[organism.lower()].items()}
 			except:
-				print("Error: there is no " + organism + " information in token file.", file=sys.stderr)
+				print("Error: there is no " + organism.lower() + " information in token file.", file=sys.stderr)
 				sys.exit(1)
 			else:
 				# Check username		
 				if "Username" not in token_dict.keys():
-					print("Error: there is no " + organism + " > username information in token file.", file=sys.stderr)
+					print("Error: there is no " + organism.lower() + " > username information in token file.", file=sys.stderr)
 					sys.exit(1)	
 				elif ("Username" in token_dict.keys()) and ((token_dict["Username"] is None) or (token_dict["Username"] == "")):
-					print("Error:" + organism + " > username in the token file cannot be empty.", file=sys.stderr)
+					print("Error: " + organism + " > username in the token file cannot be empty.", file=sys.stderr)
 					sys.exit(1)		
 				# Check password		
 				if "Password" not in token_dict.keys():
-					print("Error: there is no" + organism + " > password information in token file.", file=sys.stderr)
+					print("Error: there is no" + organism.lower() + " > password information in token file.", file=sys.stderr)
 					sys.exit(1)		
 				elif ("Password" in token_dict.keys()) and ((token_dict["Password"] is None) or (token_dict["Password"] == "")):
-					print("Error: " + organism + " > password in the token file cannot be empty.", file=sys.stderr)
+					print("Error: " + organism.lower() + " > password in the token file cannot be empty.", file=sys.stderr)
 					sys.exit(1)
 				return token_dict
 		else:
-			print("Error: Token file is incorrect. Token file must be in a json format.", file=sys.stderr)
+			print("Error: Token file is incorrect. Token file must be in a valid json format.", file=sys.stderr)
 			sys.exit(1)
 
 # Process Biosample Report
-def get_process_report(database, organism, submission_name, submission_dir):
+def get_process_report(database, organism, submission_name, submission_dir, submission_type):
 	token_file = os.path.join(work_dir, "ncbi."+organism.lower()+".authtoken")
 	credentials = get_token(token_file=token_file, organism=organism)
 	# Login into NCBI FTP Server
@@ -865,26 +889,21 @@ def get_process_report(database, organism, submission_name, submission_dir):
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=credentials["Username"], passwd=credentials["Password"])
 		print("\n" + "User authenticated", file=sys.stdout)
-		# Submit to test or production ftp server
-		if test == "Test":
-			submisison_type = "Test"
-		else:
-			submisison_type = "Production"
+		print("\n" + "Checking "+ submission_type + " submission server", file=sys.stdout)
 		# Create test/production directory if it does not exist
-		if submisison_type not in ftp.nlst():
-			ftp.mkd(submisison_type)
+		if submission_type not in ftp.nlst():
+			ftp.mkd(submission_type)
 		# CD to to test/production folder
-		ftp.cwd(submisison_type)
-		print("\n" + "Checking "+ submisison_type + " submission server", file=sys.stdout)
+		ftp.cwd(submission_type)
 		# Check if submission name exists
 		if submission_name not in ftp.nlst():
-			print("There is no submission with the name of "+ submission_name + " exists on "+submission_type+"server", file=sys.stderr)
+			print("There is no submission with the name of '"+ submission_name + "' exists on "+submission_type+" server", file=sys.stderr)
 			print("Please try to submit the submission again", file=sys.stderr)
 			sys.exit(1)
 		# CD to submission folder
 		ftp.cwd(submission_name)
 		# Check if report.xml exists
-		if "report.xml" in ftp.nlst() and overwrite == False:
+		if "report.xml" in ftp.nlst():
 			print("\n" + "Pulling down report.xml", file=sys.stdout)
 			report_file = os.path.join(submission_dir, "report.xml")
 			with open(report_file, 'wb') as f:
@@ -892,15 +911,15 @@ def get_process_report(database, organism, submission_name, submission_dir):
 				f.close()
 			return report_file
 		else:
-			print("There is no report.xml exists on the server.", file=sys.stdout)
+			print("There is no report.xml exists on the FTP server.", file=sys.stdout)
 			print("Please try again later.", file=sys.stdout)
 			sys.exit(1)
 	except ftplib.all_errors as e:
-		print("\n" + 'Error:' + str(e), file=sys.stderr)
+		print("\n" + "Error: " + str(e), file=sys.stderr)
 		sys.exit(1)
 
 # Read xml report and get status of the submission
-def process_report(database, organism, submission_name, submission_type, submisison_dir, report_file, submission_file):
+def process_report(database, report_file, submission_file):
 	# Read in report.xml
 	with open(report_file, "r", encoding="utf-8") as f:
 		report_xml = f.read()
@@ -962,7 +981,7 @@ def process_report(database, organism, submission_name, submission_type, submisi
 		sra_message = sra_message
 	) 
 	genbank_submission_df = pd.DataFrame().assign(
-		spuid = genbank_spuid, 
+		Sequence_ID = genbank_spuid, 
 		genbank_status = genbank_status,
 		genbank_accession = genbank_accession,
 		genbank_message = genbank_message
@@ -994,7 +1013,7 @@ def process_report(database, organism, submission_name, submission_type, submisi
 				genbank_submision_df.loc[genbank_submision_df["spuid"].lower() == rp_spuid, 'genbank_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
 				if report_action_dict[i]["@status"] == "processed-ok":	
 					genbank_submision_df.loc[genbank_submision_df["spuid"].lower == rp_spuid, 'genbank_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]				
-	# Save final submission status
+	# Create final submission status df
 	if database == "BioSample":
 		final_submission_df = bs_submission_df
 	elif database == "SRA":
@@ -1003,19 +1022,12 @@ def process_report(database, organism, submission_name, submission_type, submisi
 		final_submission_df = bs_submission_df.merge(sra_submission_df, left_on='spuid', right_on='spuid') 
 	elif database == "Genbank":
 		final_submission_df = genbank_submision_df
-	final_submission_df.to_csv(os.path.join(submisison_dir, "submission_report_status.csv"), header = True, index = False)
+	# Save final submission status df
+	final_submission_df.to_csv(os.path.join(os.path.dirname(submission_file), "submission_report_status.csv"), header = True, index = False)
 	# Get number of submitted total and failed total
 	submitted_total = final_submission_df.shape[0]
-	failed_total = final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error") or (final_submission_df["sra_status"]=="processed-error") or (final_submission_df["genbank_status"]=="processed-error")].shape[0]
-	# Update submission log
-	create_submission_log(database=database, organism=organism, submission_name=submission_name, submisison_type=submisison_type, submission_status=submission_status, submission_id=submission_id, submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
-	# Output message
-	print("Submission name:" + submission_name, file=sys.stdout)
-	print("Submission database:" + database, file=sys.stdout)
-	print("Submission organism:" + organism, file=sys.stdout)
-	print("Submission type:" + submission_type, file=sys.stdout)
-	print("Submission id:" + submission_id, file=sys.stdout)
-	print("Submission status:" + submission_status, file=sys.stdout)
+	failed_total = final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error") | (final_submission_df["sra_status"]=="processed-error") | (final_submission_df["genbank_status"]=="processed-error")].shape[0]
+	return submission_status, submission_id, str(number_submitted), str(number_failed)
 
 # Create template for testings
 def create_zip_template(database, organism):
@@ -1064,7 +1076,7 @@ def args_parser():
 	auth_database_parser = argparse.ArgumentParser(add_help=False)
 	metadata_file_parser = argparse.ArgumentParser(add_help=False)
 	fasta_file_parser = argparse.ArgumentParser(add_help=False)
-	fasta_path_parser = argparse.ArgumentParser(add_help=False)
+	raw_reads_path_parser = argparse.ArgumentParser(add_help=False)
 	authorset_file_parser = argparse.ArgumentParser(add_help=False)
 	test_parser = argparse.ArgumentParser(add_help=False)
 	check_submission_database_parser = argparse.ArgumentParser(add_help=False)
@@ -1085,7 +1097,7 @@ def args_parser():
 	fasta_file_parser.add_argument("--fasta_file",
 		help="Fasta file",
 		required=True)	
-	fasta_path_parser.add_argument("--fasta_path",
+	raw_reads_path_parser.add_argument("--raw_reads_path",
 		help="Fasta path",
 		required=True)
 	authorset_file_parser.add_argument("--authorset_file",
@@ -1094,9 +1106,9 @@ def args_parser():
 	test_parser.add_argument("--test",
 		help="Whether to perform test submission.",
 		required=False,
-		default="Production",
 		action="store_const",
-		const="Test")
+		default=False,
+		const=True)
 	check_submission_database_parser.add_argument("--database",
 		help="BioSample/SRA/BioSample_SRA/Genbank/GISAID",
 		required=True)
@@ -1124,14 +1136,14 @@ def args_parser():
 		'sra', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		help='Creates submission files and begins automated process of submitting to public databases.',
-		parents=[organism_parser, config_file_parser, metadata_file_parser, fasta_path_parser, test_parser]
+		parents=[organism_parser, config_file_parser, metadata_file_parser, raw_reads_path_parser, test_parser]
 	)
 
 	biosample_sra_module = subparser_modules.add_parser(
 		'biosample_sra', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		help='Creates submission files and begins automated process of submitting to public databases.',
-		parents=[organism_parser, config_file_parser, metadata_file_parser, fasta_path_parser, test_parser]
+		parents=[organism_parser, config_file_parser, metadata_file_parser, raw_reads_path_parser, test_parser]
 	)
 
 	genbank_module = subparser_modules.add_parser(
@@ -1174,42 +1186,43 @@ def main():
 	parser = args_parser()
 	args = parser.parse_args()
 
+	# Make sure organism input all caps
 	if args.organism.upper() not in ["FLU", "COV"]:
 		print("--organism <> options are FLU/COV")
 		sys.exit(1)
 
 	if args.command == "authenticate":
-		if args.database not in ["NCBI", "GISAID"]:
+		if args.database.upper() not in ["NCBI", "GISAID"]:
 			print("--database <> options are NCBI/GISAID")
 			sys.exit(1)
-		authenticate(database=args.database, organism=args.organism, config_file=args.config_file)  
+		authenticate(organism=args.organism.upper(), database=args.database.upper(), config_file=args.config_file)  
 		get_execution_time()
 	elif args.command == "biosample":
-		submit_ncbi(organism=args.organism, database="BioSample", config_file=args.config_file, metadata_file=args.metadata_file, test=args.test)
+		submit_ncbi(organism=args.organism.upper(), database="BioSample", config_file=args.config_file, metadata_file=args.metadata_file, test=args.test)
 		get_execution_time()
 	elif args.command == "sra":
-		submit_ncbi(organism=args.organism, database="SRA", config_file=args.config_file, metadata_file=args.metadata_file, fasta_path=args.fasta_path, test=args.test)
+		submit_ncbi(organism=args.organism.upper(), database="SRA", config_file=args.config_file, metadata_file=args.metadata_file, raw_reads_path=args.raw_reads_path, test=args.test)
 		get_execution_time()
 	elif args.command == "biosample_sra":
-		submit_ncbi(organism=args.organism, database="BioSample_SRA", config_file=args.config_file, metadata_file=args.metadata_file, fasta_path=args.fasta_path, test=args.test)
+		submit_ncbi(organism=args.organism.upper(), database="BioSample_SRA", config_file=args.config_file, metadata_file=args.metadata_file, raw_reads_path=args.raw_reads_path, test=args.test)
 		get_execution_time()
 	elif args.command == "genbank":
-		submit_ncbi(organism=args.organism, database="Genbank", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, authorset_file=args.authorset_file, test=args.test)				
+		submit_ncbi(organism=args.organism.upper(), database="Genbank", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, authorset_file=args.authorset_file, test=args.test)				
 		get_execution_time()
 	elif args.command == "gisaid":
-		submit_gisaid(organism=args.organism, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, test=args.test)
+		submit_gisaid(organism=args.organism.upper(), database="GISAID", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, test=args.test)
 		get_execution_time()
 	elif args.command == "check_submission_status":
-		if args.database not in ["BioSample", "SRA", "BioSample_SRA", "Genbank", "GISAID"]:
+		if args.database.upper() not in database_dict.keys():
 			print("--database <> options are BioSample/SRA/BioSample_SRA/Genbank/GISAID")
 			sys.exit(1)
-		check_submission_status(database=args.database, organism=args.organism, submission_name=args.submission_name, test=args.test)
+		check_submission_status(organism=args.organism.upper(), database=database_dict[args.database.upper()], submission_name=args.submission_name, test=args.test)
 		get_execution_time()
 	elif args.command == "template":
-		if args.database not in ["BioSample", "SRA", "BioSample_SRA", "Genbank", "GISAID"]:
+		if args.database.upper() not in database_dict.keys():
 			print("--database <> options are BioSample/SRA/BioSample_SRA/Genbank/GISAID")
 			sys.exit(1)
-		create_zip_template(database=args.database, organism=args.organism.upper())
+		create_zip_template(organism=args.organism.upper(), database=database_dict[args.database.upper()])
 		get_execution_time()
 	elif args.command == "version":
 	    print("Version: " + version, file=sys.stdout)
