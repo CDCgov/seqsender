@@ -92,12 +92,13 @@ def request_authentication_token(ctx, client_id, user, password, proxy, debug, c
     return resp["rc"], resp.get("auth_token"), resp.get("valid_until")
 
 
-def write_authentication_token_file(ctx, filename, client_id, token, valid_until):
+def write_authentication_token_file(ctx, filename, username, client_id, token, valid_until):
     """
     Write the authentication token.
     """
     tokens = {}
-    tokens[ctx] = {'client-id': client_id,
+    tokens[ctx] = {"username": username,
+                        'client-id': client_id,
                         'token': token,
                         'expiry': valid_until,
                        }
@@ -202,16 +203,14 @@ def handle(args):
         # print(f"proxy settings: {proxy}")
         
     client_type = 'live'
-
+    
+    log_dict = []
     def log(code, *msg):
         """
         Write to stdout and, to file for future reference.
         """
-        with open(args.log, "a") as f:
-            output = f"{code}: {', '.join(msg)}"
-            f.write(output + os.linesep)
-            print(output)
-
+        log_dict.append({"code": code, "msg": " ".join(msg)})
+        print(f"{code}: {', '.join(msg)}")
 
     # FLU-API: dump JSON-messages here
     def output_faulty(resp, submission):
@@ -220,7 +219,6 @@ def handle(args):
                 resp["rc"], json.dumps(resp["validation"]))
         else:
             log("upload_error", "%s; %s" % (submission.get("Isolate_Name"), resp["rc"]))
-
 
     # execute CLI-commands
     if args.subparser_name == "authenticate":
@@ -266,7 +264,7 @@ def handle(args):
 
         # save it or report error
         if auth_token:
-            write_authentication_token_file(database, args.token, args.client_id,
+            write_authentication_token_file(database, args.token, args.username, args.client_id,
                                             auth_token, time.ctime(valid_until))
             return 0
         else:
@@ -274,6 +272,7 @@ def handle(args):
 
     elif args.subparser_name == "upload":
         auth_token = load_authentication_token(database, args.token, args.debug)
+        username = auth_token['username']
         client_id = auth_token['client-id']
         auth_token = auth_token['token']
 
@@ -311,7 +310,7 @@ def handle(args):
                     missing_data = True
 
             submission["segments"] = {}
-            submission["submitter"] = "rchau88"
+            submission["submitter"] = username
             for field_name, seq_id in sequence_references.items():
                 if seq_id not in sequences:
                     log("missing_seq", "missing sequence '" + seq_id + "'")
@@ -435,7 +434,12 @@ def handle(args):
                             debug = args.debug,
                             client_type = client_type)
 
-
+        # Save log file
+        if args.log:
+            with open(args.log, "wt") as f:
+                f.write(json.dumps(log_dict, indent = 4))
+                f.close
+                    
         return 0
 
     elif args.subparser_name == "labs":

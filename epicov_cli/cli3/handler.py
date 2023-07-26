@@ -177,11 +177,10 @@ def handle(args):
                  "http": args.proxy}
     client_type = 'live'
 
-    logfile = []
+    logfile = []; log_dict = [];
     def log(code, *msg):
-        with open(args.log, "a") as f:
-            f.write(json.dumps({"code": code, "msg": " ".join(msg)}) + os.linesep)
-            print(f"{code}: {', '.join(msg)}")
+        log_dict.append({"code": code, "msg": " ".join(msg)})
+        print(f"{code}: {', '.join(msg)}")
 
     failed_writer = None #can avoid this setup in later iterations of cli3 software
     failed_file = None
@@ -357,9 +356,14 @@ def handle(args):
         log("upload_count", f"submissions uploaded: {ok_count}")
         log("failed_count", f"submissions failed: {count - ok_count}")
 
+        # Save log file
+        if args.log:
+            with open(args.log, "wt") as f:
+                f.write(json.dumps(log_dict, indent = 4))
+                f.close
+
         # close the file for the failed uploads if needed
         if failed_file:
             failed_file.close()
 
-
-        return 0, logfile
+        return 0, log_dict

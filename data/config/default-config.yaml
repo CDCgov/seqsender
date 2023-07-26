@@ -1,7 +1,7 @@
 Submission:
   NCBI:
-    Username:
-    Password:
+    Username: username
+    Password: password
     Description:
       Title: new_biosample_cov_submission
       Organization:
@@ -9,13 +9,13 @@ Submission:
         '@type': institute
         Name: Institute Name
         Contact:
-          '@email': 'snu3@cdc.gov'
+          '@email': email@myemail.com
           Name:
-            First: Reina
-            Last: Chau
+            First: Jane
+            Last: Doe
   GISAID:
-    Client-Id: 
-    Username:
-    Password:
+    Client-Id: cid-2589ijdk8
+    Username: username
+    Password: password
     Description:
       Title: new_gisaid_cov_submission

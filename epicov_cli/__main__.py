@@ -136,9 +136,6 @@ def main():
         except KeyboardInterrupt:
             print("user interrupt")
             sys.exit(1)
-        if args.log:
-            with open(args.log, "a") as f:
-                f.write(json.dumps(logfile, indent = 4))
         get_execution_time()
         sys.exit(exit_code) #no need to do this as python does this implicitly at this stage
 
