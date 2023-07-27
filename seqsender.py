@@ -330,18 +330,23 @@ def check_rawread_files(metadata, raw_reads_path):
 		elif row["file_location"] == "cloud":
 			cloud_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
 	# Get a list of raw reads files that are not exist locally or on cloud
-	if len(local_rawread_files) > 0:
+	if (len(local_rawread_files) > 0) and (len(set(local_rawread_files)) == len(local_rawread_files)):
 		failed_rawreads = list(filter(lambda x: os.path.exists(x)==False, local_rawread_files))
 		if len(failed_rawreads) > 0:
 			print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
 			sys.exit(1)	
+	else:
+		print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
+		sys.exit(1)			
 	# Get a list of fasta paths that does not exist on aws cloud
-	if len(cloud_rawread_files) > 0:
+	if (len(cloud_rawread_files) > 0) and (len(set(cloud_rawread_files)) == len(cloud_rawread_files)):
 		failed_rawreads = list(filter(lambda x: (subprocess.run("aws s3 ls %s" % x, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).returncode)==1, cloud_rawread_files))
 		if len(failed_rawreads) > 0:
 			print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
 			sys.exit(1)	
-
+	else:
+		print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
+		sys.exit(1)	
 # Create action section in submission.xml for SRA
 def create_sra_submission(description_dict, metadata, raw_reads_path, organism, biosample=False):	
 	# Check fasta files listed in metadata file exist local or on cloud given raw reads path
@@ -674,16 +679,16 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 		while not os.path.exists(os.path.join(submission_dir, log_file)):
 			time.sleep(10)
 		# Read in the log file
-		submitted_total, failed_total = read_gisaid_log(organism=organism, database=database, log_file=log_file, submission_dir=submission_dir)
+		submission_status, submission_id, submitted_total, failed_total = read_gisaid_log(organism=organism, database=database, log_file=log_file, submission_name=submission_name, submission_dir=submission_dir)
 		# Update submission log
-		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
+		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status=submission_status, submission_id=submission_id, submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
 	else:
 		print("Submission errored out.", file=sys.stderr)
 		print("Please check failed log file at: " + log_file, file=sys.stdout)
 		sys.exit(1)
 
 # Read output log from gisaid submission script
-def read_gisaid_log(organism, database, log_file, submission_dir):
+def read_gisaid_log(organism, database, log_file, submission_name, submission_dir):
 	if os.path.isfile(log_file) == False:
 		print("Error: GISAID log file does not exist at: "+log_file, file=sys.stderr)
 		print("Try to re-upload the sequences again.", file=sys.stderr)
@@ -694,10 +699,11 @@ def read_gisaid_log(organism, database, log_file, submission_dir):
 			gisaid_log = json.load(f)
 			f.close()
 		# Create variables to obtain total submitted and total failed
-		number_submitted = 0
-		number_failed = 0
+		submitted_total = 0
+		failed_total = 0
+		submission_status = "Submitted"
+		submission_id = submission_name
 		sample_id = []
-		segment_id = []   # for flu
 		gisaid_status = []
 		gisaid_accession = []
 		gisaid_message = []
@@ -710,10 +716,14 @@ def read_gisaid_log(organism, database, log_file, submission_dir):
 					gisaid_accession.append(msg[-1])
 					gisaid_status.append("proccessed-ok")
 					gisaid_message.append("")
-					number_submitted += 1
+					submitted_total += 1
 				elif gisaid_log[i]["code"].upper() == "epi_id".upper():
 					msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")]
-					segment_id.append(msg[1])
+					sample_id.append(msg[0])
+					gisaid_accession.append(msg[-1])
+					gisaid_status.append("proccessed-ok")
+					gisaid_message.append("")
+					submitted_total += 1
 				elif gisaid_log[i]["code"].upper() == "validation_error".upper():
 					msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")] 
 					sample_id.append(msg[0])
@@ -721,7 +731,7 @@ def read_gisaid_log(organism, database, log_file, submission_dir):
 					gisaid_accession.append("")
 					gisaid_status.append("validation-error")
 					gisaid_message.append("")
-					number_failed += 1
+					failed_total += 1
 				elif gisaid_log[i]["code"].upper() == "upload_error".upper():
 					msg = [g.strip() for g in gisaid_log[i]["msg"].split(";")] 
 					sample_id.append(msg[0])
@@ -729,7 +739,7 @@ def read_gisaid_log(organism, database, log_file, submission_dir):
 					gisaid_accession.append("")
 					gisaid_status.append("upload-error")
 					gisaid_message.append(gisaid_log[i]["msg"])
-					number_failed += 1
+					failed_total += 1
 		elif organism == "COV":
 			for i in range(len(gisaid_log)):
 				if gisaid_log[i]["code"].upper() in "epi_isl_id".upper():
@@ -752,33 +762,20 @@ def read_gisaid_log(organism, database, log_file, submission_dir):
 					gisaid_message.append(gisaid_log[i]["msg"])
 				elif gisaid_log[i]["code"].upper() == "upload_count".upper():
 					msg = [g.strip() for g in gisaid_log[i]["msg"].split("submissions uploaded:")]
-					number_submitted += int(msg[-1])
+					submitted_total += int(msg[-1])
 				elif gisaid_log[i]["code"].upper() == "failed_count".upper():
 					msg = [g.strip() for g in gisaid_log[i]["msg"].split("submissions failed:")] 
-					number_failed += int(msg[-1])
+					failed_total += int(msg[-1])
 		# Create final submission df
-		if organism == "FLU":
-			final_submission_df = pd.DataFrame().assign(
-				sample_id = sample_id, 
-				segment_id = segment_id, 
-				gisaid_status = gisaid_status,
-				gisaid_accession = gisaid_accession,
-				gisaid_message = gisaid_message
-			)
-		elif organism == "COV":
-			final_submission_df = pd.DataFrame().assign(
-				sample_id = sample_id, 
-				gisaid_status = gisaid_status,
-				gisaid_accession = gisaid_accession,
-				gisaid_message = gisaid_message
-			)			
+		final_submission_df = pd.DataFrame().assign(
+			sample_id = sample_id, 
+			gisaid_status = gisaid_status,
+			gisaid_accession = gisaid_accession,
+			gisaid_message = gisaid_message
+		)		
 		# Save a copy to submission status df
-		final_submission_df.to_csv(os.path.join(submission_dir, "submission_report_status.csv"), header = True, index = False)
-		# If there are failed submissions, output message
-		if number_failed > 0 or number_submitted == 0:
-			print("Warning: Uploading error", file=sys.stdout)
-			print("Please check failed log file at: " + log_file, file=sys.stdout)		
-		return str(number_submitted), str(number_failed)
+		final_submission_df.to_csv(os.path.join(submission_dir, "submission_report_status.csv"), header = True, index = False)		
+		return submission_status, submission_id, str(submitted_total), str(failed_total)
 		
 # Create submission log csv
 def create_submission_log(database, organism, submission_name, submission_type, submission_status, submission_id, submitted_total, failed_total, submission_dir):
@@ -837,16 +834,21 @@ def check_submission_status(database, organism, submission_name, test=True):
 			sys.exit(1)
 		# Obtain the authentication file
 		if database == "GISAID":
+			# Create log file
+			log_file = os.path.join(submission_dir, gisaid_logfile[organism])
 			# Get gisaid submission total and failed total
-			submitted_total = df_partial["submitted_total"].values[0]
-			failed_total = df_partial["failed_total"].values[0]
+			submission_status, submission_id, submitted_total, failed_total = read_gisaid_log(organism=organism, database=database, log_file=log_file, submission_name=submission_name, submission_dir=submission_dir)
+			# Update submission log
+			create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status=submission_status, submission_id=submission_id, submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
 			# Output message
-			print("Submission name: " + submission_name, file=sys.stdout)
+			print("\n"+"Submission name: " + submission_name, file=sys.stdout)
 			print("Submission database: " + database, file=sys.stdout)
 			print("Submission organism: " + organism, file=sys.stdout)
 			print("Submission type: " + submission_type, file=sys.stdout)
+			print("Submission status: " + submission_status, file=sys.stdout)
 			print("Submitted total: " + submitted_total, file=sys.stdout)
 			print("Failed total: " + failed_total, file=sys.stdout)
+			print("Status report stored at: " + os.path.join(submission_dir, "submission_report_status.csv"), file=sys.stdout)
 		else:
 			report_file = get_process_report(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_dir=submission_dir)
 			# Obtain submission.xml path
@@ -861,7 +863,7 @@ def check_submission_status(database, organism, submission_name, test=True):
 			# Update submission log
 			create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status=submission_status, submission_id=submission_id, submitted_total=submitted_total, failed_total=failed_total, submission_dir=submission_dir)
 			# Output message
-			print("Submission name: " + submission_name, file=sys.stdout)
+			print("\n"+"Submission name: " + submission_name, file=sys.stdout)
 			print("Submission database: " + database, file=sys.stdout)
 			print("Submission organism: " + organism, file=sys.stdout)
 			print("Submission type: " + submission_type, file=sys.stdout)
@@ -959,257 +961,268 @@ def process_report(database, report_file, submission_file):
 	with open(submission_file, "r", encoding="utf-8") as f:
 		submission_xml = f.read()
 		f.close()	
-	# Convert submission.xml to dictionary	
+	# Create variable to store number submitted and number failed
+	submitted_total = 0
+	failed_total = 0
+	submission_status = "Submitted"
+	submission_id = ""		
+	# Convert submission.xml to dictionary 
 	submission_dict = xmltodict.parse(submission_xml)
-	# Get a list of actions from submission.xml
-	submission_action_dict = submission_dict["Submission"]["Action"]
-	# Create fields to store submission values for BioSample
-	bs_spuid = [""]*len(submission_action_dict)
-	biosample_status = [""]*len(submission_action_dict)
-	biosample_accession = [""]*len(submission_action_dict)
-	biosample_message = [""]*len(submission_action_dict)
-	# Create fields to store submission values for SRA
-	sra_spuid = [""]*len(submission_action_dict)
-	sra_status = [""]*len(submission_action_dict)
-	sra_accession = [""]*len(submission_action_dict)
-	sra_message = [""]*len(submission_action_dict)
-	# Create fields to store submission values for genbank
-	genbank_spuid = [""]*len(submission_action_dict)
-	genbank_status = [""]*len(submission_action_dict)
-	genbank_accession = [""]*len(submission_action_dict)
-	genbank_message = [""]*len(submission_action_dict)
-	for i in range(len(submission_action_dict)):
-		if database == "BioSample":
-			bs_spuid[i] = submission_action_dict[i]["AddData"]["Identifier"]["SPUID"]["#text"]
-		elif database == "SRA":
-			sra_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
-		elif database == "BioSample_SRA":
-			try:
-				submission_action_dict[i]["AddData"]["@target_db"]
-			except:
-				try:
-					submission_action_dict[i]["AddFiles"]["@target_db"]
-				except:
-					pass
-				else:					
-					sra_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
-			else:
-				bs_spuid[i] = submission_action_dict[i]["AddData"]["Identifier"]["SPUID"]["#text"]
-		elif database == "Genbank":
-			genbank_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
-	# create the submission df for biosample
-	bs_submission_df = pd.DataFrame().assign(
-		spuid = bs_spuid, 
-		report_spuid = [re.sub("_", "/", x.lower()) for x in bs_spuid],
-		biosample_status = biosample_status,
-		biosample_accession = biosample_accession,
-		biosample_message = biosample_message
-	) 
-	# create the submission df for sra
-	sra_submission_df = pd.DataFrame().assign(
-		spuid = sra_spuid, 
-		report_spuid = [re.sub("_", "/", x.lower()) for x in sra_spuid],
-		sra_status = sra_status,
-		sra_accession = sra_accession,
-		sra_message = sra_message
-	) 
-	genbank_submission_df = pd.DataFrame().assign(
-		Sequence_ID = genbank_spuid, 
-		report_spuid = [re.sub("_", "/", x.lower()) for x in genbank_spuid],
-		genbank_status = genbank_status,
-		genbank_accession = genbank_accession,
-		genbank_message = genbank_message
-	)
-	# Convert xml to dictionary	
-	report_dict = xmltodict.parse(report_xml)
-	# Get submission status and id from report.xml
-	submission_status = report_dict["SubmissionStatus"]["@status"]
-	submission_id = report_dict["SubmissionStatus"]["@submission_id"]
-	# Get a list of actions from report.xml
-	report_action_dict = report_dict["SubmissionStatus"]["Action"]
-	# CHECK SUBMISSION ACTIONS ON THE REPORT
 	try:
-		report_action_dict[0]
-		for i in range(len(report_action_dict)):
-			rp_spuid = re.sub(submission_id+"-", "", report_action_dict[i]["@action_id"])
-			rp_spuid = re.sub("_", "/", rp_spuid)
-			rp_target_db = report_action_dict[i]["@target_db"]
-			# CHECK THE RESPONSE SECTION OF THE REPORT
-			try:
-				report_action_dict[i]["Response"][0]
-				if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
-					df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
-					bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict[i]["@status"]
-					bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]
-				elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
-					df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
-					sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict[i]["@status"]
-					sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]
-				elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
-					df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]	
-						# CHECK THE FILE SECTION IN GENBANK WHICH OFTEN STORED ON THE SECOND SECTION OF THE RESPONSE STRING
-						try:
-							filename_dict = report_action_dict[i]["Response"][1]["File"]
-						except:
-							pass
-						else:
-							if len(filename_dict) > 1:
-								for f in range(len(filename_dict)):
-									file_name = filename_dict[f]["@file_path"]
-									file_path = filename_dict[f]["@file_id"]
-									r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-									open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
-							elif len(filename_dict) == 1:
-								file_name = filename_dict["@file_path"]
-								file_path = filename_dict["@file_id"]
-								r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-								open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)	
-			# CHECK THE RESPONSE SECTION OF THE REPORT
-			except:
-				if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
-					df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
-					bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict[i]["@status"]
-					bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]
-				elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
-					df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
-					sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict[i]["@status"]
-					sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]
-				elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
-					df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
-					if report_action_dict[i]["@status"] == "processed-ok":	
-						genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]	
-						# Obtain genbank output files
-						try:
-							filename_dict = report_action_dict[i]["Response"]["File"]
-						except:
-							pass
-						else:
-							if len(filename_dict) > 1:
-								for f in range(len(filename_dict)):
-									file_name = filename_dict[f]["@file_path"]
-									file_path = filename_dict[f]["@file_id"]
-									r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-									open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
-							elif len(filename_dict) == 1:
-								file_name = filename_dict["@file_path"]
-								file_path = filename_dict["@file_id"]
-								r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-								open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)							
-	# CHECK THE SUBMISSION ACTIONS ON THE REPORT
-	except:
-		rp_spuid = re.sub(submission_id+"-", "", report_action_dict["@action_id"])
-		rp_spuid = re.sub("_", "/", rp_spuid)
-		rp_target_db = report_action_dict["@target_db"]
-		# CHECK THE RESPONSE SECTION OF THE REPORT
+		# Get a list of actions from submission.xml
+		submission_action_dict = submission_dict["Submission"]["Action"]
+		# Create fields to store submission values for BioSample
+		bs_spuid = [""]*len(submission_action_dict)
+		biosample_status = [""]*len(submission_action_dict)
+		biosample_accession = [""]*len(submission_action_dict)
+		biosample_message = [""]*len(submission_action_dict)
+		# Create fields to store submission values for SRA
+		sra_spuid = [""]*len(submission_action_dict)
+		sra_status = [""]*len(submission_action_dict)
+		sra_accession = [""]*len(submission_action_dict)
+		sra_message = [""]*len(submission_action_dict)
+		# Create fields to store submission values for genbank
+		genbank_spuid = [""]*len(submission_action_dict)
+		genbank_status = [""]*len(submission_action_dict)
+		genbank_accession = [""]*len(submission_action_dict)
+		genbank_message = [""]*len(submission_action_dict)
+		for i in range(len(submission_action_dict)):
+			if database == "BioSample":
+				bs_spuid[i] = submission_action_dict[i]["AddData"]["Identifier"]["SPUID"]["#text"]
+			elif database == "SRA":
+				sra_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
+			elif database == "BioSample_SRA":
+				try:
+					submission_action_dict[i]["AddData"]["@target_db"]
+				except:
+					try:
+						submission_action_dict[i]["AddFiles"]["@target_db"]
+					except:
+						pass
+					else:					
+						sra_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
+				else:
+					bs_spuid[i] = submission_action_dict[i]["AddData"]["Identifier"]["SPUID"]["#text"]
+			elif database == "Genbank":
+				genbank_spuid[i] = submission_action_dict[i]["AddFiles"]["Identifier"]["SPUID"]["#text"]
+		# create the submission df for biosample
+		bs_submission_df = pd.DataFrame().assign(
+			spuid = bs_spuid, 
+			report_spuid = [re.sub("_", "/", x.lower()) for x in bs_spuid],
+			biosample_status = biosample_status,
+			biosample_accession = biosample_accession,
+			biosample_message = biosample_message
+		) 
+		# create the submission df for sra
+		sra_submission_df = pd.DataFrame().assign(
+			spuid = sra_spuid, 
+			report_spuid = [re.sub("_", "/", x.lower()) for x in sra_spuid],
+			sra_status = sra_status,
+			sra_accession = sra_accession,
+			sra_message = sra_message
+		) 
+		genbank_submission_df = pd.DataFrame().assign(
+			Sequence_ID = genbank_spuid, 
+			report_spuid = [re.sub("_", "/", x.lower()) for x in genbank_spuid],
+			genbank_status = genbank_status,
+			genbank_accession = genbank_accession,
+			genbank_message = genbank_message
+		)
+		# Convert xml to dictionary	
+		report_dict = xmltodict.parse(report_xml)
 		try:
-			report_action_dict["Response"][0]
-			if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
-				df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
-				bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict["@status"]
-				bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict["Response"][0]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]
-			elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
-				df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
-				sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict["@status"]
-				sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict["Response"][0]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]
-			elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
-				df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
-				genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
-				genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict["Response"][0]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]	
-					# Obtain genbank output files
+			# Get submission status and id from report.xml
+			submission_status = report_dict["SubmissionStatus"]["@status"]
+			submission_id = report_dict["SubmissionStatus"]["@submission_id"]
+			# Get a list of actions from report.xml
+			report_action_dict = report_dict["SubmissionStatus"]["Action"]
+			# CHECK SUBMISSION ACTIONS ON THE REPORT
+			try:
+				report_action_dict[0]
+				for i in range(len(report_action_dict)):
+					rp_spuid = re.sub(submission_id+"-", "", report_action_dict[i]["@action_id"])
+					rp_spuid = re.sub("_", "/", rp_spuid)
+					rp_target_db = report_action_dict[i]["@target_db"]
+					# CHECK THE RESPONSE SECTION OF THE REPORT
 					try:
-						filename_dict = report_action_dict["Response"][1]["File"]
+						report_action_dict[i]["Response"][0]
+						if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
+							df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
+							bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict[i]["@status"]
+							bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]
+						elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
+							df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
+							sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict[i]["@status"]
+							sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]
+						elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
+							df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict[i]["Response"][0]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict[i]["Response"][0]["Object"]["@accession"]	
+								# CHECK THE FILE SECTION IN GENBANK WHICH OFTEN STORED ON THE SECOND SECTION OF THE RESPONSE STRING
+								try:
+									filename_dict = report_action_dict[i]["Response"][1]["File"]
+								except:
+									pass
+								else:
+									if len(filename_dict) > 1:
+										for f in range(len(filename_dict)):
+											file_name = filename_dict[f]["@file_path"]
+											file_path = filename_dict[f]["@file_id"]
+											r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+											open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
+									elif len(filename_dict) == 1:
+										file_name = filename_dict["@file_path"]
+										file_path = filename_dict["@file_id"]
+										r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+										open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)	
+					# CHECK THE RESPONSE SECTION OF THE REPORT
 					except:
-						pass
-					else:
-						if len(filename_dict) > 1:
-							for f in range(len(filename_dict)):
-								file_name = filename_dict[f]["@file_path"]
-								file_path = filename_dict[f]["@file_id"]
-								r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-								open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
-						elif len(filename_dict) == 1:
-							file_name = filename_dict["@file_path"]
-							file_path = filename_dict["@file_id"]
-							r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-							open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
-		# CHECK THE RESPONSE SECTION OF THE REPORT					
+						if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
+							df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
+							bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict[i]["@status"]
+							bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]
+						elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
+							df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
+							sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict[i]["@status"]
+							sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]
+						elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
+							df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict[i]["Response"]["Message"]["#text"]
+							if report_action_dict[i]["@status"] == "processed-ok":	
+								genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict[i]["Response"]["Object"]["@accession"]	
+								# Obtain genbank output files
+								try:
+									filename_dict = report_action_dict[i]["Response"]["File"]
+								except:
+									pass
+								else:
+									if len(filename_dict) > 1:
+										for f in range(len(filename_dict)):
+											file_name = filename_dict[f]["@file_path"]
+											file_path = filename_dict[f]["@file_id"]
+											r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+											open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
+									elif len(filename_dict) == 1:
+										file_name = filename_dict["@file_path"]
+										file_path = filename_dict["@file_id"]
+										r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+										open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)							
+			# CHECK THE SUBMISSION ACTIONS ON THE REPORT
+			except:
+				rp_spuid = re.sub(submission_id+"-", "", report_action_dict["@action_id"])
+				rp_spuid = re.sub("_", "/", rp_spuid)
+				rp_target_db = report_action_dict["@target_db"]
+				# CHECK THE RESPONSE SECTION OF THE REPORT
+				try:
+					report_action_dict["Response"][0]
+					if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
+						df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
+						bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict["@status"]
+						bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict["Response"][0]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]
+					elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
+						df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
+						sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict["@status"]
+						sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict["Response"][0]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]
+					elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
+						df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
+						genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
+						genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict["Response"][0]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict["Response"][0]["Object"]["@accession"]	
+							# Obtain genbank output files
+							try:
+								filename_dict = report_action_dict["Response"][1]["File"]
+							except:
+								pass
+							else:
+								if len(filename_dict) > 1:
+									for f in range(len(filename_dict)):
+										file_name = filename_dict[f]["@file_path"]
+										file_path = filename_dict[f]["@file_id"]
+										r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+										open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
+								elif len(filename_dict) == 1:
+									file_name = filename_dict["@file_path"]
+									file_path = filename_dict["@file_id"]
+									r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+									open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
+				# CHECK THE RESPONSE SECTION OF THE REPORT					
+				except:
+					if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
+						df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
+						bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict["@status"]
+						bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict["Response"]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict["Response"]["Object"]["@accession"]
+					elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
+						df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
+						sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict["@status"]
+						sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict["Response"]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict["Response"]["Object"]["@accession"]
+					elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
+						df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
+						genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
+						genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict["Response"]["Message"]["#text"]
+						if report_action_dict["@status"] == "processed-ok":	
+							genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict["Response"]["Object"]["@accession"]	
+							# Obtain genbank output files
+							try:
+								filename_dict = report_action_dict["Response"]["File"]
+							except:
+								pass
+							else:
+								if len(filename_dict) > 1:
+									for f in range(len(filename_dict)):
+										file_name = filename_dict[f]["@file_path"]
+										file_path = filename_dict[f]["@file_id"]
+										r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+										open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
+								elif len(filename_dict) == 1:
+									file_name = filename_dict["@file_path"]
+									file_path = filename_dict["@file_id"]
+									r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+									open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)	
 		except:
-			if rp_target_db.upper() == "BIOSAMPLE" and rp_spuid in bs_submission_df["report_spuid"].values.tolist():
-				df_partial = bs_submission_df.loc[bs_submission_df["report_spuid"] == rp_spuid]
-				bs_submission_df.loc[df_partial.index.values, 'biosample_status'] = report_action_dict["@status"]
-				bs_submission_df.loc[df_partial.index.values, 'biosample_message'] = report_action_dict["Response"]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					bs_submission_df.loc[df_partial.index.values, 'biosample_accession'] = report_action_dict["Response"]["Object"]["@accession"]
-			elif rp_target_db.upper() == "SRA" and rp_spuid in sra_submision_df["report_spuid"].values.tolist():
-				df_partial = sra_submision_df.loc[sra_submision_df["report_spuid"] == rp_spuid]
-				sra_submision_df.loc[df_partial.index.values, 'sra_status'] = report_action_dict["@status"]
-				sra_submision_df.loc[df_partial.index.values, 'sra_message'] = report_action_dict["Response"]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					sra_submision_df.loc[df_partial.index.values , 'sra_accession'] = report_action_dict["Response"]["Object"]["@accession"]
-			elif (rp_target_db.upper() == "GENBANK") and (rp_spuid in genbank_submision_df["report_spuid"].values.tolist()):
-				df_partial = genbank_submision_df.loc[genbank_submision_df["report_spuid"] == rp_spuid]
-				genbank_submision_df.loc[df_partial.index.values, 'genbank_status'] = report_action_dict["@status"]
-				genbank_submision_df.loc[df_partial.index.values, 'genbank_message'] = report_action_dict["Response"]["Message"]["#text"]
-				if report_action_dict["@status"] == "processed-ok":	
-					genbank_submision_df.loc[df_partial.index.values, 'genbank_accession'] = report_action_dict["Response"]["Object"]["@accession"]	
-					# Obtain genbank output files
-					try:
-						filename_dict = report_action_dict["Response"]["File"]
-					except:
-						pass
-					else:
-						if len(filename_dict) > 1:
-							for f in range(len(filename_dict)):
-								file_name = filename_dict[f]["@file_path"]
-								file_path = filename_dict[f]["@file_id"]
-								r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-								open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)
-						elif len(filename_dict) == 1:
-							file_name = filename_dict["@file_path"]
-							file_path = filename_dict["@file_id"]
-							r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
-							open(os.path.join(os.path.dirname(submission_file)+file_name), 'wb').write(r.content)	
-	# Create final submission status df
-	if database == "BioSample":
-		final_submission_df = bs_submission_df
-		final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
-		failed_total = final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error")].shape[0]
-	elif database == "SRA":
-		final_submission_df = sra_submission_df
-		final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
-		failed_total = final_submission_df.loc[(final_submission_df["sra_status"]=="processed-error")].shape[0]
-	elif database == "BioSample_SRA":
-		final_submission_df = bs_submission_df.merge(sra_submission_df, left_on='spuid', right_on='spuid')
-		final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
-		failed_total = final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error") | (final_submission_df["sra_status"]=="processed-error")].shape[0]
-	elif database == "Genbank":
-		final_submission_df = genbank_submision_df
-		final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
-		failed_total = final_submission_df.loc[(final_submission_df["genbank_status"]=="processed-error")].shape[0]
-	# Save final submission status df
-	final_submission_df.to_csv(os.path.join(os.path.dirname(submission_file), "submission_report_status.csv"), header = True, index = False)
-	# Get number of submitted total and failed total
-	submitted_total = final_submission_df.shape[0]
+			pass
+		# Create final submission status df
+		if database == "BioSample":
+			final_submission_df = bs_submission_df
+			final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
+			failed_total += final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error")].shape[0]
+		elif database == "SRA":
+			final_submission_df = sra_submission_df
+			final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
+			failed_total += final_submission_df.loc[(final_submission_df["sra_status"]=="processed-error")].shape[0]
+		elif database == "BioSample_SRA":
+			final_submission_df = bs_submission_df.merge(sra_submission_df, left_on='spuid', right_on='spuid')
+			final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
+			failed_total += final_submission_df.loc[(final_submission_df["biosample_status"]=="processed-error") | (final_submission_df["sra_status"]=="processed-error")].shape[0]
+		elif database == "Genbank":
+			final_submission_df = genbank_submision_df
+			final_submission_df = final_submission_df.loc[:, final_submission_df.columns != 'report_spuid'] 
+			failed_total += final_submission_df.loc[(final_submission_df["genbank_status"]=="processed-error")].shape[0]
+		# Save final submission status df
+		final_submission_df.to_csv(os.path.join(os.path.dirname(submission_file), "submission_report_status.csv"), header = True, index = False)
+		# Get number of submitted total and failed total
+		submitted_total += final_submission_df.shape[0]
+	except: 
+		pass
 	return submission_status, submission_id, str(submitted_total), str(failed_total)
 
 # Create template for testings
