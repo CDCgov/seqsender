@@ -330,23 +330,25 @@ def check_rawread_files(metadata, raw_reads_path):
 		elif row["file_location"] == "cloud":
 			cloud_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
 	# Get a list of raw reads files that are not exist locally or on cloud
-	if (len(local_rawread_files) > 0) and (len(set(local_rawread_files)) == len(local_rawread_files)):
-		failed_rawreads = list(filter(lambda x: os.path.exists(x)==False, local_rawread_files))
-		if len(failed_rawreads) > 0:
-			print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
-			sys.exit(1)	
-	else:
-		print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
+	if len(local_rawread_files) > 0:
+		if len(set(local_rawread_files)) == len(local_rawread_files):
+			failed_rawreads = list(filter(lambda x: os.path.exists(x)==False, local_rawread_files))
+			if len(failed_rawreads) > 0:
+				print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
+				sys.exit(1)
+		else:
+			print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
 		sys.exit(1)			
 	# Get a list of fasta paths that does not exist on aws cloud
-	if (len(cloud_rawread_files) > 0) and (len(set(cloud_rawread_files)) == len(cloud_rawread_files)):
-		failed_rawreads = list(filter(lambda x: (subprocess.run("aws s3 ls %s" % x, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).returncode)==1, cloud_rawread_files))
-		if len(failed_rawreads) > 0:
-			print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
+	if len(cloud_rawread_files) > 0:
+		if len(set(cloud_rawread_files)) == len(cloud_rawread_files):
+			failed_rawreads = list(filter(lambda x: (subprocess.run("aws s3 ls %s" % x, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).returncode)==1, cloud_rawread_files))
+			if len(failed_rawreads) > 0:
+				print("Error: Raw reads files do not exist at " + ", ".join(failed_rawreads) + ".", file=sys.stderr)
+				sys.exit(1)	
+		else:
+			print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
 			sys.exit(1)	
-	else:
-		print("Error: Raw reads files listed in 'file_path' column in metadata file must be unique.", file=sys.stderr)
-		sys.exit(1)	
 # Create action section in submission.xml for SRA
 def create_sra_submission(description_dict, metadata, raw_reads_path, organism, biosample=False):	
 	# Check fasta files listed in metadata file exist local or on cloud given raw reads path
