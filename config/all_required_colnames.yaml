@@ -37,7 +37,7 @@ COV:
   - sra-library_construction_protocol***
   GISAID:
   - covv_virus_name*
-  - submitter***
+  - submitter
   - covv_type***
   - covv_passage**
   - covv_collection_date***
@@ -52,7 +52,7 @@ COV:
   - covv_subm_lab***
   - covv_subm_lab_addr***
   - covv_authors***
-  - fn***
+  - fn
   Genbank:
   - Sequence_ID*
   - src-organism***

@@ -116,7 +116,7 @@ def get_metadata(organism, database, metadata_file):
 		# Check if required column names are existed in metadata file
 		if not set(required_colnames).issubset(set(metadata.columns)):
 			failed_rq_colnames = list(filter(lambda x: (x in metadata.columns)==False, required_colnames))
-			print("Error: Metadata file must have the following required column names: " + ", ".join(failed_rq_colnames) + ".", file=sys.stderr)
+			print("Error: Metadata file must have the following required column names: " + ", ".join(failed_rq_colnames), file=sys.stderr)
 			sys.exit(1)	
 		# Create a empty list to store all sample names	
 		all_sample_names = [];
