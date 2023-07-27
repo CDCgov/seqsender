@@ -3,6 +3,9 @@ Submission:
     Action:
       AddFiles:
         '@target_db': SRA
+        File:
+        - '@file_path': file_name.fastq
+          DataType: generic-data
         Attribute:
         - '#text': Illumina HiSeq 2500
           '@name': instrument_model
@@ -20,9 +23,6 @@ Submission:
             SPUID:
               '#text': SARS-CoV-2/Human/USA/AR-sequence_1/2022
               '@spuid_namespace': SARS-CoV2 Test Submission  
-        File:
-        - '@file_path': file_name.fastq
-          DataType: generic-data
         Identifier:
           SPUID:
             '#text': CFSAN006236_01:3
