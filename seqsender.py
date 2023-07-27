@@ -415,6 +415,7 @@ def create_sra_submission(description_dict, metadata, raw_reads_path, organism, 
 # Check sample names in metadata file are listed in fasta file
 def check_fasta_samples(organism, database, metadata, fasta_file):
 	sample_colnames = list(filter(lambda x: (("*" in x) and ("**" not in x) and ("***" not in x))==True, all_required_colnames[organism][database]))
+	sample_colnames = [str(x).replace("*", "") for x in sample_colnames]
 	for index, row in metadata.iterrows():
 		for name in sample_colnames:
 			if row[name] != "":
