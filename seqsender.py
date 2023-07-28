@@ -666,8 +666,6 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 		os.remove(log_file)
 	# Create failed file
 	failed_file = os.path.join(submission_dir, gisaid_failedfile[organism])
-	# Create submission status file to keep track of its submission process
-	submission_status_df 
 	# Try submission two times before erroring out
 	print("\n" + "Submitting to " + database + "-" + organism, file=sys.stdout)
 	attempts = 1
