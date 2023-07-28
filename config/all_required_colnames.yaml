@@ -134,6 +134,7 @@ FLU:
   - Subtype***
   Genbank:
   - Sequence_ID*
+  - src-organism***
   - src-strain***
   - src-collection_date***
   - src-country***
