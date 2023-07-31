@@ -2,42 +2,43 @@ COV:
   BioSample:
   - spuid*
   - spuid_namespace***
-  - bioproject***
   - description_title***
   - organism_name***
+  - bioproject***
+  - bs-isolate***
   - bs-collected_by***
   - bs-collection_date***
-  - bs-geo_loc_name***
   - bs-host***
   - bs-host_disease***
-  - bs-isolate***
-  - bs-isolation_source***
-  BioSample_SRA:
-  - spuid*
-  - bs-isolate***
   - bs-isolation_source***
   - bs-geo_loc_name***
+  BioSample_SRA:
+  - spuid*
+  - spuid_namespace***
+  - description_title***
   - organism_name***
   - bioproject***
   - file_location***
-  - bs-host_disease***
-  - bs-collection_date***
-  - sra-instrument_model***
+  - file_path***
+  - datatype***
+  - bs-isolate***
   - bs-collected_by***
+  - bs-collection_date***
   - bs-host***
+  - bs-host_disease***
+  - bs-isolation_source***
+  - bs-geo_loc_name***
+  - sra-instrument_model***
   - sra-library_source***
   - sra-library_layout***
-  - description_title***
   - sra-library_name***
-  - spuid_namespace***
-  - datatype***
-  - file_path***
   - sra-library_strategy***
   - sra-library_selection***
   - sra-library_construction_protocol***
   GISAID:
-  - covv_virus_name*
   - submitter
+  - fn
+  - covv_virus_name*
   - covv_type***
   - covv_passage**
   - covv_collection_date***
@@ -52,7 +53,6 @@ COV:
   - covv_subm_lab***
   - covv_subm_lab_addr***
   - covv_authors***
-  - fn
   Genbank:
   - Sequence_ID*
   - src-organism***
@@ -79,42 +79,46 @@ FLU:
   BioSample:
   - spuid*
   - spuid_namespace***
-  - bioproject***
   - description_title***
   - organism_name***
+  - bioproject***
+  - bs-strain***
   - bs-collected_by***
   - bs-collection_date***
-  - bs-geo_loc_name***
   - bs-host***
   - bs-host_disease***
-  - bs-strain***
   - bs-isolation_source***
-  - bs-lat_lon***
+  - bs-geo_loc_name***
   BioSample_SRA:
   - spuid*
-  - bs-isolation_source***
-  - bs-strain***
+  - spuid_namespace***
+  - description_title***
   - organism_name***
   - bioproject***
   - file_location***
-  - bs-host_disease***
+  - file_path***
+  - datatype***
+  - bs-strain***
+  - bs-collected_by*** 
   - bs-collection_date***
-  - sra-instrument_model***
-  - bs-collected_by***
   - bs-host***
-  - bs-lat_lon***
+  - bs-host_disease***
+  - bs-isolation_source***
+  - bs-geo_loc_name***
+  - sra-instrument_model***
   - sra-library_source***
-  - description_title***
   - sra-library_layout***
   - sra-library_name***
-  - spuid_namespace***
-  - datatype***
-  - file_path***
   - sra-library_strategy***
   - sra-library_selection***
   - sra-library_construction_protocol***
-  - bs-geo_loc_name***
   GISAID:
+  - Isolate_Id
+  - Segment_Ids
+  - Isolate_Name***
+  - Subtype***
+  - Location***
+  - Host***
   - Seq_Id (HA)*
   - Seq_Id (NA)*
   - Seq_Id (PB1)*
@@ -125,13 +129,8 @@ FLU:
   - Seq_Id (NP)*
   - Seq_Id (HE)*
   - Seq_Id (P3)* 
-  - Isolate_Id
-  - Segment_Ids
+  - Originating_Lab_Id***
   - Collection_Date***
-  - Host***
-  - Isolate_Name***
-  - Location***
-  - Subtype***
   Genbank:
   - Sequence_ID*
   - src-organism***

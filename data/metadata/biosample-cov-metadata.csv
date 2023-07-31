@@ -1,11 +1,3 @@
-spuid,spuid_namespace,bioproject,description_title,organism_name,bs-collected_by, bs-collection_date, bs-geo_loc_name, bs-host, bs-host_disease, bs-isolate, bs-isolation_source,bs-host_sex,bs-host_age
-spuid_1,spuid_namespace_1,PRJNA720050,description_title_1,organism_name_1,collected_by_1, collection_date_1, geo_loc_name_1, host_1, host_disease_1, isolate_1, isolation_source_1,host_sex_1,host_age_1
-spuid_2,spuid_namespace_2,PRJNA720050,description_title_2,organism_name_2,collected_by_2, collection_date_2, geo_loc_name_2, host_2, host_disease_2, isolate_2, isolation_source_2,host_sex_2,host_age_2
-spuid_3,spuid_namespace_3,PRJNA720050,description_title_3,organism_name_3,collected_by_3, collection_date_3, geo_loc_name_3, host_3, host_disease_3, isolate_3, isolation_source_3,host_sex_3,host_age_3
-spuid_4,spuid_namespace_4,PRJNA720050,description_title_4,organism_name_4,collected_by_4, collection_date_4, geo_loc_name_4, host_4, host_disease_4, isolate_4, isolation_source_4,host_sex_4,host_age_4
-spuid_5,spuid_namespace_5,PRJNA720050,description_title_5,organism_name_5,collected_by_5, collection_date_5, geo_loc_name_5, host_5, host_disease_5, isolate_5, isolation_source_5,host_sex_5,host_age_5
-spuid_6,spuid_namespace_6,PRJNA720050,description_title_6,organism_name_6,collected_by_6, collection_date_6, geo_loc_name_6, host_6, host_disease_6, isolate_6, isolation_source_6,host_sex_6,host_age_6
-spuid_7,spuid_namespace_7,PRJNA720050,description_title_7,organism_name_7,collected_by_7, collection_date_7, geo_loc_name_7, host_7, host_disease_7, isolate_7, isolation_source_7,host_sex_7,host_age_7
-spuid_8,spuid_namespace_8,PRJNA720050,description_title_8,organism_name_8,collected_by_8, collection_date_8, geo_loc_name_8, host_8, host_disease_8, isolate_8, isolation_source_8,host_sex_8,host_age_8
-spuid_9,spuid_namespace_9,PRJNA720050,description_title_9,organism_name_9,collected_by_9, collection_date_9, geo_loc_name_9, host_9, host_disease_9, isolate_9, isolation_source_9,host_sex_9,host_age_9
-spuid_10,spuid_namespace_10,PRJNA720050,description_title_10,organism_name_10,collected_by_10, collection_date_10, geo_loc_name_10, host_10, host_disease_10, isolate_10, isolation_source_10,host_sex_10,host_age_10
+spuid,spuid_namespace,description_title,organism_name,bioproject,bs-isolate,bs-collected_by, bs-collection_date, bs-host, bs-host_disease,bs-isolation_source,bs-geo_loc_name,bs-host_sex,bs-host_age
+seq1,CDC-OAMD,CDC Sars CoV2 Sequencing Baseline Constellation,Severe acute respiratory syndrome coronavirus 2,PRJNA512913,SARS-CoV-2/human/USA/GA_2741/2020,Helix,3/28/2020,Homo sapiens,COVID-19,nasal swab,United States: Georgia,Male,28
+seq2,CDC-OAMD,CDC Sars CoV2 Sequencing Baseline Constellation,Severe acute respiratory syndrome coronavirus 3,PRJNA512962,SARS-CoV-2/human/USA/GA_3742/2020,Helix,4/29/2020,Homo sapiens,COVID-20,nasal swab,United States: Georgia,Male,45
