@@ -696,9 +696,17 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 			time.sleep(10)
 		# Update submission log	
 		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=len(sample_names), failed_total=0, submission_dir=submission_dir)
+		submission_status, submitted_total, failed_total = read_gisaid_log(log_file=log_file, submission_status_file=submission_status_file)			
+		if failed_total > 0:
+			print("Error: Uploading error", file=sys.stderr)
+			print("Please check log file at: " + log_file, file=sys.stderr)
+			sys.exit(1)
+		else:
+			print("ok: Uploading successfully", file=sys.stdout)
+			print("Log file is stored at: " + log_file, file=sys.stdout)
 	else:
 		print("Submission errored out.", file=sys.stderr)
-		print("Please check failed log file at: " + log_file, file=sys.stderr)
+		print("Please check log file at: " + log_file, file=sys.stderr)
 		sys.exit(1)
 
 # Read output log from gisaid submission script
