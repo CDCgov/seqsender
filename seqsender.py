@@ -292,7 +292,7 @@ def create_biosample_submission(description_dict, metadata, organism):
 		# Fill in the spuid and spuid_namespace information
 		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["SampleId"]["SPUID"]["#text"] = row["spuid"]+"-bs"
 		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["SampleId"]["SPUID"]["@spuid_namespace"] = row["spuid_namespace"]
-		action_config_dict["Action"]["AddData"]["Identifier"]["SPUID"]["#text"] = row["spuid"]
+		action_config_dict["Action"]["AddData"]["Identifier"]["SPUID"]["#text"] = row["spuid"]+"-bs"
 		action_config_dict["Action"]["AddData"]["Identifier"]["SPUID"]["@spuid_namespace"] = row["spuid_namespace"]
 		## Fill in the description title and organism name information
 		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["Descriptor"]['Title'] = row["description_title"]
