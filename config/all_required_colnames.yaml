@@ -89,6 +89,7 @@ FLU:
   - bs-host_disease***
   - bs-isolation_source***
   - bs-geo_loc_name***
+  - bs-lat_lon***
   BioSample_SRA:
   - spuid*
   - spuid_namespace***
@@ -105,6 +106,7 @@ FLU:
   - bs-host_disease***
   - bs-isolation_source***
   - bs-geo_loc_name***
+  - bs-lat_lon***
   - sra-instrument_model***
   - sra-library_source***
   - sra-library_layout***
