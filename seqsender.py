@@ -671,6 +671,8 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 		os.remove(log_file)
 	# Create failed file
 	failed_file = os.path.join(submission_dir, gisaid_failedfile[organism])
+	# Create submission status csv
+	submission_status_file = os.path.join(submission_dir, "submission_report_status.csv")
 	# Try submission two times before erroring out
 	print("\n" + "Submitting to " + database + "-" + organism, file=sys.stdout)
 	attempts = 1
@@ -696,13 +698,16 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 			time.sleep(10)
 		# Update submission log	
 		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=len(sample_names), failed_total=0, submission_dir=submission_dir)
-		submission_status, submitted_total, failed_total = read_gisaid_log(log_file=log_file, submission_status_file=submission_status_file)			
+		submission_status, submitted_total, failed_total = read_gisaid_log(log_file=log_file, submission_status_file=submission_status_file)
+		print(submitted_total); print(failed_total)			
 		if failed_total > 0:
-			print("Error: Uploading error", file=sys.stderr)
+			print("Error: "+failed_total+" sample(s) is/are failed to upload to GISAID", file=sys.stderr)
+			print("Please check status report at: " + submission_status_file, file=sys.stdout)
 			print("Please check log file at: " + log_file, file=sys.stderr)
 			sys.exit(1)
 		else:
-			print("ok: Uploading successfully", file=sys.stdout)
+			print("Uploading successfully", file=sys.stdout)
+			print("Status report is stored at: " + log_file, file=sys.stdout)
 			print("Log file is stored at: " + log_file, file=sys.stdout)
 	else:
 		print("Submission errored out.", file=sys.stderr)
@@ -892,7 +897,7 @@ def check_submission_status(database, organism, submission_name, test=True):
 			print("Submission status: " + submission_status, file=sys.stdout)
 			print("Submitted total: " + str(submitted_total), file=sys.stdout)
 			print("Failed total: " + str(failed_total), file=sys.stdout)
-			print("Status report stored at: " + os.path.join(submission_dir, "submission_report_status.csv"), file=sys.stdout)
+			print("Status report stored at: " + submission_status_file, file=sys.stdout)
 			print("Log file stored at: " + log_file, file=sys.stdout)
 		else:
 			# Get report file
@@ -915,7 +920,7 @@ def check_submission_status(database, organism, submission_name, test=True):
 			print("Submission status: " + submission_status, file=sys.stdout)
 			print("Submitted total: " + str(submitted_total), file=sys.stdout)
 			print("Failed total: " + str(failed_total), file=sys.stdout)
-			print("Status report stored at: " + os.path.join(submission_dir, "submission_report_status.csv"), file=sys.stdout)
+			print("Status report stored at: " + submission_status_file, file=sys.stdout)
 			print("Report file stored at: " + report_file, file=sys.stdout)
 	else:
 		print("\n" + "Error: " + submission_name + " is not in the submisison log file")
