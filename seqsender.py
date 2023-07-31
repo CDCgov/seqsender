@@ -17,8 +17,8 @@ import json
 
 # Get working and program directory
 work_dir = os.getcwd()
-#prog_dir = os.path.dirname(os.path.abspath(__file__))
-prog_dir = "/seqsender"
+prog_dir = os.path.dirname(os.path.abspath(__file__))
+#prog_dir = "/seqsender"
 
 # Define version of seqsender
 version = "1.0 (Beta)"
@@ -699,9 +699,8 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 		# Update submission log	
 		create_submission_log(database=database, organism=organism, submission_name=submission_name, submission_type=submission_type, submission_status="Submitted", submission_id="", submitted_total=len(sample_names), failed_total=0, submission_dir=submission_dir)
 		submission_status, submitted_total, failed_total = read_gisaid_log(log_file=log_file, submission_status_file=submission_status_file)
-		print(submitted_total); print(failed_total)			
 		if failed_total > 0:
-			print("Error: "+failed_total+" sample(s) is/are failed to upload to GISAID", file=sys.stderr)
+			print("Error: " + str(failed_total) + " sample(s) failed to upload to GISAID", file=sys.stderr)
 			print("Please check status report at: " + submission_status_file, file=sys.stdout)
 			print("Please check log file at: " + log_file, file=sys.stderr)
 			sys.exit(1)
