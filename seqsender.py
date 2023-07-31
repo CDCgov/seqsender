@@ -125,6 +125,7 @@ def get_metadata(organism, database, metadata_file):
 			# Make sure specific column fields filled with only empty String (in gisaid flu)
 			if (name in required_empty_colnames) and any(metadata[name] != ""):
 				print("Error: The required '" + name + "' in metadata file must be empty String.", file=sys.stderr)
+				print("The system will auto-fill these fields.", file=sys.stderr)
 				sys.exit(1)			
 			# Make sure specific column fields with empty values are filled with "Unknown" (in gisaid cov)
 			if (name in required_unknown_colnames) and any(metadata[name]==""):
@@ -566,6 +567,10 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 	credentials = get_credentials(config_file=config_file, database="NCBI")
 	# Extract metadata file
 	metadata, sample_names = get_metadata(organism=organism, database=database, metadata_file=metadata_file)
+	# Authenticate the database to obtain the token for future submission
+	token_file = os.path.join(work_dir, "ncbi."+organism.lower()+".authtoken")
+	if os.path.exists(token_file) == False: 
+		authenticate(database="NCBI", organism=organism, config_file=config_file)
 	# If xml file exists, removes it
 	report_file = os.path.join(submission_dir, "report.xml")
 	if os.path.isfile(report_file) == True:
@@ -714,7 +719,7 @@ def read_gisaid_log(log_file, submission_status_file):
 		f.close()
 	# Read in submission status csv
 	gisaid_submission_df = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-	gisaid_submission_df = metadata.fillna("")
+	gisaid_submission_df = gisaid_submission_df.fillna("")
 	gisaid_submission_df.columns = gisaid_submission_df.columns.str.strip()
 	# Different organism has different log messages
 	try:
@@ -1061,13 +1066,13 @@ def process_biosample_sra_report(database, report_file, submission_status_file):
 		pass						
 	# Save a copy to submission status df without report_sample_id
 	status_submission_df = status_submission_df.loc[:, status_submission_df.columns != 'report_sample_id']
-	status_submission_df.to_csv(submission_status_file, header = True, index = False)	
+	status_submission_df.to_csv(submission_status_file, header = True, index = False)
 	# Obtain total failed
-	if database == "BioSample":
+	if database == "BioSample" and any(status_submission_df["biosample_status"] == "proccessed-error"):
 		failed_total = status_submission_df.loc[status_submission_df["biosample_status"] == "proccessed-error"].shape[0]
-	elif database == "SRA":
+	elif database == "SRA" and any(status_submission_df["sra_status"] == "proccessed-error"):
 		failed_total = status_submission_df.loc[status_submission_df["sra_status"] == "proccessed-error"].shape[0]
-	elif database == "BioSample_SRA":
+	elif database == "BioSample_SRA" and any((status_submission_df["biosample_status"] == "proccessed-error") | (status_submission_df["sra_status"] == "proccessed-error")):
 		failed_total = status_submission_df.loc[(status_submission_df["biosample_status"] or "proccessed-error") | (status_submission_df["sra_status"] == "proccessed-error")].shape[0]
 	return submission_status, submission_id, submitted_total, failed_total
 
@@ -1095,8 +1100,6 @@ def process_genbank_report(report_file, submission_status_file):
 	failed_total = 0
 	submission_status = "Submitted"
 	submission_id = ""
-	# Convert submission.xml to dictionary 
-	submission_dict = xmltodict.parse(submission_xml)
 	# Convert xml to dictionary
 	report_dict = xmltodict.parse(report_xml)
 	try:
