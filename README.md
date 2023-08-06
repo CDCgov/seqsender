@@ -61,36 +61,38 @@ desired database.
 1.  Prepping for FLU submissions
 
    -
-<a href="biosample_flu_required_fields.html" target="_blank">BioSample</a>
-
-   - <a href="sra_flu_required_fields.html" target="_blank">SRA</a>
+<a href="https://cdcgov.github.io/seqsender/articles/biosample_flu_required_fields.html" target="_blank">BioSample</a>
 
    -
-<a href="biosample_sra_flu_required_fields.html" target="_blank">BioSample +
+<a href="https://cdcgov.github.io/seqsender/articles/sra_flu_required_fields.html" target="_blank">SRA</a>
+
+   -
+<a href="https://cdcgov.github.io/seqsender/articles/biosample_sra_flu_required_fields.html" target="_blank">BioSample +
 SRA</a>
 
    -
-<a href="genbank_flu_required_fields.html" target="_blank">Genbank</a>
+<a href="https://cdcgov.github.io/seqsender/articles/genbank_flu_required_fields.html" target="_blank">Genbank</a>
 
    -
-<a href="gisaid_flu_required_fields.html" target="_blank">GISAID</a>
+<a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_required_fields.html" target="_blank">GISAID</a>
 
 2.  Prepping for COV submissions
 
    -
-<a href="biosample_cov_required_fields.html" target="_blank">BioSample</a>
-
-   - <a href="sra_cov_required_fields.html" target="_blank">SRA</a>
+<a href="https://cdcgov.github.io/seqsender/articles/biosample_cov_required_fields.html" target="_blank">BioSample</a>
 
    -
-<a href="biosample_sra_cov_required_fields.html" target="_blank">BioSample +
+<a href="https://cdcgov.github.io/seqsender/articles/sra_cov_required_fields.html" target="_blank">SRA</a>
+
+   -
+<a href="https://cdcgov.github.io/seqsender/articles/biosample_sra_cov_required_fields.html" target="_blank">BioSample +
 SRA</a>
 
    -
-<a href="genbank_cov_required_fields.html" target="_blank">Genbank</a>
+<a href="https://cdcgov.github.io/seqsender/articles/genbank_cov_required_fields.html" target="_blank">Genbank</a>
 
    -
-<a href="gisaid_cov_required_fields.html" target="_blank">GISAID</a>
+<a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_required_fields.html" target="_blank">GISAID</a>
 
 ## Run SeqSender with Docker CLI
 
