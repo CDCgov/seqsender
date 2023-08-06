@@ -3,7 +3,8 @@ Submission:
     Username: username
     Password: password
     Description:
-      Title: new_biosample_cov_submission
+      Title: test_biosample_flu_submission
+      Comment: This is a test submission
       Organization:
         '@role': owner
         '@type': institute
@@ -13,9 +14,11 @@ Submission:
           Name:
             First: Jane
             Last: Doe
+      Hold:
+        release_date: "2017-01-01"
   GISAID:
-    Client-Id: cid-2589ijdk8
+    Client-Id: TEST-EA76875B00C3
     Username: username
     Password: password
     Description:
-      Title: new_gisaid_cov_submission
+      Title: test_gisaid_flu_submission

@@ -1,4 +1,5 @@
 *.aws
-./data/config/*.yaml
-!./data/config/default-cov-config.yaml
-!./data/config/default-flu-config.yaml
+*.Rmd
+.Rproj.user
+.Rhistory
+.Rbuildignore

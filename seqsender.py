@@ -18,7 +18,6 @@ import json
 # Get working and program directory
 work_dir = os.getcwd()
 prog_dir = os.path.dirname(os.path.abspath(__file__))
-#prog_dir = "/seqsender"
 
 # Define version of seqsender
 version = "1.0 (Beta)"
@@ -56,8 +55,8 @@ gisaid_failedfile = {"FLU": "gisaid.flu.failed.csv",
 				     "COV": "gisaid.cov.failed.csv"}
 				  
 # Define required column names for metadata file
-with open(os.path.join(prog_dir, "config", "all_required_colnames.yaml"), "r") as f:
-	all_required_colnames = yaml.safe_load(f)	
+with open(os.path.join(prog_dir, "config", "all_required_colnames_with_description.yaml"), "r") as f:
+	all_required_colnames = yaml.safe_load(f)
 	f.close()					
 
 # NCBI FTP Server
@@ -103,16 +102,16 @@ def get_metadata(organism, database, metadata_file):
 		metadata = pd.read_csv(metadata_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 		metadata = metadata.fillna("")
 		metadata.columns = metadata.columns.str.strip() 
-		# Obtain the column fields with no "*". Those fileds must be empty String (gisaid flu) 
-		required_empty_colnames = list(filter(lambda x: ("*" not in x)==True, all_required_colnames[organism][database]))	
+		# Extract the required fields for specified database
+		db_required_colnames = [list(all_required_colnames[organism][database][x].keys())[0] for x in range(len(all_required_colnames[organism][database]))]
 		# Obtain the column fields with "*". Those fields must contains the sample names 
-		required_sample_colnames = list(filter(lambda x: (("*" in x) and ("**" not in x) and ("***" not in x))==True, all_required_colnames[organism][database]))
-		# Obtain the column fields with "**". If a value is missing in those fields, use the term "unknown" (gisaid cov)
-		required_unknown_colnames = list(filter(lambda x: (("**" in x) and ("***" not in x))==True, all_required_colnames[organism][database]))	
-		#  Obtain the column fields with "***". Those fields must be required in full
-		required_full_colnames = list(filter(lambda x: ("***" in x)==True, all_required_colnames[organism][database]))
-		# Obtain the real required column names without the asterisks 
-		required_colnames = [str(x).replace("*", "") for x in all_required_colnames[organism][database]]
+		required_sample_colnames = list(filter(lambda x: (("*" in x) and ("**" not in x) and ("***" not in x))==True, db_required_colnames))
+		# Obtain the column fields with "**". If a value is missing in those fields, use the term "unknown" 
+		required_unknown_colnames = list(filter(lambda x: (("**" in x) and ("***" not in x))==True, db_required_colnames))	
+		# Obtain the column fields with & sign. Those fields are containning date values. Date must be in yyyy-mm-dd format
+		required_date_colnames = list(filter(lambda x: ("&" in x)==True, db_required_colnames))		
+		# Obtain the real required column names without the asterisks and & signs
+		required_colnames = [str(x).replace("*", "").replace("&", "") for x in db_required_colnames      ]
 		# Check if required column names are existed in metadata file
 		if not set(required_colnames).issubset(set(metadata.columns)):
 			failed_rq_colnames = list(filter(lambda x: (x in metadata.columns)==False, required_colnames))
@@ -122,25 +121,32 @@ def get_metadata(organism, database, metadata_file):
 		all_sample_names = [];
 		# Run some checks to make sure the required column fields are populated correctly
 		for name in required_colnames:
-			# Make sure specific column fields filled with only empty String (in gisaid flu)
-			if (name in required_empty_colnames) and any(metadata[name] != ""):
-				print("Error: The required '" + name + "' in metadata file must be empty String.", file=sys.stderr)
-				print("The system will auto-fill these fields.", file=sys.stderr)
-				sys.exit(1)			
-			# Make sure specific column fields with empty values are filled with "Unknown" (in gisaid cov)
-			if (name in required_unknown_colnames) and any(metadata[name]==""):
+			# Make sure specific column fields with empty values are filled with "Unknown" 
+			if (name in [str(x).replace("*", "") for x in required_unknown_colnames]) and any(metadata[name]==""):
 				print("Error: The required '" + name + "' field in metatdata file cannot contain any empty values. Please fill empty values with 'Unknown'", file=sys.stderr)
 				sys.exit(1)
-			# Make sure specific column fields are required in full
-			if (name in required_full_colnames) and any(metadata[name]==""):
-				print("Error: The required '" + name + "' field in metatdata file cannot contain any empty values. It must be provided in full.", file=sys.stderr)
-				sys.exit(1)
-			# Make sure the column fields that contains sample names are unique
+			# Make sure specific column fields have a correct date format YYYY-MM-DD
+			if name in [str(x).replace("*", "").replace("&","") for x in required_date_colnames]:
+				try:
+					metadata.loc[:,name] = [datetime.strptime(x, "%Y-%m-%d").strftime("%Y-%m-%d") for x in metadata[name]]
+				except:
+					try:
+						metadata.loc[:,name] = [datetime.strptime(x, "%Y/%m/%d").strftime("%Y-%m-%d") for x in metadata[name]]
+					except:
+						try:
+							metadata.loc[:,name] = [datetime.strptime(x, "%m/%d/%Y").strftime("%Y-%m-%d") for x in metadata[name]]
+						except:
+							try:
+								metadata.loc[:,name] = [datetime.strptime(x, "%m-%d-%Y").strftime("%Y-%m-%d") for x in metadata[name]]
+							except:
+								print("Error: The required '" + name + "' field in metatdata file contains incorrect date format, must be in the ISO format: YYYY-MM-DD. For example: 2020-03-25", file=sys.stderr)
+								sys.exit(1)
+			# Make sure the column fields that contains sample names that are unique
 			if name in [str(x).replace("*", "") for x in required_sample_colnames]:
 				all_sample_names += list(filter(lambda x: (x != "")==True, metadata[name].values.tolist()))
 		# Check if there are any samples that are duplicated
 		if len(set(all_sample_names)) != len(all_sample_names):
-			print("Error: The required " + ", ".join([str(x).replace("*", "") for x in required_sample_colnames]) + " fields in metatdata file must have sample names that are unique.", file=sys.stderr)
+			print("Error: The required " + ", ".join([str(x).replace("*", "") for x in required_sample_colnames]) + " field(s) in metatdata file must have sample names that are unique.", file=sys.stderr)
 			sys.exit(1)
 		return metadata, all_sample_names
 
@@ -295,8 +301,8 @@ def create_biosample_submission(description_dict, metadata, organism):
 		action_config_dict["Action"]["AddData"]["Identifier"]["SPUID"]["#text"] = row["spuid"]+"-bs"
 		action_config_dict["Action"]["AddData"]["Identifier"]["SPUID"]["@spuid_namespace"] = row["spuid_namespace"]
 		## Fill in the description title and organism name information
-		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["Descriptor"]['Title'] = row["description_title"]
-		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["Organism"]["OrganismName"] = row["organism_name"]
+		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["Descriptor"]['Title'] = row["description"]
+		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["Organism"]["OrganismName"] = row["organism"]
 		## Fill in bioproject information
 		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["BioProject"]["PrimaryId"]["@db"] = "BioProject"
 		action_config_dict["Action"]["AddData"]["Data"]["XmlContent"]["BioSample"]["BioProject"]["PrimaryId"]["#text"] = row["bioproject"]
@@ -327,9 +333,9 @@ def check_rawread_files(metadata, raw_reads_path):
 	local_rawread_files = []; cloud_rawread_files = [];
 	for index, row in metadata.iterrows():
 		if row["file_location"] == "local":
-			local_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
+			local_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_name"].split(",")]
 		elif row["file_location"] == "cloud":
-			cloud_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
+			cloud_rawread_files += [os.path.join(raw_reads_path, g.strip()) for g in row["file_name"].split(",")]
 	# Get a list of raw reads files that are not exist locally or on cloud
 	if len(local_rawread_files) > 0:
 		if len(set(local_rawread_files)) == len(local_rawread_files):
@@ -390,7 +396,7 @@ def create_sra_submission(description_dict, metadata, raw_reads_path, organism, 
 			action_config_dict["Action"]["AddFiles"]["AttributeRefId"][1]["RefId"]["SPUID"]["@spuid_namespace"] = row["spuid_namespace"]
 			del action_config_dict["Action"]["AddFiles"]["AttributeRefId"][1]["RefId"]["PrimaryId"]
 		## Get fasta file information
-		fasta = [file.strip() for file in row["file_path"].split(",")]
+		fasta = [file.strip() for file in row["file_name"].split(",")]
 		## Fill in fasta file information
 		combined_fasta_dict = dict()
 		combined_fasta_dict.setdefault("File", [""]*len(fasta))
@@ -400,7 +406,7 @@ def create_sra_submission(description_dict, metadata, raw_reads_path, organism, 
 				fasta_dict["@file_path"] = fasta[i]
 			elif row["file_location"] == "cloud":
 				fasta_dict["@cloud_url"] = fasta[i]
-			fasta_dict["DataType"] = row["datatype"]
+			fasta_dict["DataType"] = "generic-data"
 			combined_fasta_dict["File"][i] = fasta_dict
 		action_config_dict["Action"]["AddFiles"]["File"] = combined_fasta_dict["File"]
 		## Fill in attributes information
@@ -423,7 +429,9 @@ def create_sra_submission(description_dict, metadata, raw_reads_path, organism, 
 
 # Check sample names in metadata file are listed in fasta file
 def check_fasta_samples(organism, database, metadata, fasta_file):
-	sample_colnames = list(filter(lambda x: (("*" in x) and ("**" not in x) and ("***" not in x))==True, all_required_colnames[organism][database]))
+	# Extract the required fields for specified database
+	db_required_colnames = [list(all_required_colnames[organism][database][x].keys())[0] for x in range(len(all_required_colnames[organism][database]))]
+	sample_colnames = list(filter(lambda x: (("*" in x) and ("**" not in x) and ("***" not in x))==True, db_required_colnames))
 	sample_colnames = [str(x).replace("*", "") for x in sample_colnames]
 	for index, row in metadata.iterrows():
 		for name in sample_colnames:
@@ -440,25 +448,214 @@ def check_fasta_samples(organism, database, metadata, fasta_file):
 					print("Error: Cannot find " + name + " = " + row[name] + " in " + fasta_file + ". Make sure to start a sample with >sample_name.", file=sys.stderr)
 					sys.exit(1)
 
+# Create a authorset file
+def create_authorset(description_dict, metadata, submission_name, submission_dir):
+	submitter_first = description_dict["Organization"]["Contact"]["Name"]["First"]
+	submitter_last = description_dict["Organization"]["Contact"]["Name"]["Last"]
+	submitter_email = description_dict["Organization"]["Contact"]["@email"]
+	affil = metadata["subm_lab"].unique()[0]
+	div = metadata["subm_lab_division"].unique()[0]
+	address = [x.strip() for x in metadata["subm_lab_addr"].unique()[0].split(",")]
+	publication_status = metadata["publication_status"].unique()[0]
+	publication_title = metadata["publication_title"].unique()[0]
+	if len(address) == 1:
+		street = address[0]
+		city = ""
+		sub = ""
+		country = ""
+		zip_code = ""
+	elif len(address) == 2:
+		street = address[0]
+		city = address[1]
+		sub = ""
+		country = ""
+		zip_code = ""
+	elif len(address) == 3:
+		street = address[0]
+		city = address[1]
+		sub = address[2]
+		country = ""
+		zip_code = ""
+	elif len(address) > 3:
+		street = address[0]
+		city = address[1]
+		sub = address[2]
+		postal = [x.strip() for x in address[3].split(" ")]
+		if (len(postal) == 1) and (type(postal) == int):
+			country = ""
+			zip_code = postal
+		elif (len(postal) == 1) and (type(postal) == str):
+			country = postal
+			zip_code = ""
+		elif len(postal) > 1:		
+			country = postal[0]
+			zip_code = postal[1]	
+		else:
+			country = ""
+			zip_code = ""				
+	# Create authorset file
+	with open(os.path.join(submission_dir, "authorset.sbt"), "w+") as f:
+		f.write("Submit-block ::= {\n")
+		f.write("  contact {\n")
+		f.write("    contact {\n")
+		f.write("      name name {\n")
+		f.write("        last \"" + submitter_last + "\",\n")
+		f.write("        first \"" + submitter_first + "\",\n")
+		f.write("        middle \"\",\n")
+		f.write("        initials \"\",\n")
+		f.write("        suffix \"\",\n")
+		f.write("        title \"\",\n")
+		f.write("      },\n")
+		f.write("      affil std {\n")
+		f.write("        affil \""+ affil + "\",\n")
+		f.write("        div \"" + div + "\",\n")
+		f.write("        city \"" + city + "\",\n")
+		f.write("        sub \"" + sub + "\",\n")
+		f.write("        country \"" + country + "\",\n")
+		f.write("        street \"" + street + "\",\n")
+		f.write("        email \"" + submitter_email + "\",\n")
+		f.write("        phone \"\",\n")
+		f.write("        postal-code \"" + zip_code + "\"\n")
+		f.write("      }\n")
+		f.write("    }\n")
+		f.write("  },\n")
+		f.write("  cit {\n")
+		f.write("    authors {\n")
+		f.write("      names std {\n")
+		authors = [x.strip() for x in metadata["authors"].unique()[0].split(";")]
+		authors = list(filter(lambda x: (x != "")==True, authors))
+		total_names = len(authors)
+		name_counter = 0
+		for person in authors:
+			name = [name.strip() for name in person.split(",")]
+			if len(name) == 1:
+				last = name[0]
+				first = ""
+				middle = ""
+			elif len(name) == 2:
+				last = name[0]
+				first = name[1]
+				middle = ""
+			elif len(name) > 2:
+				last = name[0]
+				first = name[1]
+				middle = ""				
+			f.write("        {\n")
+			f.write("          name name {\n")
+			f.write("          last \"" + last + "\",\n")
+			f.write("            first \"" + first + "\",\n")
+			f.write("            middle \"" + middle + "\",\n")
+			f.write("            initials \"\",\n")
+			f.write("            suffix \"\",\n")
+			f.write("            title \"\"\n")
+			f.write("          }\n")
+			name_counter += 1
+			if name_counter == total_names:
+				f.write("        }\n")
+			else:
+				f.write("        },\n")
+		f.write("      },\n")
+		f.write("      affil std {\n")
+		f.write("        affil \"" + affil + "\",\n")
+		f.write("        div \"" + div + "\",\n")
+		f.write("        city \"" + city + "\",\n")
+		f.write("        sub \"" + sub + "\",\n")
+		f.write("        country \"" + country + "\",\n")
+		f.write("        street \"" + street + "\",\n")
+		f.write("        postal-code \"" + zip_code + "\"\n")
+		f.write("      }\n")
+		f.write("    }\n")
+		f.write("  },\n")
+		f.write("  subtype new\n")
+		f.write("}\n")
+		f.write("Seqdesc ::= pub {\n")
+		f.write("  pub {\n")
+		f.write("    gen {\n")
+		f.write("      cit \"" + publication_status + "\",\n")
+		f.write("      authors {\n")
+		f.write("        names std {\n")
+		name_counter = 0
+		for person in authors:
+			name = [name.strip() for name in person.split(",")]
+			if len(name) == 1:
+				last = name[0]
+				first = ""
+				middle = ""
+			elif len(name) == 2:
+				last = name[0]
+				first = name[1]
+				middle = ""
+			elif len(name) > 2:
+				last = name[0]
+				first = name[1]
+				middle = ""		
+			f.write("          {\n")
+			f.write("            name name {\n")
+			f.write("              last \"" + last + "\",\n")
+			f.write("              first \"" + first + "\",\n")
+			f.write("              middle \"" + middle + "\",\n")
+			f.write("              initials \"\",\n")
+			f.write("              suffix \"\",\n")
+			f.write("              title \"\"\n")
+			f.write("            }\n")
+			name_counter += 1
+			if name_counter == total_names:
+				f.write("          }\n")
+			else:
+				f.write("          },\n")
+		f.write("        }\n")
+		f.write("      },\n")
+		f.write("      title \"" + publication_title + "\"\n")
+		f.write("    }\n")
+		f.write("  }\n")
+		f.write("}\n")
+		f.write("Seqdesc ::= user {\n")
+		f.write("  type str \"Submission\",\n")
+		f.write("  data {\n")
+		f.write("    {\n")
+		f.write("      label str \"AdditionalComment\",\n")
+		f.write("      data str \"ALT EMAIL: " + submitter_email + "\"\n")
+		f.write("    }\n")
+		f.write("  }\n")
+		f.write("}\n")
+		f.write("Seqdesc ::= user {\n")
+		f.write("  type str \"Submission\",\n")
+		f.write("  data {\n")
+		f.write("    {\n")
+		f.write("      label str \"AdditionalComment\",\n")
+		f.write("      data str \"Submission Title: " + submission_name + "\"\n")
+		f.write("    }\n")
+		f.write("  }\n")
+		f.write("}\n")
+
 # Create a zip file for genbank submission
-def create_genbank_zip(organism, database, metadata, fasta_file, authorset_file, submission_name, submission_dir, comment=False):
+def create_genbank_zip(organism, description_dict, metadata, fasta_file, submission_name, submission_dir, comment=False):
+	# Create authorset file
+	create_authorset(description_dict=description_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir)
 	# Copy fasta to output directory
 	shutil.copyfile(fasta_file, os.path.join(submission_dir, "sequence.fsa"))
-	# Copy authorset to output directory
-	shutil.copyfile(authorset_file, os.path.join(submission_dir, "authorset.sbt"))
 	# Retrieve the source df
 	source_df = metadata.filter(regex="Sequence_ID|^src-")
 	source_df.columns = [re.sub(r'^src-', '', str(x)) for x in source_df.columns]
 	source_df.columns = source_df.columns.str.strip() 
 	source_df.to_csv(os.path.join(submission_dir, "source.src"), index=False, sep="\t")
-	# Retrieve comment df
+	# Retrieve Structured Comment df
 	comment_df = metadata.filter(regex="^cmt-")
 	if comment_df.shape[0] > 0:
 		comment_df = metadata.filter(regex="Sequence_ID|^cmt-")
 		comment_df.columns = [re.sub(r'^cmt-', '', str(x)) for x in comment_df.columns]
 		comment_df.columns = [re.sub(r'Sequence_ID', 'SeqID', str(x)) for x in comment_df.columns]
-		#comment_df.columns = [re.sub(r'-', ' ', str(x)) for x in comment_df.columns]
-		comment_df.columns = comment_df.columns.str.strip() 
+		comment_df.columns = comment_df.columns.str.strip()
+		# Check StructuredCommentPrefix and StructuredCommentSuffix
+		if organism == "FLU": 
+			comment_df.loc[:,'StructuredCommentPrefix'] = ["FluData" for i in range(len(comment_df.index))]
+			comment_df.loc[:,'StructuredCommentSuffix'] = ["FluData" for i in range(len(comment_df.index))]
+		elif organism == "COV":
+			comment_df.loc[:,'StructuredCommentPrefix'] = ["Assembly-Data" for i in range(len(comment_df.index))]
+			comment_df.loc[:,'StructuredCommentSuffix'] = ["Assembly-Data" for i in range(len(comment_df.index))]	
+		column_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix"])==True, comment_df.columns))
+		ordered_columns = ["SeqID", "StructuredCommentPrefix"] + column_no_prefix_suffix + ["StructuredCommentSuffix"]
+		comment_df = comment_df.reindex(columns=ordered_columns)			
 		comment_df.to_csv(os.path.join(submission_dir, "comment.cmt"), index=False, sep="\t")
 		comment = True
 	# Create a zip file for genbank submission
@@ -473,11 +670,11 @@ def create_genbank_zip(organism, database, metadata, fasta_file, authorset_file,
 		time.sleep(10)
 
 # Create action section in submission.xml for Genbank
-def create_genbank_submission(organism, database, metadata, fasta_file, authorset_file, submission_name, submission_dir):
+def create_genbank_submission(organism, database, description_dict, metadata, fasta_file, submission_name, submission_dir):
 	# Check each row to make sure each sample name exists in fasta file
 	check_fasta_samples(organism=organism, database=database, metadata=metadata, fasta_file=fasta_file)
 	# Create a zip file for genbank submission
-	create_genbank_zip(organism=organism, database=database, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)
+	create_genbank_zip(organism=organism, description_dict=description_dict, metadata=metadata, fasta_file=fasta_file, submission_name=submission_name, submission_dir=submission_dir)
 	# Read in the action config file
 	action_config_path = os.path.join(prog_dir, "config", "genbank_action_config.yaml")
 	action_config_dict = get_config(action_config_path, database="NCBI")
@@ -490,7 +687,7 @@ def create_genbank_submission(organism, database, metadata, fasta_file, authorse
 	action_config_dict["Action"]["AddFiles"]["File"]["@file_path"] = submission_name + ".zip"
 	return action_config_dict["Action"]
 
-def create_submission_xml(organism, database, config_file, metadata_file, fasta_file=None, raw_reads_path=None, authorset_file=None):
+def create_submission_xml(organism, database, config_file, metadata_file, fasta_file=None, raw_reads_path=None):
 	# Get config file
 	config_dict = get_config(config_file=config_file, database="NCBI")
 	# Get metadata file
@@ -502,10 +699,6 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 	# Check if fasta path is provided
 	if raw_reads_path is not None and os.path.isdir(raw_reads_path) == False:
 		print("Error: fasta path does not exist at: " + raw_reads_path, file=sys.stderr)
-		sys.exit(1)	
-	# Check if authorset file is provided
-	if authorset_file is not None and  os.path.isfile(authorset_file) == False:
-		print("Error: authorset file does not exist at: " + authorset_file, file=sys.stderr)
 		sys.exit(1)	
 	# Extract submission description information
 	description_dict = create_submission_description(config_dict=config_dict, database="NCBI")
@@ -532,7 +725,7 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 		submission_xml = {"Submission": biosample_sra_submission_dict}
 	elif database == "Genbank":
 		# Create genebank submission dict
-		genbank_submission_dict = create_genbank_submission(organism=organism, database=database, metadata=metadata, fasta_file=fasta_file, authorset_file=authorset_file, submission_name=submission_name, submission_dir=submission_dir)		
+		genbank_submission_dict = create_genbank_submission(organism=organism, database=database, description_dict=description_dict, metadata=metadata, fasta_file=fasta_file, submission_name=submission_name, submission_dir=submission_dir)		
 		# Create final submission file
 		submission_xml = {"Submission": {"Description": description_dict, "Action": genbank_submission_dict}}	
 	# Create submission string
@@ -556,9 +749,9 @@ def create_submission_xml(organism, database, config_file, metadata_file, fasta_
 		sys.exit(1)			
 
 # Submit to NCBI
-def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None, raw_reads_path=None, authorset_file=None, test=True):
+def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None, raw_reads_path=None, test=True):
 	# Create submission.xml
-	submission_dict = create_submission_xml(database=database, organism=organism, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, raw_reads_path=raw_reads_path, authorset_file=authorset_file)				
+	submission_dict = create_submission_xml(database=database, organism=organism, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, raw_reads_path=raw_reads_path)				
 	# Extract submission name
 	submission_name = submission_dict["submission_name"]
 	# Extract submission directory
@@ -609,7 +802,7 @@ def submit_ncbi(database, organism, config_file, metadata_file, fasta_file=None,
 		if database in ["BioSample_SRA", "SRA"]:
 			for index, row in metadata.iterrows():
 				if row["file_location"] == "local":
-					local_rawread_files = [os.path.join(raw_reads_path, g.strip()) for g in row["file_path"].split(",")]
+					local_rawread_files = [os.path.join(raw_reads_path, g.strip()) for g in row["file_name"].split(",")]
 					for file in local_rawread_files:
 						res = ftp.storbinary("STOR " + os.path.basename(file.strip()), open(file.strip(), 'rb'))
 						if not res.startswith('226 Transfer complete'):
@@ -655,6 +848,13 @@ def submit_gisaid(organism, database, config_file, metadata_file, fasta_file, te
 	create_submission_status_csv(database=database, sample_names=sample_names, submission_dir=submission_dir)
 	# Authenticate to obtain the authentication token 
 	credentials = authenticate(database=database, organism=organism, config_file=config_file)
+	# Fill in submitter and fasta name
+	required_empty_colnames = list(filter(lambda x: ("*" not in x)==True, all_required_colnames))
+	for name in [str(x).replace("*", "") for x in required_empty_colnames]:
+		if name == "submitter":
+			metadata.loc[:, name] = [credentials["Username"] for i in range(len(metadata.index))]
+		elif name == "fn":
+			metadata.loc[:, name] = [os.path.basename(fasta_file) for i in range(len(metadata.index))]
 	# Upload the sequences to GISAID
 	if test == True:
 		submission_type = "Test"
@@ -1154,7 +1354,7 @@ def create_zip_template(database, organism):
 	if database == "GISAID":
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
-			zip.write(os.path.join(prog_dir, "data", "fasta", database.lower() + "-" + organism.lower()+".fasta"), "sequence.fasta")
+			zip.write(os.path.join(prog_dir, "data", "fasta", database.lower()+"-" + organism.lower()+".fasta"), "sequence.fasta")
 			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	elif database == "BioSample":
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
@@ -1163,14 +1363,13 @@ def create_zip_template(database, organism):
 	elif database in ["SRA", "BioSample_SRA"]:
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
-			zip.write(os.path.join(prog_dir, "data", "fasta", "sample_1_fastq_R1.fastq.gz"), "sample_1_fastq_R1.fastq.gz")
-			zip.write(os.path.join(prog_dir, "data", "fasta", "sample_1_fastq_R2.fastq.gz"), "sample_1_fastq_R2.fastq.gz")
+			zip.write(os.path.join(prog_dir, "data", "raw_reads", "fastq_R1.fastq.gz"), "fastq_R1.fastq.gz")
+			zip.write(os.path.join(prog_dir, "data", "raw_reads", "fastq_R2.fastq.gz"), "fastq_R2.fastq.gz")
 			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	elif database == "Genbank":
 		with ZipFile(os.path.join(out_dir, database+"-"+organism+"-template.zip"), 'w') as zip:
 			zip.write(os.path.join(prog_dir, "data", "metadata", database.lower()+"-"+organism.lower()+"-metadata.csv"), "metadata.csv")
-			zip.write(os.path.join(prog_dir, "data", "fasta", database.lower()+"-" + organism.lower()+".fsa"), "sequence.fsa")
-			zip.write(os.path.join(prog_dir, "data", "config", "authorset.sbt"), "authorset.sbt")
+			zip.write(os.path.join(prog_dir, "data", "fasta", database.lower()+"-" + organism.lower()+".fasta"), "sequence.fasta")
 			zip.write(os.path.join(prog_dir, "data", "config", "default-config.yaml"), "config.yaml")
 	# Waiting for the zip file to write
 	while not os.path.exists(os.path.join(out_dir, database+"-"+organism+"-template.zip")):
@@ -1185,14 +1384,13 @@ def args_parser():
 	"""
 	# Create submission.xml 
 	parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-									 description='Generate submission.xml for submissions')
+									 description='Automatic process of submitting samples to BioSample/SRA/BioSample+SRA/GenBank/GISAID for FLU/COV organism')
 	organism_parser = argparse.ArgumentParser(add_help=False)
 	config_file_parser = argparse.ArgumentParser(add_help=False)
 	auth_database_parser = argparse.ArgumentParser(add_help=False)
 	metadata_file_parser = argparse.ArgumentParser(add_help=False)
 	fasta_file_parser = argparse.ArgumentParser(add_help=False)
 	raw_reads_path_parser = argparse.ArgumentParser(add_help=False)
-	authorset_file_parser = argparse.ArgumentParser(add_help=False)
 	test_parser = argparse.ArgumentParser(add_help=False)
 	check_submission_database_parser = argparse.ArgumentParser(add_help=False)
 	submission_name_parser = argparse.ArgumentParser(add_help=False)
@@ -1215,9 +1413,6 @@ def args_parser():
 	raw_reads_path_parser.add_argument("--raw_reads_path",
 		help="Fasta path",
 		required=True)
-	authorset_file_parser.add_argument("--authorset_file",
-		help="Authorset file",
-		required=True)
 	test_parser.add_argument("--test",
 		help="Whether to perform test submission.",
 		required=False,
@@ -1236,62 +1431,64 @@ def args_parser():
 	auth_module = subparser_modules.add_parser(
 		'authenticate', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='(Interactively) ask for user credentials, generate an authentication-token and store it in the auth-file',
+		help='Generates an authentication-token and store it for future submissions',
 		parents=[auth_database_parser, organism_parser, config_file_parser]
 	)
 
 	biosample_module = subparser_modules.add_parser(
 		'biosample', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Creates submission files and begins automated process of submitting to public databases.',
+		help='Creates submission files and begins automated process of submitting to BioSample database.',
 		parents=[organism_parser, config_file_parser, metadata_file_parser, test_parser]
 	)
 
 	sra_module = subparser_modules.add_parser(
 		'sra', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Creates submission files and begins automated process of submitting to public databases.',
+		help='Creates submission files and begins automated process of submitting to SRA database.',
 		parents=[organism_parser, config_file_parser, metadata_file_parser, raw_reads_path_parser, test_parser]
 	)
 
 	biosample_sra_module = subparser_modules.add_parser(
 		'biosample_sra', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Creates submission files and begins automated process of submitting to public databases.',
+		help='Creates submission files and begins automated process of submitting to BioSample+SRA databases.',
 		parents=[organism_parser, config_file_parser, metadata_file_parser, raw_reads_path_parser, test_parser]
 	)
 
 	genbank_module = subparser_modules.add_parser(
 		'genbank', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Creates submission files and begins automated process of submitting to public databases.',
-		parents=[organism_parser, config_file_parser, metadata_file_parser, fasta_file_parser, authorset_file_parser, test_parser]
+		help='Creates submission files and begins automated process of submitting to GenBank database.',
+		parents=[organism_parser, config_file_parser, metadata_file_parser, fasta_file_parser, test_parser]
 	)
 
 	gisaid_module = subparser_modules.add_parser(
 		'gisaid', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Creates submission files and begins automated process of submitting to public databases.',
+		help='Creates submission files and begins automated process of submitting to GISAID database.',
 		parents=[organism_parser, config_file_parser, metadata_file_parser, fasta_file_parser, test_parser]
 	)
 
 	update_module = subparser_modules.add_parser(
 		'check_submission_status', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Check existing process of submissions using submission log.',
+		help='Check existing process of submissions using a submission log.',
 		parents=[check_submission_database_parser, organism_parser, submission_name_parser, test_parser]
 	)
 
 	template_module = subparser_modules.add_parser(
 		'template', 
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		help='Return a zip file containning config file, metadata file, fasta files, etc., that can be used to make a test submission',
+		help='Return a zip file containning config file, metadata file, fasta files, etc., that are needed to make a submission',
 		parents=[check_submission_database_parser, organism_parser]
 	)
 
-	verion_module = subparser_modules.add_parser(
-		"version",
-		help = "Show version and exit."
+	version_module = subparser_modules.add_parser(
+		'version', 
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+		help='Show version and exit',
+		parents=[]
 	)
 
 	return(parser)
@@ -1302,9 +1499,10 @@ def main():
 	args = parser.parse_args()
 
 	# Make sure organism input all caps
-	if args.organism.upper() not in ["FLU", "COV"]:
-		print("--organism <> options are FLU/COV")
-		sys.exit(1)
+	if args.command != "version":
+		if args.organism.upper() not in ["FLU", "COV"]:
+			print("--organism <> options are FLU/COV")
+			sys.exit(1)
 
 	if args.command == "authenticate":
 		if args.database.upper() not in ["NCBI", "GISAID"]:
@@ -1322,7 +1520,7 @@ def main():
 		submit_ncbi(organism=args.organism.upper(), database="BioSample_SRA", config_file=args.config_file, metadata_file=args.metadata_file, raw_reads_path=args.raw_reads_path, test=args.test)
 		get_execution_time()
 	elif args.command == "genbank":
-		submit_ncbi(organism=args.organism.upper(), database="Genbank", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, authorset_file=args.authorset_file, test=args.test)				
+		submit_ncbi(organism=args.organism.upper(), database="Genbank", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, test=args.test)				
 		get_execution_time()
 	elif args.command == "gisaid":
 		submit_gisaid(organism=args.organism.upper(), database="GISAID", config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, test=args.test)
@@ -1340,7 +1538,7 @@ def main():
 		create_zip_template(organism=args.organism.upper(), database=database_dict[args.database.upper()])
 		get_execution_time()
 	elif args.command == "version":
-	    print("Version: " + version, file=sys.stdout)
+	    print("\n"+"Version: " + version, file=sys.stdout)
 
 if __name__ == "__main__":
 	main()

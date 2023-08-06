@@ -7,8 +7,20 @@ x-seqsender-git-version:
 x-data-volumes:
   &data-volume
   type: bind
-  source: /path/to/data
+  source: /c/Users/snu3-su/github/mira-testdata
   target: /data
+
+x-seqsender-code:
+  &seqsender-code
+  type: bind
+  source: /c/Users/snu3-su/github/CDCgov/seqsender
+  target: /seqsender
+
+x-aws-credentials:
+  &aws-credentials
+  type: bind
+  source: /c/Users/snu3-su/.aws
+  target: /root/.aws
 
 services:
   seqsender: 
@@ -19,4 +31,6 @@ services:
       context: *seqsender-git-version 
     volumes: 
       - *data-volume
+      - *seqsender-code
+      - *aws-credentials
     command: tail -f /dev/null 

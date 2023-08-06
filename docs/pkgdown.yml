@@ -1,0 +1,24 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  biosample_cov_required_fields: biosample_cov_required_fields.html
+  biosample_flu_required_fields: biosample_flu_required_fields.html
+  biosample_sra_cov_required_fields: biosample_sra_cov_required_fields.html
+  biosample_sra_flu_required_fields: biosample_sra_flu_required_fields.html
+  docker-compose: docker-compose.html
+  docker: docker.html
+  genbank_cov_required_fields: genbank_cov_required_fields.html
+  genbank_flu_required_fields: genbank_flu_required_fields.html
+  gisaid_cov_required_fields: gisaid_cov_required_fields.html
+  gisaid_flu_required_fields: gisaid_flu_required_fields.html
+  gisaid_options: gisaid_options.html
+  home: home.html
+  sra_cov_required_fields: sra_cov_required_fields.html
+  sra_flu_required_fields: sra_flu_required_fields.html
+  sra_options: sra_options.html
+last_built: 2023-08-06T08:27Z
+urls:
+  reference: https://github.com/CDCgov/seqsender/reference
+  article: https://github.com/CDCgov/seqsender/articles
+

@@ -1,0 +1,42 @@
+url: https://github.com/CDCgov/seqsender
+
+template:
+  bootswatch: Flatly
+
+authors:
+  Dakota Howard:
+    href: https://github.com/dthoward96
+  Ben Rambo-Martin:
+    href: https://github.com/nbx0
+  Kristine Lacek:
+    href: https://github.com/kristinelacek
+  Reina Chau:
+    href: https://github.com/rchau88
+    
+news:
+  one_page: false
+
+navbar:
+  title: "seqsender"
+  left:
+    - icon: fa-home
+      text: Home
+      href: articles/home.html
+    - icon: fa-box
+      text: Run SeqSender with Docker CLI
+      href: articles/docker.html
+    - icon: fa-rocket
+      text: Launch SeqSender with Compose
+      href: articles/docker-compose.html
+  right:
+    - text: "Change Log"
+      href: news/index.html
+    - icon: fa-github
+      href: https://github.com/CDCgov/seqsender
+      
+footer:
+  structure: 
+    left: developed_by
+    right: built_with
+    
+    
