@@ -6,3 +6,4 @@
 docker-compose-*.yaml
 GISAID
 table2asn/*
+*.Rproj
