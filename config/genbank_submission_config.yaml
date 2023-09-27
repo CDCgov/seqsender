@@ -1,0 +1,30 @@
+Submission:
+  Description:
+    Title: test_genbank_submission
+    Comment: This is a test submission
+    Organization:
+      '@role': owner
+      '@type': institute
+      Name: Institute Name
+      Contact:
+        '@email': email@myemail.com
+        Name:
+          First: Jane
+          Last: Doe
+    Hold:
+      release_date: "2017-01-01"
+  Action:
+    AddFiles:
+      '@target_db': GenBank
+      File:
+        '@file_path': 230627_sarscov2_genbank.zip
+        DataType: genbank-submission-package
+      Attribute:
+      - '#text': BankIt_SARSCoV2_api
+        '@name': wizard
+      - '#text': 'yes'
+        '@name': auto_remove_failed_seqs
+      Identifier:
+        SPUID:
+          '#text': 230627_sarscov2_genbank
+          '@spuid_namespace': ncbi-sarscov2-genbank

@@ -2,7 +2,7 @@
 ############# Build Stage: Dependencies ##################
 
 # Start from a base image
-FROM --platform=linux/amd64 ubuntu:focal as base
+FROM ubuntu:focal as base
 
 # Install system libraries of general use
 ENV DEBIAN_FRONTEND=noninteractive
@@ -34,6 +34,9 @@ ENV PROGRAM=/seqsender
 
 # Create working directory 
 ENV WORKDIR=/data
+
+# Create a working directory in docker
+RUN mkdir ${WORKDIR}
 
 # Set up volume directory in docker
 VOLUME ${WORKDIR}
@@ -89,3 +92,6 @@ RUN chmod a+x ${PROGRAM}/seqsender-kickoff
 
 # Export bash script to path
 ENV PATH "$PATH:${PROGRAM}"
+
+# Execute the pipeline 
+ENTRYPOINT ["tail", "-f", "/dev/null"]

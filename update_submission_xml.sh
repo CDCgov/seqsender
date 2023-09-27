@@ -3,7 +3,6 @@
 
 # Getting submission file
 submission_file=$1
-n=$2
 
 # Path to a temp config file
 tmp_sub_xml=/tmp/tmp_submission.xml

@@ -1,0 +1,44 @@
+Submission:
+  Description:
+    Title: test_biosample_submission
+    Comment: This is a test submission
+    Organization:
+      '@role': owner
+      '@type': institute
+      Name: Institute Name
+      Contact:
+        '@email': email@myemail.com
+        Name:
+          First: Jane
+          Last: Doe
+    Hold:
+      release_date: "2017-01-01"
+  Action:
+    AddData:
+      '@target_db': BioSample
+      Data:
+        '@content_type': xml
+        XmlContent:
+          BioSample:
+            '@schema_version': '2.0'
+            SampleId:
+              SPUID:
+                '#text': bs_sequence_1
+                '@spuid_namespace': CFSAN
+            Descriptor:
+              Title: SARS-CoV-2 Sequencing Baseline Constellation
+            Organism:
+              OrganismName: Severe acute respiratory syndrome coronavirus 2
+            BioProject:
+              PrimaryId:
+                '@db': BioProject  
+                '#text': PRJNA217342
+            Package: SARS-CoV-2.cl.1.0
+            Attributes:
+              Attribute:
+              - '#text': '2022-05-03'
+                '@attribute_name': collection_date
+      Identifier:
+        SPUID:
+          '#text': bs_sequence_1
+          '@spuid_namespace': CFSAN

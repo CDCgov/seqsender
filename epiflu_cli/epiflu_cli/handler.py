@@ -209,8 +209,8 @@ def handle(args):
         """
         Write to stdout and, to file for future reference.
         """
-        log_dict.append({"code": code, "msg": " ".join(msg)})
-        print(f"{code}: {', '.join(msg)}")
+        log_dict.append({"code": code, "msg": " ".join(map(str, msg))})
+        print(f"{code}: {', '.join(map(str, msg))}")
 
     # FLU-API: dump JSON-messages here
     def output_faulty(resp, submission):

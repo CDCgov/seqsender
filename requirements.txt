@@ -4,7 +4,7 @@ xmltodict==0.13.0
 pyyaml==6.0
 
 ## epiflu and epicov
-certifi==2022.12.7
+certifi==2023.7.22
 charset-normalizer==2.0.4
 idna==3.4
 requests==2.28.2

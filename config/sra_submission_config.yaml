@@ -1,0 +1,42 @@
+Submission:
+  Description:
+    Title: test_sra_submission
+    Comment: This is a test submission
+    Organization:
+      '@role': owner
+      '@type': institute
+      Name: Institute Name
+      Contact:
+        '@email': email@myemail.com
+        Name:
+          First: Jane
+          Last: Doe
+    Hold:
+      release_date: "2017-01-01"
+  Action:
+    AddFiles:
+      '@target_db': SRA
+      File:
+      - '@file_path': sra_sequence_1.fastq
+        DataType: generic-data
+      Attribute:
+      - '#text': Illumina HiSeq 2500
+        '@name': instrument_model
+      AttributeRefId:
+      - '@name': BioProject
+        RefId:
+          PrimaryId:
+            '#text': PRJNA217342
+            '@db': BioProject
+      - '@name': BioSample
+        RefId:
+          PrimaryId:
+            '#text': SAMN02335374
+            '@db': BioSample
+          SPUID:
+            '#text': bs_sequence_1
+            '@spuid_namespace': CFSAN
+      Identifier:
+        SPUID:
+          '#text': sra_sequence_1
+          '@spuid_namespace': CFSAN

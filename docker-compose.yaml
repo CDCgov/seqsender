@@ -16,7 +16,8 @@ services:
     image: seqsender
     restart: always
     build: 
-      context: *seqsender-git-version 
+      context: .
+      dockerfile: Dockerfile
     volumes: 
       - *data-volume
     command: tail -f /dev/null 
