@@ -114,7 +114,7 @@ def update_csv(unique_name,config,type,Genbank_submission_id=None,Genbank_submis
                     "GISAID_submitted_total":GISAID_submitted_total,
                     "GISAID_failed_total":GISAID_failed_total
                     }
-        df = pd.concat([df, new_entry], ignore_index = True)
+        df = pd.concat([df, pd.Series([new_entry])], ignore_index = True)
     df.to_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "upload_log.csv"), header = True, index = False, sep = ",")
 
 #Update log status
