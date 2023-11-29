@@ -18,7 +18,7 @@ from Bio import SeqIO
 import xml.etree.ElementTree as ET
 
 config_dict = dict()
-version = "0.1 (Beta)"
+_version = "0.1 (Beta)"
 
 #Initialize config file
 def initialize_global_variables(config):
@@ -606,7 +606,7 @@ def test_bioproject(config):
         sys.exit(1)
 
 def version():
-    print("Version: " + version)
+    print("Version: " + _version)
 
 def main():
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter,
