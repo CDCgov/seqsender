@@ -78,7 +78,7 @@ def update_csv(
 ):
     curr_time = datetime.now()
     if os.path.isfile(upload_log_path):
-        df = pd.read_csv(upload_log_path, header = 0, dtype = str, sep = ",")
+        df = _read_upload_log(upload_log_path)
     else:
         df = pd.DataFrame(columns = ["name","update_date","SRA_submission_id","SRA_submission_date","SRA_status","BioSample_submission_id","BioSample_submission_date","BioSample_status","Genbank_submission_id","Genbank_submission_date","Genbank_status","GISAID_submission_date","GISAID_submitted_total","GISAID_failed_total","directory","config","type"])
     #Check if row exists in log to update instead of write new
@@ -134,14 +134,16 @@ def update_csv(
         df = pd.concat([df, pd.Series([new_entry])], ignore_index = True)
     df.to_csv(upload_log_path, header = True, index = False, sep = ",")
 
+
+def _read_upload_log(upload_log_path: str) -> pd.DataFrame:
+    return pd.read_csv(upload_log_path, header=0, dtype=str, sep=",")
+
+
 #Update log status
 #Pulls all entries that do not say processed and updates status
 def update_log(upload_log_path: str):
-    def _read_upload_log():
-        return pd.read_csv(upload_log_path, header = 0, dtype = str, sep = ",")
-
     if os.path.isfile(upload_log_path):
-        main_df = _read_upload_log()
+        main_df = _read_upload_log(upload_log_path)
     else:
         error_msg = f"Error: Either a submission has not been made or upload_log.csv has been moved from {upload_log_path}"
         print(error_msg, file=sys.stderr)
@@ -192,7 +194,7 @@ def update_log(upload_log_path: str):
                     print("Submitting to Genbank: " + row["name"])
                     submit_genbank(row["name"], row["config"], upload_log_path, row["type"], False)
     #Check BioSample
-    main_df = _read_upload_log()
+    main_df = _read_upload_log(upload_log_path)
     df = main_df.loc[(main_df['BioSample_status'] != None) & (main_df['BioSample_status'] != "processed-ok") & (main_df['BioSample_status'] != "")]
     if len(df.index) != 0:
         for index, row in df.iterrows():
@@ -237,7 +239,7 @@ def update_log(upload_log_path: str):
                     print("Submitting to Genbank: " + row["name"])
                     submit_genbank(row["name"], row["config"], upload_log_path, row["type"], True)
     #Check SRA
-    main_df = _read_upload_log()
+    main_df = _read_upload_log(upload_log_path)
     df = main_df.loc[(main_df['SRA_status'] != None) & (main_df['SRA_status'] != "processed-ok") & (main_df['SRA_status'] != "")]
     if len(df.index) != 0:
         for index, row in df.iterrows():
@@ -282,7 +284,7 @@ def update_log(upload_log_path: str):
                     print("Submitting to Genbank: " + row["name"])
                     submit_genbank(row["name"], row["config"], upload_log_path, row["type"], False)
     #Check Genbank
-    main_df = _read_upload_log()
+    main_df = _read_upload_log(upload_log_path)
     df = main_df.loc[(main_df['Genbank_status'] != None) & (main_df['Genbank_status'] != "processed-ok") & (main_df['Genbank_status'] != "") & (main_df['Genbank_status'].isnull() == False)]
     if len(df.index) != 0:
         for index, row in df.iterrows():
@@ -327,7 +329,7 @@ def update_log(upload_log_path: str):
                     print("\nSubmitting to GISAID: " + row["name"])
                     submit_gisaid(unique_name=row["name"], config=row["config"], upload_log_path=upload_log_path, test=row["type"])
     #Check GISAID
-    main_df = _read_upload_log()
+    main_df = _read_upload_log(upload_log_path)
     df = main_df.loc[(main_df['GISAID_submitted_total'] != None) & (main_df['GISAID_submitted_total'] != "") & (main_df['GISAID_submitted_total'].isnull() == False) & (main_df['type'] != "Test") & (main_df['GISAID_failed_total'] != "0")]
     if len(df.index) != 0:
         for index, row in df.iterrows():
