@@ -178,10 +178,19 @@ def update_log(upload_log_path: str):
                 print('FTP error:', e)
             if report_generated == True:
                 submission_id, submission_status = biosample_sra_process_report(row["name"], "biosample_sra")
-                update_csv(unique_name=row['name'],config=row["config"],type=row["type"],Biosample_submission_id=submission_id,Biosample_status=submission_status,SRA_submission_id=submission_id,SRA_status=submission_status)
+                update_csv(
+                    unique_name=row['name'],
+                    config=row["config"],
+                    upload_log_path=upload_log_path,
+                    type=row["type"],
+                    Biosample_submission_id=submission_id,
+                    Biosample_status=submission_status,
+                    SRA_submission_id=submission_id,
+                    SRA_status=submission_status
+                )
                 if submission_status == "processed-ok" and config_dict["general"]["submit_Genbank"] == True and (row["Genbank_status"] == None or row["Genbank_status"] == "" or pd.isnull(row["Genbank_status"])):
                     print("Submitting to Genbank: " + row["name"])
-                    submit_genbank(row["name"], row["config"], row["type"], False)
+                    submit_genbank(row["name"], row["config"], upload_log_path, row["type"], False)
     #Check BioSample
     main_df = _read_upload_log()
     df = main_df.loc[(main_df['BioSample_status'] != None) & (main_df['BioSample_status'] != "processed-ok") & (main_df['BioSample_status'] != "")]
@@ -215,11 +224,18 @@ def update_log(upload_log_path: str):
                 print('FTP error:', e)
             if report_generated == True:
                 submission_id, submission_status = biosample_sra_process_report(row["name"], "biosample")
-                update_csv(unique_name=row['name'],config=row["config"],type=row["type"],Biosample_submission_id=submission_id,Biosample_status=submission_status)
+                update_csv(
+                    unique_name=row['name'],
+                    config=row["config"],
+                    upload_log_path=upload_log_path,
+                    type=row["type"],
+                    Biosample_submission_id=submission_id,
+                    Biosample_status=submission_status
+                )
                 print("Status: " + submission_status)
                 if submission_status == "processed-ok" and config_dict["general"]["submit_Genbank"] == True and (row["Genbank_status"] == None or row["Genbank_status"] == "" or pd.isnull(row["Genbank_status"])):
                     print("Submitting to Genbank: " + row["name"])
-                    submit_genbank(row["name"], row["config"], row["type"], True)
+                    submit_genbank(row["name"], row["config"], upload_log_path, row["type"], True)
     #Check SRA
     main_df = _read_upload_log()
     df = main_df.loc[(main_df['SRA_status'] != None) & (main_df['SRA_status'] != "processed-ok") & (main_df['SRA_status'] != "")]
@@ -253,11 +269,18 @@ def update_log(upload_log_path: str):
                 print('FTP error:', e)
             if report_generated == True:
                 submission_id, submission_status = biosample_sra_process_report(row["name"], "sra")
-                update_csv(unique_name=row['name'],config=row["config"],type=row["type"],SRA_submission_id=submission_id,SRA_status=submission_status)
+                update_csv(
+                    unique_name=row['name'],
+                    config=row["config"],
+                    upload_log_path=upload_log_path,
+                    type=row["type"],
+                    SRA_submission_id=submission_id,
+                    SRA_status=submission_status
+                )
                 print("Status: " + submission_status)
                 if submission_status == "processed-ok" and config_dict["general"]["submit_Genbank"] == True and (row["Genbank_status"] == None or row["Genbank_status"] == "" or pd.isnull(row["Genbank_status"])):
                     print("Submitting to Genbank: " + row["name"])
-                    submit_genbank(row["name"], row["config"], row["type"], False)
+                    submit_genbank(row["name"], row["config"], upload_log_path, row["type"], False)
     #Check Genbank
     main_df = _read_upload_log()
     df = main_df.loc[(main_df['Genbank_status'] != None) & (main_df['Genbank_status'] != "processed-ok") & (main_df['Genbank_status'] != "") & (main_df['Genbank_status'].isnull() == False)]
@@ -291,11 +314,18 @@ def update_log(upload_log_path: str):
                 print('FTP error:', e)
             if report_generated == True:
                 submission_id, submission_status = genbank_process_report(row["name"])
-                update_csv(unique_name=row['name'],config=row["config"],type=row["type"],Genbank_submission_id=submission_id,Genbank_status=submission_status)
+                update_csv(
+                    unique_name=row['name'],
+                    config=row["config"],
+                    upload_log_path=upload_log_path,
+                    type=row["type"],
+                    Genbank_submission_id=submission_id,
+                    Genbank_status=submission_status
+                )
                 print("Status: " + submission_status)
                 if submission_status == "processed-ok" and config_dict["general"]["submit_GISAID"].lower == "true" and row["type"] != "Test":
                     print("\nSubmitting to GISAID: " + row["name"])
-                    submit_gisaid(unique_name=row["name"], config=row["config"], test=row["type"])
+                    submit_gisaid(unique_name=row["name"], config=row["config"], upload_log_path=upload_log_path, test=row["type"])
     #Check GISAID
     main_df = _read_upload_log()
     df = main_df.loc[(main_df['GISAID_submitted_total'] != None) & (main_df['GISAID_submitted_total'] != "") & (main_df['GISAID_submitted_total'].isnull() == False) & (main_df['type'] != "Test") & (main_df['GISAID_failed_total'] != "0")]
@@ -304,7 +334,7 @@ def update_log(upload_log_path: str):
             initialize_global_variables(row["config"])
             if config_dict["general"]["submit_GISAID"] == True:
                 print("\nSubmitting to GISAID: " + row["name"])
-                submit_gisaid(unique_name=row["name"], config=row["config"], test=row["type"])
+                submit_gisaid(unique_name=row["name"], config=row["config"], upload_log_path=upload_log_path, test=row["type"])
 
 #Read output log from gisaid submission script
 def read_log(unique_name, file):
@@ -353,7 +383,7 @@ def pull_report_files(unique_name, files):
         r = requests.get(api_url.replace("FILE_ID", files[item]), allow_redirects=True)
         open(os.path.join(config_dict["general"]["submission_directory"], unique_name, "genbank", unique_name + "_" + item), 'wb').write(r.content)
 
-def submit_genbank(unique_name, config, test, overwrite):
+def submit_genbank(unique_name, config, upload_log_path, test, overwrite):
     initialize_global_variables(config)
     prepare_genbank(unique_name)
     if test == "Production":
@@ -362,9 +392,17 @@ def submit_genbank(unique_name, config, test, overwrite):
         test_type = True
     genbank_submission.submit_ftp(unique_name=unique_name, config=config, test=test_type, overwrite=overwrite)
     curr_time = datetime.now()
-    update_csv(unique_name=unique_name, config=config, type=test, Genbank_submission_id="submitted", Genbank_submission_date=curr_time.strftime("%-m/%-d/%Y"), Genbank_status="submitted")
+    update_csv(
+        unique_name=unique_name,
+        config=config,
+        upload_log_path=upload_log_path,
+        type=test,
+        Genbank_submission_id="submitted",
+        Genbank_submission_date=curr_time.strftime("%-m/%-d/%Y"),
+        Genbank_status="submitted"
+    )
 
-def submit_gisaid(unique_name, config, test):
+def submit_gisaid(unique_name, config, upload_log_path, test):
     initialize_global_variables(config)
     if config_dict["gisaid"]["Update_sequences_on_Genbank_auto_removal"] == True and config_dict["ncbi"]["Genbank_auto_remove_sequences_that_fail_qc"] == True:
         prepare_gisaid(unique_name)
@@ -375,7 +413,15 @@ def submit_gisaid(unique_name, config, test):
     gisaid_submission.run_uploader(unique_name=unique_name, config=config, test=test_type)
     submitted, failed = read_log(unique_name, os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid", unique_name + ".log"))
     curr_time = datetime.now()
-    update_csv(unique_name=unique_name, config=config, type=test, GISAID_submission_date=curr_time.strftime("%-m/%-d/%Y"),GISAID_submitted_total=submitted,GISAID_failed_total=failed)
+    update_csv(
+        unique_name=unique_name,
+        config=config,
+        upload_log_path=upload_log_path,
+        type=test,
+        GISAID_submission_date=curr_time.strftime("%-m/%-d/%Y"),
+        GISAID_submitted_total=submitted,
+        GISAID_failed_total=failed
+    )
 
 #Read xml report and check status of report
 def genbank_process_report(unique_name):
@@ -463,7 +509,7 @@ def prepare_gisaid(unique_name):
         SeqIO.write(keep_records, fasta_file, "fasta")
 
 #For submitting when SRA/Biosample have to be split due to errors
-def submit_biosample_sra(unique_name, config, test, ncbi_sub_type, overwrite):
+def submit_biosample_sra(unique_name, config, upload_log_path, test, ncbi_sub_type, overwrite):
     initialize_global_variables(config)
     if test == "Production":
         test_type = False
@@ -472,28 +518,55 @@ def submit_biosample_sra(unique_name, config, test, ncbi_sub_type, overwrite):
     biosample_sra_submission.submit_ftp(unique_name=unique_name, ncbi_sub_type=ncbi_sub_type, config=config, test=test_type, overwrite=overwrite)
     curr_time = datetime.now()
     if ncbi_sub_type == "biosample_sra":
-        update_csv(unique_name=unique_name,config=config,type=test,Biosample_submission_id="submitted",Biosample_status="submitted",Biosample_submission_date=curr_time.strftime("%-m/%-d/%Y"),SRA_submission_id="submitted",SRA_status="submitted",SRA_submission_date=curr_time.strftime("%-m/%-d/%Y"))
+        update_csv(
+            unique_name=unique_name,
+            config=config,
+            upload_log_path=upload_log_path,
+            type=test,
+            Biosample_submission_id="submitted",
+            Biosample_status="submitted",
+            Biosample_submission_date=curr_time.strftime("%-m/%-d/%Y"),
+            SRA_submission_id="submitted",
+            SRA_status="submitted",
+            SRA_submission_date=curr_time.strftime("%-m/%-d/%Y")
+        )
     elif ncbi_sub_type == "biosample":
-        update_csv(unique_name=unique_name,config=config,type=test,Biosample_submission_id="submitted",Biosample_status="submitted",Biosample_submission_date=curr_time.strftime("%-m/%-d/%Y"))
+        update_csv(
+            unique_name=unique_name,
+            config=config,
+            upload_log_path=upload_log_path,
+            type=test,
+            Biosample_submission_id="submitted",
+            Biosample_status="submitted",
+            Biosample_submission_date=curr_time.strftime("%-m/%-d/%Y")
+        )
     elif ncbi_sub_type == "sra":
-        update_csv(unique_name=unique_name,config=config,type=test,SRA_submission_id="submitted",SRA_status="submitted",SRA_submission_date=curr_time.strftime("%-m/%-d/%Y"))
+        update_csv(
+            unique_name=unique_name,
+            config=config,
+            upload_log_path=upload_log_path,
+            type=test,
+            SRA_submission_id="submitted",
+            SRA_status="submitted",
+            SRA_submission_date=curr_time.strftime("%-m/%-d/%Y")
+        )
 
 #Start submission into automated pipeline
 def start_submission(unique_name, config, upload_log_path, test, overwrite):
     initialize_global_variables(config)
     if config_dict["general"]["submit_BioSample"] == True and config_dict["general"]["submit_SRA"] == True and config_dict["general"]["joint_SRA_BioSample_submission"] == True:
-        submit_biosample_sra(unique_name, config, test, "biosample_sra", overwrite)
+        submit_biosample_sra(unique_name, config, upload_log_path, test, "biosample_sra", overwrite)
     elif config_dict["general"]["submit_BioSample"] == True and config_dict["general"]["submit_SRA"] == True and config_dict["general"]["joint_SRA_BioSample_submission"] == False:
-        submit_biosample_sra(unique_name, config, test, "biosample", overwrite)
-        submit_biosample_sra(unique_name, config, test, "sra", overwrite)
+        submit_biosample_sra(unique_name, config, upload_log_path, test, "biosample", overwrite)
+        submit_biosample_sra(unique_name, config, upload_log_path, test, "sra", overwrite)
     elif config_dict["general"]["submit_BioSample"] == True:
-        submit_biosample_sra(unique_name, config, test, "biosample", overwrite)
+        submit_biosample_sra(unique_name, config, upload_log_path, test, "biosample", overwrite)
     elif config_dict["general"]["submit_SRA"] == True:
-        submit_biosample_sra(unique_name, config, test, "sra", overwrite)
+        submit_biosample_sra(unique_name, config, upload_log_path, test, "sra", overwrite)
     elif config_dict["general"]["submit_Genbank"] == True:
-        submit_genbank(unique_name=unique_name, config=config, test=test, overwrite=overwrite)
+        submit_genbank(unique_name=unique_name, config=config, upload_log_path=upload_log_path, test=test, overwrite=overwrite)
     elif config_dict["general"]["submit_GISAID"] == True:
-        submit_gisaid(unique_name=unique_name, config=config, test=test)
+        submit_gisaid(unique_name=unique_name, config=config, upload_log_path=upload_log_path, test=test)
 
 def test_bioproject(config):
     initialize_global_variables(config)
@@ -657,6 +730,7 @@ def main():
         submit_genbank(
             unique_name=args.unique_name,
             config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            upload_log_path=args.upload_log,
             test=args.test,
             overwrite=args.overwrite
         )
@@ -664,12 +738,14 @@ def main():
         submit_gisaid(
             unique_name=args.unique_name,
             config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            upload_log_path=args.upload_log,
             test=args.test
         )
     elif args.command == "biosample_sra":
         submit_biosample_sra(
             unique_name=args.unique_name,
             config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample_sra",
             overwrite=args.overwrite
@@ -678,6 +754,7 @@ def main():
         submit_biosample_sra(
             unique_name=args.unique_name,
             config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample",
             overwrite=args.overwrite
@@ -686,6 +763,7 @@ def main():
         submit_biosample_sra(
             unique_name=args.unique_name,
             config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="sra",
             overwrite=args.overwrite
