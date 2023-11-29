@@ -59,22 +59,22 @@ def biosample_sra_process_report(unique_name, ncbi_sub_type):
 
 #Update log csv
 def update_csv(
-        unique_name,
-        config,
-        upload_log_path,
-        type,
-        Genbank_submission_id=None,
-        Genbank_submission_date=None,
-        Genbank_status=None,
-        SRA_submission_id=None,
-        SRA_status=None,
-        SRA_submission_date=None,
-        Biosample_submission_id=None,
-        Biosample_status=None,
-        Biosample_submission_date=None,
-        GISAID_submission_date=None,
-        GISAID_submitted_total=None,
-        GISAID_failed_total=None
+    unique_name,
+    config,
+    upload_log_path,
+    type,
+    Genbank_submission_id=None,
+    Genbank_submission_date=None,
+    Genbank_status=None,
+    SRA_submission_id=None,
+    SRA_status=None,
+    SRA_submission_date=None,
+    Biosample_submission_id=None,
+    Biosample_status=None,
+    Biosample_submission_date=None,
+    GISAID_submission_date=None,
+    GISAID_submitted_total=None,
+    GISAID_failed_total=None
 ):
     curr_time = datetime.now()
     if os.path.isfile(upload_log_path):
