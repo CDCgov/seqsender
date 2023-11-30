@@ -572,8 +572,9 @@ def start_submission(unique_name, config, upload_log_path, test, overwrite):
 
 def test_bioproject(config):
     initialize_global_variables(config)
-    if not os.path.isfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready")):
-        open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready"), 'w+').close()
+    submit_file_path: str = os.path.join(config_dict["general"]["submission_directory"], "submit.ready")
+    if not os.path.isfile(submit_file_path):
+        open(submit_file_path, 'w+').close()
     try:
         #Login to ftp
         ftp = ftplib.FTP(config_dict["ncbi"]["hostname"])
@@ -600,7 +601,7 @@ def test_bioproject(config):
             res = ftp.storlines("STOR " + "submission.xml", open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"test_input", "submission.xml"), 'rb'))
             if not res.startswith('226 Transfer complete'):
                 print('Submission.xml upload failed.', file=sys.stderr)
-            res = ftp.storlines("STOR " + "submit.ready", open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready"), 'rb'))
+            res = ftp.storlines("STOR " + "submit.ready", open(submit_file_path, 'rb'))
             if not res.startswith('226 Transfer complete'):
                 print('Submission.xml upload failed.', file=sys.stderr)
     except ftplib.all_errors as e:
@@ -710,11 +711,11 @@ def main():
             args.unique_name,
             args.fasta,
             args.metadata,
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
+            args.config
         )
         start_submission(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             overwrite=args.overwrite
@@ -724,14 +725,14 @@ def main():
             args.unique_name,
             args.fasta,
             args.metadata,
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
+            args.config
         )
     elif args.command == "update_submissions":
         update_log(upload_log_path=args.upload_log)
     elif args.command == "genbank":
         submit_genbank(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             overwrite=args.overwrite
@@ -739,14 +740,14 @@ def main():
     elif args.command == "gisaid":
         submit_gisaid(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test
         )
     elif args.command == "biosample_sra":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample_sra",
@@ -755,7 +756,7 @@ def main():
     elif args.command == "biosample":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample",
@@ -764,16 +765,14 @@ def main():
     elif args.command == "sra":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="sra",
             overwrite=args.overwrite
         )
     elif args.command == "test_bioproject":
-        test_bioproject(
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
-        )
+        test_bioproject(config=args.config)
     elif args.command == "version":
         version()
     else:
