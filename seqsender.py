@@ -710,11 +710,11 @@ def main():
             args.unique_name,
             args.fasta,
             args.metadata,
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
+            args.config
         )
         start_submission(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             overwrite=args.overwrite
@@ -724,14 +724,14 @@ def main():
             args.unique_name,
             args.fasta,
             args.metadata,
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
+            args.config
         )
     elif args.command == "update_submissions":
         update_log(upload_log_path=args.upload_log)
     elif args.command == "genbank":
         submit_genbank(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             overwrite=args.overwrite
@@ -739,14 +739,14 @@ def main():
     elif args.command == "gisaid":
         submit_gisaid(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test
         )
     elif args.command == "biosample_sra":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample_sra",
@@ -755,7 +755,7 @@ def main():
     elif args.command == "biosample":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="biosample",
@@ -764,16 +764,14 @@ def main():
     elif args.command == "sra":
         submit_biosample_sra(
             unique_name=args.unique_name,
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config),
+            config=args.config,
             upload_log_path=args.upload_log,
             test=args.test,
             ncbi_sub_type="sra",
             overwrite=args.overwrite
         )
     elif args.command == "test_bioproject":
-        test_bioproject(
-            config=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config_files", args.config)
-        )
+        test_bioproject(config=args.config)
     elif args.command == "version":
         version()
     else:
