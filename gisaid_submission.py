@@ -3,10 +3,9 @@
 import sys
 import os
 import subprocess as subprocess
-from datetime import datetime, date
+from datetime import datetime
 import yaml
 import time
-import csv
 
 cid = ""
 username = ""
@@ -32,26 +31,27 @@ def initialize_global_variables(config):
         global password
         password = config_dict["gisaid"]["password"]
 
+# NOTE: this method is never used
 #Checks authentication token from gisaid log to see if it has reached it's 100 day lifespan
 #If lifespan has been reached it authenticates and then continues preprocessing
-def check_authentication_date():
-    #Check if uploader log exists]
-    if os.path.isfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log")):
-        #Check authentication date
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log"), "r") as f:
-            line = f.readline().strip().split(": ")[1]
-        auth_time = datetime.strptime(line, '%a %b %d %H:%M:%S %Y')
-    else:
-        print("gisaid_uploader.log missing. Reauthentication is required.")
-        print("Run this command to authenticate: python " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log") + " COV authenticate --cid " + cid)
-        sys.exit()
-    # If authentication has expired it will reauthenticate automatically
-    if auth_time.date() <= datetime.today().date():
-        print("Authentication token needs updating.")
-        print("Run this command to authenticate: python " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log") + " COV authenticate --cid " + cid)
-        sys.exit()
-    else:
-        print("Authenticated")
+# def check_authentication_date():
+#     #Check if uploader log exists]
+#     if os.path.isfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log")):
+#         #Check authentication date
+#         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log"), "r") as f:
+#             line = f.readline().strip().split(": ")[1]
+#         auth_time = datetime.strptime(line, '%a %b %d %H:%M:%S %Y')
+#     else:
+#         print("gisaid_uploader.log missing. Reauthentication is required.")
+#         print("Run this command to authenticate: python " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log") + " COV authenticate --cid " + cid)
+#         sys.exit()
+#     # If authentication has expired it will reauthenticate automatically
+#     if auth_time.date() <= datetime.today().date():
+#         print("Authentication token needs updating.")
+#         print("Run this command to authenticate: python " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.log") + " COV authenticate --cid " + cid)
+#         sys.exit()
+#     else:
+#         print("Authenticated")
 
 #Run gisaid upload script and saves output to submission location
 def run_uploader(unique_name, config, test):
@@ -66,12 +66,19 @@ def run_uploader(unique_name, config, test):
     attempts = 1
     complete = False
     while attempts < 3 and complete == False:
-        proc = subprocess.run("python " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.py") + " --debug -l " +
+        proc = subprocess.run(
+            "python3 " + os.path.join(os.path.dirname(os.path.abspath(__file__)), "gisaid_uploader.py") + " --debug --authfile " +
+            os.path.join(config_dict["general"]["submission_directory"], "gisaid_uploader.authtoken") + " --logfile " +
             os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid", unique_name + ".log") + " COV upload --fasta " +
             os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid", unique_name + "_gisaid.fsa") + " --csv " +
             os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid", unique_name + "_gisaid.csv") + " --failedout " +
             os.path.join(config_dict["general"]["submission_directory"], unique_name, "gisaid", unique_name + "_failed_meta.csv"),
-            env = os.environ.copy(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
+            env=os.environ.copy(),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            shell=True
+        )
         #print(proc.args)
         if proc.returncode != 0:
             print(proc.stdout)

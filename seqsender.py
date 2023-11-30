@@ -572,8 +572,9 @@ def start_submission(unique_name, config, upload_log_path, test, overwrite):
 
 def test_bioproject(config):
     initialize_global_variables(config)
-    if not os.path.isfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready")):
-        open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready"), 'w+').close()
+    submit_file_path: str = os.path.join(config_dict["general"]["submission_directory"], "submit.ready")
+    if not os.path.isfile(submit_file_path):
+        open(submit_file_path, 'w+').close()
     try:
         #Login to ftp
         ftp = ftplib.FTP(config_dict["ncbi"]["hostname"])
@@ -600,7 +601,7 @@ def test_bioproject(config):
             res = ftp.storlines("STOR " + "submission.xml", open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"test_input", "submission.xml"), 'rb'))
             if not res.startswith('226 Transfer complete'):
                 print('Submission.xml upload failed.', file=sys.stderr)
-            res = ftp.storlines("STOR " + "submit.ready", open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "submit.ready"), 'rb'))
+            res = ftp.storlines("STOR " + "submit.ready", open(submit_file_path, 'rb'))
             if not res.startswith('226 Transfer complete'):
                 print('Submission.xml upload failed.', file=sys.stderr)
     except ftplib.all_errors as e:
