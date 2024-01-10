@@ -80,7 +80,27 @@ def update_csv(
     if os.path.isfile(upload_log_path):
         df = _read_upload_log(upload_log_path)
     else:
-        df = pd.DataFrame(columns = ["name","update_date","SRA_submission_id","SRA_submission_date","SRA_status","BioSample_submission_id","BioSample_submission_date","BioSample_status","Genbank_submission_id","Genbank_submission_date","Genbank_status","GISAID_submission_date","GISAID_submitted_total","GISAID_failed_total","directory","config","type"])
+        df = pd.DataFrame(
+            columns=[
+                "name",
+                "update_date",
+                "SRA_submission_id",
+                "SRA_submission_date",
+                "SRA_status",
+                "BioSample_submission_id",
+                "BioSample_submission_date",
+                "BioSample_status",
+                "Genbank_submission_id",
+                "Genbank_submission_date",
+                "Genbank_status",
+                "GISAID_submission_date",
+                "GISAID_submitted_total",
+                "GISAID_failed_total",
+                "directory",
+                "config",
+                "type"
+            ]
+        )
     #Check if row exists in log to update instead of write new
     if df['name'].str.contains(unique_name).any():
         df_partial = df.loc[df['name'] == unique_name]
@@ -113,25 +133,26 @@ def update_csv(
         if GISAID_failed_total is not None:
             df.loc[df_partial.index.values, 'GISAID_failed_total'] = GISAID_failed_total
     else:
-        new_entry = {'name':unique_name,
-                    'update_date':curr_time.strftime("%-m/%-d/%Y"),
-                    'Genbank_submission_id':Genbank_submission_id,
-                    'Genbank_submission_date':Genbank_submission_date,
-                    'Genbank_status':Genbank_status,
-                    'directory':os.path.join(config_dict["general"]["submission_directory"], unique_name),
-                    'config':config,
-                    'type':type,
-                    "SRA_submission_id":SRA_submission_id,
-                    "SRA_submission_date":SRA_submission_date,
-                    "SRA_status":SRA_status,
-                    "BioSample_submission_id":Biosample_submission_id,
-                    "BioSample_submission_date":Biosample_submission_date,
-                    "BioSample_status":Biosample_status,
-                    "GISAID_submission_date":GISAID_submission_date,
-                    "GISAID_submitted_total":GISAID_submitted_total,
-                    "GISAID_failed_total":GISAID_failed_total
-                    }
-        df = pd.concat([df, pd.Series([new_entry])], ignore_index = True)
+        new_entry = {
+            "name":unique_name,
+            "update_date":curr_time.strftime("%-m/%-d/%Y"),
+            "Genbank_submission_id":Genbank_submission_id,
+            "Genbank_submission_date":Genbank_submission_date,
+            "Genbank_status":Genbank_status,
+            "directory":os.path.join(config_dict["general"]["submission_directory"], unique_name),
+            "config":config,
+            "type":type,
+            "SRA_submission_id":SRA_submission_id,
+            "SRA_submission_date":SRA_submission_date,
+            "SRA_status":SRA_status,
+            "BioSample_submission_id":Biosample_submission_id,
+            "BioSample_submission_date":Biosample_submission_date,
+            "BioSample_status":Biosample_status,
+            "GISAID_submission_date":GISAID_submission_date,
+            "GISAID_submitted_total":GISAID_submitted_total,
+            "GISAID_failed_total":GISAID_failed_total
+        }
+        df = pd.concat([df, pd.Series(new_entry).to_frame().T], ignore_index=True)
     df.to_csv(upload_log_path, header = True, index = False, sep = ",")
 
 
