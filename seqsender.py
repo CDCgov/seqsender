@@ -676,7 +676,8 @@ def main():
     )
 
     runall_parser = subparsers.add_parser('submit',formatter_class=RawTextHelpFormatter,
-        help='Creates submission files and begins automated process of submitting to public databases.', parents=[parent_parser, parent_parser_prep],
+        help='Creates submission files and begins automated process of submitting to public databases.',
+        parents=[parent_parser, parent_parser_prep],
         description='Creates submission files and begins process of submitting to public databases.'
     )
 
@@ -687,6 +688,7 @@ def main():
 
     log_parser = subparsers.add_parser('update_submissions',formatter_class=RawTextHelpFormatter,
         help='Using submission log, script updates existing process of submissions.',
+        parents=[parent_parser],
         description='Using submission log, script updates existing process of submissions.'
     )
 
