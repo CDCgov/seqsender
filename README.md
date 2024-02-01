@@ -76,11 +76,11 @@ FTP on the command line. Before attempting to submit a submission using
     to the submitter to decide but they must be unique and
     well-coordinated prior to make a submission. For more information
     about these two fields, see
-    [BioSample](https://rchau88.github.io/seqsender/articles/biosample_submission.html#metadata)
+    [BioSample](https://cdcgov.github.io/seqsender/articles/biosample_submission.html#metadata)
     /
-    [SRA](https://rchau88.github.io/seqsender/articles/sra_submission.html#metadata)
+    [SRA](https://cdcgov.github.io/seqsender/articles/sra_submission.html#metadata)
     /
-    [GENBANK](https://rchau88.github.io/seqsender/articles/genbank_submission.html#metadata)
+    [GENBANK](https://cdcgov.github.io/seqsender/articles/genbank_submission.html#metadata)
     metadata requirements.
 
 <!-- end list -->
@@ -106,9 +106,9 @@ pipeline only allows upload to EpiFlu (**Influenza A Virus**) and EpiCoV
     additionally request a test client-id to perform such submissions.*
 
 3.  Download the
-    <a href="https://rchau88.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a>
+    <a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a>
     or
-    <a href="https://rchau88.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a>
+    <a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a>
     CLI from the **GISAID platform** and stored them in the destination
     of choice prior to perform a batch upload.
 
@@ -127,39 +127,39 @@ a submission directory of choice.
 1)  To prep for FLU submissions, select one of the databases below to
     get started:
 
-> <a href="https://rchau88.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a>
 > <br>
-> <!-- > <a href="https://rchau88.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a> -->
+> <!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a> -->
 
 2)  To prep for COV submissions, select one of the databases below to
     get started:
 
-> <a href="https://rchau88.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
 > <br>
-> <a href="https://rchau88.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a>
+> <a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a>
 > <br>
-> <!-- > <a href="https://rchau88.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a> -->
+> <!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a> -->
 
 ## Quick Start
 
   - [How to run seqsender
-    locally](https://rchau88.github.io/seqsender/articles/local_installation.html)
+    locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
   - [How to run seqsender with
-    Docker](https://rchau88.github.io/seqsender/articles/docker_installation.html)
+    Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
   - [How to run seqsender with
-    Compose](https://rchau88.github.io/seqsender/articles/compose_installation.html)
+    Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
   - [How to run seqsender with
-    Singularity](https://rchau88.github.io/seqsender/articles/singularity_installation.html)
+    Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
 
 ## Public Domain Standard Notice
 

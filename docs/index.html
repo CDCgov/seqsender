@@ -161,7 +161,7 @@
 <li><p>Required for CDC users and highly recommended for others is creating a center account for your institution/lab <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/sra/#step6">NCBI Center Account Instructions</a>. Center accounts allow you to perform submissions UI-less submissions as your institution/lab.</p></li>
 <li><p>Required for CDC users and also recommended is creating a submission group in <a href="https://submit.ncbi.nlm.nih.gov">NCBI Submission Portal</a>. A group should include all individuals who need access to UI-less submissions through the web interface with your center account. Each member of the group must also have an individual NCBI account. <a href="https://account.ncbi.nlm.nih.gov/">NCBI website</a>.</p></li>
 <li><p>Refer to this page for information regarding requirements for GenBank submissions via FTP only. This page applies only for COVID and Influenza <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5">NCBI GenBank FTP Submissions</a> For further questions contact <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a> to discuss requirements for submissions.</p></li>
-<li><p>Coordinate a NCBI namespace name (<strong>spuid_namespace</strong>) that will be used with Submitter Provided Unique Identifiers (<strong>spuid</strong>) in the submission. The liaison of <strong>spuid_namespace</strong> and <strong>spuid</strong> is used to report back assigned accessions as well as for cross-linking objects within submission. The values of <strong>spuid_namespace</strong> are up to the submitter to decide but they must be unique and well-coordinated prior to make a submission. For more information about these two fields, see <a href="https://rchau88.github.io/seqsender/articles/biosample_submission.html#metadata">BioSample</a> / <a href="https://rchau88.github.io/seqsender/articles/sra_submission.html#metadata">SRA</a> / <a href="https://rchau88.github.io/seqsender/articles/genbank_submission.html#metadata">GENBANK</a> metadata requirements.</p></li>
+<li><p>Coordinate a NCBI namespace name (<strong>spuid_namespace</strong>) that will be used with Submitter Provided Unique Identifiers (<strong>spuid</strong>) in the submission. The liaison of <strong>spuid_namespace</strong> and <strong>spuid</strong> is used to report back assigned accessions as well as for cross-linking objects within submission. The values of <strong>spuid_namespace</strong> are up to the submitter to decide but they must be unique and well-coordinated prior to make a submission. For more information about these two fields, see <a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html#metadata">BioSample</a> / <a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html#metadata">SRA</a> / <a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html#metadata">GENBANK</a> metadata requirements.</p></li>
 </ol>
 <!-- end list --><ul>
 <li><strong>GISAID Submissions</strong></li>
@@ -170,7 +170,7 @@
 <ol>
 <li><p>Have a GISAID account. To sign up, visit <a href="https://gisaid.org/">GISAID Platform</a>.</p></li>
 <li><p>Request a client-ID for EpiFlu or EpiCoV database in order to use its CLI tool. The CLI utilizes the client-ID along with the username and password to authenticate the database prior to make a submission. To obtain a client-ID, please email <a href="mailto:clisupport@gisaid.org">clisupport@gisaid.org</a> to request. <em><strong>Important note</strong>: If submitter would like to upload a “test” submission first to familiarize themselves with the submission process prior to make a real submission, one should additionally request a test client-id to perform such submissions.</em></p></li>
-<li><p>Download the <a href="https://rchau88.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a> or <a href="https://rchau88.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a> CLI from the <strong>GISAID platform</strong> and stored them in the destination of choice prior to perform a batch upload.</p></li>
+<li><p>Download the <a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a> or <a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a> CLI from the <strong>GISAID platform</strong> and stored them in the destination of choice prior to perform a batch upload.</p></li>
 </ol>
 <p>Here is a quick look of where to store the downloaded <strong>GISAID CLI</strong> package.</p>
 <p><img src="reference/figures/gisaid_cli_dir.png"></p>
@@ -181,21 +181,21 @@
 <p>Before submitter can perform a submission using <code>seqsender</code>, make sure the requirement files (such as <em>config.yaml</em>, <em>metadata.csv</em>, <em>sequence.fasta</em>, <em>raw reads</em>, etc.) are already prepared and stored in a submission directory of choice.</p>
 <p>1) To prep for FLU submissions, select one of the databases below to get started:</p>
 <blockquote>
-<p><a href="https://rchau88.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://rchau88.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://rchau88.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://rchau88.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a> <br><!-- > <a href="https://rchau88.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a> --></p>
+<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a> <br><!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a> --></p>
 </blockquote>
 <p>2) To prep for COV submissions, select one of the databases below to get started:</p>
 <blockquote>
-<p><a href="https://rchau88.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://rchau88.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://rchau88.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://rchau88.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a> <br><!-- > <a href="https://rchau88.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a> --></p>
+<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a> <br><!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a> --></p>
 </blockquote>
 </div>
 <div id="quick-start" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h2>
 <ul>
-<li><a href="https://rchau88.github.io/seqsender/articles/local_installation.html">How to run seqsender locally</a></li>
-<li><a href="https://rchau88.github.io/seqsender/articles/docker_installation.html">How to run seqsender with Docker</a></li>
-<li><a href="https://rchau88.github.io/seqsender/articles/compose_installation.html">How to run seqsender with Compose</a></li>
-<li><a href="https://rchau88.github.io/seqsender/articles/singularity_installation.html">How to run seqsender with Singularity</a></li>
+<li><a href="https://cdcgov.github.io/seqsender/articles/local_installation.html">How to run seqsender locally</a></li>
+<li><a href="https://cdcgov.github.io/seqsender/articles/docker_installation.html">How to run seqsender with Docker</a></li>
+<li><a href="https://cdcgov.github.io/seqsender/articles/compose_installation.html">How to run seqsender with Compose</a></li>
+<li><a href="https://cdcgov.github.io/seqsender/articles/singularity_installation.html">How to run seqsender with Singularity</a></li>
 </ul>
 </div>
 <div id="public-domain-standard-notice" class="section level2">
