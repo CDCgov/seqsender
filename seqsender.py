@@ -21,7 +21,7 @@ import setup
 PROG_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Define version of seqsender
-VERSION = "1.0 (Beta)"
+VERSION = "1.1.0 (Beta)"
 
 # Define current time
 STARTTIME = datetime.now()
