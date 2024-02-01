@@ -9,12 +9,8 @@ news:
 
 navbar:
   structure:
-    right: [twitter, github]
+    right: [github]
   components:
-    twitter:
-      icon: fa-twitter
-      href: http://twitter.com/hadleywickham
-      aria-label: Twitter
   left:
     - icon: fa-home
       href: index.html
