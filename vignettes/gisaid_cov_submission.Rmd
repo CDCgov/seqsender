@@ -1,0 +1,160 @@
+---
+output: rmarkdown::html_document
+title: "GISAID - EpiCoV"
+vignette: >
+  %\VignetteIndexEntry{GISAID - EpiCoV}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+  
+  table {
+    border: 1px solid gray;
+  }
+  
+  td, th {
+    border: 1px solid gray;
+    padding: 5px 5px 5px 5px;
+  }
+
+</style>
+
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# R libraries
+library(knitr) # for html table
+library(yaml)  # for yaml file
+library(tidyverse) # for pipe
+library(reshape2) # for data manipulation
+
+# Read in the DESCRIPTION file
+description <- yaml::read_yaml("../DESCRIPTION")
+
+# Define variables
+program <- description$Package
+title <- "EpiCoV"
+prefix <- "gs-"
+cli <- "covCLI"
+cli_list <-  c("EpiFlu", "EpiCoV", "EpiRSV", "EpiArbo")
+portals <- c("NCBI", "NCBI", "NCBI", "GISAID", "GISAID")
+databases <- c("BIOSAMPLE", "SRA", "GENBANK", "FLU", "COV")
+organism <- c("SARS-COV-2")
+organism_abbrev <- c("COV")
+
+# Define github repo
+github_repo <- description$URL
+
+# Define github pages URL
+github_pages_url <- description$GITHUB_PAGES
+
+# Create main config data frame
+main_config_df <- data.frame(
+  portals = portals,
+  databases = databases
+) %>% 
+dplyr::filter(
+  databases %in% toupper(!!organism_abbrev)
+)
+
+# Read in data files
+main_config_file <- yaml::read_yaml("../config/main_config.yaml")
+
+# Store all required fields
+metadata_df <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$COMMON_FIELDS) %>% 
+  dplyr::transmute(
+    Column_name = gsub("[*&?#]", "", L1),
+    Description = value
+  )
+
+# Combine all fields in given databases and portals
+for(d in 1:nrow(main_config_df)){
+  #d=1
+  database <- main_config_df$databases[d]
+  portal <- main_config_df$portals[which(main_config_df$databases %in% database)]
+  
+  if("COMMON_FIELDS" %in% names(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]])){
+    portal_fields <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]]$COMMON_FIELDS) %>% 
+      dplyr::transmute(
+        Column_name = gsub("[*&?#]", "", L1),
+        Description = value
+      )
+    
+    metadata_df <- metadata_df %>% 
+      dplyr::bind_rows(portal_fields) %>% 
+      dplyr::distinct(.keep_all = TRUE)
+    
+  }
+  
+  database_fields <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]]$DATABASE[[database]]) %>% 
+    dplyr::transmute(
+      Column_name = gsub("[*&?#]", "", L1),
+      Description = value
+    )
+  
+  metadata_df <- metadata_df %>% 
+    dplyr::bind_rows(database_fields) %>% 
+    dplyr::distinct(.keep_all = TRUE)
+  
+}
+```
+
+## Overview
+
+**GISAID**, short for the **Global Initiative on Sharing All Influenza Data**, is an organization that manages a restricted-access database containing genomic sequence data of select virus, primarily influenza viruses. The database has expanded to include the coronavirus responsible for the COVID-19 pandemic as well as other pathogens.
+
+For all GISAID submissions, ``r program`` makes use of GISAID's Command Line Interface Tools (e.g. ``r paste0(cli_list, collapse=", ")``, etc.) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload, submitters must download the ``r paste(title, "CLI")`` package from the GISAID platform that is compatible with their machine and store it in a subfolder called `epicov_cli` within a destination of choice..
+
+![](images/`r cli`_download.png)
+
+<br>
+
+After unzip and extracted the CLI from the downloaded package, submitters will need to prepare the requirement files to pass to ``r program``.
+
+## Requirement files
+
+- [Config file](#config-file) in a `yaml` format
+- [Fasta file](#fasta-file) in a`fasta` format
+- [Metadata file](#metadata-file) in a `csv` format
+
+## Config file
+
+Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow ``r program`` to authenticate the database prior to upload a submission.
+
+![](images/config_file.png)
+
+:::{style="padding: 10px; border: 1px solid blue !important;"}
+<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> **NOTE:** <br>
+
+- To submit to NCBI only, one can remove the **GISAID Submission (b)** section from the config file. Vice versa, to submit to GISAID only, just remove the **NCBI Submission (a)** section. <br>
+- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `Primary`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
+- **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
+:::
+
+## Fasta file
+
+Fasta file contains nucleotide sequences for all samples. See [Genbank Fasta Format](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) for more details.
+
+![](images/`r cli`_fasta.png)
+
+## Metadata file
+
+Here is a short description about the fields in the metadata worksheet.
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(metadata_df, format = "html", row.names = FALSE, escape = FALSE)
+```
+
+<br>
+
+**NOTE:** The prefix of **“`r prefix`”** is used to identity attributes for **GISAID** submissions. 
+
+<br><br>
+
+### [*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)
+
+<br><br><br>
+
+Any questions or issues? Please report them on our <a href="`r github_repo`/issues" target="_blank">Github issue tracker</a>.
+
+<br>
+

@@ -1,0 +1,36 @@
+Submission:
+  NCBI:
+    Username: username
+    Password: password
+    Table2asn: False
+    Submission_Position: 2
+    Description:
+      Title: cov_test_submission
+      Comment: This is a test submission
+      Organization:
+        '@role': owner
+        '@type': institute
+        '@org_id': 12345
+        Name: CDC
+        Address:
+           Affil: Centers for Disease Control and Prevention
+           Div: Respiratory Viruses Branch, Division of Viral Diseases
+           Street: 1600 Clifton Rd
+           City: Atlanta
+           Sub: GA
+           Postal_code: 30329
+           Country: USA
+           Email: email@myemail.com
+           Phone: ""
+        Submitter:
+          '@email': email@myemail.com
+          '@alt_email':
+          Name:
+            First: Jane
+            Last: Doe
+  GISAID:
+    Client-Id: TEST-EA76875B00C3
+    Username: username
+    Password: password
+    Submission_Position: 1
+

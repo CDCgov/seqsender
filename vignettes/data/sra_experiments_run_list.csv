@@ -1,0 +1,66 @@
+﻿library_source,library_selection,library_strategy,instrument_model
+GENOMIC,RANDOM,WGS,454 GS
+GENOMIC SINGLE CELL,PCR,WGA,454 GS 20
+TRANSCRIPTOMIC,RANDOM PCR,WXS,454 GS FLX
+TRANSCRIPTOMIC SINGLE CELL,RT-PCR,RNA-Seq,454 GS FLX+
+METAGENOMIC,HMPR,ssRNA-seq,454 GS FLX Titanium
+METATRANSCRIPTOMIC,MF,miRNA-Seq,454 GS Junior
+SYNTHETIC,repeat fractionation,ncRNA-Seq,Illumina Genome Analyzer
+VIRAL RNA,size fractionation,FL-cDNA,Illumina Genome Analyzer II
+OTHER,MSLL,EST,Illumina Genome Analyzer IIx
+,cDNA,Hi-C,Illumina HiSeq 1000
+,cDNA_randomPriming,ATAC-seq,Illumina HiSeq 1500
+,cDNA_oligo_dT,WCS,Illumina HiSeq 2000
+,PolyA,RAD-Seq,Illumina HiSeq 2500
+,Oligo-dT,CLONE,Illumina HiSeq 3000
+,Inverse rRNA,POOLCLONE,Illumina HiSeq 4000
+,ChIP,AMPLICON,HiSeq X Five
+,MNase,CLONEEND,HiSeq X Ten
+,DNase,FINISHING,Illumina HiScanSQ
+,Hybrid Selection,ChIP-Seq,Illumina NovaSeq 6000
+,Reduced Representation,MNase-Seq,Illumina MiSeq
+,Restriction Digest,DNase-Hypersensitivity,Illumina MiniSeq
+,5-methylcytidine antibody,Bisulfite-Seq,Illumina iSeq 100
+,MBD2 protein methyl-CpG binding domain,CTS,NextSeq 500
+,CAGE,MRE-Seq,NextSeq 550
+,RACE,MeDIP-Seq,NextSeq 1000
+,MDA,MBD-Seq,NextSeq 2000
+,padlock probes capture method,Tn-Seq,Helicos HeliScope
+,other,VALIDATION,AB SOLiD System
+,unspecified,FAIRE-seq,AB SOLiD System 2.0
+,,SELEX,AB SOLiD System 3.0
+,,NOMe-Seq,AB SOLiD 3 Plus System
+,,RIP-Seq,AB SOLiD 4 System
+,,ChIA-PET,AB SOLiD 4hq System
+,,Synthetic-Long-Read,AB SOLiD PI System
+,,Targeted-Capture,AB 5500 Genetic Analyzer
+,,Tethered Chromatin Conformation Capture,AB 5500xl Genetic Analyzer
+,,OTHER,AB 5500xl-W Genetic Analysis System
+,,,Complete Genomics
+,,,BGISEQ-500
+,,,DNBSEQ-G400
+,,,DNBSEQ-T7
+,,,DNBSEQ-G50
+,,,MGISEQ-2000RS
+,,,PacBio RS
+,,,PacBio RS II
+,,,Sequel
+,,,Sequel II
+,,,Ion Torrent PGM
+,,,Ion Torrent Proton
+,,,Ion Torrent S5
+,,,Ion Torrent S5 XL
+,,,Ion GeneStudio S5
+,,,Ion GeneStudio S5 plus
+,,,Ion GeneStudio S5 prime
+,,,AB 3730xL Genetic Analyzer
+,,,AB 3730 Genetic Analyzer
+,,,AB 3500xL Genetic Analyzer
+,,,AB 3500 Genetic Analyzer
+,,,AB 3130xL Genetic Analyzer
+,,,AB 3130 Genetic Analyzer
+,,,AB 310 Genetic Analyzer
+,,,MinION
+,,,GridION
+,,,PromethION
+,,,unspecified

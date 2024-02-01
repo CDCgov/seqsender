@@ -1,0 +1,52 @@
+﻿Section,Name,Description,Required
+General,submission_directory,Output directory for script to process submissions at,Yes
+General,submit_Genbank,Perform submission to Genbank,"Yes, True/False"
+General,submit_GISAID,Perform submission to GISAID,"Yes, True/False"
+General,submit_SRA,Perform submission to SRA,"Yes, True/False"
+General,submit_BioSample,Perform submission to BioSample,"Yes, True/False"
+General,joint_SRA_BioSample_submission,Submit SRA and BioSample together as one submission,"Yes, True/False"
+General,contact_email1,Primary contact email,Yes
+General,contact_email2,Secondary contact email,No
+General,organization_name,Organization name,Yes
+General,authorset,List of authors for submission,Yes
+General,ncbi_org_id,Center account organization ID,Yes
+General,submitter_info,Primary submitter info,Yes
+General,organism_name,Organism,Yes
+General,metadata_file_sep,File seperator used in your metadata file,Yes
+General,fasta_sample_name_col,Metadata column of sequence name used in fasta file,Yes
+General,collection_date_col,Collection date for sequence,Yes
+General,baseline_surveillance,If performing baseline_sequencing setting this to True will add baseline_sequencing tag to all of your submissions,"Yes, True/False"
+ncbi,hostname,FTP site. Use ftp-private.ncbi.nlm.nih.gov,Yes
+ncbi,api_url,API url for pulling down files from NCBI https://submit.ncbi.nlm.nih.gov/api/2.0/files/FILE_ID/?format=attachment,Yes
+ncbi,username,NCBI center account username,Yes
+ncbi,password,NCBI center account password,Yes
+ncbi,publication_title,Public facing title for submission,Yes
+ncbi,ncbi_ftp_path_to_submission_folders,If your FTP site does not directly have the folders for Production/Test then provide the path for this. Typically left blank,No
+ncbi,BioProject,BioProject to link submissions to,No
+ncbi,BioSample_sample_name_col,Sequence names for BioSample,"Yes, if submitting to BioSample"
+ncbi,SRA_sample_name_col,Sequence names for SRA,"Yes, if submitting to SRA"
+ncbi,Genbank_sample_name_col,Sequence names for Genbank,"Yes, if submitting to Genbank"
+ncbi,BioSample_package,Use SARS-CoV-2.cl.1.0,Yes
+ncbi,Center_title,Title for center account,Yes
+ncbi,Genbank_organization_type,Center organization type,Yes
+ncbi,Genbank_organization_role,Use owner unless otherwise specified,Yes
+ncbi,Genbank_spuid_namespace,Use ncbi-sarscov2-genbank unless specified,Yes
+ncbi,Genbank_auto_remove_sequences_that_fail_qc,Genbank can automatically remove sequences that fail submission qc in order to not stall submissions,Yes True/False
+ncbi,Genbank_wizard,Use BankIt_SARSCoV2_api unless specified,Yes
+ncbi,citation_address,Address of submitter organization,Yes
+ncbi,SRA_file_location,Whether you are submitting SRA files via manual upload or cloud link,"Yes, if submitting to SRA File/Cloud"
+ncbi,SRA_file_column1,Either name of file if uploading or full path to cloud link,"Yes, if submitting to SRA"
+ncbi,SRA_file_column2,Either name of file if uploading or full path to cloud link,"Yes, if submitting to SRA and you have multiple files"
+ncbi,SRA_file_loader,Leave blank unless notified by SRA team you need to use a specific loader for your SRA files,No
+genbank_src_metadata,column_names,Database field to column name of metadata,Yes
+genbank_cmt_metadata,create_cmt,Create cmt file to go with submission,Yes True/False
+genbank_cmt_metadata,column_names,Database field to column name of metadata,Yes
+BioSample_attributes,column_names,Database field to column name of metadata,Yes
+SRA_attributes,column_names,Database field to column name of metadata,Yes
+gisaid,column_names,Database field to column name of metadata,Yes
+gisaid,gisaid_sample_name_col,Sequence names for GISAID,"Yes, if submitting to GISAID"
+gisaid,cid,CID used for submission,Yes
+gisaid,username,gisaid username,Yes
+gisaid,password,GISAID password,Yes
+gisaid,type,Use betacoronavirus unless specified,Yes
+gisaid,Update_sequences_on_Genbank_auto_removal,If using Genbank auto-remove qc then use this to update the GISAID submission based on what is accepted by Genbank,Yes True/False

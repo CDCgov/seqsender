@@ -1,0 +1,38 @@
+---
+title: "Frequently asked questions"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{Frequently asked questions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# R libraries
+library(yaml)  # for yaml file
+
+# Read in the DESCRIPTION file
+description <- yaml::read_yaml("../DESCRIPTION")
+
+# Define variables
+program <- description$Package
+
+# Define github repo
+github_repo <- description$URL
+
+# Define github pages URL
+github_pages_url <- description$GITHUB_PAGES
+```
+
+## How do I get help?
+
+``r program`` is under active development. If you need help, would like to contribute, or simply want to talk about the project with like-minded individuals, we have a number of open channels for communication.
+
+- To report bugs or file feature requests, use the [issue tracker on Github](`r github_repo`/issues).
+
+- To contribute code submit a [pull request on Github](`r github_repo`/pulls).
+
+
+
+
