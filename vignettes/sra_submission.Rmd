@@ -1,0 +1,163 @@
+---
+title: "NCBI - SRA"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{NCBI - SRA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+  
+  table {
+    border: 1px solid gray;
+  }
+  
+  td, th {
+    border: 1px solid gray;
+    padding: 5px 5px 5px 5px;
+  }
+
+</style>
+
+
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# R libraries
+library(knitr) # for html table
+library(yaml)  # for yaml file
+library(tidyverse) # for pipe
+library(reshape2) # for data manipulation
+
+# Read in the DESCRIPTION file
+description <- yaml::read_yaml("../DESCRIPTION")
+
+# Define variables
+program <- description$Package
+title <- "SRA"
+prefix <- "sra-"
+prefix_examples <- c("sra-loader", "sra-platform")
+portals <- c("NCBI", "NCBI", "NCBI", "GISAID", "GISAID")
+databases <- c("BIOSAMPLE", "SRA", "GENBANK", "FLU", "COV")
+organism <- c("Influenza A Virus", "SARS-COV-2")
+organism_abbrev <- c("FLU", "COV")
+
+# Define github repo
+github_repo <- description$URL
+
+# Define github pages URL
+github_pages_url <- description$GITHUB_PAGES
+  
+# Create main config data frame
+main_config_df <- data.frame(
+  portals = portals,
+  databases = databases
+) %>% 
+dplyr::filter(
+  databases %in% toupper(!!title)
+)
+
+# Read in data files
+main_config_file <- yaml::read_yaml("../config/main_config.yaml")
+
+# Store all required fields
+metadata_df <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$COMMON_FIELDS) %>% 
+  dplyr::transmute(
+    Column_name = gsub("[*&?#]", "", L1),
+    Description = value
+  )
+
+# Combine all fields in given databases and portals
+for(d in 1:nrow(main_config_df)){
+  #d=1
+  database <- main_config_df$databases[d]
+  portal <- main_config_df$portals[which(main_config_df$databases %in% database)]
+  
+  if("COMMON_FIELDS" %in% names(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]])){
+    portal_fields <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]]$COMMON_FIELDS) %>% 
+      dplyr::transmute(
+        Column_name = gsub("[*&?#]", "", L1),
+        Description = value
+      )
+    
+    metadata_df <- metadata_df %>% 
+      dplyr::bind_rows(portal_fields) %>% 
+      dplyr::distinct(.keep_all = TRUE)
+    
+  }
+  
+  database_fields <- reshape2::melt(main_config_file$SUBMISSION_PORTAL$PORTAL_NAMES[[portal]]$DATABASE[[database]]) %>% 
+    dplyr::transmute(
+      Column_name = gsub("[*&?#]", "", L1),
+      Description = value
+    )
+  
+  metadata_df <- metadata_df %>% 
+    dplyr::bind_rows(database_fields) %>% 
+    dplyr::distinct(.keep_all = TRUE)
+  
+}
+```
+
+## Overview
+
+**Sequence Read Archive (SRA)** data, available through multiple cloud providers and NCBI servers, is the largest publicly available repository of high throughput sequencing data. The archive accepts data from all branches of life as well as metagenomic and environmental surveys. **SRA** stores raw sequencing data and alignment information to enhance reproducibility and facilitate new discoveries through data analysis. 
+
+Before one can upload sequence read archives to **`r title`** database using ``r program``, they must ensure the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) are prepared in advance and stored in a submission directory of choice.
+
+## Requirement files
+
+- [Config file](#config-file) in a `yaml` format
+- [Sequence read archives](#sequence-read-archives) in a `bam/sff/hdf5/fastq` format
+- [Metadata file](#metadata-file) in a `csv` format
+
+
+## Config file
+
+Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow ``r program`` to authenticate the database prior to upload a submission.
+
+![](images/config_file.png)
+
+:::{style="padding: 10px; border: 1px solid blue !important;"}
+<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>` **NOTE:** <br>
+
+- To submit to NCBI only, one can remove the **GISAID Submission (b)** section from the config file. Vice versa, to submit to GISAID only, just remove the **NCBI Submission (a)** section. <br>
+- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `Primary`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
+- **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
+:::
+
+## Sequence read archives
+
+Currently, NCBI accepts binary files such as BAM, SFF, and HDF5 formats and text formats such as FASTQ. See [SRA Submit Formats](https://www.ncbi.nlm.nih.gov/sra/docs/submitformats/) for more details.
+
+:::{style="padding: 10px; border: 1px solid blue !important;"}
+<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>` **NOTE:** <br>
+
+- Sequence read archive for all samples must be stored in a subfolder called `raw_reads` inside a submission directory of choice
+:::
+
+<br>
+
+## Metadata file
+
+Here is a short description about the fields in the metadata worksheet.
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(metadata_df, format = "html", row.names = FALSE, escape = FALSE)
+```
+
+<br>
+
+**NOTE:** The prefix of **“`r prefix`”** is used to identity attributes for **`r title`** submissions
+
+To include additional attributes to **`r title`** submissions, just append ``r prefix`` in front of the desired attributes, e.g. ``r paste0( prefix_examples, collapse=", ")``, etc. See [SRA metadata section](https://www.ncbi.nlm.nih.gov/sra/docs/submitmeta/) for more details.
+
+<br><br>
+
+### [*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)
+
+<br><br><br>
+
+Any questions or issues? Please report them on our <a href="`r github_repo`/issues" target="_blank">Github issue tracker</a>.
+
+<br>
+
