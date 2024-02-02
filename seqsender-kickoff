@@ -1,0 +1,11 @@
+
+#!/bin/bash
+# Wrapper to run public-repository-submission pipeline
+
+# Define working directory and project directory
+WORKDIR=${WORKDIR:-"/data"}
+PROJECT_DIR=${PROJECT_DIR:-"/seqsender"}
+PROGRAM=${PROJECT_DIR}/seqsender.py
+
+# Execute seqsender program
+python ${PROGRAM} "$@"

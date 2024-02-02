@@ -1,0 +1,104 @@
+---
+title: "GISAID - EpiCoV"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{GISAID - EpiCoV}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+<style>
+  
+  table {
+    border: 1px solid gray;
+  }
+
+td, th {
+  border: 1px solid gray;
+  padding: 5px 5px 5px 5px;
+}
+
+</style>
+
+<script type="text/javascript">
+  
+  function ToggleOperation(id) {
+    var x = document.getElementById(id+"-block");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+
+</script>
+
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# R libraries
+library(knitr) # for html table
+library(tidyverse) # for pipe
+library(yaml)  # for yaml file
+
+# Read in the DESCRIPTION file
+description <- yaml::read_yaml("../DESCRIPTION")
+
+# Define github repo
+github_repo <- description$URL
+
+# Define github pages URL
+github_pages_url <- description$GITHUB_PAGES
+
+# Read in files
+gisaid_seq_tech_df <- read.csv("./data/gisaid_seq_technology_list.csv", header=TRUE) 
+
+# Read in files
+gisaid_orig_lab_id_df <- read.csv("./data/gisaid_originating_lab_id_list.csv", header=TRUE) 
+```
+
+
+## Metadata Options
+
+- ### <a onclick="ToggleOperation('seq-technology')">seq_technology</a>
+
+<div id="seq-technology-block" style="display: none;">
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(gisaid_seq_tech_df, format = "html", row.names = FALSE, escape = FALSE)
+```
+
+</div>
+
+- ### <a onclick="ToggleOperation('subm-lab')">subm_lab</a>
+
+<div id="subm-lab-block" style="display: none;">
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(gisaid_orig_lab_id_df, format = "html", row.names = FALSE, escape = FALSE)
+```
+
+</div>
+
+
+<br><br><br>
+
+Any questions or issues? Please report them on our <a href="`r github_repo`/issues" target="_blank">Github issue tracker</a>.
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

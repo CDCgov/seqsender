@@ -1,0 +1,136 @@
+---
+title: "NCBI - SRA"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{NCBI - SRA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+<style>
+  
+  table {
+    border: 1px solid gray;
+  }
+
+td, th {
+  border: 1px solid gray;
+  padding: 5px 5px 5px 5px;
+}
+
+</style>
+
+<script type="text/javascript">
+  
+  function ToggleOperation(id) {
+    var x = document.getElementById(id+"-block");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+
+</script>
+
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# R libraries
+library(knitr) # for html table
+library(tidyverse) # for pipe
+library(yaml)  # for yaml file
+
+# Read in the DESCRIPTION file
+description <- yaml::read_yaml("../DESCRIPTION")
+
+# Define variables
+program <- description$Package
+
+# Define github repo
+github_repo <- description$URL
+
+# Define github pages URL
+github_pages_url <- description$GITHUB_PAGES
+
+# Read in files
+sra_options_df <- read.csv("./data/sra_experiments_run_list.csv", header=TRUE)
+
+instrument_model_df <- sra_options_df %>% select(instrument_model) %>% 
+  dplyr::filter(!instrument_model %in% c(NA, "", NULL) )
+
+library_strategy_df <- sra_options_df %>% select(library_strategy) %>% 
+  dplyr::filter(!library_strategy %in% c(NA, "", NULL) )
+
+library_source_df <- sra_options_df %>% select(library_source) %>% 
+  dplyr::filter(!library_source %in% c(NA, "", NULL) )
+
+library_selection_df <- sra_options_df %>% select(library_selection) %>% 
+  dplyr::filter(!library_selection %in% c(NA, "", NULL) )
+```
+
+## Metadata Options
+
+- ### <a onclick="ToggleOperation('instrument-model')">instrument_model</a>
+
+<div id="instrument-model-block" style="display: none;">
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(instrument_model_df, format = "html", row.names = FALSE, col.names=NULL, escape = FALSE)
+```
+
+</div>
+
+- ### <a onclick="ToggleOperation('library-strategy')">library_strategy</a>
+
+<div id="library-strategy-block" style="display: none;">
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(library_strategy_df, format = "html", row.names = FALSE, col.names=NULL, escape = FALSE)
+```
+
+</div>
+
+- ### <a onclick="ToggleOperation('library-source')">library_source</a>
+
+<div id="library-source-block" style="display: none;">
+
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(library_source_df, format = "html", row.names = FALSE, col.names=NULL, escape = FALSE)
+```
+
+</div>
+
+- ### <a onclick="ToggleOperation('library-selection')">library_selection</a>
+
+<div id="library-selection-block" style="display: none;">
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(library_selection_df, format = "html", row.names = FALSE, col.names=NULL, escape = FALSE)
+```
+
+</div>
+
+
+<br><br><br>
+
+Any questions or issues? Please report them on our <a href="`r github_repo`/issues" target="_blank">Github issue tracker</a>.
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

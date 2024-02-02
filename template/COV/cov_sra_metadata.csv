@@ -1,0 +1,2 @@
+spuid,spuid_namespace,bioproject,file_location,file_name,sra-library_name,sra-instrument_model,sra-library_strategy,sra-library_source,sra-library_selection,sra-library_layout,sra-library_construction_protocol,sra-loader
+seq1,CDC-OAMD,PRJNA512913,local,"fastq_R1.fastq.gz, fastq_R2.fastq.gz",Helix COVID-19 and Flu Test,Illumina NovaSeq 6000,AMPLICON,VIRAL RNA,RT-PCR,PAIRED,Helix Hybrid-Capture Test,latf-load

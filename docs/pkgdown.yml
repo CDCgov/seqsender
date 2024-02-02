@@ -1,0 +1,22 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  biosample_submission: biosample_submission.html
+  compose_installation: compose_installation.html
+  docker_installation: docker_installation.html
+  faqs: faqs.html
+  genbank_submission: genbank_submission.html
+  gisaid_cov_submission: gisaid_cov_submission.html
+  gisaid_flu_submission: gisaid_flu_submission.html
+  gisaid_options: gisaid_options.html
+  local_installation: local_installation.html
+  prerequisites: prerequisites.html
+  singularity_installation: singularity_installation.html
+  sra_options: sra_options.html
+  sra_submission: sra_submission.html
+last_built: 2024-02-01T21:54Z
+urls:
+  reference: https://github.com/CDCgov/seqsender/reference
+  article: https://github.com/CDCgov/seqsender/articles
+

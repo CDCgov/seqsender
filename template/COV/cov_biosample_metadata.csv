@@ -1,0 +1,3 @@
+spuid,spuid_namespace,description,organism,bioproject,bs-isolate,bs-collected_by, bs-collection_date, bs-host, bs-host_disease,bs-isolation_source,bs-geo_loc_name,bs-host_sex,bs-host_age
+seq1,CDC-OAMD,CDC Sars CoV2 Sequencing Baseline Constellation,Severe acute respiratory syndrome coronavirus 2,PRJNA512913,SARS-CoV-2/human/USA/GA_2741/2020,Helix,2020-03-28,Homo sapiens,COVID-19,nasal swab,United States: Georgia,Male,28
+seq2,CDC-OAMD,CDC Sars CoV2 Sequencing Baseline Constellation,Severe acute respiratory syndrome coronavirus 2,PRJNA512962,SARS-CoV-2/human/USA/GA_3742/2020,Helix,2020-04-29,Homo sapiens,COVID-20,nasal swab,United States: Georgia,Male,45

@@ -1,0 +1,23 @@
+version: "3.9"
+
+x-data-volumes:
+  &data-volume
+  type: bind
+  source: $HOME/Github/Testings/seqsender
+  target: /data
+
+x-seqsender-code:
+  &seqsender-code
+  type: bind
+  source: $HOME/Github/seqsender
+  target: /seqsender
+
+services:
+  seqsender: 
+    container_name: seqsender
+    image: cdcgov/seqsender-dev:latest
+    restart: always
+    volumes: 
+      - *data-volume
+      - *seqsender-code
+    command: tail -f /dev/null 
