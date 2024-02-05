@@ -102,7 +102,7 @@ for(d in 1:nrow(main_config_df)){
 
 **GISAID**, short for the **Global Initiative on Sharing All Influenza Data**, is an organization that manages a restricted-access database containing genomic sequence data of select virus, primarily influenza viruses. The database has expanded to include the coronavirus responsible for the COVID-19 pandemic as well as other pathogens.
 
-For all GISAID submissions, ``r program`` makes use of GISAID's Command Line Interface Tools (e.g. ``r paste0(cli_list, collapse=", ")``, etc.) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload, submitters must download the ``r paste(title, "CLI")`` package from the GISAID platform that is compatible with their machine and store it in a subfolder called `epicov_cli` within a destination of choice..
+For all GISAID submissions, ``r program`` makes use of GISAID's Command Line Interface Tools (e.g. ``r paste0(cli_list, collapse=", ")``, etc.) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload, submitter must download the ``r paste(title, "CLI")`` package from the GISAID platform that is compatible with their machine and store it in a subfolder called `gisaid_cli` within a submission directory of choice.
 
 ![](images/`r cli`_download.png)
 
@@ -115,6 +115,13 @@ After unzip and extracted the CLI from the downloaded package, submitters will n
 - [Config file](#config-file) in a `yaml` format
 - [Fasta file](#fasta-file) in a`fasta` format
 - [Metadata file](#metadata-file) in a `csv` format
+- covCLI binary
+
+A quick look of where to store all of the requirement files
+
+![](images/gisaid_cli_dir.png)
+
+![](images/submission_dir.png)
 
 ## Config file
 
@@ -126,7 +133,7 @@ Config file is a yaml file that provides a brief description about the submissio
 <i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> **NOTE:** <br>
 
 - To submit to NCBI only, one can remove the **GISAID Submission (b)** section from the config file. Vice versa, to submit to GISAID only, just remove the **NCBI Submission (a)** section. <br>
-- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `Primary`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
+- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `1`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
 - **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
 :::
 

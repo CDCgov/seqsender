@@ -10,3 +10,9 @@ submit.ready
 *report.xml
 test_input/test_metadata.tsv
 upload_log.csv
+*.vscode
+*.Rproj
+.Rproj.user
+.Rhistory
+.Rbuildignore
+docker-compose-*.yaml

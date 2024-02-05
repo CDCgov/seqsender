@@ -9,7 +9,7 @@ news:
 
 navbar:
   structure:
-    right: [github]
+    right: [news, github]
   components:
   left:
     - icon: fa-home

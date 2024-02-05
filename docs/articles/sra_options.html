@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">seqsender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -44,7 +46,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Getting Started
      
     <span class="caret"></span>
@@ -69,7 +71,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Databases
      
     <span class="caret"></span>
@@ -95,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Support
      
     <span class="caret"></span>
@@ -108,6 +110,9 @@
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li>
   <a href="https://github.com/CDCgov/seqsender/">
     <span class="fab fa-github fa-lg"></span>
@@ -124,13 +129,13 @@
 
       
 
-      </header><script src="sra_options_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>NCBI - SRA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/master/vignettes/sra_options.Rmd"><code>vignettes/sra_options.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/HEAD/vignettes/sra_options.Rmd"><code>vignettes/sra_options.Rmd</code></a></small>
       <div class="hidden name"><code>sra_options.Rmd</code></div>
 
     </div>
@@ -160,14 +165,13 @@ td, th {
     }
   }
 
-</script><div id="metadata-options" class="section level2">
-<h2 class="hasAnchor">
-<a href="#metadata-options" class="anchor"></a>Metadata Options</h2>
+</script><div class="section level2">
+<h2 id="metadata-options">Metadata Options<a class="anchor" aria-label="anchor" href="#metadata-options"></a>
+</h2>
 <ul>
 <li><h3 id="instrument_model"><a onclick="ToggleOperation('instrument-model')">instrument_model</a></h3></li>
 </ul>
 <div id="instrument-model-block" style="display: none;">
-
 <table class="table"><tbody>
 <tr>
 <td style="text-align:left;">
@@ -500,7 +504,6 @@ unspecified
 <li><h3 id="library_strategy"><a onclick="ToggleOperation('library-strategy')">library_strategy</a></h3></li>
 </ul>
 <div id="library-strategy-block" style="display: none;">
-
 <table class="table"><tbody>
 <tr>
 <td style="text-align:left;">
@@ -693,8 +696,6 @@ OTHER
 <li><h3 id="library_source"><a onclick="ToggleOperation('library-source')">library_source</a></h3></li>
 </ul>
 <div id="library-source-block" style="display: none;">
-
-
 <table class="table"><tbody>
 <tr>
 <td style="text-align:left;">
@@ -747,7 +748,6 @@ OTHER
 <li><h3 id="library_selection"><a onclick="ToggleOperation('library-selection')">library_selection</a></h3></li>
 </ul>
 <div id="library-selection-block" style="display: none;">
-
 <table class="table"><tbody>
 <tr>
 <td style="text-align:left;">
@@ -897,7 +897,9 @@ unspecified
 </tbody></table>
 </div>
 <p><br><br><br></p>
-<p>Any questions or issues? Please report them on our <a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github issue tracker</a>.</p>
+<p>Any questions or issues? Please report them on our
+<a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github
+issue tracker</a>.</p>
 <p><br></p>
 </div>
   </div>
@@ -913,11 +915,13 @@ unspecified
 
 
       <footer><div class="copyright">
-  <p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Ben Rambo-Martin.</p>
+  <p></p>
+<p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Benjamin Rambo-Martin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer>
@@ -925,6 +929,8 @@ unspecified
 
   
 
+
+  
 
   </body>
 </html>
