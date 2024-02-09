@@ -12,8 +12,10 @@ test_input/test_metadata.tsv
 upload_log.csv
 *.vscode
 *.Rproj
-.Rproj.user/*
 *.Rhistory
 *.Rbuildignore
 *.Rproj
 docker-compose-*.yaml
+
+# ignore folders
+**/.Rproj.user
