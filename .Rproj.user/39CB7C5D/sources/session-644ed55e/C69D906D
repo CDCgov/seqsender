@@ -1,0 +1,26 @@
+{
+    "id": "C69D906D",
+    "path": "~/Github/seqsender/vignettes/sra_submission.Rmd",
+    "project_path": "vignettes/sra_submission.Rmd",
+    "type": "r_markdown",
+    "hash": "3473667126",
+    "contents": "",
+    "dirty": false,
+    "created": 1707160368048.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "129,130",
+        "scrollLine": "124"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1707161546,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1707161546384,
+    "read_only": false,
+    "read_only_alternatives": []
+}

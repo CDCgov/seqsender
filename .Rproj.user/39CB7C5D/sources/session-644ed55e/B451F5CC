@@ -1,0 +1,26 @@
+{
+    "id": "B451F5CC",
+    "path": "~/Github/seqsender/vignettes/local_installation.Rmd",
+    "project_path": "vignettes/local_installation.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1707156979196.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "65,55",
+        "scrollLine": "59"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1707160288,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1707160288472,
+    "read_only": false,
+    "read_only_alternatives": []
+}

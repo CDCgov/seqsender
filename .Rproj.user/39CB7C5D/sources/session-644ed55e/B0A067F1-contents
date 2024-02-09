@@ -1,0 +1,43 @@
+Package: seqsender
+Type: Package
+Title: Public Database Submission Pipeline
+Version: 1.1.0
+Authors@R: 
+  c(
+    person(given="Dakota", family="Howard", role=c("aut","cre"), 
+           email="psv4@cdc.gov", comment=c(ORCID="0000-0002-7674-0385")), 
+    person(given="Reina", family="Chau", role=c("aut"), 
+           email="snu3@cdc.gov", comment=c(ORCID="0000-0003-3012-1404")),
+    person(given="Peter", family="Cook", role=c("aut"), 
+           email="ooj4@cdc.gov"), 
+    person(given="Kristine", family="Lacek", role=c("aut"), 
+           email="qgx6@cdc.gov", comment=c(ORCID="0000-0002-6247-5082")),   
+    person(given="Amanda", family="Sullivan", role=c("aut"), 
+           email="xpa3@cdc.gov"), 
+    person(given="Vikram", family="Setlur", role=c("aut"), 
+           email="xoe7@cdc.gov"),     
+    person(given="Thomas", family="Stark", role=c("aut"), 
+           email="ynh4@cdc.gov"),     
+    person(given="Brian", family="Lee", role=c("aut"), 
+           email="fya1@cdc.gov"),     
+    person(given="Benjamin", family="Rambo-Martin", role=c("aut"), 
+           email="nbx0@cdc.gov", comment=c(ORCID="0000-0002-8591-3954")) 
+  )
+Description: seqsender is a Python program that is designed to automate the process of generating 
+  necessary submission files (e.g. submission.xml, submission.zip, etc.) 
+  and then bulk uploading them via FTP to NCBI archives such as Genbank, BioSample, and SRA. 
+  Additionally, the program can batch uploading submissions of meta- and sequence-data to GISAID 
+  using their Command Line Interface Tools (e.g., EpiFlu and EpiCoV CLI). 
+  Currently, the pipeline is capable of uploading Influenza A Virus and SARS-COV-2 data.
+RoxygenNote: 7.2.3
+License: Apache License (== 2.0) + file LICENSE
+URL: https://github.com/CDCgov/seqsender
+GITHUB_PAGES: https://cdcgov.github.io/seqsender
+Docker: cdcgov/seqsender-dev:latest
+Encoding: UTF-8
+VignetteBuilder: knitr
+BugReports: https://github.com/CDCgov/seqsender/issues
+
+
+
+

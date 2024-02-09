@@ -1,0 +1,52 @@
+url: https://github.com/CDCgov/seqsender
+
+template:
+  params:
+    bootswatch: cosmo
+
+news:
+  one_page: false
+
+navbar:
+  structure:
+    right: [news, github]
+  components:
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: Getting Started
+      menu:
+      - text: Prerequisites
+        href: articles/prerequisites.html
+      - text: Installation
+      - text: How to run seqsender locally
+        href: articles/local_installation.html
+      - text: How to run seqsender with Docker
+        href: articles/docker_installation.html
+      - text: How to run seqsender with Compose
+        href: articles/compose_installation.html
+      - text: How to run seqsender with Singularity
+        href: articles/singularity_installation.html
+    - text: Databases
+      menu: 
+      - text: NCBI
+      - text: BioSample
+        href: articles/biosample_submission.html
+      - text: SRA
+        href: articles/sra_submission.html
+      - text: GenBank
+        href: articles/genbank_submission.html 
+      - text: GISAID
+      - text: EpiFlu
+        href: articles/gisaid_flu_submission.html
+      - text: EpiCoV
+        href: articles/gisaid_cov_submission.html
+    - text: Support
+      menu:
+      - text: FAQs
+        href: articles/faqs.html
+        
+footer:
+  structure: 
+    left: developed_by
+    right: built_with

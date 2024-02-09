@@ -1,0 +1,26 @@
+{
+    "id": "23D64F45",
+    "path": "~/Github/seqsender/vignettes/biosample_submission.Rmd",
+    "project_path": "vignettes/biosample_submission.Rmd",
+    "type": "r_markdown",
+    "hash": "3105959148",
+    "contents": "",
+    "dirty": false,
+    "created": 1707160700849.0,
+    "source_on_save": false,
+    "relative_order": 11,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "126,130",
+        "scrollLine": "121"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1707161547,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1707161547650,
+    "read_only": false,
+    "read_only_alternatives": []
+}

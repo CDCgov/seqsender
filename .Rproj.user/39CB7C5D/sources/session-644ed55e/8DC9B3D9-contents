@@ -1,0 +1,12 @@
+
+citHeader("To cite seqsender in publications use:")
+
+citEntry(
+  entry    = "manual",
+  title    = "seqsender: Public Database Submission Pipeline",
+  author   = "Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Benjamin Rambo-Martin",
+  institution = "Centers for Disease Control and Prevention",
+  address  = "1600 Clifton Road NE, Building 21, 8th Floor, Atlanta, Georgia 30333",
+  year     = format(Sys.Date(), "%Y"),
+  textVersion = "Howard, D. et al. seqsender: Public Database Submission Pipeline."
+)
