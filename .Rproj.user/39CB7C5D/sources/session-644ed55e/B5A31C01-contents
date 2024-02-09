@@ -12,7 +12,7 @@ test_input/test_metadata.tsv
 upload_log.csv
 *.vscode
 *.Rproj
-*.Rproj.user
+.Rproj.user/
 *.Rhistory
 *.Rbuildignore
 *.Rproj
