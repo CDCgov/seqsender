@@ -1,0 +1,24 @@
+name: Set up Mamba Environment
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - uses: mamba-org/setup-micromamba@v1
+    - name: Set up Mamba Environment
+      with:
+        environment-file: env.yaml
+      init-shell: >-
+        bash
+        powershell
+      cache-environment: true
+      post-cleanup: 'all'
+    - name: Test with pytest
+      run: |
+        mamba install pytest
+        pytest
