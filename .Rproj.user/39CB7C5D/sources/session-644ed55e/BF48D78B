@@ -1,0 +1,26 @@
+{
+    "id": "BF48D78B",
+    "path": "~/Github/seqsender/vignettes/singularity_installation.Rmd",
+    "project_path": "vignettes/singularity_installation.Rmd",
+    "type": "r_markdown",
+    "hash": "562811111",
+    "contents": "",
+    "dirty": false,
+    "created": 1707157073615.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "135,7",
+        "scrollLine": "118"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1707512279,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1707512279812,
+    "read_only": false,
+    "read_only_alternatives": []
+}

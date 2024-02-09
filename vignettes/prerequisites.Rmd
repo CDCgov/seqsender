@@ -62,7 +62,6 @@ Before submitter can perform a submission using ``r program``, make sure the req
 > <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
 > <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
 > <a href="`r github_pages_url`/articles/gisaid_flu_submission.html" target="_blank">GISAID</a> <br>
-> <a href="`r github_pages_url`/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a>
 
 (b) To prep for COV submissions, select one of the databases below to get started:
 
@@ -70,7 +69,6 @@ Before submitter can perform a submission using ``r program``, make sure the req
 > <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
 > <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
 > <a href="`r github_pages_url`/articles/gisaid_cov_submission.html" target="_blank">GISAID</a> <br>
-> <a href="`r github_pages_url`/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a>
 
 <br><br><br>
 

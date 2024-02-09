@@ -1,6 +1,6 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
-pkgdown_sha: ~
+pandoc: 3.1.1
+pkgdown: 2.0.7.9000
+pkgdown_sha: 5a0a31f89d7c839c04a929844e4b7216196189ca
 articles:
   biosample_submission: biosample_submission.html
   compose_installation: compose_installation.html
@@ -15,7 +15,7 @@ articles:
   singularity_installation: singularity_installation.html
   sra_options: sra_options.html
   sra_submission: sra_submission.html
-last_built: 2024-02-01T21:54Z
+last_built: 2024-02-09T22:11Z
 urls:
   reference: https://github.com/CDCgov/seqsender/reference
   article: https://github.com/CDCgov/seqsender/articles

@@ -1,0 +1,26 @@
+Column_name,Description
+Lineage,"""pdm09"", ""Victoria"", ""Yamagata"""
+Passage_History,"E.g. 'Original', 'E2','MX/C1', ... "
+province,Province of the sample location.
+sub_province,Sub-Province of the submission location
+Location_Additional_info,e.g. the city name
+Host_Additional_info,Any other information about the host or source.
+Submitting_Sample_Id,Internal ID given to the sample by the submitting lab
+Originating_Sample_Id,Internal ID given to the sample by the originating lab.
+Antigen_Character,e.g. 'A/Brisbane/10/2007
+Adamantanes_Resistance_geno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"" "
+Oseltamivir_Resistance_geno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Zanamivir_Resistance_geno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Peramivir_Resistance_geno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Other_Resistance_geno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Adamantanes_Resistance_pheno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Oseltamivir_Resistance_pheno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Zanamivir_Resistance_pheno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Peramivir_Resistance_pheno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Other_Resistance_pheno,"""Unknown"", ""Resistant"", ""Sensitive"", ""Inconclusive"""
+Host_Age,"Age as string, e.g. ""15"""
+Host_Age_Unit,"Unit for the age: ""Y"" for years, ""M"" for months, ""D"" for days."
+Host_Gender,Alternatives are 'M' or 'F'
+Health_Status,"For human hosts: Deceased, Recovered, In-patient, Out-patient, Long-term resident. <br> For animal hosts: Healthy, Sick, Dead."
+Note,A place for any extra notes about the sample.
+PMID,"List of PubMed ID's for referencing PubMed records related to the sample. <br> Example 1: 1234567; Example 2: 1234567, 1234568"

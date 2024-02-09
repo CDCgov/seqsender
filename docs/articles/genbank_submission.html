@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">seqsender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -44,7 +46,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Getting Started
      
     <span class="caret"></span>
@@ -69,7 +71,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Databases
      
     <span class="caret"></span>
@@ -95,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Support
      
     <span class="caret"></span>
@@ -108,6 +110,9 @@
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li>
   <a href="https://github.com/CDCgov/seqsender/">
     <span class="fab fa-github fa-lg"></span>
@@ -124,13 +129,13 @@
 
       
 
-      </header><script src="genbank_submission_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>NCBI - GenBank</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/master/vignettes/genbank_submission.Rmd"><code>vignettes/genbank_submission.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/HEAD/vignettes/genbank_submission.Rmd"><code>vignettes/genbank_submission.Rmd</code></a></small>
       <div class="hidden name"><code>genbank_submission.Rmd</code></div>
 
     </div>
@@ -140,60 +145,102 @@
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
   
-  td, th {
+  td, th, tr {
     border: 1px solid gray;
     padding: 5px 5px 5px 5px;
   }
 
 </style>
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
-<p>The <strong>GenBank</strong> sequence database is an open access, annotated collection of all publicly available nucleotide sequences and their protein translations. It is produced and maintained by the <strong>National Center for Biotechnology Information</strong> (NCBI; a part of the <strong>National Institutes of Health</strong> in the United States) as part of the <strong>International Nucleotide Sequence Database Collaboration (INSDC)</strong>.</p>
-<p>Before one can batch uploading meta- and sequence-data to <strong>GenBank</strong> database using <code>seqsender</code>, they must ensure the requirement files (such as <code>config.yaml</code>, <code>metadata.csv</code>, <code>sequence.fasta</code>, <code>raw reads</code>, etc.) are already prepared and stored in a submission directory of choice.</p>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>The <strong>GenBank</strong> sequence database is an open access,
+annotated collection of all publicly available nucleotide sequences and
+their protein translations. It is produced and maintained by the
+<strong>National Center for Biotechnology Information</strong> (NCBI; a
+part of the <strong>National Institutes of Health</strong> in the United
+States) as part of the <strong>International Nucleotide Sequence
+Database Collaboration (INSDC)</strong>.</p>
+<p>Before submitters can batch uploading meta- and sequence-data to
+<strong>GenBank</strong> database using <code>seqsender</code>, they
+must ensure the requirement files (such as <code>config.yaml</code>,
+<code>metadata.csv</code>, <code>sequence.fasta</code>,
+<code>raw reads</code>, etc.) are already prepared ahead of time and
+stored them in a submission folder of choice (e.g.,
+<code>submission_name</code>) within a parent submission directory
+(e.g., <code>submission_dir</code>). That way <code>seqsender</code>
+will be able to scoop up the necessary files in that folder, generate
+submission files, and then batch uploading them to the submitting
+database of choices.</p>
 </div>
-<div id="requirement-files" class="section level2">
-<h2 class="hasAnchor">
-<a href="#requirement-files" class="anchor"></a>Requirement files</h2>
+<div class="section level2">
+<h2 id="requirement-files">Requirement files<a class="anchor" aria-label="anchor" href="#requirement-files"></a>
+</h2>
 <ul>
 <li>
-<a href="#config-file">Config file</a> in a <code>yaml</code> format</li>
+<a href="#config-file">Config file</a> in a <code>yaml</code>
+format</li>
 <li>
-<a href="#fasta-file">Fasta file</a> in a<code>fasta</code> format</li>
+<a href="#fasta-file">Fasta file</a> in a<code>fasta</code>
+format</li>
 <li>
-<a href="#metadata-file">Metadata file</a> in a <code>csv</code> format</li>
+<a href="#metadata-file">Metadata file</a> in a <code>csv</code>
+format</li>
 </ul>
-</div>
-<div id="config-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#config-file" class="anchor"></a>Config file</h2>
-<p>Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow <code>seqsender</code> to authenticate the database prior to upload a submission.</p>
+<p>A quick look of where to store all of the requirement files</p>
+<p><img src="images/submission_dir.png"></p>
+<div class="section level3">
+<h3 id="config-file">Config file<a class="anchor" aria-label="anchor" href="#config-file"></a>
+</h3>
+<p>Config file is a yaml file that provides a brief description about
+the submission and contains user credentials that allow
+<code>seqsender</code> to authenticate the database prior to upload a
+submission.</p>
 <p><img src="images/config_file.png"></p>
 <div style="padding: 10px; border: 1px solid blue !important;">
-<p><i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>` <strong>NOTE:</strong> <br></p>
+<p><i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>
+<strong>NOTE:</strong> <br></p>
 <ul>
-<li>To submit to NCBI only, one can remove the <strong>GISAID Submission (b)</strong> section from the config file. Vice versa, to submit to GISAID only, just remove the <strong>NCBI Submission (a)</strong> section. <br>
+<li>To submit to NCBI only, one can remove the <strong>GISAID Submission
+(b)</strong> section from the config file. Vice versa, to submit to
+GISAID only, just remove the <strong>NCBI Submission (a)</strong>
+section. <br>
 </li>
 <li>
-<strong>Submission_Position</strong> determines the order of databases in which we will submit to first. For instance, if GISAID is set as <code>Primary</code>, <strong><em>seqsender</em></strong> will submit to GISAID first, then after all samples are assigned with a GISAID accession number, <strong><em>seqsender</em></strong> will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br>
+<strong>Submission_Position</strong> determines the order of
+databases in which we will submit to first. For instance, if GISAID is
+set as <code>1</code>, <strong><em>seqsender</em></strong> will submit
+to GISAID first, then after all samples are assigned with a GISAID
+accession number, <strong><em>seqsender</em></strong> will proceed to
+submit to NCBI. This order of submission ensures samples are linked
+correctly between the two databases. <br>
 </li>
 <li>
-<strong>Username</strong> and <strong>Password</strong> under the <strong>NCBI Submission (b)</strong> section are the credentials used to authenticate the <strong>NCBI FTP Server</strong> (not to mistake with individual NCBI account). See <a href="https://cdcgov.github.io/seqsender/index.html#prerequisites">PRE-REQUISITES</a> for more details.</li>
+<strong>Username</strong> and <strong>Password</strong> under the
+<strong>NCBI Submission (b)</strong> section are the credentials used to
+authenticate the <strong>NCBI FTP Server</strong> (not to mistake with
+individual NCBI account). See <a href="https://cdcgov.github.io/seqsender/index.html#prerequisites" class="external-link">PRE-REQUISITES</a>
+for more details.</li>
 </ul>
 </div>
 </div>
-<div id="fasta-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fasta-file" class="anchor"></a>Fasta file</h2>
-<p>Fasta file contains nucleotide sequences for all samples. See <a href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/">Genbank Fasta Format</a> for more details.</p>
+<div class="section level3">
+<h3 id="fasta-file">Fasta file<a class="anchor" aria-label="anchor" href="#fasta-file"></a>
+</h3>
+<p>Fasta file contains nucleotide sequences for all samples. See <a href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/" class="external-link">Genbank Fasta
+Format</a> for more details.</p>
 </div>
-<div id="metadata-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#metadata-file" class="anchor"></a>Metadata file</h2>
-<p>Here is a short description about the fields in the metadata worksheet.</p>
+<div class="section level3">
+<h3 id="metadata-file">Metadata file<a class="anchor" aria-label="anchor" href="#metadata-file"></a>
+</h3>
+<p>The metadata worksheet is a comma-delimited (csv) file that contains
+required attributes that are useful for the rapid analysis and trace
+back of <strong>Influenza A Virus or SARS-COV-2</strong> cases.</p>
+<p>Here is a short description about the fields in the metadata
+worksheet.</p>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -209,7 +256,8 @@ Description
 sequence_name
 </td>
 <td style="text-align:left;">
-Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.
+Sequence identifier used in fasta file. This is used to create the fasta
+file for Genbank or GISAID.
 </td>
 </tr>
 <tr>
@@ -217,7 +265,12 @@ Sequence identifier used in fasta file. This is used to create the fasta file fo
 organism
 </td>
 <td style="text-align:left;">
-The most descriptive organism name for the samples. If relevant, you can search the organism name in the <a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank">NCBI Taxonomy database</a>. For FLU, organism must be <b>“Influenza A Virus”</b>. For COV, organism must be <b>“Severe acute respiratory syndrome coronavirus 2”</b>.
+The most descriptive organism name for the samples. If relevant, you can
+search the organism name in the
+<a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank" class="external-link">NCBI
+Taxonomy database</a>. For FLU, organism must be <b>“Influenza A
+Virus”</b>. For COV, organism must be <b>“Severe acute respiratory
+syndrome coronavirus 2”</b>.
 </td>
 </tr>
 <tr>
@@ -225,7 +278,8 @@ The most descriptive organism name for the samples. If relevant, you can search 
 collection_date
 </td>
 <td style="text-align:left;">
-The date on which the sample was collected; must be in the ISO format: <b>YYYY-MM-DD</b>.<br>For example: 2020-03-25
+The date on which the sample was collected; must be in the ISO format:
+<b>YYYY-MM-DD</b>.<br>For example: 2020-03-25
 </td>
 </tr>
 <tr>
@@ -233,7 +287,9 @@ The date on which the sample was collected; must be in the ISO format: <b>YYYY-M
 authors
 </td>
 <td style="text-align:left;">
-Citing authors. List of <b>Last, First Middle, suffix</b> separated by a semicolon “;” E.g.: “Baker, Howard Henry, Jr.; Powell, Earl Alexander, III.;”
+Citing authors. List of <b>Last, First Middle, suffix</b> separated by a
+semicolon “;” E.g.: “Baker, Howard Henry, Jr.; Powell, Earl Alexander,
+III.;”
 </td>
 </tr>
 <tr>
@@ -241,7 +297,9 @@ Citing authors. List of <b>Last, First Middle, suffix</b> separated by a semicol
 ncbi-spuid
 </td>
 <td style="text-align:left;">
-Submitter Provided Unique Identifiers. This is used to report back assigned accessions as well as for cross-linking objects within submission.
+Submitter Provided Unique Identifiers. This is used to report back
+assigned accessions as well as for cross-linking objects within
+submission.
 </td>
 </tr>
 <tr>
@@ -249,7 +307,9 @@ Submitter Provided Unique Identifiers. This is used to report back assigned acce
 ncbi-spuid_namespace
 </td>
 <td style="text-align:left;">
-If SPUID is used, spuid_namespace has to be provided. The values of spuid_namespace are from controlled vocabulary and need to be coordinated with NCBI prior to submission.
+If SPUID is used, spuid_namespace has to be provided. The values of
+spuid_namespace are from controlled vocabulary and need to be
+coordinated with NCBI prior to submission.
 </td>
 </tr>
 <tr>
@@ -273,7 +333,8 @@ Identification to be used for the sequence in the FASTA.
 gb-subm_lab
 </td>
 <td style="text-align:left;">
-Full name of organization, institute, or laboratory, etc., who is submitting this record
+Full name of organization, institute, or laboratory, etc., who is
+submitting this record
 </td>
 </tr>
 <tr>
@@ -281,7 +342,8 @@ Full name of organization, institute, or laboratory, etc., who is submitting thi
 gb-subm_lab_division
 </td>
 <td style="text-align:left;">
-The division of organization, institute, or laboratory, etc., who is submitting this record
+The division of organization, institute, or laboratory, etc., who is
+submitting this record
 </td>
 </tr>
 <tr>
@@ -289,7 +351,8 @@ The division of organization, institute, or laboratory, etc., who is submitting 
 gb-subm_lab_addr
 </td>
 <td style="text-align:left;">
-The address of organization, institute, or laboratory, etc., who is submitting this record
+The address of organization, institute, or laboratory, etc., who is
+submitting this record
 </td>
 </tr>
 <tr>
@@ -297,7 +360,9 @@ The address of organization, institute, or laboratory, etc., who is submitting t
 gb-publication_title
 </td>
 <td style="text-align:left;">
-The title and relevant publication details (volume, issue, etc.) of a paper that discusses the submission. If left empty, the program will used the name of the submission as title.
+The title and relevant publication details (volume, issue, etc.) of a
+paper that discusses the submission. If left empty, the program will
+used the name of the submission as title.
 </td>
 </tr>
 <tr>
@@ -313,7 +378,8 @@ Options: “unpublished” or “in-press” or “published”
 src-isolate
 </td>
 <td style="text-align:left;">
-Identification or description of the specific individual from which this sample was obtained
+Identification or description of the specific individual from which this
+sample was obtained
 </td>
 </tr>
 <tr>
@@ -321,7 +387,12 @@ Identification or description of the specific individual from which this sample 
 src-country
 </td>
 <td style="text-align:left;">
-Geographical origin of the sample; use the appropriate name from <a href="http://www.insdc.org/documents/country-qualifier-vocabulary" target="_blank">this list</a>. Use a colon to separate the country or ocean from more detailed information about the location, eg “Canada: Vancouver” or “Germany: halfway down Zugspitze, Alps”. Entering multiple localities in one attribute is not allowed.
+Geographical origin of the sample; use the appropriate name from
+<a href="http://www.insdc.org/documents/country-qualifier-vocabulary" target="_blank" class="external-link">this
+list</a>. Use a colon to separate the country or ocean from more
+detailed information about the location, eg “Canada: Vancouver” or
+“Germany: halfway down Zugspitze, Alps”. Entering multiple localities in
+one attribute is not allowed.
 </td>
 </tr>
 <tr>
@@ -329,7 +400,8 @@ Geographical origin of the sample; use the appropriate name from <a href="http:/
 src-host
 </td>
 <td style="text-align:left;">
-The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, Homo sapiens
+The natural (as opposed to laboratory) host to the organism from which
+the sample was obtained. Use the full taxonomic name, eg, Homo sapiens
 </td>
 </tr>
 <tr>
@@ -337,7 +409,8 @@ The natural (as opposed to laboratory) host to the organism from which the sampl
 src-serotype
 </td>
 <td style="text-align:left;">
-For Influenza A only; must be in format HxNx, Hx, Nx or mixed; where x is a numeral
+For Influenza A only; must be in format HxNx, Hx, Nx or mixed; where x
+is a numeral
 </td>
 </tr>
 <tr>
@@ -345,7 +418,8 @@ For Influenza A only; must be in format HxNx, Hx, Nx or mixed; where x is a nume
 src-isolation_source
 </td>
 <td style="text-align:left;">
-Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived.
+Describes the physical, environmental and/or local geographical source
+of the biological sample from which the sample was derived.
 </td>
 </tr>
 <tr>
@@ -353,7 +427,8 @@ Describes the physical, environmental and/or local geographical source of the bi
 cmt-StructuredCommentPrefix
 </td>
 <td style="text-align:left;">
-Structured comment keyword. For FLU use “FluData”, HIV use “HIV-DataBaseData”, and for COV and other organisms use “Assembly-Data”.
+Structured comment keyword. For FLU use “FluData”, HIV use
+“HIV-DataBaseData”, and for COV and other organisms use “Assembly-Data”.
 </td>
 </tr>
 <tr>
@@ -361,22 +436,44 @@ Structured comment keyword. For FLU use “FluData”, HIV use “HIV-DataBaseDa
 cmt-StructuredCommentSuffix
 </td>
 <td style="text-align:left;">
-Structured comment keyword. For FLU use “FluData”, HIV use “HIV-DataBaseData”, and for COV and other organisms use “Assembly-Data”.
+Structured comment keyword. For FLU use “FluData”, HIV use
+“HIV-DataBaseData”, and for COV and other organisms use “Assembly-Data”.
 </td>
 </tr>
 </tbody>
 </table>
 <p><br></p>
-<p><strong>NOTE:</strong> The prefix of <strong>“gb-”</strong> is used to identity attributes for <strong>GenBank</strong> submissions. The prefix of <strong>“src-”</strong> is used to identity attributes for <strong>Source Information Table</strong>. Likewise, the prefix of <strong>“cmt-”</strong> is used to identity attributes for <strong>Structured Comment Table</strong>.</p>
-<p>To include additional attributes to <strong>Source Information table</strong>, just append <code>src-</code> in front of the desired attributes, e.g. <code>src-subtype</code>, <code>src-passage</code>, etc. See <a href="https://www.ncbi.nlm.nih.gov/WebSub/html/help/genbank-source-table.html#modifiers">Genbank Source Table Modifier</a> for more details.</p>
-<p>To include additional attributes to <strong>Structured Comment Table</strong>, just append <code>cmt-</code> in front of the desired attributes, and most importantly, the fields must be sandwiched between <code>cmt-StructuredCommentPrefix</code> and <code>cmt-StructuredCommentSuffix</code>. For examples, <code>cmt-StructuredCommentPrefix</code>, <code>cmt-Assembly Method</code>, <code>cmt-Coverage</code>, <code>...</code>, <code>cmt-Sequencing Technology</code>, <code>cmt-StructuredCommentSuffix</code>. See <a href="https://www.ncbi.nlm.nih.gov/genbank/structuredcomment/#GenBank">Genbank Structured Comment</a> for more details.</p>
+<p><strong>NOTE:</strong> The prefix of <strong>“gb-”</strong> is used
+to identity attributes for <strong>GenBank</strong> submissions. The
+prefix of <strong>“src-”</strong> is used to identity attributes for
+<strong>Source Information Table</strong>. Likewise, the prefix of
+<strong>“cmt-”</strong> is used to identity attributes for
+<strong>Structured Comment Table</strong>.</p>
+<p>To include additional attributes to <strong>Source Information
+table</strong>, just append <code>src-</code> in front of the desired
+attributes, e.g. <code>src-subtype</code>, <code>src-passage</code>,
+etc. See <a href="https://www.ncbi.nlm.nih.gov/WebSub/html/help/genbank-source-table.html#modifiers" class="external-link">Genbank
+Source Table Modifier</a> for more details.</p>
+<p>To include additional attributes to <strong>Structured Comment
+Table</strong>, just append <code>cmt-</code> in front of the desired
+attributes, and most importantly, the fields must be sandwiched between
+<code>cmt-StructuredCommentPrefix</code> and
+<code>cmt-StructuredCommentSuffix</code>. For examples,
+<code>cmt-StructuredCommentPrefix</code>,
+<code>cmt-Assembly Method</code>, <code>cmt-Coverage</code>,
+<code>...</code>, <code>cmt-Sequencing Technology</code>,
+<code>cmt-StructuredCommentSuffix</code>. See <a href="https://www.ncbi.nlm.nih.gov/genbank/structuredcomment/#GenBank" class="external-link">Genbank
+Structured Comment</a> for more details.</p>
 <p><br><br></p>
-<div id="you-are-now-ready-to-install-seqsender-and-batch-upload-your-submission" class="section level3">
-<h3 class="hasAnchor">
-<a href="#you-are-now-ready-to-install-seqsender-and-batch-upload-your-submission" class="anchor"></a><a href="https://cdcgov.github.io/seqsender/articles/local_installation.html"><em><i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install <code>seqsender</code> and batch upload your submission</em></a>
-</h3>
+<p style="font-size: 20px">
+<a href="https://cdcgov.github.io/seqsender/articles/local_installation.html" class="external-link"><em><i class="fas fa-play" role="presentation" aria-label="play icon"></i>
+You are now ready to install <code>seqsender</code> and batch upload
+your submission</em></a>
+</p>
 <p><br><br><br></p>
-<p>Any questions or issues? Please report them on our <a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github issue tracker</a>.</p>
+<p>Any questions or issues? Please report them on our
+<a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github
+issue tracker</a>.</p>
 <p><br></p>
 </div>
 </div>
@@ -393,11 +490,13 @@ Structured comment keyword. For FLU use “FluData”, HIV use “HIV-DataBaseDa
 
 
       <footer><div class="copyright">
-  <p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Ben Rambo-Martin.</p>
+  <p></p>
+<p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Benjamin Rambo-Martin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer>
@@ -405,6 +504,8 @@ Structured comment keyword. For FLU use “FluData”, HIV use “HIV-DataBaseDa
 
   
 
+
+  
 
   </body>
 </html>

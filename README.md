@@ -1,19 +1,14 @@
 
 <!-- ![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg) -->
-
 <!-- ![GitHub issues](https://img.shields.io/github/issues/montilab/cadra) -->
-
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
-
 <p style="font-size: 16px;">
-
 <em>Public Database Submission Pipeline</em>
-
 </p>
 
 **Beta Version**: 1.1.0. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
-Feedback and suggestions are welcome\!
+Feedback and suggestions are welcome!
 
 **General Disclaimer**: This repository was created for use by CDC
 programs to collaborate on public health related projects in support of
@@ -36,7 +31,7 @@ organisms in future updates or requests.
 
 ## Prerequisites
 
-  - **NCBI Submissions**
+- **NCBI Submissions**
 
 `seqsender` utilizes an UI-Less Data Submission Protocol to bulk upload
 submission files (e.g., *submission.xml*, *submission.zip*, etc.) to
@@ -68,11 +63,11 @@ FTP on the command line. Before attempting to submit a submission using
     <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a>
     to discuss requirements for submissions.
 
-5.  Coordinate a NCBI namespace name (**spuid\_namespace**) that will be
+5.  Coordinate a NCBI namespace name (**spuid_namespace**) that will be
     used with Submitter Provided Unique Identifiers (**spuid**) in the
-    submission. The liaison of **spuid\_namespace** and **spuid** is
-    used to report back assigned accessions as well as for cross-linking
-    objects within submission. The values of **spuid\_namespace** are up
+    submission. The liaison of **spuid_namespace** and **spuid** is used
+    to report back assigned accessions as well as for cross-linking
+    objects within submission. The values of **spuid_namespace** are up
     to the submitter to decide but they must be unique and
     well-coordinated prior to make a submission. For more information
     about these two fields, see
@@ -83,9 +78,7 @@ FTP on the command line. Before attempting to submit a submission using
     [GENBANK](https://cdcgov.github.io/seqsender/articles/genbank_submission.html#metadata)
     metadata requirements.
 
-<!-- end list -->
-
-  - **GISAID Submissions**
+- **GISAID Submissions**
 
 `seqsender` makes use of GISAID’s Command Line Interface tools to bulk
 uploading meta- and sequence-data to GISAID databases. Presently, the
@@ -119,10 +112,10 @@ package.
 
 ## Requirement Files
 
-Before submitter can perform a submission using `seqsender`, make sure
-the requirement files (such as *config.yaml*, *metadata.csv*,
-*sequence.fasta*, *raw reads*, etc.) are already prepared and stored in
-a submission directory of choice.
+Before submitters can perform a batch submission using `seqsender`, they
+must make sure the requirement files (such as *config.yaml*,
+*metadata.csv*, *sequence.fasta*, *raw reads*, etc.) are already
+prepared and stored in a submission directory of choice.
 
 1)  To prep for FLU submissions, select one of the databases below to
     get started:
@@ -152,14 +145,14 @@ a submission directory of choice.
 
 ## Quick Start
 
-  - [How to run seqsender
-    locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
-  - [How to run seqsender with
-    Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
-  - [How to run seqsender with
-    Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
-  - [How to run seqsender with
-    Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
+- [How to run seqsender
+  locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
+- [How to run seqsender with
+  Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
+- [How to run seqsender with
+  Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
+- [How to run seqsender with
+  Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
 
 ## Public Domain Standard Notice
 
@@ -237,5 +230,3 @@ repository](https://github.com/CDCgov/template/blob/master/CONTRIBUTING.md),
 disclaimers](https://github.com/CDCgov/template/blob/master/DISCLAIMER.md),
 and [code of
 conduct](https://github.com/CDCgov/template/blob/master/code-of-conduct.md).
-
-test
