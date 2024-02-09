@@ -104,6 +104,10 @@ SUBMISSION_PORTAL:
             - text: 'E.g., "United Kingdom", "Japan", "China", "United States", etc.'
           gs-Host:  
             - text: 'Host or source name., E.g. "human", "avian", "chicken", "Anas Acuta", "environment", etc.'
+          gs-Collection_Month:
+            - text: 'For incomplete collection dates, use this field instead of "Collection_Date". Month of year: "1" = Jan, "2" = Feb, so forth, "12" = Dec'
+          gs-Collection_Year:
+            - text: 'For incomplete collection dates, use this field instead of "Collection_Date". Four digit year as string:  e.g. "2023"'
           gs-Originating_Lab_Id:  
             - text: 'The numeric ID of the sample"s originating laboratory, e.g. "2698"'
         COV:

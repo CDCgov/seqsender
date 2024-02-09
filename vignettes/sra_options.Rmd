@@ -10,13 +10,13 @@ vignette: >
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
-
-td, th {
-  border: 1px solid gray;
-  padding: 5px 5px 5px 5px;
-}
+  
+  td, th, tr {
+    border: 1px solid gray;
+    padding: 5px 5px 5px 5px;
+  }
 
 </style>
 

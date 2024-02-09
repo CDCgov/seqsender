@@ -128,6 +128,8 @@ optional arguments:
 
 Rather than hastily jump in and submit a `production` submission right away, we can utilize GISAID's and NCBI's **“TEST-SERVER”** to upload a `test` submission first. That way submitter can familiarize themselves with the submission process prior to make a real submission. 
 
+**Note:** Duplicate test submissions will result in an error. Please create new sequence names each time you plan to run test submissions to avoid this issue. 
+
 ### <a onclick="ToggleOperation('projects')"><i class="fas fa-play" role="presentation" aria-label="play icon"></i> Submit a `test` submission with a pre-processed dataset</a>
 
 <div id="projects-block" style="display: none;">
@@ -140,7 +142,7 @@ The `template` command will allow you to output examples of metadata and config 
 docker exec -it seqsender bash seqsender-kickoff template --help
 ```
 
-```text
+```bash
 usage: seqsender.py template [-h] [--biosample] [--sra] [--genbank] [--gisaid]
                              --organism {FLU,COV} --submission_dir
                              SUBMISSION_DIR --submission_name SUBMISSION_NAME
@@ -176,7 +178,7 @@ docker exec -it seqsender bash seqsender-kickoff template \
 
 - **`--organism`** specifies the type of data to download. Currently, **Influenza A Virus** (FLU) and **SARS-COV-2** (COV) are the only two options. Additional datasets for other organisms will be provided in future updates or requests. <br>
 - **`-bsng`** is a combination flag of databases: **Biosample** *(`-b` or `--biosample`)*, **SRA** *(`-s` or `--sra`)*, **Genbank** *(`-n` or `--genbank`)*, and **GISAID** *(`-g` or `--gisaid`)*. This combination flag tells ``r program`` to generate an unified meta- and sequence-data into one file so we can perform batch upload to all databases simultaneously. <br>
-- **`--submission_dir`** is the directory where you would like to dump all the submission files (e.g. `/data` -> our `$HOME` directory). <br>
+- **`--submission_dir`** is the directory where you store all of the submission histories (e.g. `/data` -> our `$HOME` directory). <br>
 - **`--submission_name`** is the submission folder inside the `--submission_dir` directory where it contains all necessary files (such as *config.yaml*, *metadata.csv*, *sequence.fasta*, *raw reads*, etc.) in order to make a submission.
 
 A quick look at the output files:
@@ -185,7 +187,7 @@ A quick look at the output files:
 
 Here is the standard out of the command.
 
-```text
+```bash
 Generating submission template
 Files are stored at: /home/snu3/flu-test-submission
 
@@ -220,7 +222,7 @@ A quick look of where to store the downloaded **GISAID CLI** package,
 
 _**Important:** Make sure you binary CLI package are executable. To allow executable permissions, run_
 ```bash
-chmod a+x <your_gisaid_cli_file>
+chmod a+x <your_gisaid_cli_binary>
 ```
 :::
 
@@ -251,7 +253,7 @@ docker exec -it seqsender bash seqsender-kickoff submit \
 
 A quick look at the standard output.
 
-```text
+```bash
 Creating submission files for BIOSAMPLE
 Files are stored at: /home/snu3/flu-test-submission/submission_files/BIOSAMPLE
 
@@ -269,16 +271,17 @@ Performing a 'Test' submission
 If this is not a 'Test' submission, interrupts submission immediately.
 
 Connecting to NCBI FTP Server
-Submission name: rc-flu-test-submission
-Submitting 'rc-flu-test-submission'
+Submission name: flu-test-submission
+Submitting 'flu-test-submission'
+
 
 Uploading submission files to NCBI-SRA
 Performing a 'Test' submission
 If this is not a 'Test' submission, interrupts submission immediately.
 
 Connecting to NCBI FTP Server
-Submission name: rc-flu-test-submission
-Submitting 'rc-flu-test-submission'
+Submission name: flu-test-submission
+Submitting 'flu-test-submission'
 
 Uploading submission files to GISAID-FLU
 Performing a 'Test' submission with Client-Id: TEST-EA76875B00C3
@@ -309,7 +312,7 @@ docker exec -it seqsender bash seqsender-kickoff check_submission_status \
 
 Here is a quick look at the standard output:
 
-```text
+```bash
 Checking submission status for:
 
 Submission name: flu-test-submission
@@ -390,7 +393,7 @@ Here is an example of where to place the **GISAID CLI** package.
 
 _**Important:** Make sure you binary CLI package are executable. To allow executable permissions, run_
 ```bash
-chmod a+x <your_gisaid_cli_file>
+chmod a+x <your_gisaid_cli_binary>
 ```
 :::
 
@@ -423,7 +426,7 @@ docker exec -it seqsender bash seqsender-kickoff submit \
 
 A quick look at the standard output.
 
-```text
+```bash
 Creating submission files for BIOSAMPLE
 Files are stored at: /home/snu3/flu-test-submission/submission_files/BIOSAMPLE
 
@@ -441,16 +444,16 @@ Performing a 'Test' submission
 If this is not a 'Test' submission, interrupts submission immediately.
 
 Connecting to NCBI FTP Server
-Submission name: rc-flu-test-submission
-Submitting 'rc-flu-test-submission'
+Submission name: flu-test-submission
+Submitting 'flu-test-submission'
 
 Uploading submission files to NCBI-SRA
 Performing a 'Test' submission
 If this is not a 'Test' submission, interrupts submission immediately.
 
 Connecting to NCBI FTP Server
-Submission name: rc-flu-test-submission
-Submitting 'rc-flu-test-submission'
+Submission name: flu-test-submission
+Submitting 'flu-test-submission'
 
 Uploading submission files to GISAID-FLU
 Performing a 'Test' submission with Client-Id: TEST-EA76875B00C3
@@ -481,7 +484,7 @@ docker exec -it seqsender bash seqsender-kickoff check_submission_status \
 
 Here is a quick look at the standard output:
 
-```text
+```bash
 Checking submission status for:
 
 Submission name: flu-test-submission

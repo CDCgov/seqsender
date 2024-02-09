@@ -10,10 +10,10 @@ vignette: >
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
   
-  td, th {
+  td, th, tr {
     border: 1px solid gray;
     padding: 5px 5px 5px 5px;
   }
@@ -96,27 +96,47 @@ for(d in 1:nrow(main_config_df)){
     dplyr::distinct(.keep_all = TRUE)
   
 }
+
+optional_attributes_df <- read.csv("./data/cov_metadata_optional_fields.csv", header=TRUE)
+
 ```
 
 ## Overview
 
 **GISAID**, short for the **Global Initiative on Sharing All Influenza Data**, is an organization that manages a restricted-access database containing genomic sequence data of select virus, primarily influenza viruses. The database has expanded to include the coronavirus responsible for the COVID-19 pandemic as well as other pathogens.
 
-For all GISAID submissions, ``r program`` makes use of GISAID's Command Line Interface Tools (e.g. ``r paste0(cli_list, collapse=", ")``, etc.) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload, submitters must download the ``r paste(title, "CLI")`` package from the GISAID platform that is compatible with their machine and store it in a subfolder called `epicov_cli` within a destination of choice..
+## Prerequisites
+
+For all GISAID submissions, ``r program`` makes use of GISAID's Command Line Interface Tools (CLIs) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload to **`r title` database**, submitters must 
+
+1. Download the **`r paste(title, "CLI")`** package from the **GISAID Platform** that is compatible with their machine (e.g., Linux, macOS, or Windows). 
 
 ![](images/`r cli`_download.png)
+![](images/`r cli`_download_2.png)
+
 
 <br>
 
-After unzip and extracted the CLI from the downloaded package, submitters will need to prepare the requirement files to pass to ``r program``.
+2. Unzip the downloaded package and store it in a subfolder called **`gisaid_cli`** within a submission directory of choice (e.g., `submission_dir`).
+
+![](images/gisaid_cli_dir.png)
+
+<br>
 
 ## Requirement files
+
+After submitters had obtained the **GISAID CLI** for **`r title`**, they must also prepare the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) and store them in a submission folder of choice (e.g., `submission_name`) within a parent submission directory (e.g., `submission_dir`). That way ``r program`` will be able to scoop up the necessary files in that folder, generate submission files, and then batch uploading them to the submitting database of choices.
+
+Here is a list of the requirement files and where to store them:
 
 - [Config file](#config-file) in a `yaml` format
 - [Fasta file](#fasta-file) in a`fasta` format
 - [Metadata file](#metadata-file) in a `csv` format
 
-## Config file
+
+![](images/submission_dir.png)
+
+### Config file
 
 Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow ``r program`` to authenticate the database prior to upload a submission.
 
@@ -126,17 +146,19 @@ Config file is a yaml file that provides a brief description about the submissio
 <i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> **NOTE:** <br>
 
 - To submit to NCBI only, one can remove the **GISAID Submission (b)** section from the config file. Vice versa, to submit to GISAID only, just remove the **NCBI Submission (a)** section. <br>
-- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `Primary`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
+- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `1`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
 - **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
 :::
 
-## Fasta file
+### Fasta file
 
 Fasta file contains nucleotide sequences for all samples. See [Genbank Fasta Format](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) for more details.
 
 ![](images/`r cli`_fasta.png)
 
-## Metadata file
+### Metadata file
+
+The metadata worksheet is a comma-delimited (csv) file that contains required attributes that are useful for the rapid analysis and trace back of **`r paste0(organism, collapse=" or ")`** cases.
 
 Here is a short description about the fields in the metadata worksheet.
 
@@ -148,9 +170,21 @@ knitr::kable(metadata_df, format = "html", row.names = FALSE, escape = FALSE)
 
 **NOTE:** The prefix of **“`r prefix`”** is used to identity attributes for **GISAID** submissions. 
 
+<br>
+
+#### <b>Optional Attributes</b>
+
+To include additional attributes to **`r title`** submissions, just append ``r prefix`` in front of the desired attributes. Here is a list of optional attributes:
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::kable(optional_attributes_df, format = "html", row.names = FALSE, escape = FALSE)
+```
+
+<br>
+
 <br><br>
 
-### [*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)
+<p style="font-size: 20px">[*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)</p>
 
 <br><br><br>
 

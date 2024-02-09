@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">seqsender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -44,7 +46,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Getting Started
      
     <span class="caret"></span>
@@ -69,7 +71,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Databases
      
     <span class="caret"></span>
@@ -95,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Support
      
     <span class="caret"></span>
@@ -108,6 +110,9 @@
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li>
   <a href="https://github.com/CDCgov/seqsender/">
     <span class="fab fa-github fa-lg"></span>
@@ -124,13 +129,13 @@
 
       
 
-      </header><script src="prerequisites_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Prerequisites</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/master/vignettes/prerequisites.Rmd"><code>vignettes/prerequisites.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/HEAD/vignettes/prerequisites.Rmd"><code>vignettes/prerequisites.Rmd</code></a></small>
       <div class="hidden name"><code>prerequisites.Rmd</code></div>
 
     </div>
@@ -140,43 +145,107 @@
 <ul>
 <li><strong>NCBI Submissions</strong></li>
 </ul>
-<p><code>seqsender</code> utilizes an UI-Less Data Submission Protocol to bulk upload submission files (e.g., <em>submission.xml</em>, <em>submission.zip</em>, etc.) to NCBI archives. The submission files are uploaded to the NCBI server via FTP on the command line. Before attempting to submit a submission using <code>seqsender</code>, submitter will need to</p>
+<p><code>seqsender</code> utilizes an UI-Less Data Submission Protocol
+to bulk upload submission files (e.g., <em>submission.xml</em>,
+<em>submission.zip</em>, etc.) to NCBI archives. The submission files
+are uploaded to the NCBI server via FTP on the command line. Before
+attempting to submit a submission using <code>seqsender</code>,
+submitter will need to</p>
 <ol style="list-style-type: decimal">
-<li><p>Have a NCBI account. To sign up, visit <a href="https://account.ncbi.nlm.nih.gov/">NCBI website</a>.</p></li>
-<li><p>Required for CDC users and highly recommended for others is creating a center account for your institution/lab <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/sra/#step6">NCBI Center Account Instructions</a>. Center accounts allow you to perform submissions UI-less submissions as your institution/lab.</p></li>
-<li><p>Required for CDC users and also recommended is creating a submission group in <a href="https://submit.ncbi.nlm.nih.gov">NCBI Submission Portal</a>. A group should include all individuals who need access to UI-less submissions through the web interface with your center account. Each member of the group must also have an individual NCBI account. <a href="https://account.ncbi.nlm.nih.gov/">NCBI website</a>.</p></li>
-<li><p>Refer to this page for information regarding requirements for GenBank submissions via FTP only. This page applies only for COVID and Influenza <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5">NCBI GenBank FTP Submissions</a> For further questions contact <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a> to discuss requirements for submissions.</p></li>
-<li><p>Coordinate a NCBI namespace name (<strong>spuid_namespace</strong>) that will be used with Submitter Provided Unique Identifiers (<strong>spuid</strong>) in the submission. The liaison of <strong>spuid_namespace</strong> and <strong>spuid</strong> is used to report back assigned accessions as well as for cross-linking objects within submission. The values of <strong>spuid_namespace</strong> are up to the submitter to decide but they must be unique and well-coordinated prior to make a submission. For more information about these two fields, see <a href="">BioSample</a> / <a href="">SRA</a> / <a href="">GENBANK</a> metadata requirements.</p></li>
+<li><p>Have a NCBI account. To sign up, visit <a href="https://account.ncbi.nlm.nih.gov/" class="external-link">NCBI website</a>.</p></li>
+<li><p>Required for CDC users and highly recommended for others is
+creating a center account for your institution/lab <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/sra/#step6" class="external-link">NCBI Center
+Account Instructions</a>. Center accounts allow you to perform
+submissions UI-less submissions as your institution/lab.</p></li>
+<li><p>Required for CDC users and also recommended is creating a
+submission group in <a href="https://submit.ncbi.nlm.nih.gov" class="external-link">NCBI
+Submission Portal</a>. A group should include all individuals who need
+access to UI-less submissions through the web interface with your center
+account. Each member of the group must also have an individual NCBI
+account. <a href="https://account.ncbi.nlm.nih.gov/" class="external-link">NCBI
+website</a>.</p></li>
+<li><p>Refer to this page for information regarding requirements for
+GenBank submissions via FTP only. This page applies only for COVID and
+Influenza <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5" class="external-link">NCBI
+GenBank FTP Submissions</a> For further questions contact
+<a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a>
+to discuss requirements for submissions.</p></li>
+<li><p>Coordinate a NCBI namespace name
+(<strong>spuid_namespace</strong>) that will be used with Submitter
+Provided Unique Identifiers (<strong>spuid</strong>) in the submission.
+The liaison of <strong>spuid_namespace</strong> and
+<strong>spuid</strong> is used to report back assigned accessions as
+well as for cross-linking objects within submission. The values of
+<strong>spuid_namespace</strong> are up to the submitter to decide but
+they must be unique and well-coordinated prior to make a submission. For
+more information about these two fields, see <a href="">BioSample</a> /
+<a href="">SRA</a> / <a href="">GENBANK</a> metadata
+requirements.</p></li>
 </ol>
 <ul>
 <li><strong>GISAID Submissions</strong></li>
 </ul>
-<p><code>seqsender</code> makes use of GISAID’s Command Line Interface tools to bulk uploading meta- and sequence-data to GISAID databases. Presently, the pipeline only allows upload to EpiFlu (<strong>Influenza A Virus</strong>) and EpiCoV (<strong>SARS-COV-2</strong>) databases. Before uploading, submitter needs to</p>
+<p><code>seqsender</code> makes use of GISAID’s Command Line Interface
+tools to bulk uploading meta- and sequence-data to GISAID databases.
+Presently, the pipeline only allows upload to EpiFlu (<strong>Influenza
+A Virus</strong>) and EpiCoV (<strong>SARS-COV-2</strong>) databases.
+Before uploading, submitter needs to</p>
 <ol style="list-style-type: decimal">
-<li><p>Have a GISAID account. To sign up, visit <a href="https://gisaid.org/">GISAID Platform</a>.</p></li>
-<li><p>Request a client-ID for EpiFlu or EpiCoV database in order to use its CLI tool. The CLI utilizes the client-ID along with the username and password to authenticate the database prior to make a submission. To obtain a client-ID, please email <a href="mailto:clisupport@gisaid.org">clisupport@gisaid.org</a> to request. <em><strong>Important note</strong>: If submitter would like to upload a “test” submission first to familiarize themselves with the submission process prior to make a real submission, one should additionally request a test client-id to perform such submissions.</em></p></li>
-<li><p>Download the <a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a> or <a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a> CLI from the <strong>GISAID platform</strong> and stored them in the destination of choice prior to perform a batch upload.</p></li>
+<li><p>Have a GISAID account. To sign up, visit <a href="https://gisaid.org/" class="external-link">GISAID Platform</a>.</p></li>
+<li><p>Request a client-ID for EpiFlu or EpiCoV database in order to use
+its CLI tool. The CLI utilizes the client-ID along with the username and
+password to authenticate the database prior to make a submission. To
+obtain a client-ID, please email
+<a href="mailto:clisupport@gisaid.org">clisupport@gisaid.org</a> to
+request. <em><strong>Important note</strong>: If submitter would like to
+upload a “test” submission first to familiarize themselves with the
+submission process prior to make a real submission, one should
+additionally request a test client-id to perform such
+submissions.</em></p></li>
+<li><p>Download the
+<a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank" class="external-link">EpiFlu</a>
+or
+<a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank" class="external-link">EpiCoV</a>
+CLI from the <strong>GISAID platform</strong> and stored them in the
+destination of choice prior to perform a batch upload.</p></li>
 </ol>
-<p>Here is a quick look of where to store the downloaded <strong>GISAID CLI</strong> package.</p>
+<p>Here is a quick look of where to store the downloaded <strong>GISAID
+CLI</strong> package.</p>
 <p><img src="images/gisaid_cli_dir.png"></p>
-<div id="requirement-files" class="section level2">
-<h2 class="hasAnchor">
-<a href="#requirement-files" class="anchor"></a>Requirement Files</h2>
-<p>Before submitter can perform a submission using <code>seqsender</code>, make sure the requirement files (such as <em>config.yaml</em>, <em>metadata.csv</em>, <em>sequence.fasta</em>, <em>raw reads</em>, etc.) are already prepared and stored in a submission directory of choice.</p>
+<div class="section level2">
+<h2 id="requirement-files">Requirement Files<a class="anchor" aria-label="anchor" href="#requirement-files"></a>
+</h2>
+<p>Before submitter can perform a submission using
+<code>seqsender</code>, make sure the requirement files (such as
+<em>config.yaml</em>, <em>metadata.csv</em>, <em>sequence.fasta</em>,
+<em>raw reads</em>, etc.) are already prepared and stored in a
+submission directory of choice.</p>
 <ol style="list-style-type: lower-alpha">
-<li>To prep for FLU submissions, select one of the databases below to get started:</li>
+<li>To prep for FLU submissions, select one of the databases below to
+get started:</li>
 </ol>
 <blockquote>
-<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a> <br><a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a></p>
+<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank" class="external-link">BioSample</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank" class="external-link">SRA</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank" class="external-link">Genbank</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank" class="external-link">GISAID</a>
+<br></p>
 </blockquote>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>To prep for COV submissions, select one of the databases below to get started:</li>
+<li>To prep for COV submissions, select one of the databases below to
+get started:</li>
 </ol>
 <blockquote>
-<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a> <br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a> <br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a> <br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a> <br><a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a></p>
+<p><a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank" class="external-link">BioSample</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank" class="external-link">SRA</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank" class="external-link">Genbank</a>
+<br><a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank" class="external-link">GISAID</a>
+<br></p>
 </blockquote>
 <p><br><br><br></p>
-<p>Any questions or issues? Please report them on our <a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github issue tracker</a>.</p>
+<p>Any questions or issues? Please report them on our
+<a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github
+issue tracker</a>.</p>
 <p><br></p>
 </div>
   </div>
@@ -192,11 +261,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Ben Rambo-Martin.</p>
+  <p></p>
+<p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Benjamin Rambo-Martin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer>
@@ -204,6 +275,8 @@
 
   
 
+
+  
 
   </body>
 </html>

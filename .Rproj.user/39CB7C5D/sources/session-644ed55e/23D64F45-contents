@@ -10,10 +10,10 @@ vignette: >
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
   
-  td, th {
+  td, th, tr {
     border: 1px solid gray;
     padding: 5px 5px 5px 5px;
   }
@@ -95,13 +95,14 @@ for(d in 1:nrow(main_config_df)){
     dplyr::distinct(.keep_all = TRUE)
   
 }
+
 ```
 
 ## Overview
 
 **`r title`** is a database containing aggregated information pertaining to reference samples and samples stored in the [European Bioinformatics Institute](https://www.ebi.ac.uk/) assay databases. 
 
-Before one can upload experimental samples to **`r title`** database using ``r program``, they must ensure the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) are prepared ahead of time and stored in a submission directory of choice.
+Before submitters can upload their experimental samples to **`r title`** database using ``r program``, they must ensure the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) are already prepared ahead of time and stored them in a submission folder of choice (e.g., `submission_name`) within a parent submission directory (e.g., `submission_dir`). That way ``r program`` will be able to scoop up the necessary files in that folder, generate submission files, and then batch uploading them to the submitting database of choices.
 
 ## Requirement files
 
@@ -110,11 +111,9 @@ Before one can upload experimental samples to **`r title`** database using ``r p
 
 A quick look of where to store all of the requirement files
 
-![](images/gisaid_cli_dir.png)
-
 ![](images/submission_dir.png)
 
-## Config file
+### Config file
 
 Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow ``r program`` to authenticate the database prior to upload a submission.
 
@@ -128,7 +127,9 @@ Config file is a yaml file that provides a brief description about the submissio
 - **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
 :::
 
-## Metadata file
+### Metadata file
+
+The metadata worksheet is a comma-delimited (csv) file that contains required attributes that are useful for the rapid analysis and trace back of **`r paste0(organism, collapse=" or ")`** cases.
 
 Here is a short description about the fields in the metadata worksheet.
 
@@ -144,7 +145,7 @@ To include additional attributes to **`r title`** submissions, just append ``r p
 
 <br><br>
 
-### [*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)
+<p style="font-size: 20px">[*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)</p>
 
 <br><br><br>
 

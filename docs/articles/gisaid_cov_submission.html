@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">seqsender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -44,7 +46,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Getting Started
      
     <span class="caret"></span>
@@ -69,7 +71,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Databases
      
     <span class="caret"></span>
@@ -95,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Support
      
     <span class="caret"></span>
@@ -108,6 +110,9 @@
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li>
   <a href="https://github.com/CDCgov/seqsender/">
     <span class="fab fa-github fa-lg"></span>
@@ -124,13 +129,13 @@
 
       
 
-      </header><script src="gisaid_cov_submission_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>GISAID - EpiCoV</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/master/vignettes/gisaid_cov_submission.Rmd"><code>vignettes/gisaid_cov_submission.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CDCgov/seqsender/blob/HEAD/vignettes/gisaid_cov_submission.Rmd"><code>vignettes/gisaid_cov_submission.Rmd</code></a></small>
       <div class="hidden name"><code>gisaid_cov_submission.Rmd</code></div>
 
     </div>
@@ -140,64 +145,123 @@
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
   
-  td, th {
+  td, th, tr {
     border: 1px solid gray;
     padding: 5px 5px 5px 5px;
   }
 
 </style>
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
-<p><strong>GISAID</strong>, short for the <strong>Global Initiative on Sharing All Influenza Data</strong>, is an organization that manages a restricted-access database containing genomic sequence data of select virus, primarily influenza viruses. The database has expanded to include the coronavirus responsible for the COVID-19 pandemic as well as other pathogens.</p>
-<p>For all GISAID submissions, <code>seqsender</code> makes use of GISAID’s Command Line Interface Tools (e.g. <code>EpiFlu, EpiCoV, EpiRSV, EpiArbo</code>, etc.) to batch uploading meta- and sequence-data to their databases. Prior to perform a batch upload, submitters must download the <code>EpiCoV CLI</code> package from the GISAID platform that is compatible with their machine and store it in a subfolder called <code>epicov_cli</code> within a destination of choice..</p>
-<p><img src="images/covCLI_download.png"></p>
-<p><br></p>
-<p>After unzip and extracted the CLI from the downloaded package, submitters will need to prepare the requirement files to pass to <code>seqsender</code>.</p>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p><strong>GISAID</strong>, short for the <strong>Global Initiative on
+Sharing All Influenza Data</strong>, is an organization that manages a
+restricted-access database containing genomic sequence data of select
+virus, primarily influenza viruses. The database has expanded to include
+the coronavirus responsible for the COVID-19 pandemic as well as other
+pathogens.</p>
 </div>
-<div id="requirement-files" class="section level2">
-<h2 class="hasAnchor">
-<a href="#requirement-files" class="anchor"></a>Requirement files</h2>
+<div class="section level2">
+<h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h2>
+<p>For all GISAID submissions, <code>seqsender</code> makes use of
+GISAID’s Command Line Interface Tools (CLIs) to batch uploading meta-
+and sequence-data to their databases. Prior to perform a batch upload to
+<strong>EpiCoV database</strong>, submitters must</p>
+<ol style="list-style-type: decimal">
+<li>Download the <strong>EpiCoV CLI</strong> package from the
+<strong>GISAID Platform</strong> that is compatible with their machine
+(e.g., Linux, macOS, or Windows).</li>
+</ol>
+<p><img src="images/covCLI_download.png"><img src="images/covCLI_download_2.png"></p>
+<p><br></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Unzip the downloaded package and store it in a subfolder called
+<strong><code>gisaid_cli</code></strong> within a submission directory
+of choice (e.g., <code>submission_dir</code>).</li>
+</ol>
+<p><img src="images/gisaid_cli_dir.png"></p>
+<p><br></p>
+</div>
+<div class="section level2">
+<h2 id="requirement-files">Requirement files<a class="anchor" aria-label="anchor" href="#requirement-files"></a>
+</h2>
+<p>After submitters had obtained the <strong>GISAID CLI</strong> for
+<strong>EpiCoV</strong>, they must also prepare the requirement files
+(such as <code>config.yaml</code>, <code>metadata.csv</code>,
+<code>sequence.fasta</code>, <code>raw reads</code>, etc.) and store
+them in a submission folder of choice (e.g.,
+<code>submission_name</code>) within a parent submission directory
+(e.g., <code>submission_dir</code>). That way <code>seqsender</code>
+will be able to scoop up the necessary files in that folder, generate
+submission files, and then batch uploading them to the submitting
+database of choices.</p>
+<p>Here is a list of the requirement files and where to store them:</p>
 <ul>
 <li>
-<a href="#config-file">Config file</a> in a <code>yaml</code> format</li>
+<a href="#config-file">Config file</a> in a <code>yaml</code>
+format</li>
 <li>
-<a href="#fasta-file">Fasta file</a> in a<code>fasta</code> format</li>
+<a href="#fasta-file">Fasta file</a> in a<code>fasta</code>
+format</li>
 <li>
-<a href="#metadata-file">Metadata file</a> in a <code>csv</code> format</li>
+<a href="#metadata-file">Metadata file</a> in a <code>csv</code>
+format</li>
 </ul>
-</div>
-<div id="config-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#config-file" class="anchor"></a>Config file</h2>
-<p>Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow <code>seqsender</code> to authenticate the database prior to upload a submission.</p>
+<p><img src="images/submission_dir.png"></p>
+<div class="section level3">
+<h3 id="config-file">Config file<a class="anchor" aria-label="anchor" href="#config-file"></a>
+</h3>
+<p>Config file is a yaml file that provides a brief description about
+the submission and contains user credentials that allow
+<code>seqsender</code> to authenticate the database prior to upload a
+submission.</p>
 <p><img src="images/config_file.png"></p>
 <div style="padding: 10px; border: 1px solid blue !important;">
-<p><i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> <strong>NOTE:</strong> <br></p>
+<p><i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>
+<strong>NOTE:</strong> <br></p>
 <ul>
-<li>To submit to NCBI only, one can remove the <strong>GISAID Submission (b)</strong> section from the config file. Vice versa, to submit to GISAID only, just remove the <strong>NCBI Submission (a)</strong> section. <br>
+<li>To submit to NCBI only, one can remove the <strong>GISAID Submission
+(b)</strong> section from the config file. Vice versa, to submit to
+GISAID only, just remove the <strong>NCBI Submission (a)</strong>
+section. <br>
 </li>
 <li>
-<strong>Submission_Position</strong> determines the order of databases in which we will submit to first. For instance, if GISAID is set as <code>Primary</code>, <strong><em>seqsender</em></strong> will submit to GISAID first, then after all samples are assigned with a GISAID accession number, <strong><em>seqsender</em></strong> will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br>
+<strong>Submission_Position</strong> determines the order of
+databases in which we will submit to first. For instance, if GISAID is
+set as <code>1</code>, <strong><em>seqsender</em></strong> will submit
+to GISAID first, then after all samples are assigned with a GISAID
+accession number, <strong><em>seqsender</em></strong> will proceed to
+submit to NCBI. This order of submission ensures samples are linked
+correctly between the two databases. <br>
 </li>
 <li>
-<strong>Username</strong> and <strong>Password</strong> under the <strong>NCBI Submission (b)</strong> section are the credentials used to authenticate the <strong>NCBI FTP Server</strong> (not to mistake with individual NCBI account). See <a href="https://cdcgov.github.io/seqsender/index.html#prerequisites">PRE-REQUISITES</a> for more details.</li>
+<strong>Username</strong> and <strong>Password</strong> under the
+<strong>NCBI Submission (b)</strong> section are the credentials used to
+authenticate the <strong>NCBI FTP Server</strong> (not to mistake with
+individual NCBI account). See <a href="https://cdcgov.github.io/seqsender/index.html#prerequisites" class="external-link">PRE-REQUISITES</a>
+for more details.</li>
 </ul>
 </div>
 </div>
-<div id="fasta-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fasta-file" class="anchor"></a>Fasta file</h2>
-<p>Fasta file contains nucleotide sequences for all samples. See <a href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/">Genbank Fasta Format</a> for more details.</p>
+<div class="section level3">
+<h3 id="fasta-file">Fasta file<a class="anchor" aria-label="anchor" href="#fasta-file"></a>
+</h3>
+<p>Fasta file contains nucleotide sequences for all samples. See <a href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/" class="external-link">Genbank Fasta
+Format</a> for more details.</p>
 <p><img src="images/covCLI_fasta.png"></p>
 </div>
-<div id="metadata-file" class="section level2">
-<h2 class="hasAnchor">
-<a href="#metadata-file" class="anchor"></a>Metadata file</h2>
-<p>Here is a short description about the fields in the metadata worksheet.</p>
+<div class="section level3">
+<h3 id="metadata-file">Metadata file<a class="anchor" aria-label="anchor" href="#metadata-file"></a>
+</h3>
+<p>The metadata worksheet is a comma-delimited (csv) file that contains
+required attributes that are useful for the rapid analysis and trace
+back of <strong>SARS-COV-2</strong> cases.</p>
+<p>Here is a short description about the fields in the metadata
+worksheet.</p>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -213,7 +277,8 @@ Description
 sequence_name
 </td>
 <td style="text-align:left;">
-Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.
+Sequence identifier used in fasta file. This is used to create the fasta
+file for Genbank or GISAID.
 </td>
 </tr>
 <tr>
@@ -221,7 +286,12 @@ Sequence identifier used in fasta file. This is used to create the fasta file fo
 organism
 </td>
 <td style="text-align:left;">
-The most descriptive organism name for the samples. If relevant, you can search the organism name in the <a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank">NCBI Taxonomy database</a>. For FLU, organism must be <b>“Influenza A Virus”</b>. For COV, organism must be <b>“Severe acute respiratory syndrome coronavirus 2”</b>.
+The most descriptive organism name for the samples. If relevant, you can
+search the organism name in the
+<a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank" class="external-link">NCBI
+Taxonomy database</a>. For FLU, organism must be <b>“Influenza A
+Virus”</b>. For COV, organism must be <b>“Severe acute respiratory
+syndrome coronavirus 2”</b>.
 </td>
 </tr>
 <tr>
@@ -229,7 +299,8 @@ The most descriptive organism name for the samples. If relevant, you can search 
 collection_date
 </td>
 <td style="text-align:left;">
-The date on which the sample was collected; must be in the ISO format: <b>YYYY-MM-DD</b>.<br>For example: 2020-03-25
+The date on which the sample was collected; must be in the ISO format:
+<b>YYYY-MM-DD</b>.<br>For example: 2020-03-25
 </td>
 </tr>
 <tr>
@@ -237,7 +308,9 @@ The date on which the sample was collected; must be in the ISO format: <b>YYYY-M
 authors
 </td>
 <td style="text-align:left;">
-Citing authors. List of <b>Last, First Middle, suffix</b> separated by a semicolon “;” E.g.: “Baker, Howard Henry, Jr.; Powell, Earl Alexander, III.;”
+Citing authors. List of <b>Last, First Middle, suffix</b> separated by a
+semicolon “;” E.g.: “Baker, Howard Henry, Jr.; Powell, Earl Alexander,
+III.;”
 </td>
 </tr>
 <tr>
@@ -245,29 +318,39 @@ Citing authors. List of <b>Last, First Middle, suffix</b> separated by a semicol
 gs-virus_name
 </td>
 <td style="text-align:left;">
-For example: hCoV-19/Country/SampleID/YYYY<br>There are four parts delineated by the forward slash “/” character:<br><ul>
+For example: hCoV-19/Country/SampleID/YYYY<br>There are four parts
+delineated by the forward slash “/” character:<br><ul>
 <li>
-“hCoV-19”: despite common usage of virus synonyms such as SARS-CoV-2 or nCoV-19, this first part must remain “hCoV-19” verbatim (to ensure backwards compatibility with EpiCoV db).
+“hCoV-19”: despite common usage of virus synonyms such as SARS-CoV-2 or
+nCoV-19, this first part must remain “hCoV-19” verbatim (to ensure
+backwards compatibility with EpiCoV db).
 </li>
 <li>
-“Country” is full name of country of sample collection (e.g., Australia), including spaces. For backwards compatibility, the exception being to use “USA” for United States of America.
+“Country” is full name of country of sample collection (e.g.,
+Australia), including spaces. For backwards compatibility, the exception
+being to use “USA” for United States of America.
 </li>
 <li>
 “SampleID” is recommended to be of the format, Loc-Lab-Number, where:
 </li>
 <ul>
 <li>
-Loc is location abbreviation (use abbreviated state or province for location, such as “VIC” for Victoria, Australia, or “CA” for California, USA)
+Loc is location abbreviation (use abbreviated state or province for
+location, such as “VIC” for Victoria, Australia, or “CA” for California,
+USA)
 </li>
 <li>
-Lab is lab name abbreviation (e.g., “CDC” for Centres for Disease Control)
+Lab is lab name abbreviation (e.g., “CDC” for Centres for Disease
+Control)
 </li>
 <li>
 Number is sample number or lab code (e.g., 02978, or S47y)
 </li>
 </ul>
 <li>
-“YYYY” is four digit year of sample collection. Note, this must be the same as the YYYY provided in the collection_date value, else a “date inplausible” error will occur
+“YYYY” is four digit year of sample collection. Note, this must be the
+same as the YYYY provided in the collection_date value, else a “date
+inplausible” error will occur
 </li>
 </ul>
 In this example, the virus_name could be:<br><ul>
@@ -278,7 +361,8 @@ hCoV-19/Australia/VIC-CDC-02978/2022, or
 hCoV-19/USA/CA-CDC-S47y/2022, respectively.
 </li>
 </ul>
-<b>NOTE:</b> virus_name field must match exactly the header of the respective sequence in the fasta file.<br>
+<b>NOTE:</b> virus_name field must match exactly the header of the
+respective sequence in the fasta file.<br>
 </td>
 </tr>
 <tr>
@@ -294,7 +378,9 @@ For hCoV-19, this will always be “betacoronavirus”.
 gs-passage
 </td>
 <td style="text-align:left;">
-“Original” if the sample was sequenced directly from swabs, otherwise add the name of the cell line (e.g., “Vero”) used to culture the specimen.
+“Original” if the sample was sequenced directly from swabs, otherwise
+add the name of the cell line (e.g., “Vero”) used to culture the
+specimen.
 </td>
 </tr>
 <tr>
@@ -310,7 +396,8 @@ Format as “Continent / Country / Region / Sub-region”
 gs-host
 </td>
 <td style="text-align:left;">
-For clinical samples, this is “Human”. Otherwise add the species name of the organism from which the sample was originally sourced.
+For clinical samples, this is “Human”. Otherwise add the species name of
+the organism from which the sample was originally sourced.
 </td>
 </tr>
 <tr>
@@ -326,7 +413,10 @@ Synonym for “Biological sex”. Should be “Female”, “Male”, or “Othe
 gs-patient_age
 </td>
 <td style="text-align:left;">
-Age in years of the person from whom the specimen was collected. May take format other than integer years, for example, “0.5” (i.e., 6 months), “5 days”, “7 months”. If units are not given, they are assumed in years.
+Age in years of the person from whom the specimen was collected. May
+take format other than integer years, for example, “0.5” (i.e., 6
+months), “5 days”, “7 months”. If units are not given, they are assumed
+in years.
 </td>
 </tr>
 <tr>
@@ -342,7 +432,8 @@ E.g., “Hospitalized”, “Released”, “Live”, “Deceased”
 gs-seq_technology
 </td>
 <td style="text-align:left;">
-Add the sequencer brand and model. See a list of options <a href="gisaid_options.html#seq_technology" target="_blank">here</a>.
+Add the sequencer brand and model. See a list of options
+<a href="gisaid_options.html#seq_technology" target="_blank">here</a>.
 </td>
 </tr>
 <tr>
@@ -366,7 +457,8 @@ Complete building address of laboratory from where sample originated.
 gs-subm_lab
 </td>
 <td style="text-align:left;">
-Full name of laboratory submitting this record to GISAID. See a list of options <a href="gisaid_options.html#subm_lab" target="_blank">here</a>.
+Full name of laboratory submitting this record to GISAID. See a list of
+options <a href="gisaid_options.html#subm_lab" target="_blank">here</a>.
 </td>
 </tr>
 <tr>
@@ -380,15 +472,158 @@ Complete building address of the submitting laboratory.
 </tbody>
 </table>
 <p><br></p>
-<p><strong>NOTE:</strong> The prefix of <strong>“gs-”</strong> is used to identity attributes for <strong>GISAID</strong> submissions.</p>
-<p><br><br></p>
-<div id="you-are-now-ready-to-install-seqsender-and-batch-upload-your-submission" class="section level3">
-<h3 class="hasAnchor">
-<a href="#you-are-now-ready-to-install-seqsender-and-batch-upload-your-submission" class="anchor"></a><a href="https://cdcgov.github.io/seqsender/articles/local_installation.html"><em><i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install <code>seqsender</code> and batch upload your submission</em></a>
-</h3>
-<p><br><br><br></p>
-<p>Any questions or issues? Please report them on our <a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github issue tracker</a>.</p>
+<p><strong>NOTE:</strong> The prefix of <strong>“gs-”</strong> is used
+to identity attributes for <strong>GISAID</strong> submissions.</p>
 <p><br></p>
+<div class="section level4">
+<h4 id="optional-attributes">
+<b>Optional Attributes</b><a class="anchor" aria-label="anchor" href="#optional-attributes"></a>
+</h4>
+<p>To include additional attributes to <strong>EpiCoV</strong>
+submissions, just append <code>gs-</code> in front of the desired
+attributes. Here is a list of optional attributes:</p>
+<table class="table">
+<thead><tr>
+<th style="text-align:left;">
+Column_name
+</th>
+<th style="text-align:left;">
+Description
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+add_location
+</td>
+<td style="text-align:left;">
+e.g. Cruise Ship, Convention, Live animal market
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+add_host_info
+</td>
+<td style="text-align:left;">
+e.g. Patient infected while traveling in
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sampling_strategy
+</td>
+<td style="text-align:left;">
+e.g. Sentinel surveillance (ILI), Sentinel surveillance (ARI), Sentinel
+surveillance (SARI), Non-sentinel-surveillance (hospital),
+Non-sentinel-surveillance (GP network), Longitudinal sampling on same
+patient(s), S gene dropout
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+specimen
+</td>
+<td style="text-align:left;">
+e.g. Sputum, Alveolar lavage fluid, Oro-pharyngeal swab, Blood, Tracheal
+swab, Urine, Stool, Cloakal swab, Organ, Feces, Other
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+outbreak
+</td>
+<td style="text-align:left;">
+Date, Location e.g. type of gathering, Family cluster, etc.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+last_vaccinated
+</td>
+<td style="text-align:left;">
+provide details if applicable
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:left;">
+Include drug name, dosage
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+assembly_method
+</td>
+<td style="text-align:left;">
+e.g. CLC Genomics Workbench 12, Geneious 10.2.4, SPAdes/MEGAHIT v1.2.9,
+UGENE v. 33, etc.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+coverage
+</td>
+<td style="text-align:left;">
+e.g. 70x, 1,000x, 10,000x (average)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+provider_sample_id
+</td>
+<td style="text-align:left;">
+Sample ID given by originating laboratory
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+subm_sample_id
+</td>
+<td style="text-align:left;">
+Sample ID given by the submitting laboratory
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+consortium
+</td>
+<td style="text-align:left;">
+Sequencing consortium the submitting lab is affiliated to
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+comment
+</td>
+<td style="text-align:left;">
+Comment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+comment_type
+</td>
+<td style="text-align:left;">
+Comment icon
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p><br><br></p>
+<p style="font-size: 20px">
+<a href="https://cdcgov.github.io/seqsender/articles/local_installation.html" class="external-link"><em><i class="fas fa-play" role="presentation" aria-label="play icon"></i>
+You are now ready to install <code>seqsender</code> and batch upload
+your submission</em></a>
+</p>
+<p><br><br><br></p>
+<p>Any questions or issues? Please report them on our
+<a href="https://github.com/CDCgov/seqsender/issues" target="_blank">Github
+issue tracker</a>.</p>
+<p><br></p>
+</div>
 </div>
 </div>
   </div>
@@ -404,11 +639,13 @@ Complete building address of the submitting laboratory.
 
 
       <footer><div class="copyright">
-  <p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Ben Rambo-Martin.</p>
+  <p></p>
+<p>Developed by Dakota Howard, Reina Chau, Peter Cook, Kristine Lacek, Amanda Sullivan, Vikram Setlur, Thomas Stark, Brian Lee, Benjamin Rambo-Martin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer>
@@ -416,6 +653,8 @@ Complete building address of the submitting laboratory.
 
   
 
+
+  
 
   </body>
 </html>

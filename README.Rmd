@@ -68,7 +68,7 @@ Here is a quick look of where to store the downloaded **GISAID CLI** package.
 
 ## Requirement Files
 
-Before submitter can perform a submission using ``r program``, make sure the requirement files (such as *config.yaml*, *metadata.csv*, *sequence.fasta*, *raw reads*, etc.) are already prepared and stored in a submission directory of choice.
+Before submitters can perform a batch submission using ``r program``, they must make sure the requirement files (such as *config.yaml*, *metadata.csv*, *sequence.fasta*, *raw reads*, etc.) are already prepared and stored in a submission directory of choice.
 
 (a) To prep for FLU submissions, select one of the databases below to get started:
 

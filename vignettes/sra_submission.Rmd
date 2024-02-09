@@ -10,10 +10,10 @@ vignette: >
 <style>
   
   table {
-    border: 1px solid gray;
+    border: none;
   }
   
-  td, th {
+  td, th, tr {
     border: 1px solid gray;
     padding: 5px 5px 5px 5px;
   }
@@ -102,7 +102,7 @@ for(d in 1:nrow(main_config_df)){
 
 **Sequence Read Archive (SRA)** data, available through multiple cloud providers and NCBI servers, is the largest publicly available repository of high throughput sequencing data. The archive accepts data from all branches of life as well as metagenomic and environmental surveys. **SRA** stores raw sequencing data and alignment information to enhance reproducibility and facilitate new discoveries through data analysis. 
 
-Before one can upload sequence read archives to **`r title`** database using ``r program``, they must ensure the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) are prepared in advance and stored in a submission directory of choice.
+Before submitters can upload sequence read archives to **`r title`** database using ``r program``,they must ensure the requirement files (such as `config.yaml`, `metadata.csv`, `sequence.fasta`, `raw reads`, etc.) are already prepared ahead of time and stored them in a submission folder of choice (e.g., `submission_name`) within a parent submission directory (e.g., `submission_dir`). That way ``r program`` will be able to scoop up the necessary files in that folder, generate submission files, and then batch uploading them to the submitting database of choices.
 
 ## Requirement files
 
@@ -110,34 +110,39 @@ Before one can upload sequence read archives to **`r title`** database using ``r
 - [Sequence read archives](#sequence-read-archives) in a `bam/sff/hdf5/fastq` format
 - [Metadata file](#metadata-file) in a `csv` format
 
+A quick look of where to store all of the requirement files
 
-## Config file
+![](images/submission_dir.png)
+
+### Config file
 
 Config file is a yaml file that provides a brief description about the submission and contains user credentials that allow ``r program`` to authenticate the database prior to upload a submission.
 
 ![](images/config_file.png)
 
 :::{style="padding: 10px; border: 1px solid blue !important;"}
-<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>` **NOTE:** <br>
+<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> **NOTE:** <br>
 
 - To submit to NCBI only, one can remove the **GISAID Submission (b)** section from the config file. Vice versa, to submit to GISAID only, just remove the **NCBI Submission (a)** section. <br>
-- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `Primary`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
+- **Submission_Position** determines the order of databases in which we will submit to first. For instance, if GISAID is set as `1`, **_`r program`_** will submit to GISAID first, then after all samples are assigned with a GISAID accession number, **_`r program`_** will proceed to submit to NCBI. This order of submission ensures samples are linked correctly between the two databases. <br> 
 - **Username** and **Password** under the **NCBI Submission (b)** section are the credentials used to authenticate the **NCBI FTP Server** (not to mistake with individual NCBI account). See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) for more details.
 :::
 
-## Sequence read archives
+### Sequence read archives
 
 Currently, NCBI accepts binary files such as BAM, SFF, and HDF5 formats and text formats such as FASTQ. See [SRA Submit Formats](https://www.ncbi.nlm.nih.gov/sra/docs/submitformats/) for more details.
 
 :::{style="padding: 10px; border: 1px solid blue !important;"}
-<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i>` **NOTE:** <br>
+<i class="fas fa-triangle-exclamation" role="presentation" aria-label="triangle-exclamation icon"></i> **NOTE:** <br>
 
-- Sequence read archive for all samples must be stored in a subfolder called `raw_reads` inside a submission directory of choice
+- Sequence read archive for all samples must be stored in a subfolder called `raw_reads` inside a submission folder of choice
 :::
 
 <br>
 
-## Metadata file
+### Metadata file
+
+The metadata worksheet is a comma-delimited (csv) file that contains required attributes that are useful for the rapid analysis and trace back of **`r paste0(organism, collapse=" or ")`** cases.
 
 Here is a short description about the fields in the metadata worksheet.
 
@@ -153,7 +158,7 @@ To include additional attributes to **`r title`** submissions, just append ``r p
 
 <br><br>
 
-### [*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)
+<p style="font-size: 20px">[*<i class="fas fa-play" role="presentation" aria-label="play icon"></i> You are now ready to install ``r program`` and batch upload your submission*](`r github_pages_url`/articles/local_installation.html)</p>
 
 <br><br><br>
 
