@@ -1,14 +1,19 @@
 
 <!-- ![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg) -->
+
 <!-- ![GitHub issues](https://img.shields.io/github/issues/montilab/cadra) -->
+
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
+
 <p style="font-size: 16px;">
+
 <em>Public Database Submission Pipeline</em>
+
 </p>
 
 **Beta Version**: 1.1.0. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
-Feedback and suggestions are welcome!
+Feedback and suggestions are welcome\!
 
 **General Disclaimer**: This repository was created for use by CDC
 programs to collaborate on public health related projects in support of
@@ -17,6 +22,8 @@ GitHub is not hosted by the CDC, but is a third party website used by
 CDC and its partners to share information and collaborate on software.
 CDC use of GitHub does not imply an endorsement of any one particular
 service, product, or enterprise.
+
+# [Documentation](https://cdcgov.github.io/seqsender/index.html)
 
 ## Overview
 
@@ -29,9 +36,17 @@ A Virus** (FLU) and **SARS-COV-2** (COV) data. However, the dynamic
 nature of this pipeline can allow for additional uploads of other
 organisms in future updates or requests.
 
+## Contacts
+
+| Role       | Contact                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| Creator    | [Dakota Howard](https://github.com/dthoward96), [Reina Chau](https://github.com/rchau88) |
+| Maintainer | [Dakota Howard](https://github.com/dthoward96)                                           |
+| Back-Up    | [Reina Chau](https://github.com/rchau88), [Brian Lee](https://github.com/leebrian)       |
+
 ## Prerequisites
 
-- **NCBI Submissions**
+  - **NCBI Submissions**
 
 `seqsender` utilizes an UI-Less Data Submission Protocol to bulk upload
 submission files (e.g., *submission.xml*, *submission.zip*, etc.) to
@@ -63,11 +78,11 @@ FTP on the command line. Before attempting to submit a submission using
     <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a>
     to discuss requirements for submissions.
 
-5.  Coordinate a NCBI namespace name (**spuid_namespace**) that will be
+5.  Coordinate a NCBI namespace name (**spuid\_namespace**) that will be
     used with Submitter Provided Unique Identifiers (**spuid**) in the
-    submission. The liaison of **spuid_namespace** and **spuid** is used
-    to report back assigned accessions as well as for cross-linking
-    objects within submission. The values of **spuid_namespace** are up
+    submission. The liaison of **spuid\_namespace** and **spuid** is
+    used to report back assigned accessions as well as for cross-linking
+    objects within submission. The values of **spuid\_namespace** are up
     to the submitter to decide but they must be unique and
     well-coordinated prior to make a submission. For more information
     about these two fields, see
@@ -78,7 +93,9 @@ FTP on the command line. Before attempting to submit a submission using
     [GENBANK](https://cdcgov.github.io/seqsender/articles/genbank_submission.html#metadata)
     metadata requirements.
 
-- **GISAID Submissions**
+<!-- end list -->
+
+  - **GISAID Submissions**
 
 `seqsender` makes use of GISAID’s Command Line Interface tools to bulk
 uploading meta- and sequence-data to GISAID databases. Presently, the
@@ -145,14 +162,20 @@ prepared and stored in a submission directory of choice.
 
 ## Quick Start
 
-- [How to run seqsender
-  locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
-- [How to run seqsender with
-  Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
-- [How to run seqsender with
-  Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
-- [How to run seqsender with
-  Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
+  - [How to run seqsender
+    locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
+  - [How to run seqsender with
+    Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
+  - [How to run seqsender with
+    Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
+  - [How to run seqsender with
+    Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
+
+## Code Attributions
+
+Dakota Howard and Reina Chau for majority of the code base with input
+and testing from
+[colleagues](https://cdcgov.github.io/seqsender/authors.html).
 
 ## Public Domain Standard Notice
 

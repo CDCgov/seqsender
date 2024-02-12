@@ -30,9 +30,19 @@ github_pages_url <- description$GITHUB_PAGES
 
 **General Disclaimer**: This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
+# [Documentation](`r github_pages_url`/index.html)
+
 ## Overview
 
 ``r program`` is a Python program that is developed to automate the process of generating necessary submission files and batch uploading them to <ins>NCBI archives</ins> (such as **BioSample**, **SRA**, and **Genbank**) and <ins>GISAID databases</ins> (e.g. **EpiFlu** and **EpiCoV**). Presently, the pipeline is capable of uploading **Influenza A Virus** (FLU) and **SARS-COV-2** (COV) data. However, the dynamic nature of this pipeline can allow for additional uploads of other organisms in future updates or requests.
+
+## Contacts
+
+| Role       | Contact |
+| ---------- | ------- |
+| Creator    | [Dakota Howard](https://github.com/dthoward96), [Reina Chau](https://github.com/rchau88) |
+| Maintainer | [Dakota Howard](https://github.com/dthoward96) |
+| Back-Up    | [Reina Chau](https://github.com/rchau88), [Brian Lee](https://github.com/leebrian) |
 
 ## Prerequisites
 
@@ -92,6 +102,10 @@ Before submitters can perform a batch submission using ``r program``, they must 
 - [How to run seqsender with Docker](`r github_pages_url`/articles/docker_installation.html)
 - [How to run seqsender with Compose](`r github_pages_url`/articles/compose_installation.html)
 - [How to run seqsender with Singularity](`r github_pages_url`/articles/singularity_installation.html)
+
+## Code Attributions
+
+Dakota Howard and Reina Chau for majority of the code base with input and testing from [colleagues](`r github_pages_url`/authors.html). 
 
 ## Public Domain Standard Notice
 
