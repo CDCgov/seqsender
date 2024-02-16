@@ -86,6 +86,7 @@ def get_config(config_file, database):
 	if type(config_dict) is dict:
 		try:
 			config_dict = config_dict['Submission']
+			return config_dict
 		except:
 			print("Error: there is no Submission information in the config file.", file=sys.stderr)
 			sys.exit(1)
@@ -274,7 +275,7 @@ def process_fasta_samples(metadata, fasta_file):
 	# Check duplicates in fasta_df
 	duplicated_df = fasta_df[fasta_df.duplicated(subset = ["fasta_name_orig"], keep = False)]
 	if not duplicated_df.empty:
-		print("Error: Sequences in fasta file must be unique at: " + fasta_file + "\nDuplicate Sequences\n" + df["fasta_sequence_orig"].to_string(index=False), file=sys.stderr)
+		print("Error: Sequences in fasta file must be unique at: " + fasta_file + "\nDuplicate Sequences\n" + fasta_df["fasta_name_orig"].to_string(index=False), file=sys.stderr)
 		sys.exit(1)
 	# Validate duplicates don't appear on merge
 	try:
