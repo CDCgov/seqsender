@@ -86,7 +86,6 @@ def get_config(config_file, database):
 	if type(config_dict) is dict:
 		try:
 			config_dict = config_dict['Submission']
-			return config_dict
 		except:
 			print("Error: there is no Submission information in the config file.", file=sys.stderr)
 			sys.exit(1)
@@ -94,10 +93,11 @@ def get_config(config_file, database):
 			# Check if each database has portal information listed in the config file
 			for d in range(len(database)):
 				if submission_portals[d] not in config_dict.keys():
-					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases in the command.", file=sys.stderr)
+					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases.", file=sys.stderr)
 					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
 					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
 					sys.exit(1)
+			return config_dict
 	else:	
 		print("Error: Config file is incorrect. File must has a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
