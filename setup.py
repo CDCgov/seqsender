@@ -28,26 +28,26 @@ PROG_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Create example templates for testing
 def create_zip_template(organism, database, submission_dir, submission_name):
-	# Create output directory 
+	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
 	out_dir = os.path.join(submission_dir, submission_name)
 	os.makedirs(out_dir, exist_ok = True)
 	# Create sra directory
 	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output	
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")	
-	out_config_file = os.path.join(out_dir, "config.yaml")	
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")	
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")	
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")	
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")	
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")	
+	# Create a list of files to output
+	out_metadata_file = os.path.join(out_dir, "metadata.csv")
+	out_config_file = os.path.join(out_dir, "config.yaml")
+	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
+	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
+	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
+	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
+	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
 	# Create a list of template files to output
-	temp_config_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_config.yaml")	
-	temp_sequence_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_sequence.fasta")	
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_1_R1.fastq.gz")	
+	temp_config_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_config.yaml")
+	temp_sequence_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_sequence.fasta")
+	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
 	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_2_R1.fastq.gz")	
+	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
 	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
 	# Print generating message
 	print("\n"+"Generating submission template", file=sys.stdout)
@@ -100,4 +100,3 @@ def download_table2asn(table2asn_dir):
 		print("Downloading table2asn error", file=sys.stderr)
 		print(error, file=sys.stderr)
 		sys.exit(1)
-

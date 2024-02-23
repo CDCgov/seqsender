@@ -18,6 +18,7 @@ from datetime import datetime
 import ftplib
 import json
 from zipfile import ZipFile
+from cerberus import Validator
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -65,7 +66,7 @@ def get_required_colnames(database, organism):
 		if len(database_list) > 0:
 			# Get all common fields across all databases in a portal
 			if "COMMON_FIELDS" in list(main_config["PORTAL_NAMES"][portal].keys()):
-				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["COMMON_FIELDS"].keys())	
+				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["COMMON_FIELDS"].keys())
 			# Get required fields for given organism
 			if organism in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
 				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][organism].keys())
@@ -74,31 +75,41 @@ def get_required_colnames(database, organism):
 				if database_name in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
 					all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][database_name].keys())
 	# Extract the unique metadata fields
-	return set(all_required_colnames)		
+	return set(all_required_colnames)
 
 # Check the config file
 def get_config(config_file, database):
-	# Determine which portal is the database belongs to
-	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" for x in database]
-	# Read in config file
-	with open(config_file, "r") as f:
-		config_dict = yaml.load(f, Loader=yaml.BaseLoader) # Load yaml as str only
-	if type(config_dict) is dict:
+	# Determine required database
+	submission_portals = []
+	if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
+		submission_portals.append("ncbi")
+	if "GISAID" in database:
+		submission_portals.append("gisaid")
+	# Check if list empty
+	if not submission_portals:
+		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		sys.exit(1)
+	submission_schema = "_".join(submission_portals)
+	# Read in user config file
+	with open(config_file, "r") as file:
 		try:
-			config_dict = config_dict['Submission']
+			# Check if valid yaml
+			config_dict = yaml.load(file, Loader = yaml.FullLoader)
 		except:
-			print("Error: there is no Submission information in the config file.", file=sys.stderr)
+			print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 			sys.exit(1)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", (submission_schema + "_schema.py")), 'r').read())
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(validator.errors, file=sys.stderr)
 		else:
-			# Check if each database has portal information listed in the config file
-			for d in range(len(database)):
-				if submission_portals[d] not in config_dict.keys():
-					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases in the command.", file=sys.stderr)
-					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
-					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
-					sys.exit(1)
-	else:	
-		print("Error: Config file is incorrect. File must has a valid yaml format.", file=sys.stderr)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Read in metadata file
@@ -170,12 +181,12 @@ def read_gisaid_log(log_file, submission_status_file):
 				if "epi_isl".upper() in line.upper():
 					column_name = "gs-sample_name"
 					sample_name = list(set(filter(lambda x: (x.upper() in line.upper())==True, submission_status[column_name])))
-					accession_id = "epi_isl_id" 
+					accession_id = "epi_isl_id"
 					accession = re.search("EPI_ISL_[1-9]+", line)
 				elif "epi_id".upper() in line.upper():
 					column_name = "gs-sequence_name"
 					sample_name = list(set(filter(lambda x: (x.upper() in line.upper())==True, submission_status[column_name])))
-					accession_id = "epi_id" 
+					accession_id = "epi_id"
 					accession = re.search("EPI[1-9]+", line)
 				else:
 					continue
@@ -225,6 +236,22 @@ def check_credentials(config_dict, database):
 	else:
 		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
+
+# Check table2asn validation information
+def check_table2asn_submission(validation_file):
+	# Check if validation file exists
+	if os.path.isfile(validation_file) == False:
+		return "table2asn-error"
+	# If submission has errors reject
+	with open(validation_file, "r") as file:
+		for line in file:
+			if "error:" in line.lower():
+				print("Submission has errors after running Table2asn.", file=sys.stderr)
+				print("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.", file=sys.stderr)
+				print("Validation file: " + validation_file, file=sys.fasta_description_orig)
+				return "table2asn-validation-error"
+			else:
+				return "validated"
 
 # Check raw reads files listed in metadata file
 def check_raw_read_files(submission_name, submission_dir, metadata):
@@ -326,10 +353,10 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 	for database_name in database:
 		print("\n" + "Submission database: " + database_name, file=sys.stdout)
 		df = pd.read_csv(submission_log_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False).sort_values('Submission_Position', ascending=True)
-		df_processing = df[(df["Organism"] == organism) & (df["Database"] == database_name) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Name"] == submission_name) & (df["Submission_Type"] == submission_type)]		
+		df_processing = df[(df["Organism"] == organism) & (df["Database"] == database_name) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Name"] == submission_name) & (df["Submission_Type"] == submission_type)]
 		df_processing = df_processing.reset_index(drop=True)
-		submission_dir = df_processing["Submission_Directory"][0]		
-		submission_position = df_processing["Submission_Position"][0]	
+		submission_dir = df_processing["Submission_Directory"][0]
+		submission_position = df_processing["Submission_Position"][0]
 		submission_id, submission_status = df_processing["Submission_Status"][0].strip().split(";")
 		config_file = df_processing["Config_File"][0]
 		table2asn = df_processing["Table2asn"][0]
@@ -357,11 +384,11 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 			print("There is no GISAID CLI package for " + organism + " located at "+ gisaid_cli, file=sys.stderr)
 			print("Please download the CLI package from GISAID platform", file=sys.stderr)
 			print("Then place a copy of the CLI binary at "+ gisaid_cli, file=sys.stderr)
-			sys.exit(1)	
+			sys.exit(1)
 		# Check the status of the submission
 		if "processed-ok" in submission_status:
 			print("Submission status: " + submission_status, file=sys.stdout)
-		else:		
+		else:
 			# Pull download submission report and update its status
 			if database_name in ["BIOSAMPLE", "SRA", "GENBANK"]:
 				# If report exists, processing the report and output status of the submission
@@ -383,8 +410,8 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 							for db in other_submitting_db:
 								db_df = df.loc[df["Database"] == db]
 								db_df = db_df.reset_index(drop=True)
-								db_status = db_df["Submission_Status"][0]	
-								# If the status of biosample or sra is processed-ok, then go ahead and submit to Genbank 	
+								db_status = db_df["Submission_Status"][0]
+								# If the status of biosample or sra is processed-ok, then go ahead and submit to Genbank
 								if "processed-ok" in db_status:
 									all_status += [1]
 									report.update_genbank_files(database=database, organism=organism, submission_files_dir=submission_files_dir, submission_status_file=submission_status_file)
@@ -396,7 +423,7 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 									if os.path.isfile(str(gff_file)) == False:
 										gff_file = None
 									submission_id, submission_status = create.create_genbank_table2asn(submission_name=submission_name, submission_files_dir=submission_files_dir, gff_file=gff_file)
-									if submission_status == "processed-ok":
+									if submission_status == "validated":
 										submission_status = submit.sendmail(database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict['NCBI'], test=test)
 								else:
 									# Submit via FTP
@@ -418,9 +445,8 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 					if "processed-ok" in db_status:
 						report.update_gisaid_files(organism=organism, submission_files_dir=submission_files_dir, submission_status_file=submission_status_file)
 						submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
-						submission_id = ""	  
+						submission_id = ""
 			# Update status in the submission log
 			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, table2asn=table2asn, gff_file=gff_file, submission_type=submission_type)
 			# Print out the submission status
 			print("Submission status: " + submission_status, file=sys.stdout)
-

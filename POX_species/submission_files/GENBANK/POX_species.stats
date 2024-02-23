@@ -1,0 +1,19 @@
+Total messages:		6
+
+=================================================================
+2 INFO-level messages exist
+
+SEQ_INST.HighNpercent3Prime:	2
+
+=================================================================
+3 WARNING-level messages exist
+
+SEQ_INST.InternalNsInSeqRaw:	2
+SEQ_FEAT.BadAuthorSuffix:	1
+
+=================================================================
+1 ERROR-level messages exist
+
+SEQ_DESCR.NoSourceDescriptor:	1
+
+=================================================================

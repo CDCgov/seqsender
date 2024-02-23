@@ -1,0 +1,15 @@
+Column_name,Description
+add_location,"e.g. Cruise Ship, Convention, Live animal market"
+add_host_info,e.g. Patient infected while traveling in
+sampling_strategy,"e.g. Sentinel surveillance (ILI), Sentinel surveillance (ARI), Sentinel surveillance (SARI), Non-sentinel-surveillance (hospital), Non-sentinel-surveillance (GP network), Longitudinal sampling on same patient(s), S gene dropout"
+specimen,"e.g. Sputum, Alveolar lavage fluid, Oro-pharyngeal swab, Blood, Tracheal swab, Urine, Stool, Cloakal swab, Organ, Feces, Other"
+outbreak,"Date, Location e.g. type of gathering, Family cluster, etc."
+last_vaccinated,provide details if applicable
+treatment,"Include drug name, dosage"
+assembly_method,"e.g. CLC Genomics Workbench 12, Geneious 10.2.4, SPAdes/MEGAHIT v1.2.9, UGENE v. 33, etc."
+coverage,"e.g. 70x, 1,000x, 10,000x (average)"
+provider_sample_id,Sample ID given by originating laboratory
+subm_sample_id,Sample ID given by the submitting laboratory
+consortium,Sequencing consortium the submitting lab is affiliated to
+comment,Comment
+comment_type,Comment icon

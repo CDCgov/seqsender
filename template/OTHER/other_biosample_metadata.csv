@@ -1,0 +1,3 @@
+ncbi-spuid,ncbi-spuid_namespace,bs-description,organism,ncbi-bioproject,bs-isolate,bs-collected_by,bs-package, bs-collection_date, bs-host, bs-host_disease,bs-isolation_source,bs-geo_loc_name,bs-lat_lon,bs-host_sex,bs-host_age
+seq1,CDC-OAMD,CDC Test,Monkeypox virus,PRJNA512913,MPXV/human/USA/GA_2741/2020,Helix,Pathogen.cl.1.0,3/28/2020,Homo sapiens,Monkeypox virus,nasal swab,United States: Georgia,Unknown,Male,28
+seq2,CDC-OAMD,CDC Test,Monkeypox virus,PRJNA512962,MPXV/human/USA/GA_3742/2020,Helix,Pathogen.cl.1.0,4/29/2020,Homo sapiens,Monkeypox virus,nasal swab,United States: Georgia,Unknown,Male,45

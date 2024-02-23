@@ -1,0 +1,3 @@
+ncbi-spuid,ncbi-spuid_namespace,ncbi-bioproject,sra-file_location,sra-file_name,sra-library_name,sra-instrument_model,sra-library_strategy,sra-library_source,sra-library_selection,sra-library_layout,sra-library_construction_protocol,sra-loader
+seq1,CDC-OAMD,PRJNA512913,local,"fastq_1_R1.fastq.gz, fastq_1_R2.fastq.gz",Other Test,Illumina NovaSeq 6000,AMPLICON,VIRAL RNA,RT-PCR,PAIRED,Helix Hybrid-Capture Test,latf-load
+seq2,CDC-OAMD,PRJNA512913,local,"fastq_2_R1.fastq.gz, fastq_2_R2.fastq.gz",Other Test,Illumina NovaSeq 6000,AMPLICON,VIRAL RNA,RT-PCR,PAIRED,Helix Hybrid-Capture Test,latf-load

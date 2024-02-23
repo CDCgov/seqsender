@@ -1,0 +1,6 @@
+Warning: valid [SEQ_INST.InternalNsInSeqRaw] Run of 184 Ns in raw sequence starting at base 22302 BIOSEQ: lcl|MPXV/Anzark/12/2022: raw, dna len= 29862
+Info: valid [SEQ_INST.HighNpercent3Prime] Sequence has more than 5 Ns in the last 10 bases or more than 15 Ns in the last 50 bases BIOSEQ: lcl|MPXV/Anzark/12/2022: raw, dna len= 29862
+Warning: valid [SEQ_FEAT.BadAuthorSuffix] Bad author suffix R DESCRIPTOR: Pub: Doe,J. RUnpublished BIOSEQ-SET: genbank: lcl|MPXV/Anzark/12/2022
+Error: valid [SEQ_DESCR.NoSourceDescriptor] No source information included on this record. BIOSEQ-SET: genbank: lcl|MPXV/Anzark/12/2022
+Warning: valid [SEQ_INST.InternalNsInSeqRaw] Run of 185 Ns in raw sequence starting at base 22301 BIOSEQ: lcl|MPXV/Anzark/13/2022: raw, dna len= 29865
+Info: valid [SEQ_INST.HighNpercent3Prime] Sequence has more than 5 Ns in the last 10 bases or more than 15 Ns in the last 50 bases BIOSEQ: lcl|MPXV/Anzark/13/2022: raw, dna len= 29865
