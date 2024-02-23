@@ -48,9 +48,20 @@ def submit_ncbi(database, submission_name, submission_dir, config_dict, submissi
 		print("If this is not a '" + submission_type + "' submission, interrupts submission immediately.", file=sys.stdout)
 		print("\n"+"Connecting to NCBI FTP Server", file=sys.stdout)
 		print("Submission name: " + submission_name, file=sys.stdout)
-		# CD to to test/production folder
+		# Check FTP folder structure either /submit/Production/ or /Production/
+		if submission_type not in ftp.nlst():
+			# Check if submit folder exists
+			if "submit" in ftp.nlst():
+				ftp.cwd("submit")
+				# If submit folder exists check if Production/Test folder exists
+				if submission_type not in ftp.nlst():
+					print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
+					sys.exit(1)
+			else:
+				print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
+				sys.exit(1)
 		ftp.cwd(submission_type)
-		# Create submission directory if it does not exist
+		# Create submission name directory if it does not exist
 		if ncbi_submission_name not in ftp.nlst():
 			ftp.mkd(ncbi_submission_name)
 		# CD to submission folder
