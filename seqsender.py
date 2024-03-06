@@ -27,7 +27,7 @@ VERSION = "1.1.0 (Beta)"
 STARTTIME = datetime.now()
 
 # Define organsim choices
-ORGANISM_CHOICES = ["FLU", "COV"]
+ORGANISM_CHOICES = ["FLU", "COV", "ENTERIC"]
 
 # Define database choices
 DATABASE_CHOICES = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]

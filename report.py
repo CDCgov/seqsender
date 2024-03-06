@@ -40,7 +40,9 @@ def get_ncbi_process_report(database, submission_name, submission_files_dir, con
 		FTP_HOST = process.get_main_config()["PORTAL_NAMES"]["NCBI"]["FTP_HOST"]
 		ftp = ftplib.FTP(FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
-		# CD to to test or production folder
+		# CD to test or production folder
+		ftp.cwd('/')
+		ftp.cwd('submit')
 		ftp.cwd(submission_type)
 		# Check if submission name exists
 		if ncbi_submission_name not in ftp.nlst():

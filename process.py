@@ -79,6 +79,8 @@ def get_required_colnames(database, organism):
 # Check the config file
 def get_config(config_file, database):
 	# Determine which portal is the database belongs to
+	print(database)
+	database = database.split(',')
 	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" for x in database]
 	# Read in config file
 	with open(config_file, "r") as f:
@@ -96,7 +98,7 @@ def get_config(config_file, database):
 					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases.", file=sys.stderr)
 					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
 					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
-					sys.exit(1)
+					#sys.exit(1)
 			return config_dict
 	else:	
 		print("Error: Config file is incorrect. File must has a valid yaml format.", file=sys.stderr)
@@ -133,7 +135,7 @@ def get_metadata(database, organism, metadata_file):
 			if pd.isna(metadata[name]).any():
 				print("Error: The required 'collection_date' field in metadata file contains incorrect date format. Date must be in the ISO format: YYYYMMDD/YYYYDDMM/DDMMYYYY/MMDDYYYY. For example: 2020-03-25.", file=sys.stderr)
 				sys.exit(1)
-			metadata[name] = metadata[name].dt.strftime("%Y-%m-%d")
+			metadata[name] = metadata[name].dt.strftime("%Y-%m")
 		# Make sure specific column fields with empty values are filled with "Unknown"
 		if (name in [re.sub("[*?#&]", "", x) for x in required_unknown_colnames]) and any(metadata[name] == ""):
 			metadata[name] = metadata[name].replace(r'^\s*$', "Unknown", regex=True)

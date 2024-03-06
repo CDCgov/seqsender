@@ -39,7 +39,7 @@ SUBMISSION_PORTAL:
             - text: 'The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, Homo sapiens.'
           bs-host_disease:  
             - text: 'Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, please see <a href="http://bioportal.bioontology.org/ontologies/1009" target="_blank">Human Disease Ontology</a> or <a href="http://www.ncbi.nlm.nih.gov/mesh" target="_blank">MeSH</a>'
-          bs-isolate:  
+          bs-strain:  
             - text: 'Identification or description of the specific individual from which this sample was obtained.'
           bs-isolation_source:  
             - text: 'Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived.'
@@ -50,7 +50,7 @@ SUBMISSION_PORTAL:
             - text: 'Location of raw reads files. Options: "local" or "cloud"'
           sra-file_name:  
             - text: 'Name of the raw read files. All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If there are multiple files, concatenate them with a commas (","), e.g. "sample1_R1.fastq.gz, sample1_R2.fastq.gz". Store files in /seqsender/data/raw_reads/ or provide full path to the raw read files.'
-          sra-library_name:  
+          sra-library_ID:  
             - text: 'Short unique identifier for sequencing library. <b>Each name must be unique!</b>'
           sra-instrument_model:  
             - text: 'Type of instrument model used for sequencing. See a list of options <a href="sra_options.html#instrument_model" target="_blank">here</a>.'
