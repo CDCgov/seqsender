@@ -69,18 +69,24 @@ def get_required_colnames(database, organism):
 			# Get required fields for given organism
 			if organism in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
 				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][organism].keys())
+			# Get required fields for a biosample package
+			if organism in list(main_config["PORTAL_NAMES"][portal]["DATABASE"]["BIOSAMPLE"]["PACKAGES"].keys()):
+				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"]["BIOSAMPLE"]["PACKAGES"][organism].keys())
 			# Get required fields for each given database
 			for database_name in database_list:
 				if database_name in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
 					all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][database_name].keys())
 	# Extract the unique metadata fields
+	# remove the PACKAGES key that snuck in there, probably a better way to do this
+	all_required_colnames = [header for header in all_required_colnames if header != 'PACKAGES']
 	return set(all_required_colnames)		
 
 # Check the config file
 def get_config(config_file, database):
 	# Determine which portal is the database belongs to
-	print(database)
-	database = database.split(',')
+	if isinstance(database, str):
+		database = database.split(',')
+
 	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" for x in database]
 	# Read in config file
 	with open(config_file, "r") as f:
@@ -98,7 +104,8 @@ def get_config(config_file, database):
 					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases.", file=sys.stderr)
 					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
 					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
-					#sys.exit(1)
+					sys.exit(1)
+
 			return config_dict
 	else:	
 		print("Error: Config file is incorrect. File must has a valid yaml format.", file=sys.stderr)
@@ -110,6 +117,9 @@ def get_metadata(database, organism, metadata_file):
 	metadata = pd.read_csv(metadata_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 	# Remove rows if entirely empty
 	metadata = metadata.dropna(how="all")
+	# Drop empty optional columns that were not filled out before submission
+	metadata = metadata.applymap(lambda x: pd.NA if x == '' else x)
+	metadata = metadata.dropna(axis=1, how="all")
 	# Remove extra spaces from column names
 	metadata.columns = metadata.columns.str.strip()
 	# Extract the required fields for specified database
@@ -120,8 +130,10 @@ def get_metadata(database, organism, metadata_file):
 	required_unknown_colnames = list(filter(lambda x: ("?" in x)==True, db_required_colnames))
 	# Obtain the column fields with & sign. Those fields contain date values.
 	required_date_colnames = list(filter(lambda x: ("&" in x)==True, db_required_colnames))
+	# merge all three required lists into one
+	required_colnames = required_sample_colnames + required_unknown_colnames + required_date_colnames
 	# Obtain the real required column names without the asterisks and & signs
-	required_colnames = [re.sub("[*?#&]", "", x) for x in db_required_colnames]
+	required_colnames = [re.sub("[*?#&]", "", x) for x in required_colnames]
 	# Check if required column names are existed in metadata file
 	if not set(required_colnames).issubset(set(metadata.columns)):
 		failed_required_colnames = list(filter(lambda x: (x in metadata.columns)==False, required_colnames))
@@ -133,7 +145,7 @@ def get_metadata(database, organism, metadata_file):
 		if name in [re.sub("[*?#&]", "", x) for x in required_date_colnames]:
 			metadata[name] = pd.to_datetime(metadata[name], errors="coerce")
 			if pd.isna(metadata[name]).any():
-				print("Error: The required 'collection_date' field in metadata file contains incorrect date format. Date must be in the ISO format: YYYYMMDD/YYYYDDMM/DDMMYYYY/MMDDYYYY. For example: 2020-03-25.", file=sys.stderr)
+				print("Error: The required 'collection_date' field in metadata file contains incorrect date format. Populate using ISO 8601 standard: “YYYY-mm-dd”, “YYYY-mm” or “YYYY” (e.g., 1990–10–30, 1990–10, or 1990).", file=sys.stderr)
 				sys.exit(1)
 			metadata[name] = metadata[name].dt.strftime("%Y-%m")
 		# Make sure specific column fields with empty values are filled with "Unknown"

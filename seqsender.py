@@ -26,7 +26,7 @@ VERSION = "1.1.0 (Beta)"
 # Define current time
 STARTTIME = datetime.now()
 
-# Define organsim choices
+# Define organism choices
 ORGANISM_CHOICES = ["FLU", "COV", "ENTERIC"]
 
 # Define database choices
@@ -212,9 +212,12 @@ def args_parser():
 
 	# Parse the database argument
 	database_args = database_parser.parse_known_args()[0]
+	# Change namespace to list - value names in the namespace were being evaluated as true and requiring fasta input for BIOSAMPLE/SRA only submissions
+	database_args = [x for x in vars(database_args).values() if x]
 
 	# If genbank and/or gisaid in the database list, must provide fasta file
 	if any(x in database_args for x in ["genbank", "gisaid"]):
+		print(database_args)
 		file_parser.add_argument("--fasta_file",
 			help="Fasta file stored in submission directory",
 			required=True)

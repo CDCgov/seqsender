@@ -158,7 +158,10 @@ def create_submission_xml(organism, database, submission_name, config_dict, meta
 			spuid.text = row["ncbi-spuid"]
 			descriptor = etree.SubElement(biosample, "Descriptor")
 			title = etree.SubElement(descriptor, "Title")
-			title.text = row["bs-description"]
+			if "bs-description" in row:
+				title.text = row["bs-description"]
+			else:
+				title.text = ""
 			organism = etree.SubElement(biosample, "Organism")
 			organismname = etree.SubElement(organism, "OrganismName")
 			organismname.text = row["organism"]
