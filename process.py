@@ -193,7 +193,7 @@ def read_gisaid_log(log_file, submission_status_file):
 	# Save submission status df
 	submission_status.to_csv(submission_status_file, header = True, index = False)
 	not_submitted = submission_status[~submission_status["gisaid_accession_epi_isl_id"].str.contains("EPI", na=False)].copy()
-	return not_submitted[["gs-sample_name", "gs-sequence_name"]]
+	return not_submitted[["gs-sample_name"]]
 
 # Check user credentials information
 def check_credentials(config_dict, database):
