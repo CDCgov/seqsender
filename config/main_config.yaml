@@ -108,7 +108,7 @@ SUBMISSION_PORTAL:
             - text: 'Location of raw reads files. Options: "local" or "cloud"'
           sra-file_name*:
             - text: 'Name of the raw read files. All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If there are multiple files, concatenate them with a commas (","), e.g. "sample1_R1.fastq.gz, sample1_R2.fastq.gz". Store files in /seqsender/data/raw_reads/ or provide full path to the raw read files.'
-          sra-library_ID*:
+          sra-library_name*:
             - text: 'Short unique identifier for sequencing library. <b>Each name must be unique!</b>'
           sra-instrument_model:
             - text: 'Type of instrument model used for sequencing. See a list of options <a href="sra_options.html#instrument_model" target="_blank">here</a>.'
