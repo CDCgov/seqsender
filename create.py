@@ -111,8 +111,6 @@ def create_submission_xml(organism, database, submission_name, config_dict, meta
 	comment.text = config_dict["Description"]["Comment"]
 	# Description info including organization and contact info
 	organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["@type"], role=config_dict["Description"]["Organization"]["@role"])
-	if config_dict["Description"]["Organization"]["@org_id"]:
-		organization.set("org_id", config_dict["Description"]["Organization"]["@org_id"])
 	org_name = etree.SubElement(organization, "Name")
 	org_name.text = config_dict["Description"]["Organization"]["Name"]
 	if "GENBANK" not in database:
