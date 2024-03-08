@@ -40,9 +40,18 @@ def get_ncbi_process_report(database, submission_name, submission_files_dir, con
 		FTP_HOST = process.get_main_config()["PORTAL_NAMES"]["NCBI"]["FTP_HOST"]
 		ftp = ftplib.FTP(FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
-		# CD to test or production folder
-		ftp.cwd('/')
-		ftp.cwd('submit')
+		# Check FTP folder structure either /submit/Production/ or /Production/
+		if submission_type not in ftp.nlst():
+			# Check if submit folder exists
+			if "submit" in ftp.nlst():
+				ftp.cwd("submit")
+				# If submit folder exists check if Production/Test folder exists
+				if submission_type not in ftp.nlst():
+					print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
+					sys.exit(1)
+			else:
+				print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
+				sys.exit(1)
 		ftp.cwd(submission_type)
 		# Check if submission name exists
 		if ncbi_submission_name not in ftp.nlst():
