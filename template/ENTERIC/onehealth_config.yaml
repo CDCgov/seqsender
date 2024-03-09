@@ -1,0 +1,29 @@
+Submission:
+  NCBI:
+    Username: username
+    Password: password
+    Submission_Position: 1
+    Description:
+      Title: onehealth_test_submission
+      Comment: This is a test submission
+      Organization:
+        '@role': owner
+        '@type': institute
+        '@org_id': 12345
+        Name: CCPHL
+        Address:
+          Affil: Contra Costa Health Services
+          Div: Public Health Laboratory
+          Street: 2500 Alhambra Ave
+          City: Martinez
+          Sub: CA
+          Postal_code: 94553
+          Country: USA
+          Email: email@myemail.com
+          Phone: ""
+        Submitter:
+          '@email': email@myemail.com
+          '@alt_email': ""
+          Name:
+            First: Jane
+            Last: Doe
