@@ -1,0 +1,88 @@
+from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
+
+schema = DataFrameSchema(
+	columns={
+		"sequence_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_length(max_value=50),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.",
+			title="sequence name",
+		),
+		"gb-subm_lab": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=False,
+			coerce=False,
+			required=True,
+			description="Full name of organization, institute, or laboratory, etc., who is submitting this record.",
+			title="submitting lab",
+		),
+		"gb-subm_lab_division": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=False,
+			coerce=False,
+			required=True,
+			description="The division of organization, institute, or laboratory, etc., who is submitting this record.",
+			title="submitting lab division",
+		),
+		"gb-subm_lab_addr": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=False,
+			coerce=False,
+			required=True,
+			description="The address of organization, institute, or laboratory, etc., who is submitting this record.",
+			title="submitter lab address",
+		),
+		"gb-publication_title": Column(
+			dtype="object",
+			checks=None,
+			nullable=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="The title and relevant publication details (volume, issue, etc.) of a paper that discusses the submission. If left empty, the program will used the name of the submission as title.",
+			title="publication title",
+		),
+		"gb-publication_status": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"(?i)(\W|^)(unpublished|in-press|published)(\W|$)"),
+			],
+			nullable=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="Options: \"unpublished\" or \"in-press\" or \"published\".",
+			title="publication status",
+		),
+	},
+     checks=None,
+     index=None,
+     dtype=None,
+     coerce=False,
+     strict="filter",
+     name="genbank_schema",
+     ordered=False,
+     unique=None,
+     report_duplicates="all",
+     unique_column_names=True,
+     add_missing_columns=False,
+     title="seqsender genbank schema",
+     description="Schema validation for GenBank database.",
+)

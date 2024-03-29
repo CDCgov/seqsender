@@ -81,7 +81,7 @@ def start(command, database, organism, submission_dir, submission_name, config_f
 	# Check config file
 	config_dict = process.get_config(config_file=config_file, database=database)
 	# Check metadata file
-	metadata = process.get_metadata(database=database, organism=organism, metadata_file=metadata_file)
+	metadata = process.get_metadata(database=database, organism=organism, metadata_file=metadata_file, config_dict=config_dict)
 	# Create identifier for each database to store submitting samples in submission status worksheet
 	identifier_columns = dict()
 	# Prepping submission files for each given database
@@ -223,6 +223,7 @@ def args_parser():
 	else:
 		file_parser.add_argument("--fasta_file",
 			help="Fasta file stored in submission directory",
+			default=None,
 			required=False)
 
 	# If genbank in the database list, determine whether to prepare table2asn submission
@@ -236,6 +237,7 @@ def args_parser():
 		# Optional: add annotation to table2asn submission
 		gff_parser.add_argument("--gff_file",
 			help="An annotation file to add to a Table2asn submission",
+			default=None,
 			required=False)
 
 	# Create the submodule commands
@@ -273,6 +275,13 @@ def args_parser():
 		parents=[database_parser, organism_parser, submission_dir_parser, submission_name_parser]
 	)
 
+	# biosample xml download command
+	biosample_xml_module = subparser_modules.add_parser(
+		'update_biosample',
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+		description='Updates the Pandera schema validation for all BioSample packages based off the BioSample Package XML.'
+	)
+
 	# version command
 	version_module = subparser_modules.add_parser(
 		'version',
@@ -290,7 +299,7 @@ def main():
 	# Parse the command argument
 	command = args.command
 
-	# Determine whether required files that needed in the command
+	# Determine databases
 	database = []
 	if "biosample" in args:
 		database += [args.biosample]
@@ -300,33 +309,6 @@ def main():
 		database += [args.genbank]
 	if "gisaid" in args:
 		database += [args.gisaid]
-	if "organism" in args:
-		organism = args.organism
-	if "submission_name" in args:
-		submission_name = args.submission_name
-	if "submission_dir" in args:
-		submission_dir = args.submission_dir
-	if "config_file" in args:
-		config_file = args.config_file
-	if "metadata_file" in args:
-		metadata_file = args.metadata_file
-
-	# Determine if optional arguments are given. If not, set a DEFAULT value to each argument
-	# fasta
-	if "fasta_file" in args:
-		fasta_file = args.fasta_file
-	else:
-		fasta_file = None
-	# gff_file
-	if "gff_file" in args:
-		gff_file = args.gff_file
-	else:
-		gff_file = None
-	# test submission
-	if "test" in args:
-		test = args.test
-	else:
-		test = False
 
 	# Get database list
 	database = [x for x in database if x]
@@ -338,18 +320,22 @@ def main():
 			print("\n"+"ERROR: Missing a database selection. See USAGE below."+"\n", file=sys.stdout)
 			submit_prep_subparser.print_help()
 			sys.exit(0)
-		start(command=command, organism=organism, database=database, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, test=test)
+		start(command=command, organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=args.submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, test=args.test)
 	elif command == "check_submission_status":
-		process.update_submission_status(submission_dir=submission_dir, submission_name=submission_name, organism=organism, test=test)
+		process.update_submission_status(submission_dir=args.submission_dir, submission_name=args.submission_name, organism=args.organism, test=args.test)
 	elif command == "template":
 		# If database is not given, display help
 		if len(database) == 0:
 			print("\n"+"ERROR: Missing a database selection. See USAGE below."+"\n", file=sys.stdout)
 			submit_prep_subparser.print_help()
 			sys.exit(0)
-		setup.create_zip_template(organism=organism, database=database, submission_dir=submission_dir, submission_name=submission_name)
+		setup.create_zip_template(organism=args.organism, database=database, submission_dir=args.submission_dir, submission_name=args.submission_name)
 	elif command == "version":
 		print("\n"+"Version: " + VERSION, file=sys.stdout)
+		sys.exit(0)
+	elif command == "update_biosample":
+		print("Updating BioSample requirements.", file=sys.stdout)
+		setup.download_biosample_xml_list()
 		sys.exit(0)
 	else:
 		# If no command display help
