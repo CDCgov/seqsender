@@ -399,7 +399,7 @@ def create_genbank_files(organism, config_dict, metadata, fasta_file, submission
 	# Retrieve the source df"
 	source_df = metadata.filter(regex="^gb-seq_id$|^src-|^ncbi-spuid$|^ncbi-bioproject$|^organism$|^collection_date$").copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
-	source_df = source_df.rename(columns = {"gb-seq_id":"Sequence_ID", "collection_date":"Collection_date", "ncbi-spuid":"strain"})
+	source_df = source_df.rename(columns = {"gb-seq_id":"Sequence_ID", "collection_date":"Collection_date"})
 	# Add BioProject if available
 	if "ncbi-bioproject" in source_df:
 		source_df = source_df.rename(columns={"ncbi-bioproject": "BioProject"})
