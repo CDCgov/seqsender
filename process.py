@@ -79,7 +79,7 @@ def get_required_colnames(database, organism):
 # Check the config file
 def get_config(config_file, database):
 	# Determine which portal is the database belongs to
-	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" for x in database]
+	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" if x in ["GISAID"] else "Unknown" for x in database]
 	# Read in config file
 	with open(config_file, "r") as f:
 		config_dict = yaml.load(f, Loader=yaml.BaseLoader) # Load yaml as str only
@@ -362,7 +362,7 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 			print("Error: Config file for "+submission_name+" does not exist at "+config_file, file=sys.stderr)
 			sys.exit(1)
 		else:
-			config_dict = get_config(config_file=config_file, database=database_name)
+			config_dict = get_config(config_file=config_file, database=database)
 		# IF GISAID in a list of submitting databases, check if CLI is downloaded and store in the correct directory
 		gisaid_cli = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI") if "GISAID" in database_name else None
 		# Check if the gisaid_cli exists
