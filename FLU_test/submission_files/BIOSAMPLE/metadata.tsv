@@ -1,0 +1,3 @@
+sample_name	organism	collection_date	bioproject_accession	sample_title	collected_by	geo_loc_name	host	host_disease	isolate	isolation_source	lat_lon	host_sex	host_age	serotype
+XX-566912	Influenza A virus	12/28/2016	PRJNA217342	CDC Influenza Sequencing Baseline Constellation	Helix	USA: California	Homo sapiens	Influenza A viruses	A/California/566912/2016	Nasal Wash	36.78 N 119.42 W	female	92	H3N2
+XX-566913	Influenza A virus	11/10/2016	PRJNA217342	CDC Influenza Sequencing Baseline Constellation	Helix	USA: Texas	Homo sapiens	Influenza A viruses	A/Texas/566913/2016	Nasal Wash	29.42 N 98.49 W	male	21	H3N2

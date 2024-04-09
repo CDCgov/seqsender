@@ -2,17 +2,6 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
-		"covv_sequence_name": Column(
-			dtype="object",
-			checks=[
-				Check.str_length(min_value=1,max_value=50),
-			],
-			nullable=False,
-			unique=True,
-			coerce=False,
-			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.",
-			title="sequence name",
-		),
 		"sra-file_location": Column(
 			dtype="object",
 			checks=[

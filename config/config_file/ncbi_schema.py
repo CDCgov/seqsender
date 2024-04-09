@@ -17,8 +17,12 @@
                         'type': 'string',
                         'regex': '^[a-zA-Z0-9_.+-]+'
                     },
+                    'BioSample_Package': {
+                        'required': False,
+                        'type': 'string'
+                    },
                     'Table2asn': {
-                        'required': True,
+                        'required': False,
                         'type': 'boolean'
                     },
                     'Submission_Position': {

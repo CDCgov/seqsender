@@ -15,8 +15,10 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from distutils.util import strtobool
 from datetime import datetime
+from pandera import pandera, DataFrameSchema, Column, Check, Index, MultiIndex
 import ftplib
 import json
+import importlib
 from zipfile import ZipFile
 from cerberus import Validator
 
@@ -27,8 +29,8 @@ import report
 import seqsender
 import setup
 import submit
-from config import seqsender_schema
-from config import seqsender_upload_log_schema
+from config.seqsender_schema import schema as seqsender_schema
+from config.seqsender_upload_log_schema import schema as seqsender_upload_log_schema
 
 # Get program directory
 PROG_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -102,7 +104,7 @@ def get_config(config_file, database):
 			sys.exit(1)
 	# Check if yaml forms dictionary
 	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", (submission_schema + "_schema.py")), 'r').read())
+		schema = eval(open(os.path.join(PROG_DIR, "config", "config_file", (submission_schema + "_schema.py")), 'r').read())
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -123,76 +125,68 @@ def get_metadata(database, organism, metadata_file, config_dict):
 	# Remove extra spaces from column names
 	metadata.columns = metadata.columns.str.strip()
 	# Update seqsender base schema to include needed checks
-	seqsender_schema.update_columns("collection_date",checks=Check.str_matches(repr(datetime_schema_regex())))
 	if "BioSample" in database or "SRA" in database:
-		seqsender_schema.update_columns("bioproject",checks=Check.str_matches(r"^(?!\s*$).+"),nullable=False,required=True)
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = False
+		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
 	# Import schemas
-	if "BioSample" in database_name:
-		importlib.import_module(os.path.join(PROG_DIR,"config","biosample",(config_dict["NCBI"]["BioSample_Package"].strip() + ".py")), "biosample_schema")
-		biosample_schema = True
-	if "SRA" in database_name:
-		importlib.import_module(os.path.join(PROG_DIR,"config","sra_schema.py"), "sra_schema")
-		sra_schema = True
-	if "GenBank" in database_name:
-		importlib.import_module(os.path.join(PROG_DIR,"config","genbank","genbank_schema.py"), "genbank_schema")
-		genbank_schema = True
+	if "BIOSAMPLE" in database:
+		biosample_schema = importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema
+	if "SRA" in database:
+		sra_schema = importlib.import_module("config.sra_schema").schema
+	if "GENBANK" in database:
+		genbank_schema = importlib.import_module("config.genbank.genbank_schema").schema
 		if "cmt-" in metadata.columns:
-			importlib.import_module(os.path.join(PROG_DIR,"config","genbank","genbank_cmt_schema.py"), "genbank_cmt_schema")
-			genbank_cmt_schema = True
+			genbank_cmt_schema = importlib.import_module("config.genbank.genbank_cmt_schema").schema
 		if "src-" in metadata.columns:
-			importlib.import_module(os.path.join(PROG_DIR,"config","genbank","genbank_src_schema.py"), "genbank_src_schema")
-			genbank_src_schema = True
-	if "GISAID" in database_name:
-		importlib.import_module(os.path.join(PROG_DIR,"config","gisaid","gisaid_" + organism + "_schema.py"), "gisaid_schema")
-		gisaid_schema = True
+			genbank_src_schema = importlib.import_module("config.genbank.genbank_src_schema").schema
+	if "GISAID" in database:
+		gisaid_schema = importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema
 	# Validate metadata on schema's
 	error_msg_list = []
 	try:
 		seqsender_schema.validate(metadata, lazy = True)
-	except pa.errors.SchemaErrors as schema_error:
+	except pandera.errors.SchemaErrors as schema_error:
 		error_msg_list.append("Error: Metadata is incorrect:")
 		error_msg_list.append(schema_error)
 	if biosample_schema:
 		try:
 			biosample_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: BioSample metadata is incorrect:")
+		except pandera.errors.SchemaErrors as schema_error:
+			# error_msg_list.append("Error: BioSample metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if sra_schema:
 		try:
 			sra_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
+		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append("Error: SRA metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if genbank_schema:
 		try:
 			genbank_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
+		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append("Error: Genbank metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if genbank_cmt_schema:
 		try:
 			genbank_cmt_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
+		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append("Error: Genbank comment metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if genbank_src_schema:
 		try:
 			genbank_src_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
+		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append("Error: Genbank source metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if gisaid_schema:
 		try:
 			gisaid_schema.validate(metadata, lazy = True)
-		except pa.errors.SchemaErrors as schema_error:
+		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append("Error: GISAID metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if error_msg_list:
 		for error_msg in error_msg_list:
 			print(error_msg, file=sys.stderr)
-			print(error_msg, file=sys.stdout)
 		sys.exit(1)
 	return metadata
 

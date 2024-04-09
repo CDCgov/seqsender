@@ -157,9 +157,12 @@ def biosample_package_to_pandera_schema(xml_file, name):
 	report_dict = xmltodict.parse(xmlstr)
 	indentation = "\n\t\t"
 	mandatory_group = dict()
-	with open(os.path.join(PROG_DIR, "config", "biosample", (name + ".py")), "w+") as file:
+	with open(os.path.join(PROG_DIR, "config", "biosample", (name.replace(".", "_") + ".py")), "w+") as file:
 		file.writelines(SCHEMA_HEADER)
 		for attribute in report_dict["BioSamplePackages"]["Package"]["Attribute"]:
+			# If attribute in reserved words skip
+			if attribute["HarmonizedName"] in ["collection_date"]:
+				continue
 			# NCBI canonical field name for submission
 			file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
 			# Pandas datatypes
@@ -190,9 +193,10 @@ def biosample_package_to_pandera_schema(xml_file, name):
 			elif attribute["@use"] == "either_one_mandatory":
 				# Collect columns that are required but have different column options
 				if attribute["@group_name"] in mandatory_group:
-					mandatory_group[attribute["@group_name"]] = mandatory_group[attribute["@group_name"]] + ",\"" + attribute["HarmonizedName"] + "\""
+					mandatory_group[attribute["@group_name"]] = mandatory_group[attribute["@group_name"]] + " & df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
 				else:
-					mandatory_group[attribute["@group_name"]] = "\"" + attribute["HarmonizedName"] + "\""
+					mandatory_group[attribute["@group_name"]] = "df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
+				file.write(indentation + "required=True,")
 			else:
 				file.write(indentation + "required=False,")
 			# NCBI column description
@@ -212,7 +216,7 @@ def biosample_package_to_pandera_schema(xml_file, name):
 			# Validate columns that are required but have multiple options
 			indentation += "\t"
 			for key in mandatory_group:
-				file.write(indentation + "pa.Check(lambda df: df[[" + mandatory_group[key] + "]].isnull().all()),")
+				file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
 			# Close checks
 			indentation = indentation[:-1]
 			file.write(indentation + "],")
@@ -227,8 +231,8 @@ def biosample_package_to_pandera_schema(xml_file, name):
 		file.write(indentation + "unique=None,")
 		file.write(indentation + "report_duplicates=\"all\",")
 		file.write(indentation + "unique_column_names=True,")
-		file.write(indentation + "add_missing_columns=False,")
-		file.write(indentation + "itle=\"BioSample package " + name + " schema\",")
+		file.write(indentation + "add_missing_columns=True,")
+		file.write(indentation + "title=\"BioSample package " + name + " schema\",")
 		file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
 		# Close schema
 		indentation = indentation[:-1]
