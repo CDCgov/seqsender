@@ -101,7 +101,7 @@ def submit_ncbi(database, submission_name, submission_dir, config_dict, submissi
 		try:
 			res = ftp.storlines("STOR " + "submit.ready", open(submit_ready_file, 'rb'))
 			complete = True
-		except Exception as err: 
+		except Exception as err:
 			if str(err).startswith('Error:550 submit.ready: Permission denied'):
 				print('The submission has been submitted and currently in pending.', file=sys.stdout)
 			else:
@@ -124,7 +124,7 @@ def submit_gisaid(organism, database, submission_dir, submission_name, config_di
 	fasta = os.path.join(submission_files_dir, "sequence.fsa")
 	orig_fasta = os.path.join(submission_files_dir, "orig_sequence.fsa")
 	# Extract user credentials (e.g. username, password, client-id)
-	process.check_credentials(config_dict=config_dict, database="GISAID")	
+	process.check_credentials(config_dict=config_dict, database="GISAID")
 	# Output message
 	print("\n"+"Uploading submission files to GISAID-"+organism, file=sys.stdout)
 	print("Performing a '" + submission_type + "' submission with Client-Id: " + config_dict["Client-Id"], file=sys.stdout)
@@ -139,7 +139,7 @@ def submit_gisaid(organism, database, submission_dir, submission_name, config_di
 		# If log file exists, removes it
 		if os.path.isfile(log_file) == True:
 			os.remove(log_file)
-		# Upload submission 
+		# Upload submission
 		command = subprocess.run([gisaid_cli, "upload", "--username", config_dict["Username"], "--password", config_dict["Password"], "--clientid", config_dict["Client-Id"], "--metadata", metadata, "--fasta", fasta, "--log", log_file, "--debug"],
 			cwd=submission_files_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		# Check if uploading is successful

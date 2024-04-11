@@ -48,14 +48,35 @@ github_pages_url <- description$GITHUB_PAGES
 
 See [PRE-REQUISITES](`r github_pages_url`/index.html#prerequisites) and [REQUIREMENT FILES](`r github_pages_url`/index.html#requirement-files) before proceeding to the next steps
 
-### (1) Clone ``r program`` repo to your $HOME directory
+### (1) Get the docker image.
+
+Seqsender automatically updates the docker image based on the latest `master` branch of seqsender. Thus, it is not necessary to build the docker image based on the github repo to obtain the latest version. Determine the best option for you to retrieve the docker image between the options below:
+
+### <a onclick="ToggleOperation('build-docker')"><i class="fas fa-play" role="presentation" aria-label="play icon"></i> Download docker image</a>
+
+<div id="build-docker-block" style="display: none;">
+
+#### (1.1) Download ``r program`` docker image.
+
+``` bash
+cd $HOME
+docker pull ghcr.io/cdcgov/seqsender:master
+```
+
+</div>
+
+### <a onclick="ToggleOperation('pull-docker')"><i class="fas fa-play" role="presentation" aria-label="play icon"></i> Build docker image</a>
+
+<div id="pull-docker-block" style="display: none;">
+
+#### (1.1) Clone ``r program`` repo to your $HOME directory
 
 ``` bash
 cd $HOME
 git clone `r github_repo`.git
 ```
 
-### (2) Navigate to ``r program`` folder where `Dockerfile` file is stored and build its docker image
+#### (1.2) Navigate to ``r program`` folder where `Dockerfile` file is stored and build its docker image
 
 ``` bash
 cd `r program`
@@ -65,7 +86,10 @@ docker build -t `r program`:latest .
 **-t**: add a tag to an image, e.g. *`r program`:1.0.0* or
 *`r program`:latest*
 
-### (3) After the build is completed, you can check if the image is built successfully
+</div>
+
+
+### (2) After the build is complete, you can check if the image is created successfully.
 
 ``` bash
 docker images
@@ -74,7 +98,7 @@ REPOSITORY    TAG       IMAGE ID        CREATED        SIZE
 `r program`     latest    d9e2578d2211    2 weeks ago    581GB
 ```
 
-### (4) Run ``r program`` container
+### (3) Run ``r program`` container
 
 ``` bash
 docker run \
@@ -102,7 +126,7 @@ CONTAINER ID   IMAGE                COMMAND        CREATED         STATUS       
 b37b6b19c4e8   `r program`:latest     "/bin/bash"    5 hours ago     Up 5 hours               `r program`
 ```
 
-### (5) See a list of commands in ``r program`` container
+### (4) See a list of commands in ``r program`` container
 
 ``` bash
 docker exec -it `r program` bash `r program`-kickoff --help

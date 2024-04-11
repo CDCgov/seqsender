@@ -27,7 +27,7 @@ import setup
 import submit
 
 # Create directory and files for NCBI database submissions
-def create_ncbi_submission(organism, database, submission_name, submission_dir, config_dict, metadata, fasta_file=None, table2asn=False, gff_file=None):
+def create_ncbi_submission(organism, database, submission_name, submission_dir, config_dict, metadata, fasta_file=None, gff_file=None):
 	# Create a database subfolder within the submission directory to dump all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Create submission files directory
@@ -37,6 +37,7 @@ def create_ncbi_submission(organism, database, submission_name, submission_dir, 
 	# Create submission status csv
 	if "BIOSAMPLE" in database:
 		sequence_names = metadata["ncbi-spuid"].drop_duplicates()
+		create_manual_submission_files(database, submission_files_dir, metadata, config_dict)
 	elif "SRA" in database:
 		sequence_names = metadata["ncbi-spuid"].drop_duplicates()
 		# Validate and write raw reads location
@@ -44,14 +45,16 @@ def create_ncbi_submission(organism, database, submission_name, submission_dir, 
 		with open(os.path.join(submission_files_dir, "raw_reads_location.txt"), "w+") as file:
 			for line in raw_files_list:
 				file.write(line + "\n")
+		create_manual_submission_files(database, submission_files_dir, metadata, config_dict)
 	elif "GENBANK" in database:
 		sequence_names = metadata["gb-seq_id"]
 		# Create genbank specific files
 		create_genbank_files(organism=organism, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict, metadata=metadata, fasta_file=fasta_file)
 		# If using Table2asn do not generate extra genbank files
-		if table2asn == True:
+		if config_dict["Table2asn"] == True or organism not in ["FLU", "COV"]:
 			create_genbank_table2asn(submission_name=submission_name, submission_files_dir=submission_files_dir, gff_file=gff_file)
-			return			
+			print("Files are stored at: " + os.path.join(submission_files_dir), file=sys.stdout)
+			return
 		else:
 			# If FTP upload for Genbank, create ZIP file for upload if table2asn is set to False
 			create_genbank_zip(submission_name=submission_name, submission_files_dir=submission_files_dir)
@@ -71,10 +74,11 @@ def create_gisaid_submission(organism, database, submission_name, submission_dir
 	gisaid_df = metadata.filter(regex="^gs-|^collection_date$|^authors").copy()
 	gisaid_df.columns = gisaid_df.columns.str.replace("gs-","").str.strip()
 	#Add required gisaid fields
-	if "COV" in organism :
+	if organism in ["COV", "POX", "ARBO"]:
+		gisaid_df = gisaid_df.add_prefix((organism.lower() + "_"))
 		gisaid_df["submitter"] = config_dict["Username"]
 		gisaid_df["fn"] = ""
-		first_cols = ["submitter", "fn", "virus_name"]
+		first_cols = ["submitter", "fn", (organism.lower() + "_virus_name")]
 	elif "FLU" in organism:
 		gisaid_df["Isolate_Id"] = ""
 		gisaid_df["Segment_Ids"] = ""
@@ -100,7 +104,51 @@ def create_gisaid_submission(organism, database, submission_name, submission_dir
 	shutil.copy(os.path.join(submission_files_dir, "sequence.fsa"), os.path.join(submission_files_dir, "orig_sequence.fsa"))
 	print("\n"+"Creating submission files for " + database, file=sys.stdout)
 	print("Files are stored at: " + os.path.join(submission_files_dir), file=sys.stdout)
-	
+
+# Create files for optional manual submission to repositories biosample and sra
+def create_manual_submission_files(database, submission_files_dir, metadata, config_dict):
+	if "SRA" in database:
+		metadata_regex = "^ncbi-spuid|^sra-|^organism$|^collection_date$"
+		rename_columns = {"ncbi-spuid":"sample_name","sra-library_name":"sra-library_ID"}
+		drop_columns = ["ncbi-spuid_namespace", "sra-file_location", "sra-loader", "sra-file_name"]
+		column_ordered = ["sample_name","library_ID"]
+		prefix = "sra-"
+		# Create SRA specific fields
+		metadata["sra-title"] = config_dict["Description"]["Title"]
+		metadata = metadata["sra-file_name"].str.split(",", expand=True).add_prefix("sra-filename").join(metadata)
+		filename_cols = [col for col in metadata if col.startswith("sra-filename")]
+		# Correct index for filename column
+		for col in filename_cols:
+			# Remove 0 index
+			if col == "sra-filename0":
+				rename_columns[col] = "sra-filename"
+			else:
+				index = str(int(col.split("filename")[-1]) + 1)
+				rename_columns[col] = "sra-filename" + index
+	elif "BIOSAMPLE" in database:
+		metadata_regex = "^ncbi-|^bs-|^organism$|^collection_date$"
+		rename_columns = {"ncbi-spuid":"sample_name","bs-description":"sample_title","ncbi-bioproject":"bioproject_accession"}
+		drop_columns = ["ncbi-spuid_namespace", "bs-package"]
+		column_ordered = ["sample_name"]
+		prefix = "bs-"
+	else:
+		print("Error: create_manual_submission_files function only for databases SRA/BioSample. Not " + database + ".", file=sys.stderr)
+		sys.exit(1)
+	# Filter only needed columns
+	database_df = metadata.filter(regex=metadata_regex).copy()
+	database_df = database_df.drop_duplicates()
+	# Rename columns for manual submission
+	database_df = database_df.rename(columns={key: value for key, value in rename_columns.items() if key in database_df})
+	# Remove columns not required for manual submission
+	database_df = database_df.drop(columns=drop_columns)
+	# Remove database prefix
+	database_df.columns = [col.replace(prefix, "") for col in database_df.columns]
+	# Order columns
+	columns_no_order = list(filter(lambda x: (x not in column_ordered)==True, database_df.columns))
+	column_ordered = column_ordered + columns_no_order
+	database_df = database_df.reindex(columns=column_ordered)
+	database_df.to_csv(os.path.join(submission_files_dir, "metadata.tsv"), index=False, sep="\t")
+
 def create_submission_xml(organism, database, submission_name, config_dict, metadata, failed_seqs_auto_removed=True):
 	# Submission XML header
 	root = etree.Element("Submission")
@@ -121,7 +169,7 @@ def create_submission_xml(organism, database, submission_name, config_dict, meta
 		last_name = etree.SubElement(name, "Last")
 		last_name.text = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
 	# XML actions
-	if  "GENBANK" in database:
+	if "GENBANK" in database:
 		action = etree.SubElement(root, "Action")
 		addfiles = etree.SubElement(action, "AddFiles", target_db="GenBank")
 		file = etree.SubElement(addfiles, "File", file_path=submission_name + ".zip")
@@ -264,7 +312,7 @@ def create_authorset(config_dict, metadata, submission_name, submission_files_di
 	country = config_dict["Description"]["Organization"]["Address"]["Country"]
 	email = config_dict["Description"]["Organization"]["Address"]["Email"]
 	phone = config_dict["Description"]["Organization"]["Address"]["Phone"]
-	zip_code = config_dict["Description"]["Organization"]["Address"]["Postal_code"]
+	zip_code = str(config_dict["Description"]["Organization"]["Address"]["Postal_code"])
 	# Create authorset file
 	with open(os.path.join(submission_files_dir, "authorset.sbt"), "w+") as f:
 		f.write("Submit-block ::= {\n")
@@ -432,15 +480,16 @@ def create_genbank_zip(submission_name, submission_files_dir):
 
 # Run Table2asn to generate sqn file for submission
 def create_genbank_table2asn(submission_name, submission_files_dir, gff_file=None):
-	submission_status = "processed-ok"
+	submission_status = "processing"
 	submission_id = "Table2asn"
 	# Create a temp file to store the downloaded table2asn
 	table2asn_dir = "/tmp/table2asn"
 	# Download the table2asn
-	print("Downloading Table2asn.", file=sys.stdout)
-	setup.download_table2asn(table2asn_dir=table2asn_dir)
+	if os.path.isfile(table2asn_dir) is False:
+		print("Downloading Table2asn.", file=sys.stdout)
+		setup.download_table2asn(table2asn_dir=table2asn_dir)
 	# Command to generate table2asn submission file
-	command = [table2asn_dir, "-t", os.path.join(submission_files_dir, "authorset.sbt"), "-i", os.path.join(submission_files_dir, "sequence.fsa"), "-src-file", os.path.join(submission_files_dir, "source.src"), "-o", os.path.join(submission_files_dir, submission_name + ".sqn")]
+	command = [table2asn_dir, "-V","vb","-a","s","-t", os.path.join(submission_files_dir, "authorset.sbt"), "-i", os.path.join(submission_files_dir, "sequence.fsa"), "-src-file", os.path.join(submission_files_dir, "source.src"), "-o", os.path.join(submission_files_dir, submission_name + ".sqn")]
 	if os.path.isfile(os.path.join(submission_files_dir, "comment.cmt")):
 		command.append("-w")
 		command.append( os.path.join(submission_files_dir, "comment.cmt"))
@@ -454,6 +503,9 @@ def create_genbank_table2asn(submission_name, submission_files_dir, gff_file=Non
 		print(proc.stdout, file=sys.stdout)
 		print(proc.stderr, file=sys.stderr)
 		sys.exit(1)
+	print("Validating Table2asn submission.", file=sys.stdout)
+	validation_file = os.path.join(submission_files_dir, submission_name + ".val")
+	submission_status = process.check_table2asn_submission(validation_file=validation_file)
 	return submission_id, submission_status
 
 # Create submission log csv
@@ -465,9 +517,9 @@ def create_submission_log(database, submission_position, organism, submission_na
 		df = pd.DataFrame(columns = ["Submission_Name", "Organism", "Database", "Submission_Position", "Submission_Type", "Submission_Date", "Submission_Status", "Submission_Directory", "Config_File", "Table2asn", "GFF_File", "Update_Date"])
 	# Fill in the log field if it exists, otherwise create new
 	df_partial = df.loc[(df["Organism"] == organism) & (df["Database"] == database) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Name"] == submission_name) & (df["Submission_Type"] == submission_type)]
-	# Update existing field	
+	# Update existing field
 	if df_partial.shape[0] > 0:
-		df.loc[df_partial.index.values, "Submission_Position"] = submission_position			
+		df.loc[df_partial.index.values, "Submission_Position"] = submission_position
 		df.loc[df_partial.index.values, "Submission_Status"] = submission_id + ";" + submission_status
 		df.loc[df_partial.index.values, "Table2asn"] = table2asn
 		df.loc[df_partial.index.values, "GFF_File"] = gff_file
