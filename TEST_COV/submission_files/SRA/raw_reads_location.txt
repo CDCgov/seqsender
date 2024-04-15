@@ -1,4 +1,0 @@
-/scicomp/home-pure/psv4/seqsender_master/seqsender/TEST_COV/raw_reads/fastq_2_R1.fastq.gz
-/scicomp/home-pure/psv4/seqsender_master/seqsender/TEST_COV/raw_reads/fastq_2_R2.fastq.gz
-/scicomp/home-pure/psv4/seqsender_master/seqsender/TEST_COV/raw_reads/fastq_1_R2.fastq.gz
-/scicomp/home-pure/psv4/seqsender_master/seqsender/TEST_COV/raw_reads/fastq_1_R1.fastq.gz
