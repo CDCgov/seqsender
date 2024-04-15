@@ -1,0 +1,17 @@
+SeqID	StructuredCommentPrefix	organism	collection_date	Assembly-Method	Coverage	Sequencing-Technology	Adamantane_resistance	Patient_symptoms	EPI_ISOLATE_ID	TYPE	Segment_name	HOST_AGE	HOST_GENDER	PASSAGE	StructuredCommentSuffix
+CDC-XX-566912.1	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	PB2	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.2	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	PB1	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.3	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	PA	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.4	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	HA	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.5	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	NP	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.6	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	NA	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.7	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	M	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566912.8	FluData	Influenza A virus	2016-12-28	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8289	H3N2	NS	92	F	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.1	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	PB2	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.2	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	PB1	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.3	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	PA	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.4	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	HA	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.5	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	NP	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.6	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	NA	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.7	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	M	21	M	PMK1 (2017-01-03)	FluData
+CDC-XX-566913.8	FluData	Influenza A virus	2016-11-10	Newbler v. 2.3	100x	Illumina 	resistant	ILI	EPI_ISL_8290	H3N2	NS	21	M	PMK1 (2017-01-03)	FluData

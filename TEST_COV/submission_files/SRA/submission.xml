@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Submission>
+  <Description>
+    <Title>cov_test_submission</Title>
+    <Comment>This is a test submission</Comment>
+    <Organization type="institute" role="owner">
+      <Name>CDC</Name>
+      <Contact email="email@myemail.com">
+        <Name>
+          <First>Jane</First>
+          <Last>Doe</Last>
+        </Name>
+      </Contact>
+    </Organization>
+  </Description>
+  <Action>
+    <AddFiles target_db="SRA">
+      <File file_path="fastq_1_R1.fastq.gz">
+        <DataType>generic-data</DataType>
+      </File>
+      <File file_path="fastq_1_R2.fastq.gz">
+        <DataType>generic-data</DataType>
+      </File>
+      <Attribute name="library_name">Helix COVID-19 and Flu Test</Attribute>
+      <Attribute name="instrument_model">Illumina NovaSeq 6000</Attribute>
+      <Attribute name="library_strategy">AMPLICON</Attribute>
+      <Attribute name="library_source">VIRAL RNA</Attribute>
+      <Attribute name="library_selection">RT-PCR</Attribute>
+      <Attribute name="library_layout">PAIRED</Attribute>
+      <Attribute name="library_construction_protocol">Helix Hybrid-Capture Test</Attribute>
+      <Attribute name="loader">latf-load</Attribute>
+      <AttributeRefId name="BioProject">
+        <RefId>
+          <PrimaryId>PRJNA512913</PrimaryId>
+        </RefId>
+      </AttributeRefId>
+      <AttributeRefId name="BioSample">
+        <RefId>
+          <SPUID spuid_namespace="CDC-OAMD_bs">SARS-CoV-2/human/USA/GA_2741/2020</SPUID>
+        </RefId>
+      </AttributeRefId>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_sra">SARS-CoV-2/human/USA/GA_2741/2020</SPUID>
+      </Identifier>
+    </AddFiles>
+  </Action>
+  <Action>
+    <AddFiles target_db="SRA">
+      <File file_path="fastq_2_R1.fastq.gz">
+        <DataType>generic-data</DataType>
+      </File>
+      <File file_path="fastq_2_R2.fastq.gz">
+        <DataType>generic-data</DataType>
+      </File>
+      <Attribute name="library_name">Helix COVID-19 and Flu Test</Attribute>
+      <Attribute name="instrument_model">Illumina NovaSeq 6000</Attribute>
+      <Attribute name="library_strategy">AMPLICON</Attribute>
+      <Attribute name="library_source">VIRAL RNA</Attribute>
+      <Attribute name="library_selection">RT-PCR</Attribute>
+      <Attribute name="library_layout">PAIRED</Attribute>
+      <Attribute name="library_construction_protocol">Helix Hybrid-Capture Test</Attribute>
+      <Attribute name="loader">latf-load</Attribute>
+      <AttributeRefId name="BioProject">
+        <RefId>
+          <PrimaryId>PRJNA512962</PrimaryId>
+        </RefId>
+      </AttributeRefId>
+      <AttributeRefId name="BioSample">
+        <RefId>
+          <SPUID spuid_namespace="CDC-OAMD_bs">SARS-CoV-2/human/USA/GA_3742/2020</SPUID>
+        </RefId>
+      </AttributeRefId>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_sra">SARS-CoV-2/human/USA/GA_3742/2020</SPUID>
+      </Identifier>
+    </AddFiles>
+  </Action>
+</Submission>

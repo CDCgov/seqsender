@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Submission>
+  <Description>
+    <Title>cov_test_submission</Title>
+    <Comment>This is a test submission</Comment>
+    <Organization type="institute" role="owner">
+      <Name>CDC</Name>
+      <Contact email="email@myemail.com">
+        <Name>
+          <First>Jane</First>
+          <Last>Doe</Last>
+        </Name>
+      </Contact>
+    </Organization>
+  </Description>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">SARS-CoV-2/human/USA/GA_2741/2020</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>Sars CoV2 Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Severe acute respiratory syndrome coronavirus 2</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA512913</PrimaryId>
+            </BioProject>
+            <Package>SARS-CoV-2.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="isolate">SARS-CoV-2/human/USA/GA_2741/2020</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">COVID-19</Attribute>
+              <Attribute attribute_name="isolation_source">nasal swab</Attribute>
+              <Attribute attribute_name="geo_loc_name">United States: Georgia</Attribute>
+              <Attribute attribute_name="host_sex">Male</Attribute>
+              <Attribute attribute_name="host_age">28</Attribute>
+              <Attribute attribute_name="collection_date">2020-03-28</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">SARS-CoV-2/human/USA/GA_2741/2020</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">SARS-CoV-2/human/USA/GA_3742/2020</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>Sars CoV2 Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Severe acute respiratory syndrome coronavirus 2</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA512962</PrimaryId>
+            </BioProject>
+            <Package>SARS-CoV-2.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="isolate">SARS-CoV-2/human/USA/GA_3742/2020</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">COVID-20</Attribute>
+              <Attribute attribute_name="isolation_source">nasal swab</Attribute>
+              <Attribute attribute_name="geo_loc_name">United States: Georgia</Attribute>
+              <Attribute attribute_name="host_sex">Male</Attribute>
+              <Attribute attribute_name="host_age">45</Attribute>
+              <Attribute attribute_name="collection_date">2020-04-29</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">SARS-CoV-2/human/USA/GA_3742/2020</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+</Submission>
