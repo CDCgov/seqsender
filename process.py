@@ -122,6 +122,12 @@ def get_metadata(database, organism, metadata_file):
 	required_colnames = [re.sub("[*?#&]", "", x) for x in db_required_colnames]
 	# Remove ISOLATE FROM REQUIRED COLNAMES FOR TEMP FIX
 	required_colnames = [x for x in required_colnames if "-isolate" not in x]
+	# Bug fix to remove required fields from COV submissions (required for FLU)
+	if organism == "COV":
+		if "bs-lat_lon" in required_colnames:
+			required_colnames.remove("bs-lat_lon")
+		if "src-serotype" in required_colnames:
+			required_colnames.remove("src-serotype")
 	# Check if required column names are existed in metadata file
 	if not set(required_colnames).issubset(set(metadata.columns)):
 		failed_required_colnames = list(filter(lambda x: (x in metadata.columns)==False, required_colnames))
