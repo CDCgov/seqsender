@@ -83,6 +83,7 @@ def get_required_colnames(database: str, organism: str) -> Set[str]:
 	return set(all_required_colnames)
 
 # Check the config file
+<<<<<<< HEAD
 def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 	# Determine required database
 	submission_portals = []
@@ -95,6 +96,11 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 	submission_schema = "_".join(submission_portals)
+=======
+def get_config(config_file, database):
+	# Determine which portal is the database belongs to
+	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" if x in ["GISAID"] else "Unknown" for x in database]
+>>>>>>> ea5074477af91006afcae92acbdc6a573281ce22
 	# Read in user config file
 	with open(config_file, "r") as file:
 		try:
@@ -113,6 +119,13 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 			print(validator.errors, file=sys.stderr)
 			sys.exit(1)
 		else:
+			# Check if each database has portal information listed in the config file
+			for d in range(len(database)):
+				if submission_portals[d] not in config_dict.keys():
+					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases.", file=sys.stderr)
+					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
+					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
+					sys.exit(1)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -240,7 +253,7 @@ def read_gisaid_log(log_file: str, submission_status_file: str) -> pd.DataFrame:
 	# Save submission status df
 	submission_status.to_csv(submission_status_file, header = True, index = False)
 	not_submitted = submission_status[~submission_status["gisaid_accession_epi_isl_id"].str.contains("EPI", na=False)].copy()
-	return not_submitted[["gs-sample_name", "gs-sequence_name"]]
+	return not_submitted[["gs-sample_name"]]
 
 # Check user credentials information
 def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
@@ -435,7 +448,7 @@ def update_submission_status(submission_dir: str, submission_name: str, organism
 	if test == True:
 		submission_type = "Test"
 	else:
-		submission_type = "production"
+		submission_type = "Production"
 	# Check if given organism exist in the log
 	df_partial = df.loc[(df["Organism"] == organism) & (df["Submission_Name"] == submission_name) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Type"] == submission_type)]
 	if df_partial.shape[0] == 0:
@@ -477,7 +490,7 @@ def update_submission_status(submission_dir: str, submission_name: str, organism
 			print("Error: Config file for "+submission_name+" does not exist at "+config_file, file=sys.stderr)
 			sys.exit(1)
 		else:
-			config_dict = get_config(config_file=config_file, database=database_name)
+			config_dict = get_config(config_file=config_file, database=database)
 		# IF GISAID in a list of submitting databases, check if CLI is downloaded and store in the correct directory
 		gisaid_cli = None
 		if "GISAID" in database_name:

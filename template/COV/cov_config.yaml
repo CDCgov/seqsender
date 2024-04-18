@@ -10,7 +10,6 @@ Submission:
       Organization:
         '@role': owner
         '@type': institute
-        '@org_id': 12345
         Name: CDC
         Address:
            Affil: Centers for Disease Control and Prevention

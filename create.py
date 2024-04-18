@@ -160,8 +160,6 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 	comment.text = config_dict["Description"]["Comment"]
 	# Description info including organization and contact info
 	organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["@type"], role=config_dict["Description"]["Organization"]["@role"])
-	if config_dict["Description"]["Organization"]["@org_id"]:
-		organization.set("org_id", str(config_dict["Description"]["Organization"]["@org_id"]))
 	org_name = etree.SubElement(organization, "Name")
 	org_name.text = config_dict["Description"]["Organization"]["Name"]
 	if "GENBANK" not in database:
@@ -450,7 +448,7 @@ def create_genbank_files(organism: str, config_dict: Dict[str, Any], metadata: p
 	# Retrieve the source df"
 	source_df = metadata.filter(regex="^gb-seq_id$|^src-|^ncbi-spuid$|^ncbi-bioproject$|^organism$|^collection_date$").copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
-	source_df = source_df.rename(columns = {"gb-seq_id":"Sequence_ID", "collection_date":"Collection_date", "ncbi-spuid":"strain"})
+	source_df = source_df.rename(columns = {"gb-seq_id":"Sequence_ID", "collection_date":"Collection_date"})
 	# Add BioProject if available
 	if "ncbi-bioproject" in source_df:
 		source_df = source_df.rename(columns={"ncbi-bioproject": "BioProject"})

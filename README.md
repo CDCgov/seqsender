@@ -23,6 +23,8 @@ CDC and its partners to share information and collaborate on software.
 CDC use of GitHub does not imply an endorsement of any one particular
 service, product, or enterprise.
 
+# [Documentation](https://cdcgov.github.io/seqsender/index.html)
+
 ## Overview
 
 `seqsender` is a Python program that is developed to automate the
@@ -34,6 +36,14 @@ of uploading **Influenza A Virus** (FLU), **SARS-COV-2** (COV),
 **Monkeypox** (POX), **Arbovirus** (ARBO), and a wide variety of other
 organisms. If you’d like to have `seqsender` support your virus create a
 issue.
+
+## Contacts
+
+| Role       | Contact                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| Creator    | [Dakota Howard](https://github.com/dthoward96), [Reina Chau](https://github.com/rchau88) |
+| Maintainer | [Dakota Howard](https://github.com/dthoward96)                                           |
+| Back-Up    | [Reina Chau](https://github.com/rchau88), [Brian Lee](https://github.com/leebrian)       |
 
 ## Prerequisites
 
@@ -161,6 +171,12 @@ metadata for each database into one file.
     Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
   - [How to run seqsender with
     Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
+
+## Code Attributions
+
+Dakota Howard and Reina Chau for majority of the code base with input
+and testing from
+[colleagues](https://cdcgov.github.io/seqsender/authors.html).
 
 ## Public Domain Standard Notice
 
