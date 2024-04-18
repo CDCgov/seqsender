@@ -18,6 +18,7 @@ import time
 import xmltodict
 import xml.etree.ElementTree as ET
 from io import BytesIO
+from typing import List, Dict, Any
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -28,19 +29,19 @@ import seqsender
 import submit
 
 # Get program directory
-PROG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 # BioSample atribute html prefix
-BIOSAMPLE_HTML_PREFIX = "https://www.ncbi.nlm.nih.gov/biosample/docs/packages"
+BIOSAMPLE_HTML_PREFIX: str = "https://www.ncbi.nlm.nih.gov/biosample/docs/packages"
 # BioSample atribute html suffix
-BIOSAMPLE_HTML_SUFFIX = "/?format=xml"
+BIOSAMPLE_HTML_SUFFIX: str = "/?format=xml"
 # Schema file header
-SCHEMA_HEADER = """from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
+SCHEMA_HEADER: str = """from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={"""
 
 # Create example templates for testing
-def create_zip_template(organism, database, submission_dir, submission_name):
+def create_zip_template(organism: str, database: List[str], submission_dir: str, submission_name: str) -> None:
 	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
 	out_dir = os.path.join(submission_dir, submission_name)
@@ -87,7 +88,7 @@ def create_zip_template(organism, database, submission_dir, submission_name):
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir), file=sys.stdout)
 
-def download_table2asn(table2asn_dir):
+def download_table2asn(table2asn_dir: str) -> None:
 	# Determine which platform to download table2asn
 	if platform.system() == "Windows":
 		zip_url = "https://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/table2asn/win64.table2asn.zip"
@@ -115,13 +116,13 @@ def download_table2asn(table2asn_dir):
 		sys.exit(1)
 
 # Download xml and write to a file
-def download_xml(xml_url, output_file):
+def download_xml(xml_url: str, output_file: str) -> None:
 	r = requests.get(xml_url)
 	with open(output_file, "w+") as file:
 		file.write(r.text)
 
 # Download list of BioSample packages then download the xml for each package
-def download_biosample_xml_list():
+def download_biosample_xml_list() -> None:
 	# Download list of all packages
 	download_xml(xml_url = (BIOSAMPLE_HTML_PREFIX + BIOSAMPLE_HTML_SUFFIX), output_file = os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml"))
 	with open(os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml")) as file:
@@ -149,14 +150,14 @@ def download_biosample_xml_list():
 			line = file.readline()
 
 # Convert downloaded BioSample package xml to Pandera Schema
-def biosample_package_to_pandera_schema(xml_file, name):
+def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 	tree = ET.parse(xml_file)
 	root = tree.getroot()
 	xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
 	# Convert xml to dictionary
 	report_dict = xmltodict.parse(xmlstr)
 	indentation = "\n\t\t"
-	mandatory_group = dict()
+	mandatory_group: Dict[str, Any] = dict()
 	with open(os.path.join(PROG_DIR, "config", "biosample", (name.replace(".", "_") + ".py")), "w+") as file:
 		file.writelines(SCHEMA_HEADER)
 		for attribute in report_dict["BioSamplePackages"]["Package"]["Attribute"]:

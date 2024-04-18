@@ -8,6 +8,7 @@ from datetime import datetime
 import subprocess
 import argparse
 from distutils.util import strtobool
+from typing import List, Dict, Set, Optional
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -18,26 +19,26 @@ import submit
 import setup
 
 # Get program directory
-PROG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # Define version of seqsender
-VERSION = "1.1.0 (Beta)"
+VERSION: str = "1.1.0 (Beta)"
 
 # Define current time
 STARTTIME = datetime.now()
 
 # Define organsim choices
-ORGANISM_CHOICES = ["FLU", "COV", "POX", "ARBO", "OTHER"]
+ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "OTHER"]
 
 # Define database choices
-DATABASE_CHOICES = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]
+DATABASE_CHOICES: List[str] = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]
 
 # Get execution time
-def get_execution_time():
+def get_execution_time() -> None:
 	print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
 
 # Setup needed requirements for running
-def start(command, database, organism, submission_dir, submission_name, config_file, metadata_file, fasta_file=None, gff_file=None, test=False):
+def start(command: str, database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], test: bool = False) -> None:
 	# Create the appropriate files
 	submission_dir = os.path.abspath(submission_dir)
 	config_file = os.path.join(submission_dir, submission_name, config_file)
@@ -126,7 +127,7 @@ def start(command, database, organism, submission_dir, submission_name, config_f
 				if any(x in ["BIOSAMPLE", "SRA"] for x in database) or (submission_position == 2):
 					submission_status = "---"
 					submission_id = "---"
-				elif table2asn == True or organism not in ["FLU", "COV"]:
+				elif config_dict["NCBI"]["table2asn"] == True or organism not in ["FLU", "COV"]:
 					# GenBank Table2asn submission
 					validation_file = os.path.join(submission_files_dir, submission_name + ".val")
 					submission_status = process.check_table2asn_submission(validation_file=validation_file)
@@ -146,8 +147,10 @@ def start(command, database, organism, submission_dir, submission_name, config_f
 					submission_id = ""
 				else:
 					submission_position = 1
+					assert isinstance(gisaid_cli, str)
 					submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli,  submission_status_file=submission_status_file, submission_type=submission_type)
 					submission_id = ""
+
 			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, table2asn=table2asn, gff_file=gff_file, submission_type=submission_type)
 
 # Define program arguments and commands

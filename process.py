@@ -21,6 +21,7 @@ import json
 import importlib
 from zipfile import ZipFile
 from cerberus import Validator
+from typing import List, Set, Dict, Any, Union
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -33,10 +34,10 @@ from config.seqsender_schema import schema as seqsender_schema
 from config.seqsender_upload_log_schema import schema as seqsender_upload_log_schema
 
 # Get program directory
-PROG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # Get main config file
-def get_main_config():
+def get_main_config() -> Dict[str, Any]:
 	main_config_path = os.path.join(PROG_DIR, "config", "main_config.yaml")
 	if os.path.isfile(main_config_path) == True:
 		with open(main_config_path, "r") as f:
@@ -56,7 +57,7 @@ def get_main_config():
 		sys.exit(1)
 
 # Extract required column fields from main config file
-def get_required_colnames(database, organism):
+def get_required_colnames(database: str, organism: str) -> Set[str]:
 	# Get main fig file
 	main_config = get_main_config()
 	# Get all common fields across all portals
@@ -82,7 +83,7 @@ def get_required_colnames(database, organism):
 	return set(all_required_colnames)
 
 # Check the config file
-def get_config(config_file, database):
+def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 	# Determine required database
 	submission_portals = []
 	if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
@@ -110,6 +111,7 @@ def get_config(config_file, database):
 		if validator.validate(config_dict, schema) is False:
 			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
 			print(validator.errors, file=sys.stderr)
+			sys.exit(1)
 		else:
 			return config_dict["Submission"]
 	else:
@@ -117,7 +119,7 @@ def get_config(config_file, database):
 		sys.exit(1)
 
 # Read in metadata file
-def get_metadata(database, organism, metadata_file, config_dict):
+def get_metadata(database: List[str], organism: str, metadata_file: str, config_dict: Dict[str, Any]) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = pd.read_csv(metadata_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 	# Remove rows if entirely empty
@@ -142,7 +144,7 @@ def get_metadata(database, organism, metadata_file, config_dict):
 	if "GISAID" in database:
 		gisaid_schema = importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema
 	# Validate metadata on schema's
-	error_msg_list = []
+	error_msg_list: List[Union[str, pandera.errors.SchemaErrors]] = []
 	try:
 		seqsender_schema.validate(metadata, lazy = True)
 	except pandera.errors.SchemaErrors as schema_error:
@@ -152,7 +154,7 @@ def get_metadata(database, organism, metadata_file, config_dict):
 		try:
 			biosample_schema.validate(metadata, lazy = True)
 		except pandera.errors.SchemaErrors as schema_error:
-			# error_msg_list.append("Error: BioSample metadata is incorrect:")
+			error_msg_list.append("Error: BioSample metadata is incorrect:")
 			error_msg_list.append(schema_error)
 	if sra_schema:
 		try:
@@ -191,7 +193,7 @@ def get_metadata(database, organism, metadata_file, config_dict):
 	return metadata
 
 # Read output log from gisaid submission script
-def read_gisaid_log(log_file, submission_status_file):
+def read_gisaid_log(log_file: str, submission_status_file: str) -> pd.DataFrame:
 	if os.path.isfile(log_file) is False:
 		print("Error: GISAID log file does not exist at: "+log_file, file=sys.stderr)
 		print("Error: Either a submission has not been made or log file has been moved.", file=sys.stderr)
@@ -241,7 +243,7 @@ def read_gisaid_log(log_file, submission_status_file):
 	return not_submitted[["gs-sample_name", "gs-sequence_name"]]
 
 # Check user credentials information
-def check_credentials(config_dict, database):
+def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
 	# Check username
 	if "Username" not in config_dict.keys():
 		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
@@ -273,7 +275,7 @@ def check_credentials(config_dict, database):
 		sys.exit(1)
 
 # Check table2asn validation information
-def check_table2asn_submission(validation_file):
+def check_table2asn_submission(validation_file: str) -> str:
 	# Check if validation file exists
 	if os.path.isfile(validation_file) == False:
 		return "table2asn-error"
@@ -283,13 +285,14 @@ def check_table2asn_submission(validation_file):
 			if "error:" in line.lower():
 				print("Submission has errors after running Table2asn.", file=sys.stderr)
 				print("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.", file=sys.stderr)
-				print("Validation file: " + validation_file, file=sys.fasta_description_orig)
+				print("Validation file: " + validation_file, file=sys.stderr)
 				return "table2asn-validation-error"
 			else:
 				return "validated"
+	return "table2asn-error"
 
 # Check raw reads files listed in metadata file
-def check_raw_read_files(submission_name, submission_dir, metadata):
+def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> Set[str]:
 	# Check raw reads files if SRA is provided
 	raw_reads_path = os.path.join(submission_dir, submission_name, "raw_reads")
 	# If database is SRA, check if the raw reads path exists
@@ -324,7 +327,7 @@ def check_raw_read_files(submission_name, submission_dir, metadata):
 
 # Update dataframeschema based on today's date
 # Uses regex to allow for all valid date formats: YYYY, YYYY-MM, YYYY-MM-DD
-def datetime_schema_regex():
+def datetime_schema_regex() -> str:
 	# January, March, April, May, June, July/August, September, October, November, December
 	specific_month_ending_regex = ["[0][1][-][3][0-1])$","[0][3][-][3][0-1])$","[0][4][-][3][0])$","[0][5][-][3][0-1])$","[0][6][-][3][0])$","[0][7-8][-][3][0-1])$","[0][9][-][3][0])$","[1][0][-][3][0-1])$","[1][1][-][3][0])$","[1][2][-][3][0-1])$"]
 	# Prefilled to cover 1900's
@@ -386,7 +389,7 @@ def datetime_schema_regex():
 	return datetime_regex
 
 # Check sample names in metadata file are listed in fasta file
-def process_fasta_samples(metadata, fasta_file):
+def process_fasta_samples(metadata: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
 	fasta_dict = []
 	# Convert fasta into df
 	with open(fasta_file, "r") as fsa:
@@ -399,7 +402,7 @@ def process_fasta_samples(metadata, fasta_file):
 	# Check duplicates in fasta_df
 	duplicated_df = fasta_df[fasta_df.duplicated(subset = ["fasta_name_orig"], keep = False)]
 	if not duplicated_df.empty:
-		print("Error: Sequences in fasta file must be unique at: " + fasta_file + "\nDuplicate Sequences\n" + df["fasta_sequence_orig"].to_string(index=False), file=sys.stderr)
+		print("Error: Sequences in fasta file must be unique at: " + fasta_file + "\nDuplicate Sequences\n" + duplicated_df["fasta_sequence_orig"].to_string(index=False), file=sys.stderr)
 		sys.exit(1)
 	# Validate duplicates don't appear on merge
 	try:
@@ -418,7 +421,7 @@ def process_fasta_samples(metadata, fasta_file):
 	return merged_df
 
 # Update submission log
-def update_submission_status(submission_dir, submission_name, organism, test):
+def update_submission_status(submission_dir: str, submission_name: str, organism: str, test: bool) -> None:
 	# Check if submission log exists
 	submission_dir = os.path.abspath(submission_dir)
 	submission_log_file = os.path.join(submission_dir, "submission_log.csv")
@@ -476,7 +479,9 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 		else:
 			config_dict = get_config(config_file=config_file, database=database_name)
 		# IF GISAID in a list of submitting databases, check if CLI is downloaded and store in the correct directory
-		gisaid_cli = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI") if "GISAID" in database_name else None
+		gisaid_cli = None
+		if "GISAID" in database_name:
+			gisaid_cli = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
 		# Check if the gisaid_cli exists
 		if (gisaid_cli is not None) and os.path.isfile(gisaid_cli) == False:
 			print("There is no GISAID CLI package for " + organism + " located at "+ gisaid_cli, file=sys.stderr)
@@ -493,7 +498,7 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 				if database_name in ["BIOSAMPLE", "SRA"]:
 					report_file = report.get_ncbi_process_report(database=database_name, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict['NCBI'], submission_type=submission_type)
 					if report_file is not None and os.path.isfile(report_file):
-						submission_status, submission_id = report.process_biosample_sra_report(database=database, report_file=report_file, submission_status_file=submission_status_file)
+						submission_status, submission_id = report.process_biosample_sra_report(report_file=report_file, submission_status_file=submission_status_file)
 				elif database_name == "GENBANK":
 					# Update submission
 					if "---" in submission_status:
@@ -536,12 +541,14 @@ def update_submission_status(submission_dir, submission_name, organism, test):
 							submission_status, submission_id = report.process_genbank_report(report_file=report_file, submission_status_file=submission_status_file, submission_files_dir=submission_files_dir)
 			elif database_name == "GISAID":
 				if ("---" in submission_status) and (int(submission_position) == 1):
+					assert isinstance(gisaid_cli, str)
 					submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
 					submission_id = ""
 				elif ("---" in submission_status) and ("GENBANK" in database) and (int(submission_position) == 2):
 					db_status = df[(df["Database"] == "GENBANK"), "Submission_Status"][0]
 					if "processed-ok" in db_status:
 						report.update_gisaid_files(organism=organism, submission_files_dir=submission_files_dir, submission_status_file=submission_status_file)
+						assert isinstance(gisaid_cli, str)
 						submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
 						submission_id = ""
 			# Update status in the submission log

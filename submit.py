@@ -15,6 +15,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+from typing import List, Set, Dict, Any
 
 # Local imports
 import create
@@ -24,10 +25,10 @@ import seqsender
 import setup
 
 # Get program directory
-PROG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # Submit to NCBI
-def submit_ncbi(database, submission_name, submission_dir, config_dict, submission_type):
+def submit_ncbi(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> None:
 	# Get the directory that stores all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Create submission name
@@ -110,12 +111,18 @@ def submit_ncbi(database, submission_name, submission_dir, config_dict, submissi
 		if (complete == True) and (not res.startswith('226 Transfer complete')):
 			print('submit.ready upload failed.', file=sys.stderr)
 			sys.exit(1)
+		else:
+			return
 	except ftplib.all_errors as e:
 		print("\n" + 'Error:' + str(e), file=sys.stderr)
 		sys.exit(1)
+	except Exception as e:
+		print("\n" + 'Error:' + str(e), file=sys.stderr)
+		sys.exit(1)
+
 
 # Submit to GISAID
-def submit_gisaid(organism, database, submission_dir, submission_name, config_dict, gisaid_cli, submission_status_file, submission_type):
+def submit_gisaid(organism: str, database: str, submission_dir: str, submission_name: str, config_dict: Dict[str, Any], gisaid_cli: str, submission_status_file: str, submission_type: str) -> str:
 	# Get the directory that stores all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Gather all required files
@@ -186,7 +193,7 @@ def submit_gisaid(organism, database, submission_dir, submission_name, config_di
 		return "Error-Submission-Incomplete"
 
 # Send table2asn file through email
-def sendmail(database, submission_name, submission_dir, config_dict, test):
+def sendmail(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], test: bool) -> str:
 	# Create a database subfolder within the submission directory to dump all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Create submission files directory

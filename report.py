@@ -17,7 +17,7 @@ from datetime import datetime
 import ftplib
 import json
 from zipfile import ZipFile
-
+from typing import List, Set, Dict, Tuple, Any, Union
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import create
@@ -27,10 +27,10 @@ import setup
 import submit
 
 # Get program directory
-PROG_DIR = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # Process NCBI Report file
-def get_ncbi_process_report(database, submission_name, submission_files_dir, config_dict, submission_type):
+def get_ncbi_process_report(database: str, submission_name: str, submission_files_dir: str, config_dict: Dict[str, Any], submission_type: str) -> Union[str, None]:
 	# Check user credentials
 	process.check_credentials(config_dict=config_dict, database="NCBI")
 	# Create submission name
@@ -64,7 +64,7 @@ def get_ncbi_process_report(database, submission_name, submission_files_dir, con
 		sys.exit(1)
 
 # Read xml report and get status of the submission
-def process_biosample_sra_report(database, report_file, submission_status_file):
+def process_biosample_sra_report(report_file: str, submission_status_file: str) -> Tuple[str, str]:
 	# # Read in report.xml
 	tree = ET.parse(report_file)
 	root = tree.getroot()
@@ -153,7 +153,7 @@ def process_biosample_sra_report(database, report_file, submission_status_file):
 	status_submission_df.to_csv(submission_status_file, header = True, index = False)
 	return submission_status, submission_id
 
-def process_genbank_report(report_file, submission_status_file, submission_files_dir):
+def process_genbank_report(report_file: str, submission_status_file: str, submission_files_dir: str) -> Tuple[str, str]:
 	API_URL = process.get_main_config()["PORTAL_NAMES"]["NCBI"]["API_URL"]
 	# Read in report.xml
 	tree = ET.parse(report_file)
@@ -206,7 +206,7 @@ def process_genbank_report(report_file, submission_status_file, submission_files
 	return submission_status, submission_id
 
 # Check if it has BioSample and BioProject accession number (update status report)
-def update_genbank_files(database, organism, submission_files_dir, submission_status_file):
+def update_genbank_files(database: List[str], organism: str, submission_files_dir: str, submission_status_file: str) -> None:
 	# Read in the submission status report
 	status_df = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 	# Read in genbank source file
@@ -272,8 +272,8 @@ def update_genbank_files(database, organism, submission_files_dir, submission_st
 		ordered_columns = cmt_start + columns_no_prefix_suffix + cmt_end
 		cmt_df = cmt_df.reindex(columns=ordered_columns)
 		cmt_df.to_csv(os.path.join(submission_files_dir, "comment.cmt"), index=False, sep="\t")
-		
-def update_gisaid_files(organism, submission_files_dir, submission_status_file):
+
+def update_gisaid_files(organism: str, submission_files_dir: str, submission_status_file: str) -> None:
 	# Read in the submission status report
 	status_df = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 	# Gather all required files
