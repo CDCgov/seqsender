@@ -82,7 +82,8 @@ def start(command, database, organism, submission_dir, submission_name, config_f
 	config_dict = process.get_config(config_file=config_file, database=database)
 	# Check metadata file
 	metadata = process.get_metadata(database=database, organism=organism, metadata_file=metadata_file)
-	metadata = process.process_fasta_samples(metadata = metadata, fasta_file = fasta_file)
+	if fasta_file is not None:
+		metadata = process.process_fasta_samples(metadata = metadata, fasta_file = fasta_file)
 	# Create identifier for each database to store submitting samples in submission status worksheet
 	identifier_columns = dict()
 	# Prepping submission files for each given database
