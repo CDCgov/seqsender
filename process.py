@@ -83,7 +83,6 @@ def get_required_colnames(database: str, organism: str) -> Set[str]:
 	return set(all_required_colnames)
 
 # Check the config file
-<<<<<<< HEAD
 def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 	# Determine required database
 	submission_portals = []
@@ -96,11 +95,6 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 	submission_schema = "_".join(submission_portals)
-=======
-def get_config(config_file, database):
-	# Determine which portal is the database belongs to
-	submission_portals = ["NCBI" if x in ["BIOSAMPLE", "SRA", "GENBANK"] else "GISAID" if x in ["GISAID"] else "Unknown" for x in database]
->>>>>>> ea5074477af91006afcae92acbdc6a573281ce22
 	# Read in user config file
 	with open(config_file, "r") as file:
 		try:

@@ -83,13 +83,15 @@ def start(command: str, database: List[str], organism: str, submission_dir: str,
 	config_dict = process.get_config(config_file=config_file, database=database)
 	# Check metadata file
 	metadata = process.get_metadata(database=database, organism=organism, metadata_file=metadata_file, config_dict=config_dict)
+	if fasta_file is not None:
+		metadata = process.process_fasta_samples(metadata = metadata, fasta_file = fasta_file)
 	# Create identifier for each database to store submitting samples in submission status worksheet
 	identifier_columns = dict()
 	# Prepping submission files for each given database
 	for database_name in database:
 		if database_name in ["BIOSAMPLE", "SRA", "GENBANK"]:
 			identifier_columns.update({"ncbi-spuid": "ncbi-sample_name"})
-			create.create_ncbi_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["NCBI"], metadata=metadata, fasta_file=fasta_file, gff_file=gff_file)
+			create.create_ncbi_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["NCBI"], metadata=metadata, gff_file=gff_file)
 			if "GENBANK" in database_name:
 				identifier_columns.update({"gb-seq_id": "ncbi-sequence_name"})
 		elif "GISAID" in database_name:
@@ -98,7 +100,7 @@ def start(command: str, database: List[str], organism: str, submission_dir: str,
 				identifier_columns.update({"gs-seq_id": "gs-sequence_name"})
 			elif "COV" in organism:
 				identifier_columns.update({"gs-virus_name": "gs-sample_name"})
-			create.create_gisaid_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["GISAID"], metadata=metadata, fasta_file=fasta_file)
+			create.create_gisaid_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["GISAID"], metadata=metadata)
 		else:
 			print("Error: Database " + database_name + " is not a valid database selection.", file=sys.stderr)
 			sys.exit(1)
@@ -312,7 +314,6 @@ def main():
 		database += [args.genbank]
 	if "gisaid" in args:
 		database += [args.gisaid]
-
 	# Get database list
 	database = [x for x in database if x]
 

@@ -27,7 +27,7 @@ import setup
 import submit
 
 # Create directory and files for NCBI database submissions
-def create_ncbi_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, fasta_file: Optional[str], gff_file: Optional[str]) -> None:
+def create_ncbi_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str]) -> None:
 	# Create a database subfolder within the submission directory to dump all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Create submission files directory
@@ -49,8 +49,7 @@ def create_ncbi_submission(organism: str, database: str, submission_name: str, s
 	elif "GENBANK" in database:
 		sequence_names = metadata["gb-seq_id"]
 		# Create genbank specific files
-		assert isinstance(fasta_file, str)
-		create_genbank_files(organism=organism, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict, metadata=metadata, fasta_file=fasta_file)
+		create_genbank_files(organism=organism, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict, metadata=metadata)
 		# If using Table2asn do not generate extra genbank files
 		if config_dict["Table2asn"] == True or organism not in ["FLU", "COV"]:
 			create_genbank_table2asn(submission_name=submission_name, submission_files_dir=submission_files_dir, gff_file=gff_file)
@@ -66,7 +65,7 @@ def create_ncbi_submission(organism: str, database: str, submission_name: str, s
 	print("Files are stored at: " + os.path.join(submission_files_dir), file=sys.stdout)
 
 # Create directory and files for GISAID submission
-def create_gisaid_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, fasta_file: str) -> None:
+def create_gisaid_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> None:
 	# Create a database subfolder within the submission directory to dump all submission files
 	submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database)
 	# Create submission files directory
@@ -101,7 +100,7 @@ def create_gisaid_submission(organism: str, database: str, submission_name: str,
 	# Create submission files
 	gisaid_df.to_csv(os.path.join(submission_files_dir, "metadata.csv"), index=False, sep=",")
 	shutil.copy(os.path.join(submission_files_dir, "metadata.csv"), os.path.join(submission_files_dir, "orig_metadata.csv"))
-	create_fasta(organism=organism, database=["GISAID"], metadata=metadata, submission_files_dir=submission_files_dir, fasta_file=fasta_file)
+	create_fasta(organism=organism, database=["GISAID"], metadata=metadata, submission_files_dir=submission_files_dir)
 	shutil.copy(os.path.join(submission_files_dir, "sequence.fsa"), os.path.join(submission_files_dir, "orig_sequence.fsa"))
 	print("\n"+"Creating submission files for " + database, file=sys.stdout)
 	print("Files are stored at: " + os.path.join(submission_files_dir), file=sys.stdout)
@@ -425,17 +424,14 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("}\n")
 
 # Create fasta file based on database
-def create_fasta(organism: str, database: List[str], metadata: pd.DataFrame, fasta_file: str, submission_files_dir: str) -> None:
-	# Make sure sequence name is found in fasta file header
-	fasta_df = process.process_fasta_samples(metadata=metadata, fasta_file=fasta_file)
-	# Now replace fasta header with appropriate sequence ids
+def create_fasta(organism: str, database: List[str], metadata: pd.DataFrame, submission_files_dir: str) -> None:
 	# Extract the required fields for specified database
-	db_required_colnames = process.get_required_colnames(database=database, organism=organism)
+	db_required_colnames = process.get_required_colnames(database=[database], organism=organism)
 	# Get the sample names with "#" symbol
 	sample_colname = list(filter(lambda x: ("#" in x)==True, db_required_colnames))[0].replace("#","").replace("*","")
 	# Create fasta file
 	records = []
-	for index, row in fasta_df.iterrows():
+	for index, row in metadata.iterrows():
 		records.append(SeqRecord(row["fasta_sequence_orig"], id = row[sample_colname], description = ""))
 	with open(os.path.join(submission_files_dir, "sequence.fsa"), "w+") as f:
 		SeqIO.write(records, f, "fasta")
@@ -444,7 +440,7 @@ def create_fasta(organism: str, database: List[str], metadata: pd.DataFrame, fas
 def create_genbank_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, fasta_file: str, submission_name: str, submission_files_dir: str) -> None:
 	# Create authorset file
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_files_dir=submission_files_dir)
-	create_fasta(organism=organism, database=["GENBANK"], metadata=metadata, fasta_file=fasta_file, submission_files_dir=submission_files_dir)
+	create_fasta(organism=organism, database=["GENBANK"], metadata=metadata, submission_files_dir=submission_files_dir)
 	# Retrieve the source df"
 	source_df = metadata.filter(regex="^gb-seq_id$|^src-|^ncbi-spuid$|^ncbi-bioproject$|^organism$|^collection_date$").copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
