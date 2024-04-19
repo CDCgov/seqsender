@@ -49,7 +49,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Was carbapenemase activity tested in the presence of EDTA? If carbapenemase activity was tested in the presence of EDTA, the response should be \"yes\", otherwise \"noâ.",
+			description="Was carbapenemase activity tested in the presence of EDTA? If carbapenemase activity was tested in the presence of EDTA, the response should be \"yes\", otherwise \"no”.",
 			title="EDTA inhibitor tested",
 		),
 		"bs-geo_loc_name": Column(
@@ -117,7 +117,6 @@ schema = DataFrameSchema(
 		Check(lambda df: ~(df["bs-strain"].isnull() & df["bs-isolate"].isnull()), ignore_na = False),
 	],
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_Beta-lactamase.1.0_schema",

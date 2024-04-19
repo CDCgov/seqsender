@@ -425,7 +425,6 @@ schema = DataFrameSchema(
 	},
 	checks=None,
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_SARS-CoV-2.cl.1.0_schema",

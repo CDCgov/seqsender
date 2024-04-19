@@ -107,7 +107,6 @@ schema = DataFrameSchema(
 		Check(lambda df: ~(df["bs-host"].isnull() & df["bs-isolation_source"].isnull()), ignore_na = False),
 	],
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_Metagenome.environmental.1.0_schema",

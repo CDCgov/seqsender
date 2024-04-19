@@ -19,7 +19,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="filter",
      name="genbank_cmt_schema",

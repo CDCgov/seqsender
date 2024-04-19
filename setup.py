@@ -118,8 +118,9 @@ def download_table2asn(table2asn_dir: str) -> None:
 # Download xml and write to a file
 def download_xml(xml_url: str, output_file: str) -> None:
 	r = requests.get(xml_url)
+	r.encoding = "UTF-8"
 	with open(output_file, "w+") as file:
-		file.write(r.text)
+		file.write(r.text.replace("\xa0", " "))
 
 # Download list of BioSample packages then download the xml for each package
 def download_biosample_xml_list() -> None:
@@ -202,7 +203,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 				file.write(indentation + "required=False,")
 			# NCBI column description
 			if attribute["Description"]:
-				file.write(indentation + "description=\"" + attribute["Description"].replace("\"", "\\\"") + "\",")
+				file.write(indentation + "description=\"" + attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ") + "\",")
 			# Human readable field name for submission
 			file.write(indentation + "title=\"" + attribute["Name"] + "\",")
 			# Close attribute
@@ -224,7 +225,6 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		else:
 			file.write(indentation + "checks=None,")
 		file.write(indentation + "index=None,")
-		file.write(indentation + "dtype=None,")
 		file.write(indentation + "coerce=False,")
 		file.write(indentation + "strict=\"filter\",")
 		file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")

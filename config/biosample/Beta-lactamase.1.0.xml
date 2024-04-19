@@ -106,7 +106,7 @@
     <Attribute use="mandatory">
       <Name>EDTA inhibitor tested</Name>
       <HarmonizedName>edta_inhibitor_tested</HarmonizedName>
-      <Description>Was carbapenemase activity tested in the presence of EDTA? If carbapenemase activity was tested in the presence of EDTA, the response should be "yes", otherwise "noâ.</Description>
+      <Description>Was carbapenemase activity tested in the presence of EDTA? If carbapenemase activity was tested in the presence of EDTA, the response should be "yes", otherwise "no”.</Description>
       <Format type="select">
         <Description>yes | no | missing | not applicable | not collected | not provided | restricted access</Description>
         <Choice/>

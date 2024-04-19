@@ -119,7 +119,7 @@
     <Attribute use="optional">
       <Name>broad-scale environmental context</Name>
       <HarmonizedName>env_broad_scale</HarmonizedName>
-      <Description>Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.: Â mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]&#13;
+      <Description>Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]&#13;
 </Description>
       <Format>
         <Description>{term}</Description>

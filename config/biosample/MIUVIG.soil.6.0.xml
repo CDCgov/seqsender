@@ -70,7 +70,7 @@
     <Attribute use="mandatory" group_name="Environment">
       <Name>broad-scale environmental context</Name>
       <HarmonizedName>env_broad_scale</HarmonizedName>
-      <Description>Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.: Â mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]&#13;
+      <Description>Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]&#13;
 </Description>
       <Format>
         <Description>{term}</Description>
@@ -79,7 +79,7 @@
     <Attribute use="mandatory" group_name="Environment">
       <Name>local-scale environmental context</Name>
       <HarmonizedName>env_local_scale</HarmonizedName>
-      <Description>Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.: Â shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]&#13;
+      <Description>Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]&#13;
 </Description>
       <Format>
         <Description>{term}</Description>
@@ -136,7 +136,7 @@
     <Attribute use="mandatory" group_name="Nucleic Acid Sequence Source">
       <Name>virus enrichment approach</Name>
       <HarmonizedName>virus_enrich_appr</HarmonizedName>
-      <Description>Approach used to enrich the sample for viruses, if any. If more than one approach was used, include multiple âvirus_enrich_apprâ fields.</Description>
+      <Description>Approach used to enrich the sample for viruses, if any. If more than one approach was used, include multiple ‘virus_enrich_appr’ fields.</Description>
       <Format type="select">
         <Description>filtration | ultrafiltration | centrifugation | ultracentrifugation | PEG Precipitation | FeCl Precipitation | CsCl density gradient | DNAse | RNAse | targeted sequence capture | missing | not applicable | not collected | not provided | restricted access</Description>
         <Choice/>
@@ -440,7 +440,7 @@
     <Attribute use="optional" group_name="Soil">
       <Name>microbial biomass</Name>
       <HarmonizedName>microbial_biomass</HarmonizedName>
-      <Description>the part of the organic matter in the soil that constitutes living microorganisms smaller than 5-10 Âµm. IF you keep this, you would need to have correction factors used for conversion to the final units, which should be mg C (or N)/kg soil).</Description>
+      <Description>the part of the organic matter in the soil that constitutes living microorganisms smaller than 5-10 µm. IF you keep this, you would need to have correction factors used for conversion to the final units, which should be mg C (or N)/kg soil).</Description>
       <Format>
         <Description>{float} {unit}</Description>
       </Format>
@@ -472,7 +472,7 @@
     <Attribute use="optional" group_name="Environment">
       <Name>Omics Observatory ID</Name>
       <HarmonizedName>omics_observ_id</HarmonizedName>
-      <Description>A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here:Â https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.</Description>
+      <Description>A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.</Description>
       <Format>
         <Description>{term}</Description>
       </Format>
@@ -631,7 +631,7 @@
     <Attribute use="optional" group_name="Soil">
       <Name>slope aspect</Name>
       <HarmonizedName>slope_aspect</HarmonizedName>
-      <Description>the direction a slope faces. While looking down a slope use a compass to record the direction you are facing (direction or degrees); e.g., NW or 315Â°. This measure provides an indication of sun and wind exposure that will influence soil temperature and evapotranspiration.</Description>
+      <Description>the direction a slope faces. While looking down a slope use a compass to record the direction you are facing (direction or degrees); e.g., NW or 315°. This measure provides an indication of sun and wind exposure that will influence soil temperature and evapotranspiration.</Description>
       <Format>
         <Description>{float} {unit}</Description>
       </Format>
@@ -639,7 +639,7 @@
     <Attribute use="optional" group_name="Soil">
       <Name>slope gradient</Name>
       <HarmonizedName>slope_gradient</HarmonizedName>
-      <Description>commonly called âslope.â The angle between ground surface and a horizontal line (in percent). This is the direction that overland water would flow. This measure is usually taken with a hand level meter or clinometer.</Description>
+      <Description>commonly called “slope.” The angle between ground surface and a horizontal line (in percent). This is the direction that overland water would flow. This measure is usually taken with a hand level meter or clinometer.</Description>
       <Format>
         <Description>{float} {unit}</Description>
       </Format>

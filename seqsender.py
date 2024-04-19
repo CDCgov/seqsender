@@ -131,7 +131,7 @@ def start(command: str, database: List[str], organism: str, submission_dir: str,
 					submission_id = "---"
 				elif config_dict["NCBI"]["table2asn"] == True or organism not in ["FLU", "COV"]:
 					# GenBank Table2asn submission
-					validation_file = os.path.join(submission_files_dir, submission_name + ".val")
+					validation_file = os.path.join(submission_dir, submission_name + ".val")
 					submission_status = process.check_table2asn_submission(validation_file=validation_file)
 					if submission_status == "validated":
 						submission_status = submit.sendmail(database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["NCBI"], test=test)
@@ -153,7 +153,7 @@ def start(command: str, database: List[str], organism: str, submission_dir: str,
 					submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli,  submission_status_file=submission_status_file, submission_type=submission_type)
 					submission_id = ""
 
-			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, table2asn=table2asn, gff_file=gff_file, submission_type=submission_type)
+			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, submission_type=submission_type)
 
 # Define program arguments and commands
 def args_parser():

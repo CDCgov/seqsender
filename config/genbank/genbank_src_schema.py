@@ -495,7 +495,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="FIlter",
      name="genbank_src_schema",

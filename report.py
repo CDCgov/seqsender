@@ -158,7 +158,7 @@ def process_biosample_sra_report(report_file: str, submission_status_file: str) 
 	except:
 		pass
 	# Save a copy of submission status df without report_sample_id
-	status_submission_df = status_submission_df.loc[:, status_submission_df.columns != 'report_sample_id']
+	status_submission_df = status_submission_df.drop(["report_sample_id"], errors='ignore')
 	status_submission_df.to_csv(submission_status_file, header = True, index = False)
 	return submission_status, submission_id
 

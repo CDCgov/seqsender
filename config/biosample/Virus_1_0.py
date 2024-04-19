@@ -119,7 +119,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=False,
-			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.: Â mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
+			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
 			title="broad-scale environmental context",
 		),
 		"bs-genotype": Column(
@@ -227,7 +227,6 @@ schema = DataFrameSchema(
 		Check(lambda df: ~(df["bs-host"].isnull() & df["bs-lab_host"].isnull()), ignore_na = False),
 	],
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_Virus.1.0_schema",

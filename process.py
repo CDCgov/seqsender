@@ -57,7 +57,7 @@ def get_main_config() -> Dict[str, Any]:
 		sys.exit(1)
 
 # Extract required column fields from main config file
-def get_required_colnames(database: str, organism: str) -> Set[str]:
+def get_required_colnames(database: List[str], organism: str) -> Set[str]:
 	# Get main fig file
 	main_config = get_main_config()
 	# Get all common fields across all portals
@@ -559,6 +559,6 @@ def update_submission_status(submission_dir: str, submission_name: str, organism
 						submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
 						submission_id = ""
 			# Update status in the submission log
-			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, table2asn=table2asn, gff_file=gff_file, submission_type=submission_type)
+			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, submission_type=submission_type)
 			# Print out the submission status
 			print("Submission status: " + submission_status, file=sys.stdout)

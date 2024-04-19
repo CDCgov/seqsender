@@ -248,7 +248,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Unit of time for host age (e.g. Year is "Y", Month is "M").",
+			description="Unit of time for host age (e.g. Year is \"Y\", Month is \"M\").",
 			title="patient age unit",
 		),
 		"gs-Health_Status": Column(
@@ -286,7 +286,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="filter",
      name="gisaid_cov_schema",

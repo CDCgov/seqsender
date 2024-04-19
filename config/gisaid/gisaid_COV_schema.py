@@ -301,7 +301,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="filter",
      name="gisaid_cov_schema",

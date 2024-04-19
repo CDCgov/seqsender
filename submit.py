@@ -116,9 +116,6 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 	except ftplib.all_errors as e:
 		print("\n" + 'Error:' + str(e), file=sys.stderr)
 		sys.exit(1)
-	except Exception as e:
-		print("\n" + 'Error:' + str(e), file=sys.stderr)
-		sys.exit(1)
 
 
 # Submit to GISAID
@@ -191,6 +188,8 @@ def submit_gisaid(organism: str, database: str, submission_dir: str, submission_
 		print("Please check status report at: " + submission_status_file, file=sys.stdout)
 		print("Please check log file at: " + submission_files_dir + "/gisaid_upload_log_attempt_{1,2,3}.txt", file=sys.stderr)
 		return "Error-Submission-Incomplete"
+	else:
+		return "processed-ok"
 
 # Send table2asn file through email
 def sendmail(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], test: bool) -> str:

@@ -130,7 +130,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict=True,
      name="seqsender_log_schema",

@@ -49,7 +49,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.: Â mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
+			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
 			title="broad-scale environmental context",
 		),
 		"bs-env_local_scale": Column(
@@ -59,7 +59,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.: Â shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]",
+			description="Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]",
 			title="local-scale environmental context",
 		),
 		"bs-env_medium": Column(
@@ -379,7 +379,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=False,
-			description="A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here:Â https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.",
+			description="A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.",
 			title="Omics Observatory ID",
 		),
 		"bs-org_carb": Column(
@@ -684,7 +684,6 @@ schema = DataFrameSchema(
 		Check(lambda df: ~(df["bs-strain"].isnull() & df["bs-isolate"].isnull() & df["bs-cultivar"].isnull() & df["bs-ecotype"].isnull()), ignore_na = False),
 	],
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_MIMARKS.specimen.miscellaneous.6.0_schema",

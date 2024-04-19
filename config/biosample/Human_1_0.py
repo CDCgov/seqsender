@@ -211,7 +211,6 @@ schema = DataFrameSchema(
 	},
 	checks=None,
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_Human.1.0_schema",

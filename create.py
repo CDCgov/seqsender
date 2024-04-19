@@ -116,7 +116,7 @@ def create_manual_submission_files(database: str, submission_files_dir: str, met
 		# Create SRA specific fields
 		metadata["sra-title"] = config_dict["Description"]["Title"]
 		metadata = metadata["sra-file_name"].str.split(",", expand=True).add_prefix("sra-filename").join(metadata)
-		filename_cols = [col for col in metadata if col.startswith("sra-filename")]
+		filename_cols = [col for col in metadata.columns.tolist() if col.startswith("sra-filename")]
 		# Correct index for filename column
 		for col in filename_cols:
 			# Remove 0 index
@@ -142,14 +142,14 @@ def create_manual_submission_files(database: str, submission_files_dir: str, met
 	# Remove columns not required for manual submission
 	database_df = database_df.drop(columns=drop_columns)
 	# Remove database prefix
-	database_df.columns = [col.replace(prefix, "") for col in database_df.columns]
+	database_df.columns = database_df.columns.str.replace(prefix,"")
 	# Order columns
 	columns_no_order = list(filter(lambda x: (x not in column_ordered)==True, database_df.columns))
 	column_ordered = column_ordered + columns_no_order
 	database_df = database_df.reindex(columns=column_ordered)
 	database_df.to_csv(os.path.join(submission_files_dir, "metadata.tsv"), index=False, sep="\t")
 
-def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, failed_seqs_auto_removed: bool = True) -> str:
+def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, failed_seqs_auto_removed: bool = True) -> bytes:
 	# Submission XML header
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
@@ -217,7 +217,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 			# Attributes
 			attributes = etree.SubElement(biosample, "Attributes")
 			# Remove columns with bs-prefix that are not attributes
-			biosample_cols = [col for col in database_df if (col.startswith('bs-')) and (col not in ["bs-package","bs-description"])]
+			biosample_cols = [col for col in database_df.columns.tolist() if (col.startswith('bs-')) and (col not in ["bs-package","bs-description"])]
 			for col in biosample_cols:
 				attribute = etree.SubElement(attributes, "Attribute", attribute_name=col.replace("bs-",""))
 				attribute.text = row[col]
@@ -244,7 +244,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 				datatype = etree.SubElement(file, "DataType")
 				datatype.text = "generic-data"
 			# Remove columns with sra- prefix that are not attributes
-			sra_cols = [col for col in database_df if (col.startswith('sra-')) and (col not in ["sra-file_location","sra-file_name"])]
+			sra_cols = [col for col in database_df.columns.tolist() if (col.startswith('sra-')) and (col not in ["sra-file_location","sra-file_name"])]
 			for col in sra_cols:
 				attribute = etree.SubElement(addfiles, "Attribute", name=col.replace("sra-",""))
 				attribute.text = row[col]
@@ -266,7 +266,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 	return xml_str
 
 # Save submission xml
-def save_xml(submission_xml: str, submission_files_dir: str) -> None:
+def save_xml(submission_xml: bytes, submission_files_dir: str) -> None:
 	# Save string as submission.xml
 	with open(os.path.join(submission_files_dir, "submission.xml"), "wb") as f:
 		f.write(submission_xml)
@@ -426,7 +426,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 # Create fasta file based on database
 def create_fasta(organism: str, database: List[str], metadata: pd.DataFrame, submission_files_dir: str) -> None:
 	# Extract the required fields for specified database
-	db_required_colnames = process.get_required_colnames(database=[database], organism=organism)
+	db_required_colnames = process.get_required_colnames(database=database, organism=organism)
 	# Get the sample names with "#" symbol
 	sample_colname = list(filter(lambda x: ("#" in x)==True, db_required_colnames))[0].replace("#","").replace("*","")
 	# Create fasta file
@@ -437,7 +437,7 @@ def create_fasta(organism: str, database: List[str], metadata: pd.DataFrame, sub
 		SeqIO.write(records, f, "fasta")
 
 # Create a zip file for genbank submission
-def create_genbank_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, fasta_file: str, submission_name: str, submission_files_dir: str) -> None:
+def create_genbank_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_files_dir: str) -> None:
 	# Create authorset file
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_files_dir=submission_files_dir)
 	create_fasta(organism=organism, database=["GENBANK"], metadata=metadata, submission_files_dir=submission_files_dir)
@@ -506,7 +506,7 @@ def create_genbank_table2asn(submission_name: str, submission_files_dir: str, gf
 	return submission_id, submission_status
 
 # Create submission log csv
-def create_submission_log(database: str, submission_position: int, organism: str, submission_name: str, submission_dir: str, config_file: str, submission_status: str, submission_id: str, table2asn: str, gff_file: Optional[str], submission_type: str) -> None:
+def create_submission_log(database: str, submission_position: int, organism: str, submission_name: str, submission_dir: str, config_file: str, submission_status: str, submission_id: str, submission_type: str) -> None:
 	# If file doesn't exist create it
 	if os.path.isfile(os.path.join(submission_dir, "submission_log.csv")) == True:
 		df = pd.read_csv(os.path.join(submission_dir, "submission_log.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
@@ -518,8 +518,6 @@ def create_submission_log(database: str, submission_position: int, organism: str
 	if df_partial.shape[0] > 0:
 		df.loc[df_partial.index.values, "Submission_Position"] = submission_position
 		df.loc[df_partial.index.values, "Submission_Status"] = submission_id + ";" + submission_status
-		df.loc[df_partial.index.values, "Table2asn"] = table2asn
-		df.loc[df_partial.index.values, "GFF_File"] = gff_file
 		df.loc[df_partial.index.values, 'Update_Date'] = datetime.now().strftime("%Y-%m-%d")
 	else:
 		# Create new field
@@ -533,9 +531,7 @@ def create_submission_log(database: str, submission_position: int, organism: str
 					 'Submission_Status': status,
 					 'Submission_Directory': submission_dir,
 					 'Config_File': config_file,
-					 'Table2asn': table2asn,
-					 'GFF_File': gff_file,
 					 'Update_Date': datetime.now().strftime("%Y-%m-%d")
 					}
-		df.loc[len(df)] = new_entry
+		df.loc[len(df)] = new_entry # type: ignore[call-overload]
 	df.to_csv(os.path.join(submission_dir, "submission_log.csv"), header = True, index = False)

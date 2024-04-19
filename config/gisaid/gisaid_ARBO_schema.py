@@ -331,7 +331,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="filter",
      name="gisaid_arbo_schema",

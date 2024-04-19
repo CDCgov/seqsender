@@ -61,7 +61,6 @@ schema = DataFrameSchema(
 	},
      checks=None,
      index=None,
-     dtype=None,
      coerce=False,
      strict="filter",
      name="seqsender_schema",

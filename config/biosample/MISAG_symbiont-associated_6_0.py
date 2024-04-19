@@ -19,7 +19,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.: Â mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
+			description="Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]",
 			title="broad-scale environmental context",
 		),
 		"bs-env_local_scale": Column(
@@ -29,7 +29,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.: Â shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]",
+			description="Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]",
 			title="local-scale environmental context",
 		),
 		"bs-env_medium": Column(
@@ -367,8 +367,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=False,
-			description="Report the environmental material(s) immediately surrounding the symbiotic host organism at the time of sampling. This usually will be a tissue or substance type from the host, but may be another material if the symbiont is external to the host. We recommend using classes from the UBERON ontology, but subclasses of 'environmental material' (http://purl.obolibrary.org/obo/ENVO_00010483) may also be used. EnvO documentation about how to use the field: https://github.com/EnvironmentOntology/envo/wiki/Using-ENVO-with-MIxS. 
-Terms from other OBO ontologies are permissible as long as they reference mass/volume nouns (e.g., air, water, blood) and not discrete, countable entities (e.g., intestines, heart)",
+			description="Report the environmental material(s) immediately surrounding the symbiotic host organism at the time of sampling. This usually will be a tissue or substance type from the host, but may be another material if the symbiont is external to the host. We recommend using classes from the UBERON ontology, but subclasses of 'environmental material' (http://purl.obolibrary.org/obo/ENVO_00010483) may also be used. EnvO documentation about how to use the field: https://github.com/EnvironmentOntology/envo/wiki/Using-ENVO-with-MIxS.  Terms from other OBO ontologies are permissible as long as they reference mass/volume nouns (e.g., air, water, blood) and not discrete, countable entities (e.g., intestines, heart)",
 			title="host of the symbiotic host environemental medium",
 		),
 		"bs-host_of_host_fam_rel": Column(
@@ -607,7 +606,7 @@ Terms from other OBO ontologies are permissible as long as they reference mass/v
 			unique=False,
 			coerce=False,
 			required=False,
-			description="A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here:Â https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.",
+			description="A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory.",
 			title="Omics Observatory ID",
 		),
 		"bs-organism_count": Column(
@@ -829,7 +828,6 @@ Terms from other OBO ontologies are permissible as long as they reference mass/v
 	},
 	checks=None,
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_MISAG.symbiont-associated.6.0_schema",

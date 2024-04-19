@@ -266,7 +266,6 @@ schema = DataFrameSchema(
 		Check(lambda df: ~(df["bs-age"].isnull() & df["bs-dev_stage"].isnull()), ignore_na = False),
 	],
 	index=None,
-	dtype=None,
 	coerce=False,
 	strict="filter",
 	name="biosample_package_Plant.1.0_schema",
