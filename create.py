@@ -407,7 +407,7 @@ def create_genbank_files(organism, config_dict, metadata, submission_name, submi
 	# Retrieve Structured Comment df
 	comment_df = metadata.filter(regex="^cmt-")
 	if not comment_df.empty:
-		comment_df = metadata.filter(regex="^gb-seq_id$|^cmt-|^organism$|^collection_date$").copy()
+		comment_df = metadata.filter(regex="^gb-seq_id$|^cmt-").copy()
 		comment_df.columns = comment_df.columns.str.replace("cmt-", "").str.strip()
 		comment_df = comment_df.rename(columns = {"gb-seq_id": "SeqID"})
 		columns_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix"])==True, comment_df.columns))
