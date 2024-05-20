@@ -394,7 +394,7 @@ def create_genbank_files(organism, config_dict, metadata, submission_name, submi
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_files_dir=submission_files_dir)
 	create_fasta(organism=organism, database="GENBANK", metadata=metadata, submission_files_dir=submission_files_dir)
 	# Retrieve the source df"
-	source_df = metadata.filter(regex="^gb-seq_id$|^src-|^ncbi-spuid$|^ncbi-bioproject$|^organism$|^collection_date$").copy()
+	source_df = metadata.filter(regex="^gb-seq_id$|^src-|^ncbi-bioproject$|^organism$|^collection_date$").copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
 	source_df = source_df.rename(columns = {"gb-seq_id":"Sequence_ID", "collection_date":"Collection_date"})
 	# Add BioProject if available
@@ -437,7 +437,7 @@ def create_genbank_table2asn(submission_name, submission_files_dir, gff_file=Non
 	print("Downloading Table2asn.", file=sys.stdout)
 	setup.download_table2asn(table2asn_dir=table2asn_dir)
 	# Command to generate table2asn submission file
-	command = [table2asn_dir, "-t", os.path.join(submission_files_dir, "authorset.sbt"), "-i", os.path.join(submission_files_dir, "sequence.fsa"), "-src-file", os.path.join(submission_files_dir, "source.src"), "-o", os.path.join(submission_files_dir, submission_name + ".sqn")]
+	command = [table2asn_dir, "-a", "s", "-t", os.path.join(submission_files_dir, "authorset.sbt"), "-i", os.path.join(submission_files_dir, "sequence.fsa"), "-src-file", os.path.join(submission_files_dir, "source.src"), "-o", os.path.join(submission_files_dir, submission_name + ".sqn")]
 	if os.path.isfile(os.path.join(submission_files_dir, "comment.cmt")):
 		command.append("-w")
 		command.append( os.path.join(submission_files_dir, "comment.cmt"))
