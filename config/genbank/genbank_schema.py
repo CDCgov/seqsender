@@ -5,13 +5,27 @@ schema = DataFrameSchema(
 		"sequence_name": Column(
 			dtype="object",
 			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.",
+			title="sequence name",
+		),
+		"gb-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
 				Check.str_length(max_value=50),
 			],
 			nullable=False,
 			unique=True,
 			coerce=False,
-			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.",
-			title="sequence name",
+			required=True,
+			description="Identifier name used for GenBank. Max length is 50 characters. Fasta modifiers with brackets \"[]\" can be added. They will be added only to the fasta file.",
+			title="sample name",
 		),
 		"gb-subm_lab": Column(
 			dtype="object",

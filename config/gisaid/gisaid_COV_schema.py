@@ -2,7 +2,19 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
-		"gs-covv_sequence_name": Column(
+		"sequence_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.",
+			title="sequence name",
+		),
+		"gs-sample_name": Column(
 			dtype="object",
 			checks=[
 				Check.str_length(min_value=1,max_value=50),
@@ -10,8 +22,9 @@ schema = DataFrameSchema(
 			nullable=False,
 			unique=True,
 			coerce=False,
-			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.",
-			title="sequence name",
+			required=True,
+			description="Identifier name used for GISAID. Max length is 50 characters. This field is the same as \"covv_sequence_name\" in GISAID's metadata template.",
+			title="sample name",
 		),
 		"gs-covv_type": Column(
 			dtype="object",

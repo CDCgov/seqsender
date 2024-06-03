@@ -1,0 +1,85 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-strain,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". microbial or eukaryotic strain name"
+bs-isolate,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". identification or description of the specific individual from which this sample was obtained"
+bs-depth,Required,"Depth is defined as the vertical distance below surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly. Depth can be reported as an interval for subsurface samples."
+bs-elev,Required,The elevation of the sampling site as measured by the vertical distance from mean sea level.
+bs-env_broad_scale,Required,Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]
+bs-env_local_scale,Required,"Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]"
+bs-env_medium,Required,Add terms that identify the material displaced by the entity at time of sampling. Recommend subclasses of environmental material [ENVO:00010483]. Multiple terms can be separated by pipes e.g.: estuarine water [ENVO:01000301]|estuarine mud [ENVO:00002160]
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-isol_growth_condt,Required,PMID or url for isolation and growth condition specifications
+bs-lat_lon,Required,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
+bs-propagation,Required,phage: lytic/lysogenic/temperate/obligately lytic; plasmid: incompatibility group; eukaryote: asexual/sexual
+bs-agrochem_addition,Optional,"addition of fertilizers, pesticides, etc. - amount and time of applications"
+bs-al_sat,Optional,aluminum saturation (esp. for tropical soils)
+bs-al_sat_meth,Optional,reference or method used in determining Al saturation
+bs-altitude,Optional,The altitude of the sample is the vertical distance between Earth's surface above Sea Level and the sampled position in the air.
+bs-annual_precpt,Optional,"The average of all annual precipitation values known, or an estimated equivalent value derived by such methods as regional indexes or Isohyetal maps"
+bs-annual_temp,Optional,Mean annual temperature
+bs-biotic_relationship,Optional,Free-living or from host (define relationship)
+bs-collection_method,Optional,"Process used to collect the sample, e.g., bronchoalveolar lavage (BAL)"
+bs-crop_rotation,Optional,"whether or not crop is rotated, and if yes, rotation schedule"
+bs-cur_land_use,Optional,present state of sample site
+bs-cur_vegetation,Optional,"vegetation classification from one or more standard classification systems, or agricultural crop"
+bs-cur_vegetation_meth,Optional,reference or method used in vegetation classification
+bs-drainage_class,Optional,drainage classification from a standard system such as the USDA system
+bs-encoded_traits,Optional,Traits like antibiotic resistance/xenobiotic degration phenotypes/converting phage genes
+bs-estimated_size,Optional,Estimated size of genome
+bs-extreme_event,Optional,unusual physical events that may have affected microbial populations
+bs-fao_class,Optional,soil classification from the FAO World Reference Database for Soil Resources
+bs-fire,Optional,historical and/or physical evidence of fire
+bs-flooding,Optional,historical and/or physical evidence of flooding
+bs-heavy_metals,Optional,heavy metals present and concentrationsany drug used by subject and the frequency of usage; can include multiple heavy metals and concentrations
+bs-heavy_metals_meth,Optional,reference or method used in determining heavy metals
+bs-horizon_meth,Optional,reference or method used in determining the horizon
+bs-host,Optional,"The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, ""Homo sapiens""."
+bs-host_disease,Optional,"Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, http://bioportal.bioontology.org/ontologies/1009 or http://www.ncbi.nlm.nih.gov/mesh"
+bs-host_taxid,Optional,"NCBI taxonomy ID of the host, e.g. 9606"
+bs-isolation_source,Optional,"Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-link_addit_analys,Optional,
+bs-link_class_info,Optional,link to digitized soil maps or other soil classification information
+bs-link_climate_info,Optional,link to climate resource
+bs-local_class,Optional,soil classification based on local soil classification system
+bs-local_class_meth,Optional,reference or method used in determining the local soil classification
+bs-microbial_biomass,Optional,"the part of the organic matter in the soil that constitutes living microorganisms smaller than 5-10 µm. IF you keep this, you would need to have correction factors used for conversion to the final units, which should be mg C (or N)/kg soil)."
+bs-microbial_biomass_meth,Optional,reference or method used in determining microbial biomass
+bs-misc_param,Optional,"any other measurement performed or parameter collected, that is not listed here"
+bs-neg_cont_type,Optional,"The substance or equipment used as a negative control in an investigation, e.g., distilled water, phosphate buffer, empty collection device, empty collection tube, DNA-free PCR mix, sterile swab, sterile syringe"
+bs-num_replicons,Optional,Number of replicons in nuclear genome
+bs-omics_observ_id,Optional,"A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory."
+bs-pathogenicity,Optional,To what is the entity pathogenic
+bs-ph,Optional,pH measurement
+bs-ph_meth,Optional,reference or method used in determining pH
+bs-pool_dna_extracts,Optional,were multiple DNA extractions mixed? how many?
+bs-pos_cont_type,Optional,"The substance, mixture, product, or apparatus used to verify that a process which is part of an investigation delivers a true positive"
+bs-previous_land_use,Optional,previous land use and dates
+bs-previous_land_use_meth,Optional,reference or method used in determining previous land use and dates
+bs-profile_position,Optional,cross-sectional position in the hillslope where sample was collected.sample area position in relation to surrounding areas
+bs-ref_biomaterial,Optional,Primary publication or genome report
+bs-salinity_meth,Optional,reference or method used in determining salinity
+bs-samp_collect_device,Optional,Method or device employed for collecting sample
+bs-samp_mat_process,Optional,Processing applied to the sample during or after isolation
+bs-samp_size,Optional,"Amount or size of sample (volume, mass or area) that was collected"
+bs-samp_vol_we_dna_ext,Optional,volume (mL) or weight (g) of sample processed for DNA extraction
+bs-season_precpt,Optional,"The average of all seasonal precipitation values known, or an estimated equivalent value derived by such methods as regional indexes or Isohyetal maps"
+bs-season_temp,Optional,Mean seasonal temperature
+bs-sieving,Optional,collection design of pooled samples and/or sieve size and amount of sample sieved
+bs-slope_aspect,Optional,"the direction a slope faces. While looking down a slope use a compass to record the direction you are facing (direction or degrees); e.g., NW or 315°. This measure provides an indication of sun and wind exposure that will influence soil temperature and evapotranspiration."
+bs-slope_gradient,Optional,commonly called “slope.” The angle between ground surface and a horizontal line (in percent). This is the direction that overland water would flow. This measure is usually taken with a hand level meter or clinometer.
+bs-soil_horizon,Optional,specific layer in the land area which measures parallel to the soil surface and possesses physical characteristics which differ from the layers above and beneath
+bs-soil_text_measure,Optional,"the relative proportion of different grain sizes of mineral particles in a soil, as described using a standard system; express as % sand (50 um to 2 mm), silt (2 um to 50 um), and clay (<2 um) with textural name (e.g., silty clay loam) optional."
+bs-soil_texture_meth,Optional,reference or method used in determining soil texture
+bs-soil_type,Optional,soil series name or other lower-level classification
+bs-soil_type_meth,Optional,reference or method used in determining soil series name or other lower-level classification
+bs-source_material_id,Optional,"unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples."
+bs-store_cond,Optional,explain how and for how long the soil sample was stored before DNA extraction.
+bs-subspecf_gen_lin,Optional,"Information about the genetic distinctness of the lineage (eg., biovar, serovar)"
+bs-tillage,Optional,note method(s) used for tilling
+bs-tot_n_meth,Optional,reference or method used in determining the total N
+bs-tot_nitro,Optional,total nitrogen content of the sample
+bs-tot_nitro_cont_meth,Optional,Reference or method used in determining the total nitrogen
+bs-tot_org_c_meth,Optional,reference or method used in determining total organic C
+bs-tot_org_carb,Optional,Definition for soil: total organic C content of the soil units of g C/kg soil. Definition otherwise: total organic carbon content
+bs-water_content,Optional,water content measurement
+bs-water_content_soil_meth,Optional,reference or method used in determining the water content of soil

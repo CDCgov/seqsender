@@ -38,13 +38,25 @@ BIOSAMPLE_HTML_SUFFIX: str = "/?format=xml"
 SCHEMA_HEADER: str = """from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
-	columns={"""
+	columns={
+		\"bs-sample_name\": Column(
+			dtype=\"object\",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description=\"Identifier name used for BioSample. Max length is 50 characters.\",
+			title=\"sample_name\",
+		),"""
 
-# Create example templates for testing
-def create_zip_template(organism: str, database: List[str], submission_dir: str, submission_name: str) -> None:
+# Create example data for testing
+def create_test_data(organism: str, database: List[str], submission_dir: str) -> None:
 	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, submission_name)
+	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
 	os.makedirs(out_dir, exist_ok = True)
 	# Create sra directory
 	out_sra_dir = os.path.join(out_dir, "raw_reads")
@@ -56,18 +68,18 @@ def create_zip_template(organism: str, database: List[str], submission_dir: str,
 	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
 	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
 	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of template files to output
-	temp_config_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "template", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
+	# Create a list of test files to output
+	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
+	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
+	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
+	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
+	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
+	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
 	# Print generating message
-	print("\n"+"Generating submission template", file=sys.stdout)
+	print("\n"+"Generating submission test_data", file=sys.stdout)
 	# Get combined metadata for all given databases
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "template", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 		else:
@@ -190,6 +202,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 			# Coerce column into specified dtype
 			file.write(indentation + "coerce=False,")
 			# Column is required for submission
+			group_message = ""
 			if attribute["@use"] == "mandatory":
 				file.write(indentation + "required=True,")
 			elif attribute["@use"] == "either_one_mandatory":
@@ -198,12 +211,13 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 					mandatory_group[attribute["@group_name"]] = mandatory_group[attribute["@group_name"]] + " & df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
 				else:
 					mandatory_group[attribute["@group_name"]] = "df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
+				group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
 				file.write(indentation + "required=True,")
 			else:
 				file.write(indentation + "required=False,")
 			# NCBI column description
 			if attribute["Description"]:
-				file.write(indentation + "description=\"" + attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ") + "\",")
+				file.write(indentation + "description=\"" + group_message + attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ") + "\",")
 			# Human readable field name for submission
 			file.write(indentation + "title=\"" + attribute["Name"] + "\",")
 			# Close attribute

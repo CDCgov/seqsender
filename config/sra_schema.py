@@ -2,6 +2,19 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
+		"sra-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+				Check.str_length(max_value=50),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for SRA. Max length is 50 characters. Name must be unique from BioSample or Genbank submission.",
+			title="sample name",
+		),
 		"sra-file_location": Column(
 			dtype="object",
 			checks=[
@@ -12,7 +25,7 @@ schema = DataFrameSchema(
 			coerce=False,
 			required=True,
 			description="Location of raw reads files. Options: \"local\" or \"cloud\".",
-			title="sra file location",
+			title="file location",
 		),
 		"sra-file_name": Column(
 			dtype="object",
@@ -24,7 +37,7 @@ schema = DataFrameSchema(
 			coerce=False,
 			required=True,
 			description="Name of the raw read files. All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If there are multiple files, concatenate them with a commas (\",\"), e.g. \"sample1_R1.fastq.gz, sample1_R2.fastq.gz\". Store files in /seqsender/data/raw_reads/ or provide full html path to the raw read files.",
-			title="sra file name",
+			title="file name",
 		),
 		"sra-library_name": Column(
 			dtype="object",

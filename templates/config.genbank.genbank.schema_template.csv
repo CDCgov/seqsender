@@ -1,0 +1,8 @@
+column_name,required_column,description
+sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.
+gb-sample_name,Required,"Identifier name used for GenBank. Max length is 50 characters. Fasta modifiers with brackets ""[]"" can be added. They will be added only to the fasta file."
+gb-subm_lab,Required,"Full name of organization, institute, or laboratory, etc., who is submitting this record."
+gb-subm_lab_division,Required,"The division of organization, institute, or laboratory, etc., who is submitting this record."
+gb-subm_lab_addr,Required,"The address of organization, institute, or laboratory, etc., who is submitting this record."
+gb-publication_title,Optional,"The title and relevant publication details (volume, issue, etc.) of a paper that discusses the submission. If left empty, the program will used the name of the submission as title."
+gb-publication_status,Optional,"Options: ""unpublished"" or ""in-press"" or ""published""."

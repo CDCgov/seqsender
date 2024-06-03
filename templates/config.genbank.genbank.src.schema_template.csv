@@ -1,0 +1,50 @@
+column_name,required_column,description
+src-Altitude,Optional,Altitude in metres above or below sea level of where the sample was collected.
+src-Authority,Optional,The author or authors of the organism name from which sequence was obtained.
+src-Bio_material,Optional,"An identifier for the biological material from which the nucleotide sequence was obtained, with optional institution code and collection code for the place where it is currently stored. This should be provided using the following format 'institution-code:collection-code:material_id'. material_id is mandatory, institution-code and collection-code are optional; institution-code is mandatory when collection-code is present. This qualifier should be used to annotate the identifiers of material in biological collections which include zoos and aquaria, stock centers, seed banks, germplasm repositories and DNA banks."
+src-Biotype,Optional,"Variety of a species (usually a fungus, bacteria, or virus) characterized by some specific biological property (often geographical, ecological, or physiological). Same as biotype."
+src-Biovar,Optional,See biotype
+src-Breed,Optional,The named breed from which sequence was obtained (usually applied to domesticated mammals).
+src-Cell_line,Optional,Cell line from which sequence was obtained.
+src-Cell_type,Optional,Type of cell from which sequence was obtained.
+src-Chemovar,Optional,"Variety of a species (usually a fungus, bacteria, or virus) characterized by its biochemical properties."
+src-Clone,Optional,Name of clone from which sequence was obtained.
+src-Collected_by,Optional,Name of person who collected the sample.
+src-Country,Optional,"The country where the sequence's organism was located. May also be an ocean or major sea. Additional region or locality information must be after the country name and separated by a ':'. For example: USA: Riverview Park, Ripkentown, MD"
+src-Cultivar,Optional,Cultivated variety of plant from which sequence was obtained.
+src-Culture_collection,Optional,"Institution code and identifier for the culture from which the nucleotide sequence was obtained, with optional collection code. This should be provided using the following format 'institution-code:collection-code:culture-id'. culture-id and institution-code are mandatory. This qualifier should be used to annotate live microbial and viral cultures, and cell lines that have been deposited in curated culture collections."
+src-Dev_stage,Optional,Developmental stage of organism.
+src-Ecotype,Optional,The named ecotype (population adapted to a local habitat) from which sequence was obtained (customarily applied to populations of Arabidopsis thaliana).
+src-Forma,Optional,The forma (lowest taxonomic unit governed by the nomenclatural codes) of organism from which sequence was obtained. This term is usually applied to plants and fungi.
+src-Forma_specialis,Optional,The physiologically distinct form from which sequence was obtained (usually restricted to certain parasitic fungi).
+src-Fwd_primer_name,Optional,name of forward PCR primer
+src-Fwd_primer_seq,Optional,nucleotide sequence of forward PCR primer
+src-Genotype,Optional,Genotype of the organism.
+src-Haplogroup,Optional,Name for a group of similar haplotypes that share some sequence variation
+src-Haplotype,Optional,Haplotype of the organism.
+src-Host,Optional,"When the sequence submission is from an organism that exists in a symbiotic, parasitic, or other special relationship with some second organism, the 'host' modifier can be used to identify the name of the host species."
+src-Identified_by,Optional,name of the person or persons who identified by taxonomic name the organism from which the sequence was obtained
+src-Isolate,Optional,Identification or description of the specific individual from which this sequence was obtained.
+src-Isolation-source,Optional,Describes the local geographical source of the organism from which the sequence was obtained.
+src-Lab_host,Optional,Laboratory host used to propagate the organism from which the sequence was obtained.
+src-Lat_Lon,Optional,"Latitude and longitude, in decimal degrees, of where the sample was collected."
+src-Note,Optional,Any additional information that you wish to provide about the sequence.
+src-Pathovar,Optional,"Variety of a species (usually a fungus, bacteria or virus) characterized by the biological target of the pathogen. Examples include Pseudomonas syringae pathovar tomato and Pseudomonas syringae pathovar tabaci."
+src-Pop_variant,Optional,name of the population variant from which the sequence was obtained
+src-Rev_primer_name,Optional,name of reverse PCR primer
+src-Rev_primer_seq,Optional,nucleotide sequence of reverse PCR primer
+src-Segment,Optional,name of viral or phage segment sequenced
+src-Serogroup,Optional,"Variety of a species (usually a fungus, bacteria, or virus) characterized by its antigenic properties. Same as serogroup and serovar."
+src-Serotype,Optional,See Serogroup
+src-Serovar,Optional,See Serogroup
+src-Sex,Optional,Sex of the organism from which the sequence was obtained.
+src-Specimen_voucher,Optional,"An identifier of the individual or collection of the source organism and the place where it is currently stored, usually an institution. This should be provided using the following format 'institution-code:collection-code:specimen-id'. specimen-id is mandatory, collection-code is optional; institution-code is mandatory when collection-code is provided. Examples: 99-SRNP UAM:Mamm:52179 personal collection:Joe Smith:99-SRNP AMCC:101706"
+src-Strain,Optional,Strain of organism from which sequence was obtained.
+src-Sub_species,Optional,Subspecies of organism from which sequence was obtained.
+src-Subclone,Optional,Name of subclone from which sequence was obtained.
+src-Subtype,Optional,Subtype of organism from which sequence was obtained.
+src-Substrain,Optional,Sub-strain of organism from which sequence was obtained.
+src-Tissue_lib,Optional,Tissue library from which the sequence was obtained.
+src-Tissue_type,Optional,Type of tissue from which sequence was obtained.
+src-Type,Optional,Type of organism from which sequence was obtained.
+src-Variety,Optional,Variety of organism from which sequence was obtained.

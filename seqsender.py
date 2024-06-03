@@ -272,12 +272,12 @@ def args_parser():
 		parents=[submission_dir_parser, submission_name_parser, organism_parser, test_parser]
 	)
 
-	# template command
-	template_module = subparser_modules.add_parser(
-		'template',
+	# Generate test data command
+	test_output_module = subparser_modules.add_parser(
+		'test_data',
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		description='Return a set of files (e.g., config file, metadata file, fasta files, etc.) that are needed to make a submission',
-		parents=[database_parser, organism_parser, submission_dir_parser, submission_name_parser]
+		description='Return a set of files (e.g., config file, metadata file, fasta files, etc.) that are needed to make a submission for a specific organism/database.',
+		parents=[database_parser, organism_parser, submission_dir_parser]
 	)
 
 	# biosample xml download command
@@ -327,13 +327,13 @@ def main():
 		start(command=command, organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=args.submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, test=args.test)
 	elif command == "check_submission_status":
 		process.update_submission_status(submission_dir=args.submission_dir, submission_name=args.submission_name, organism=args.organism, test=args.test)
-	elif command == "template":
+	elif command == "test_data":
 		# If database is not given, display help
 		if len(database) == 0:
 			print("\n"+"ERROR: Missing a database selection. See USAGE below."+"\n", file=sys.stdout)
 			submit_prep_subparser.print_help()
 			sys.exit(0)
-		setup.create_zip_template(organism=args.organism, database=database, submission_dir=args.submission_dir, submission_name=args.submission_name)
+		setup.create_test_data(organism=args.organism, database=database, submission_dir=args.submission_dir)
 	elif command == "version":
 		print("\n"+"Version: " + VERSION, file=sys.stdout)
 		sys.exit(0)

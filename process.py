@@ -106,6 +106,7 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 	# Check if yaml forms dictionary
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "config_file", (submission_schema + "_schema.py")), 'r').read())
+		database_specific_config_updates(schema, database)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -113,17 +114,17 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 			print(validator.errors, file=sys.stderr)
 			sys.exit(1)
 		else:
-			# Check if each database has portal information listed in the config file
-			for d in range(len(database)):
-				if submission_portals[d] not in config_dict.keys():
-					print("\n"+"Error: " +  database[d] + " is listed as one of the submitting databases.", file=sys.stderr)
-					print("Error: However, there is no " + submission_portals[d] + " submission information provided in the config file.", file=sys.stderr)
-					print("Error: Either remove " + database[d] + " from the submitting databases or update your config file."+"\n", file=sys.stderr)
-					sys.exit(1)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
+
+def database_specific_config_updates(schema: Dict[str, Any], database: List[str]) -> Dict[str, Any]:
+	# Update seqsender base schema to include needed checks
+	if "BIOSAMPLE" in database:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["BioSample_Package"]["required"] = True
+		schema["Submission"]["schema"]["NCBI"]["schema"]["BioSample_Package"]["nullable"] = False
+	return schema
 
 # Read in metadata file
 def get_metadata(database: List[str], organism: str, metadata_file: str, config_dict: Dict[str, Any]) -> pd.DataFrame:

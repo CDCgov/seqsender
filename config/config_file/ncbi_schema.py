@@ -19,11 +19,8 @@
                     },
                     'BioSample_Package': {
                         'required': False,
-                        'type': 'string'
-                    },
-                    'Table2asn': {
-                        'required': False,
-                        'type': 'boolean'
+                        'type': 'string',
+                        'nullable': True
                     },
                     'Submission_Position': {
                         'required': False,
@@ -54,10 +51,6 @@
                                     '@type': {
                                         'required': True,
                                         'type': 'string'
-                                    },
-                                    '@org_id': {
-                                        'required': True,
-                                        'type': 'integer'
                                     },
                                     'Name': {
                                         'required': True,
@@ -120,7 +113,7 @@
                                                 'required': False,
                                                 'type': 'string',
                                                 'dependencies': ['@email'],
-                                                'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+                                                'regex': '(^\s*$)|(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)',
                                                 'nullable': True
                                             },
                                             'Name': {

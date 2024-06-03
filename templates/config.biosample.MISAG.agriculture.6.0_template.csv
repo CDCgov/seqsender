@@ -1,0 +1,152 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-isolate,Required,identification or description of the specific individual from which this sample was obtained
+bs-chem_administration,Required,"list of chemical compounds administered to the host or site where sampling occurred, and when (e.g. antibiotics, N fertilizer, air filter); can include multiple compounds. For Chemical Entities of Biological Interest ontology (CHEBI) (v1.72), please see http://bioportal.bioontology.org/visualize/44603"
+bs-env_broad_scale,Required,Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]
+bs-env_local_scale,Required,"Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]"
+bs-env_medium,Required,Add terms that identify the material displaced by the entity at time of sampling. Recommend subclasses of environmental material [ENVO:00010483]. Multiple terms can be separated by pipes e.g.: estuarine water [ENVO:01000301]|estuarine mud [ENVO:00002160]
+bs-food_source,Required,"Individual organism or category of organisms from which the food product or its major ingredient is derived, e.g., giant tiger prawn [FOODON:03412612]"
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-host,Required,"The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, ""Homo sapiens""."
+bs-host_age,Required,Age of host at the time of sampling
+bs-host_common_name,Required,"The natural language (non-taxonomic) name of the host organism, e.g., mouse"
+bs-host_genotype,Required,
+bs-host_height,Required,the height of subject
+bs-host_length,Required,the length of subject
+bs-host_life_stage,Required,description of host life stage
+bs-host_phenotype,Required,
+bs-host_taxid,Required,"NCBI taxonomy ID of the host, e.g. 9606"
+bs-host_tot_mass,Required,"total mass of the host at collection, the unit depends on host"
+bs-isolation_source,Required,"Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-lat_lon,Required,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
+bs-microbial_biomass,Required,"the part of the organic matter in the soil that constitutes living microorganisms smaller than 5-10 µm. IF you keep this, you would need to have correction factors used for conversion to the final units, which should be mg C (or N)/kg soil)."
+bs-microbial_biomass_meth,Required,reference or method used in determining microbial biomass
+bs-pathogenicity,Required,To what is the entity pathogenic
+bs-samp_store_dur,Required,
+bs-samp_store_loc,Required,
+bs-sieving,Required,collection design of pooled samples and/or sieve size and amount of sample sieved
+bs-soil_type,Required,soil series name or other lower-level classification
+bs-soil_type_meth,Required,reference or method used in determining soil series name or other lower-level classification
+bs-store_cond,Required,explain how and for how long the soil sample was stored before DNA extraction.
+bs-temp,Required,temperature of the sample at time of sampling
+bs-adjacent_environment,Optional,Description of the environmental system or features that are adjacent to the sampling site. This field accepts terms under ecosystem (http://purl.obolibrary.org/obo/ENVO_01001110) and human construction (http://purl.obolibrary.org/obo/ENVO_00000070). Multiple terms can be separated by pipes
+bs-agrochem_addition,Optional,"addition of fertilizers, pesticides, etc. - amount and time of applications"
+bs-ances_data,Optional,"Information about either pedigree or other ancestral information description, e.g., parental variety in case of mutant or selection, A/3*B (meaning [(A x B) x B] x B)"
+bs-anim_water_method,Optional,Description of the equipment or method used to distribute water to livestock. This field accepts terms listed under water delivery equipment (http://opendata.inra.fr/EOL/EOL_0001653). Multiple terms can be separated by pipes
+bs-annual_precpt,Optional,"The average of all annual precipitation values known, or an estimated equivalent value derived by such methods as regional indexes or Isohyetal maps"
+bs-annual_temp,Optional,Mean annual temperature
+bs-biotic_relationship,Optional,Free-living or from host (define relationship)
+bs-climate_environment,Optional,treatment involving an exposure to a particular climate; can include multiple climates
+bs-collection_method,Optional,"Process used to collect the sample, e.g., bronchoalveolar lavage (BAL)"
+bs-crop_rotation,Optional,"whether or not crop is rotated, and if yes, rotation schedule"
+bs-crop_yield,Optional,Amount of crop produced per unit or area of land
+bs-cult_isol_date,Optional,"A culture isolation date is a date-time entity marking the end of a process in which a sample yields a positive result for the target microbial analyte(s) in the form of an isolated colony or colonies, e.g., 5/24/2020"
+bs-cur_land_use,Optional,present state of sample site
+bs-cur_vegetation,Optional,"vegetation classification from one or more standard classification systems, or agricultural crop"
+bs-cur_vegetation_meth,Optional,reference or method used in vegetation classification
+bs-drainage_class,Optional,drainage classification from a standard system such as the USDA system
+bs-elev,Optional,The elevation of the sampling site as measured by the vertical distance from mean sea level.
+bs-enrichment_protocol,Optional,The microbiological workflow or protocol followed to test for the presence or enumeration of the target microbial analyte(s). Please provide a PubMed or DOI reference for published protocols
+bs-experimental_factor,Optional,Variable aspect of experimental design
+bs-extreme_event,Optional,unusual physical events that may have affected microbial populations
+bs-fao_class,Optional,soil classification from the FAO World Reference Database for Soil Resources
+bs-farm_equip,Optional,"List of relevant equipment used for planting, fertilization, harvesting, irrigation, land levelling, residue management, weeding or transplanting during the growing season.  This field encourages terms listed under agricultural implement (http://purl.obolibrary.org/obo/AGRO_00000416). Multiple terms can be separated by pipes, e.g., combine harvester [AGRO:00000473]"
+bs-farm_equip_san,Optional,Method used to sanitize growing and harvesting equipment including type and concentration of sanitizing solution and frequency of sanitization
+bs-farm_equip_shared,Optional,"List of planting, growing or harvesting equipment shared with other farms"
+bs-farm_water_source,Optional,"Source of water used on the farm for irrigation of crops or watering of livestock, e.g., water well"
+bs-fertilizer_admin,Optional,"Type of fertilizer or amendment added to the soil or water for the purpose of improving substrate health and quality for plant growth. This field encourages terms listed under agronomic fertilizer (http://purl.obolibrary.org/obo/AGRO_00002062). Multiple terms may apply and can be separated by pipes, listing in reverse chronological order, e.g., fish emulsion [AGRO:00000082]"
+bs-fire,Optional,historical and/or physical evidence of fire
+bs-flooding,Optional,historical and/or physical evidence of flooding
+bs-food_harvest_proc,Optional,"A harvesting process is a process which takes in some food material from an individual or community of plant or animal organisms in a given context and time, and outputs a precursor or consumable food product. This may include a part of an organism or the whole, and may involve killing the organism"
+bs-food_prod_char,Optional,"Descriptors of the food production system such as wild caught, free-range, organic, free-range, industrial, dairy, beef"
+bs-food_product_type,Optional,"A food product type is a class of food products that is differentiated by its food composition (e.g., single- or multi-ingredient), processing and/or consumption characteristics. This does not include brand name products but it may include generic food dish categories. This field encourages terms under food product type (http://purl.obolibrary.org/obo/FOODON:03400361). For terms related to food product for an animal, consult food product for animal (http://purl.obolibrary.org/obo/FOODON_03309997). If the proper descriptor is not listed please use text to describe the food type. Multiple terms can be separated by one or more pipes, e.g., multi-component food product [FOODON:00002501]"
+bs-food_trav_mode,Optional,A descriptor for the method of movement of food commodity along the food distribution system. This field accepts terms listed under travel mode (http://purl.obolibrary.org/obo/GENEPIO_0001064). If the proper descrptor is not listed please use text to describe the mode of travel. Multiple terms can be separated by one or more pipes
+bs-food_trav_vehic,Optional,A descriptor for the mobile machine which is used to transport food commodities along the food distribution system. This field accepts terms listed under vehicle (http://purl.obolibrary.org/obo/ENVO_01000604). If the proper descrptor is not listed please use text to describe the mode of travel. Multiple terms can be separated by one or more pipes
+bs-fungicide_regm,Optional,"information about treatment involving use of fungicides; should include the name of fungicide, amount administered, treatment duration, interval and total experimental duration; can include multiple fungicide regimens"
+bs-gaseous_environment,Optional,"use of conditions with differing gaseous environments; should include the name of gaseous compound, amount administered, treatment duration, interval and total experimental duration; can include multiple gaseous environment regimens"
+bs-genetic_mod,Optional,"Genetic modifications of the genome of an organism, which may occur naturally by spontaneous mutation, or be introduced by some experimental means, e.g. specification of a transgene or the gene knocked-out or details of transient transfection"
+bs-heavy_metals_meth,Optional,reference or method used in determining heavy metals
+bs-herbicide_regm,Optional,"information about treatment involving use of herbicides; information about treatment involving use of growth hormones; should include the name of herbicide, amount administered, treatment duration, interval and total experimental duration; can include multiple regimens"
+bs-horizon_meth,Optional,reference or method used in determining the horizon
+bs-host_disease,Optional,"Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, http://bioportal.bioontology.org/ontologies/1009 or http://www.ncbi.nlm.nih.gov/mesh"
+bs-host_dry_mass,Optional,measurement of dry mass
+bs-host_subspecf_genlin,Optional,"Information about the genetic distinctness of the host organism below the subspecies level e.g., serovar, serotype, biotype, ecotype, variety, cultivar, or any relevant genetic typing schemes like Group I plasmid. Subspecies should not be recorded in this term, but in the NCBI taxonomy. Supply both the lineage name and the lineage rank separated by a colon, e.g., biovar:abc123"
+bs-host_symbiont,Optional,"The taxonomic name of the organism(s) found living in mutualistic, commensalistic, or parasitic symbiosis with the specific host"
+bs-humidity,Optional,"amount of water vapour in the air, at the time of sampling"
+bs-isol_growth_condt,Optional,PMID or url for isolation and growth condition specifications
+bs-link_class_info,Optional,link to digitized soil maps or other soil classification information
+bs-link_climate_info,Optional,link to climate resource
+bs-local_class,Optional,soil classification based on local soil classification system
+bs-local_class_meth,Optional,reference or method used in determining the local soil classification
+bs-lot_number,Optional,A distinctive alpha-numeric identification code assigned by the manufacturer or distributor to a specific quantity of manufactured material or product within a batch. The submitter should provide lot number of the item followed by the item name for which the lot number was provided
+bs-misc_param,Optional,"any other measurement performed or parameter collected, that is not listed here"
+bs-neg_cont_type,Optional,"The substance or equipment used as a negative control in an investigation, e.g., distilled water, phosphate buffer, empty collection device, empty collection tube, DNA-free PCR mix, sterile swab, sterile syringe"
+bs-non_mineral_nutr_regm,Optional,"information about treatment involving the exposure of plant to non-mineral nutrient such as oxygen, hydrogen or carbon; should include the name of non-mineral nutrient, amount administered, treatment duration, interval and total experimental duration; can include multiple non-mineral nutrient regimens"
+bs-omics_observ_id,Optional,"A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory."
+bs-organism_count,Optional,"total count of any organism per gram or volume of sample,should include name of organism followed by count; can include multiple organism counts"
+bs-oxy_stat_samp,Optional,oxygenation status of sample
+bs-perturbation,Optional,"type of perturbation, e.g. chemical administration, physical disturbance, etc., coupled with time that perturbation occurred; can include multiple perturbation types"
+bs-pesticide_regm,Optional,"information about treatment involving use of insecticides; should include the name of pesticide, amount administered, treatment duration, interval and total experimental duration; can include multiple pesticide regimens"
+bs-ph_meth,Optional,reference or method used in determining pH
+bs-ph_regm,Optional,information about treatment involving exposure of plants to varying levels of pH of the growth media; can include multiple regimen
+bs-photosynt_activ,Optional,Measurement of photosythetic activity (i.e. leaf gas exchange / chlorophyll fluorescence emissions / reflectance / transpiration) Please also include the term method term detailing the method of activity measurement
+bs-photosynt_activ_meth,Optional,Reference or method used in measurement of photosythetic activity
+bs-plant_growth_med,Optional,"Type of the media used for growing sampled plants, e.g., soil [ENVO:00001998]"
+bs-plant_product,Optional,"substance produced by the plant, where the sample was obtained from"
+bs-plant_struc,Optional,"Name of plant structure the sample was obtained from; for Plant Ontology (PO) (v releases/2017-12-14) terms, see http://purl.bioontology.org/ontology/PO, e.g., petiole epidermis (PO_0000051). If an individual flower is sampled, the sex of it can be recorded here"
+bs-plant_water_method,Optional,"Description of the equipment or method used to distribute water to crops. This field encourages terms listed under irrigation process (http://purl.obolibrary.org/obo/AGRO_00000006). Multiple terms can be separated by pipes, e.g., drip irrigation process [AGRO:00000056]"
+bs-porosity,Optional,porosity of deposited sediment is volume of voids divided by the total volume of sample
+bs-pos_cont_type,Optional,"The substance, mixture, product, or apparatus used to verify that a process which is part of an investigation delivers a true positive"
+bs-pres_animal_insect,Optional,"The type and number of animals or insects present in the sampling space, e.g., cat 10, dog 2, rodent 100, snake 1"
+bs-previous_land_use,Optional,previous land use and dates
+bs-previous_land_use_meth,Optional,reference or method used in determining previous land use and dates
+bs-profile_position,Optional,cross-sectional position in the hillslope where sample was collected.sample area position in relation to surrounding areas
+bs-ref_biomaterial,Optional,Primary publication or genome report
+bs-rel_location,Optional,"Location of sample to other parts of the farm, e.g. under crop plant, near irrigation ditch, from the dirt road, from air above crops, nearby river, e.g., furrow"
+bs-rel_to_oxygen,Optional,"Is this organism an aerobe, anaerobe? Please note that aerobic and anaerobic are valid descriptors for microbial environments, eg, aerobe, anaerobe, facultative, microaerophilic, microanaerobe, obligate aerobe, obligate anaerobe, missing, not applicable, not collected, not provided, restricted access"
+bs-root_med_carbon,Optional,"Source of organic carbon in the culture rooting medium, e.g., sucrose"
+bs-root_med_macronutr,Optional,"Measurement of the culture rooting medium macronutrients (N,P, K, Ca, Mg, S), e.g., KH2PO4 (170mg/L)"
+bs-root_med_ph,Optional,"pH measurement of the culture rooting medium, e.g., 5.5"
+bs-salt_regm,Optional,"information about treatment involving use of salts as supplement to liquid and soil growth media; should include the name of salt, amount administered, treatment duration, interval and total experimental duration; can include multiple salt regimens"
+bs-samp_collect_device,Optional,Method or device employed for collecting sample
+bs-samp_collect_method,Optional,The method employed for collecting the sample
+bs-samp_mat_process,Optional,Processing applied to the sample during or after isolation
+bs-samp_pooling,Optional,"Physical combination of several instances of like material, e.g., RNA extracted from samples or dishes of cell cultures into one big aliquot of cells. Please provide a short description of the samples that were pooled"
+bs-samp_size,Optional,"Amount or size of sample (volume, mass or area) that was collected"
+bs-samp_store_temp,Optional,
+bs-samp_vol_we_dna_ext,Optional,volume (mL) or weight (g) of sample processed for DNA extraction
+bs-season,Optional,The season when sampling occurred. Any of the four periods into which the year is divided by the equinoxes and solstices. This field accepts terms listed under season (http://purl.obolibrary.org/obo/NCIT_C94729)
+bs-season_environment,Optional,"treatment involving an exposure to a particular season (e.g. winter, summer, rabi, rainy etc.)"
+bs-season_humidity,Optional,Average humidity of the region throughout the growing season
+bs-season_precpt,Optional,"The average of all seasonal precipitation values known, or an estimated equivalent value derived by such methods as regional indexes or Isohyetal maps"
+bs-season_temp,Optional,Mean seasonal temperature
+bs-size_frac,Optional,"Filtering pore size used in sample preparation, e.g., 0-0.22 micrometer"
+bs-size_frac_low,Optional,Refers to the mesh/pore size used to pre-filter/pre-sort the sample. Materials larger than the size threshold are excluded from the sample
+bs-size_frac_up,Optional,Refers to the mesh/pore size used to retain the sample. Materials smaller than the size threshold are excluded from the sample
+bs-slope_aspect,Optional,"the direction a slope faces. While looking down a slope use a compass to record the direction you are facing (direction or degrees); e.g., NW or 315°. This measure provides an indication of sun and wind exposure that will influence soil temperature and evapotranspiration."
+bs-slope_gradient,Optional,commonly called “slope.” The angle between ground surface and a horizontal line (in percent). This is the direction that overland water would flow. This measure is usually taken with a hand level meter or clinometer.
+bs-soil_conductivity,Optional,Conductivity of soil at time of sampling
+bs-soil_cover,Optional,"Description of the material covering the sampled soil. This field accepts terms under ENVO:00010483, environmental material"
+bs-soil_depth,Optional,"The vertical distance below local surface, e.g., for sediment or soil samples depth is measured from sediment or soil surface, respectively. Depth can be reported as an interval for subsurface samples"
+bs-soil_horizon,Optional,specific layer in the land area which measures parallel to the soil surface and possesses physical characteristics which differ from the layers above and beneath
+bs-soil_ph,Optional,The pH of soil at time of sampling
+bs-soil_temp,Optional,Temperature of soil at the time of sampling
+bs-soil_text_measure,Optional,"the relative proportion of different grain sizes of mineral particles in a soil, as described using a standard system; express as % sand (50 um to 2 mm), silt (2 um to 50 um), and clay (<2 um) with textural name (e.g., silty clay loam) optional."
+bs-soil_texture_meth,Optional,reference or method used in determining soil texture
+bs-solar_irradiance,Optional,the amount of solar energy that arrives at a specific area of a surface during a specific time interval
+bs-source_material_id,Optional,"unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples."
+bs-spikein_strain,Optional,Taxonomic information about the spike-in organism(s) at the strain level. This field accepts terms under organism (http://purl.obolibrary.org/obo/NCIT_C14250). This field also accepts identification numbers from NCBI under https://www.ncbi.nlm.nih.gov/taxonomy. Multiple terms can be separated by pipes
+bs-standing_water_regm,Optional,"treatment involving an exposure to standing water during a plant's life span, types can be flood water or standing water; can include multiple regimens"
+bs-tillage,Optional,note method(s) used for tilling
+bs-tot_carb,Optional,total carbon content
+bs-tot_nitro,Optional,total nitrogen content of the sample
+bs-tot_nitro_cont_meth,Optional,Reference or method used in determining the total nitrogen
+bs-tot_org_c_meth,Optional,reference or method used in determining total organic C
+bs-tot_org_carb,Optional,Definition for soil: total organic C content of the soil units of g C/kg soil. Definition otherwise: total organic carbon content
+bs-tot_phosp,Optional,"total phosphorus concentration, calculated by: total phosphorus = total dissolved phosphorus + particulate phosphorus. Can also be measured without filtering, reported as phosphorus"
+bs-trophic_level,Optional,"Feeding position in food chain (eg., chemolithotroph)"
+bs-water_ph,Optional,"The pH measurement of the sample, or liquid portion of sample, or aqueous phase of the fluid"
+bs-water_source_shared,Optional,"Other users sharing access to the same water source, e.g., multiple users, agricutural, multiple users, no sharing"
+bs-water_temp_regm,Optional,information about treatment involving an exposure to water with varying degree of temperature; can include multiple regimens
+bs-watering_regm,Optional,information about treatment involving an exposure to watering frequencies; can include multiple regimens
+bs-wga_amp_appr,Optional,"method used to amplify genomic DNA in preparation for sequencing. Examples: MDR, WGA-X, MDA"

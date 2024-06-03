@@ -19,9 +19,9 @@
                         'regex': '^[a-zA-Z0-9_.+-]+',
                         'nullable': True
                     },
-                    'Table2asn': {
+                    'BioSample_Package': {
                         'required': False,
-                        'type': 'boolean',
+                        'type': 'string',
                         'nullable': True
                     },
                     'Submission_Position': {
@@ -135,7 +135,7 @@
                                                 'required': False,
                                                 'type': 'string',
                                                 'dependencies': ['@email'],
-                                                'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+                                                'regex': '(^\s*$)|(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)',
                                                 'nullable': True
                                             },
                                             'Name': {
