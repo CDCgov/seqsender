@@ -1,0 +1,34 @@
+Submission:
+  GISAID:
+    Client-Id: ''
+    Password: ''
+    Submission_Position: Second
+    Username: ''
+  NCBI:
+    BioSample_Package: false
+    Description:
+      Comment: ''
+      Organization:
+        '@role': ''
+        '@type': ''
+        Address:
+          Affil: ''
+          City: ''
+          Country: ''
+          Div: ''
+          Email: ''
+          Phone: ''
+          Postal_code: ''
+          Street: ''
+          Sub: ''
+          Submitter:
+            '@alt_email': ''
+            '@email': ''
+            Name:
+              First: ''
+              Last: ''
+        Name: ''
+      Title: ''
+    Password: sdfsdf
+    Submission_Position: First
+    Username: ''

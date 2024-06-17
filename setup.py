@@ -22,11 +22,6 @@ from typing import List, Dict, Any
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import create
-import process
-import report
-import seqsender
-import submit
 
 # Get program directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
@@ -78,12 +73,16 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 	# Print generating message
 	print("\n"+"Generating submission test_data", file=sys.stdout)
 	# Get combined metadata for all given databases
+	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "ncbi-spuid", "ncbi-spuid_namespace", "ncbi-bioproject"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
+			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			combined_metadata = pd.merge(combined_metadata, df, how='left')
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory

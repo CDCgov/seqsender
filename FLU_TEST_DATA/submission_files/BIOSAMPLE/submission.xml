@@ -1,0 +1,672 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Submission>
+  <Description>
+    <Title>flu_test_submission</Title>
+    <Comment>This is a test submission</Comment>
+    <Organization type="institute" role="owner">
+      <Name>CDC</Name>
+      <Contact email="email@myemail.com">
+        <Name>
+          <First>Jane</First>
+          <Last>Doe</Last>
+        </Name>
+      </Contact>
+    </Organization>
+  </Description>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_PB2</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_PB1</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_PA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_HA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_NP</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_NA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_M</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566912</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566912_NS</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: California</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/California/566912/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">36.78 N 119.42 W</Attribute>
+              <Attribute attribute_name="host_sex">female</Attribute>
+              <Attribute attribute_name="host_age">92</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">12/28/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566912</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_PB2</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_PB1</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_PA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_HA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_NP</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_NA</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_M</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+  <Action>
+    <AddData target_db="BioSample">
+      <Data content_type="xml">
+        <XmlContent>
+          <BioSample schema_version="2.0">
+            <SampleId>
+              <SPUID spuid_namespace="CDC-OAMD">XX-566913</SPUID>
+            </SampleId>
+            <Descriptor>
+              <Title>CDC Influenza Sequencing Baseline Constellation</Title>
+            </Descriptor>
+            <Organism>
+              <OrganismName>Influenza A virus</OrganismName>
+            </Organism>
+            <BioProject>
+              <PrimaryId db="BioProject">PRJNA217342</PrimaryId>
+            </BioProject>
+            <Package>Pathogen.cl.1.0</Package>
+            <Attributes>
+              <Attribute attribute_name="sample_name">XX-566913_NS</Attribute>
+              <Attribute attribute_name="collected_by">Helix</Attribute>
+              <Attribute attribute_name="geo_loc_name">USA: Texas</Attribute>
+              <Attribute attribute_name="strain">Influenza A</Attribute>
+              <Attribute attribute_name="host">Homo sapiens</Attribute>
+              <Attribute attribute_name="host_disease">Influenza A viruses</Attribute>
+              <Attribute attribute_name="isolate">A/Texas/566913/2016</Attribute>
+              <Attribute attribute_name="isolation_source">Nasal Wash</Attribute>
+              <Attribute attribute_name="lat_lon">29.42 N 98.49 W</Attribute>
+              <Attribute attribute_name="host_sex">male</Attribute>
+              <Attribute attribute_name="host_age">21</Attribute>
+              <Attribute attribute_name="serotype">H3N2</Attribute>
+              <Attribute attribute_name="collection_date">11/10/2016</Attribute>
+            </Attributes>
+          </BioSample>
+        </XmlContent>
+      </Data>
+      <Identifier>
+        <SPUID spuid_namespace="CDC-OAMD_bs">XX-566913</SPUID>
+      </Identifier>
+    </AddData>
+  </Action>
+</Submission>

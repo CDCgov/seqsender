@@ -8,6 +8,7 @@ import shiny_tools
 from index import index_body
 from setup import setup_body
 import pathlib
+import yaml
 
 terminal_css = ""
 yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;margin-top:-15px;font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;-webkit-user-select: none; -ms-user-select: none; user-select: none;"
@@ -323,196 +324,30 @@ testing_body = [
 
 ####################### COMMANDS PAGE ###################
 
-databases_parameter = [
-    ui.strong("Databases"),
-    ui.tags.ul(
-        ui.tags.li(
-            ui.strong(
-                ui.code("--biosample"),
-                " | ",
-                ui.code("-b"),
-            ),
-            ui.tags.ul(
-                "  Generate files required for submission to ",
-                ui.strong("NCBI Database: BioSample"),
-                ".",
-                inline=True,
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("--sra"),
-                " | ",
-                ui.code("-s"),
-            ),
-            ui.tags.ul(
-                "  Generate files required for submission to ",
-                ui.strong("NCBI Database: SRA"),
-                ".",
-                inline=True,
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("--genbank"),
-                " | ",
-                ui.code("-n"),
-            ),
-            ui.tags.ul(
-                "  Generate files required for submission to ",
-                ui.strong("NCBI Database: GenBank"),
-                ".",
-                inline=True,
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("--gisaid"),
-                " | ",
-                ui.code("-g"),
-            ),
-            ui.tags.ul(
-                "  Generate files required for submission to ",
-                ui.strong("GISAID"),
-                ". Not available as an option when using the organism parameter ",
-                ui.code("OTHER"),
-                ".",
-                inline=True,
-            ),
-        ),
-    ),
-]
-
-organisms_parameter = [
-    ui.strong("Organism"),
-    ui.div(
-        ui.strong(ui.code("--organism "), "{'FLU', 'COV', 'POX', 'ARBO', 'OTHER'}"),
-        inline=True,
-    ),
-    ui.p(
-        "Organism selection adjusts seqsender submission process for organism specific criteria."
-    ),
-    ui.tags.ul(
-        ui.tags.li(
-            ui.strong(
-                ui.code("FLU"),
-            ),
-            ui.tags.ul(
-                " For ",
-                ui.strong("Influenza A virus"),
-                ", enables FTP GenBank submission and GISAID CLI submission.",
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("COV"),
-            ),
-            ui.tags.ul(
-                " For ",
-                ui.strong("SARS-CoV-2"),
-                ", enables FTP GenBank submission and GISAID CLI submission.",
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("POX"),
-            ),
-            ui.tags.ul(
-                " For ",
-                ui.strong("Mpox"),
-                " (monkeypox), enables GISAID CLI submission.",
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("ARBO"),
-            ),
-            ui.tags.ul(
-                " For ", ui.strong("Arbovirus"), ", enables GISAID CLI submission."
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("OTHER"),
-            ),
-            ui.tags.ul(
-                " For any organism that does not have special submission options."
-            ),
-        ),
-    ),
-]
-
-submission_directory_parameter = ui.div(
-    ui.strong(ui.code("--submission_dir")),
-    ui.tags.ul("Directory where all files required for submission are stored."),
-)
-
-submission_name_parameter = ui.div(
-    ui.strong(ui.code("--submission_name")),
-    ui.tags.ul("Unique name to use for submission. Used as a unique identifier for submission to databases and to name the files created for submission."),
-)
-
-config_parameter = ui.div(
-    ui.strong(ui.code("--config_file")),
-    ui.tags.ul("Full path to config file if not stored in ", ui.code("--submission_dir"), " location."),
-)
-
-metadata_parameter = ui.div(
-    ui.strong(ui.code("--metadata_file")),
-    ui.tags.ul("Full path to metadata file if not stored in ", ui.code("--submission_dir"), " location."),
-)
-
-fasta_parameter = ui.div(
-    ui.strong(ui.code("--fasta_file")),
-    ui.tags.ul("Full path to fasta file if not stored in ", ui.code("--submission_dir"), " location."),
-)
-
-gff_parameter = ui.div(
-    ui.strong(ui.code("--gff_file")),
-    ui.tags.ul("Full path to gff file if not stored in ", ui.code("--submission_dir"), " location."),
-)
-
-test_parameter = ui.div(
-    ui.strong(ui.code("--test")),
-    ui.tags.ul("Flag to enable a \"test\" submission to each database selected."),
-)
-
 commands_body = [
     ui.h2("SeqSender Commands"),
     ui.p(
         "This is a list of all available commands for seqsender, usage, and available options."
     ),
     ui.accordion(
-        ui.accordion_panel(
-            "Prep",
-            ui.p(
-                "The ",
-                ui.code("prep"),
-                " command is used to generate all of the required files for submission to the databases specified. This command is not required for performing submissions, however, it is useful for visualizing your data before submission/troubleshooting submission issues.",
-            ),
-            shiny_tools.seqsender_example_command("local", "prep", ""),
-            ui.accordion(
-                ui.accordion_panel(
-                    "Parameters",
-                    databases_parameter,
-                    organisms_parameter,
-                    submission_directory_parameter,
-                    submission_name_parameter,
-                    config_parameter,
-                    metadata_parameter,
-                    fasta_parameter,
-                    gff_parameter,
-                    test_parameter,
-                ),
-                ui.accordion_panel(
-                    "Notes"
-                ),
-                ui.accordion_panel(
-                    "Examples"
-                ),
-                open=["Parameters", "Notes"],
-            ),
+        # Prep command
+        shiny_tools.command_accordion_panel("prep",
+            description=" command is used to generate all of the required files for submission to the databases specified. This command is not required for performing submissions, however, it is useful for visualizing your data before submission/troubleshooting submission issues."
         ),
+        # Submit command
+        shiny_tools.command_accordion_panel("submit",
+            description=" command is used to generate all of the required files for submission to the databases specified. Then it performs batch upload to each database based on provided config file."
+        ),
+        # Submission status command
+        shiny_tools.command_accordion_panel("submission_status",
+            description=" command is used to update the progress of files submitted via the submit command. If database selection choices require submission in a sequential order then this command will also submit files when ready."
+        ),
+        # Test data command
+        shiny_tools.command_accordion_panel("test_data", description=" command is used generate test data for seqsender, to be used for testing the prep and submit commands."),
+        # Update biosample command
+        shiny_tools.command_accordion_panel("update_biosample", description=" command is used to update biosample schema options based on available BioSample Packages."),
+        # version command
+        shiny_tools.command_accordion_panel("version", description=" command prints the current seqsender version."),
     ),
 ]
 
@@ -690,6 +525,67 @@ def server(input, output, session):
             .applymap_index(metadata_index_css, axis="index")
         )
         return database_df
+
+    @reactive.Calc
+    @render.download(filename="seqsender_config.yaml")
+    def download_config():
+        config_file = dict()
+        if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox():
+            config_file["Submission"] = {
+            "NCBI":{
+                "Username": input.ncbi_config_username(),
+                "Password": input.ncbi_config_password(),
+                "BioSample_Package": input.config_bs_package(),
+                "Submission_Position": input.ncbi_submission_position(),
+                "Description": {
+                    "Title": input.ncbi_config_title(),
+                    "Comment": input.ncbi_config_comment(),
+                    "Organization": {
+                        "@role": input.ncbi_config_role(),
+                        "@type": input.ncbi_config_type(),
+                        "Name": input.ncbi_config_org_name(),
+                        "Address": {
+                            "Affil": input.ncbi_config_affil(),
+                            "Div": input.ncbi_config_div(),
+                            "Street": input.ncbi_config_street(),
+                            "City": input.ncbi_config_city(),
+                            "Sub": input.ncbi_config_state(),
+                            "Postal_code": input.ncbi_config_postal(),
+                            "Country": input.ncbi_config_country(),
+                            "Email": input.ncbi_config_email(),
+                            "Phone": input.ncbi_config_phone(),
+                            "Submitter": {
+                                "@email": input.ncbi_sub_email_one(),
+                                "@alt_email": input.ncbi_sub_email_two(),
+                                "Name": {
+                                    "First": input.ncbi_config_first_name(),
+                                    "Last": input.ncbi_config_last_name(),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        if input.GISAID_checkbox():
+            if config_file:
+                config_file["Submission"]["GISAID"] = {
+                    "Client-Id": input.gisaid_config_client(),
+                    "Username": input.gisaid_config_username(),
+                    "Password": input.gisaid_config_password(),
+                    "Submission_Position": input.gisaid_submission_position(),
+                }
+            else:
+                config_file["Submission"] = {
+                "GISAID": {
+                    "Client-Id": input.gisaid_config_client(),
+                    "Username": input.gisaid_config_username(),
+                    "Password": input.gisaid_config_password(),
+                    "Submission_Position": input.gisaid_submission_position(),
+                    }
+                }
+        with open("seqsender_config.yaml", "w") as file:
+            yaml.dump(config_file, file, default_flow_style = False)
 
     @reactive.Calc
     @render.download(filename="metadata_template.csv")

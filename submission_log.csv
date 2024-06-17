@@ -1,0 +1,9 @@
+Submission_Name,Organism,Database,Submission_Type,Submission_Date,Submission_Status,Submission_Directory,Config_File,Update_Date
+test_one,FLU,GENBANK-FTP,TEST,2024-01-01,WAITING,/scicomp/groups/,config_name,2024-01-01
+test_one,FLU,SRA,TEST,2024-01-01,SUBMITTED,/scicomp/groups/,config_name,2024-01-01
+test_one,FLU,BIOSAMPLE,TEST,2024-01-01,PROCESSING,/scicomp/groups/,config_name,2024-01-01
+test_one,FLU,GISAID,TEST,2024-01-01,WAITING,/scicomp/groups/,config_name,2024-01-01
+test_two,FLU,GENBANK-FTP,TEST,2024-01-01,WAITING,/scicomp/groups/,config_name,2024-01-01
+test_two,FLU,SRA,TEST,2024-01-01,SUBMITTED,/scicomp/groups/,config_name,2024-01-01
+test_two,FLU,BIOSAMPLE,TEST,2024-01-01,PROCESSING,/scicomp/groups/,config_name,2024-01-01
+test_two,FLU,GISAID,TEST,2024-01-01,WAITING,/scicomp/groups/,config_name,2024-01-01

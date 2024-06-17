@@ -1061,7 +1061,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package MISAG.water.6.0 schema",
 	description="Schema validation for BioSample database using MISAG.water.6.0 package.",
 )

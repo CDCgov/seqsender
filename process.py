@@ -10,77 +10,23 @@ import xmltodict
 import xml.etree.ElementTree as ET
 import requests
 import yaml
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 from distutils.util import strtobool
 from datetime import datetime
 from pandera import pandera, DataFrameSchema, Column, Check, Index, MultiIndex
 import ftplib
 import json
 import importlib
-from zipfile import ZipFile
 from cerberus import Validator
 from typing import List, Set, Dict, Any, Union
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import create
-import report
-import seqsender
-import setup
-import submit
+import file_handler
 from config.seqsender_schema import schema as seqsender_schema
 from config.seqsender_upload_log_schema import schema as seqsender_upload_log_schema
 
 # Get program directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
-
-# Get main config file
-def get_main_config() -> Dict[str, Any]:
-	main_config_path = os.path.join(PROG_DIR, "config", "main_config.yaml")
-	if os.path.isfile(main_config_path) == True:
-		with open(main_config_path, "r") as f:
-			main_config = yaml.load(f, Loader=yaml.BaseLoader) # Load yaml as str only
-		if type(main_config) is dict:
-			try:
-				main_config = main_config["SUBMISSION_PORTAL"]
-				return main_config
-			except:
-				print("Error: there is no SUBMISSION_PORTAL information in config file.", file=sys.stderr)
-				sys.exit(1)
-		else:
-			print("Error: Config file is incorrect. File must has a valid yaml format.", file=sys.stderr)
-			sys.exit(1)
-	else:
-		print("Error: Main config file does not exist at " + main_config_path, file=sys.stderr)
-		sys.exit(1)
-
-# Extract required column fields from main config file
-def get_required_colnames(database: List[str], organism: str) -> Set[str]:
-	# Get main fig file
-	main_config = get_main_config()
-	# Get all common fields across all portals
-	if "COMMON_FIELDS" in list(main_config.keys()):
-		all_required_colnames = list(main_config["COMMON_FIELDS"].keys())
-	else:
-		all_required_colnames = []
-	# Get a list of submission portals from main config file
-	for portal in list(main_config["PORTAL_NAMES"].keys()):
-		database_list = [name for name in database if (name in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()) or (name in portal))]
-		if len(database_list) > 0:
-			# Get all common fields across all databases in a portal
-			if "COMMON_FIELDS" in list(main_config["PORTAL_NAMES"][portal].keys()):
-				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["COMMON_FIELDS"].keys())
-			# Get required fields for given organism
-			if organism in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
-				all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][organism].keys())
-			# Get required fields for each given database
-			for database_name in database_list:
-				if database_name in list(main_config["PORTAL_NAMES"][portal]["DATABASE"].keys()):
-					all_required_colnames += list(main_config["PORTAL_NAMES"][portal]["DATABASE"][database_name].keys())
-	# Extract the unique metadata fields
-	return set(all_required_colnames)
 
 # Check the config file
 def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
@@ -96,14 +42,9 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 		sys.exit(1)
 	submission_schema = "_".join(submission_portals)
 	# Read in user config file
-	with open(config_file, "r") as file:
-		try:
-			# Check if valid yaml
-			config_dict = yaml.load(file, Loader = yaml.FullLoader)
-		except:
-			print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-			sys.exit(1)
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
 	# Check if yaml forms dictionary
+	print(config_dict)
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "config_file", (submission_schema + "_schema.py")), 'r').read())
 		database_specific_config_updates(schema, database)
@@ -129,126 +70,45 @@ def database_specific_config_updates(schema: Dict[str, Any], database: List[str]
 # Read in metadata file
 def get_metadata(database: List[str], organism: str, metadata_file: str, config_dict: Dict[str, Any]) -> pd.DataFrame:
 	# Read in metadata file
-	metadata = pd.read_csv(metadata_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-	# Remove rows if entirely empty
-	metadata = metadata.dropna(how="all")
-	# Remove extra spaces from column names
-	metadata.columns = metadata.columns.str.strip()
+	metadata = file_handler.load_csv(metadata_file)
 	# Update seqsender base schema to include needed checks
 	if "BioSample" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
 	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
 	# Import schemas
+	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
-		biosample_schema = importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema
+		schemas_dict["BioSample"] = importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema
 	if "SRA" in database:
-		sra_schema = importlib.import_module("config.sra_schema").schema
+		schemas_dict["SRA"] = importlib.import_module("config.sra_schema").schema
 	if "GENBANK" in database:
-		genbank_schema = importlib.import_module("config.genbank.genbank_schema").schema
+		schemas_dict["GenBank"] = importlib.import_module("config.genbank.genbank_schema").schema
 		if "cmt-" in metadata.columns:
-			genbank_cmt_schema = importlib.import_module("config.genbank.genbank_cmt_schema").schema
+			schemas_dict["GenBank comment"] = importlib.import_module("config.genbank.genbank_cmt_schema").schema
 		if "src-" in metadata.columns:
-			genbank_src_schema = importlib.import_module("config.genbank.genbank_src_schema").schema
+			schemas_dict["GenBank source"] = importlib.import_module("config.genbank.genbank_src_schema").schema
 	if "GISAID" in database:
-		gisaid_schema = importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema
+		schemas_dict["GISAID"] = importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema
 	# Validate metadata on schema's
 	error_msg_list: List[Union[str, pandera.errors.SchemaErrors]] = []
+	# Validate required columns for seqsender
 	try:
 		seqsender_schema.validate(metadata, lazy = True)
 	except pandera.errors.SchemaErrors as schema_error:
-		error_msg_list.append("Error: Metadata is incorrect:")
+		error_msg_list.append("Error: Seqsender columns are incorrect:")
 		error_msg_list.append(schema_error)
-	if biosample_schema:
+	# Validate required columns for databases
+	for schema_name, schema in schemas_dict.items():
 		try:
-			biosample_schema.validate(metadata, lazy = True)
+			schema.validate(metadata, lazy = True)
 		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: BioSample metadata is incorrect:")
-			error_msg_list.append(schema_error)
-	if sra_schema:
-		try:
-			sra_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: SRA metadata is incorrect:")
-			error_msg_list.append(schema_error)
-	if genbank_schema:
-		try:
-			genbank_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: Genbank metadata is incorrect:")
-			error_msg_list.append(schema_error)
-	if genbank_cmt_schema:
-		try:
-			genbank_cmt_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: Genbank comment metadata is incorrect:")
-			error_msg_list.append(schema_error)
-	if genbank_src_schema:
-		try:
-			genbank_src_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: Genbank source metadata is incorrect:")
-			error_msg_list.append(schema_error)
-	if gisaid_schema:
-		try:
-			gisaid_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append("Error: GISAID metadata is incorrect:")
+			error_msg_list.append(f"Error: {schema_name} columns are incorrect:")
 			error_msg_list.append(schema_error)
 	if error_msg_list:
 		for error_msg in error_msg_list:
 			print(error_msg, file=sys.stderr)
 		sys.exit(1)
 	return metadata
-
-# Read output log from gisaid submission script
-def read_gisaid_log(log_file: str, submission_status_file: str) -> pd.DataFrame:
-	if os.path.isfile(log_file) is False:
-		print("Error: GISAID log file does not exist at: "+log_file, file=sys.stderr)
-		print("Error: Either a submission has not been made or log file has been moved.", file=sys.stderr)
-		print("Try to re-upload the sequences again.", file=sys.stderr)
-		sys.exit(1)
-	if os.path.isfile(submission_status_file) is False:
-		print("Error: GISAID submission status file does not exist at: "+submission_status_file, file=sys.stderr)
-		print("Error: Either a submission has not been made or file has been moved.", file=sys.stderr)
-		print("Try to re-upload the sequences again.", file=sys.stderr)
-		sys.exit(1)
-	# Read in submission status csv
-	submission_status = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-	submission_status = submission_status.fillna("")
-	# Read in log file
-	with open(log_file) as f:
-		while True:
-			line = f.readline()
-			if not line:
-				break
-			else:
-				# Get sample or segment accession
-				if "epi_isl".upper() in line.upper():
-					column_name = "gs-sample_name"
-					sample_name = list(set(filter(lambda x: (x.upper() in line.upper())==True, submission_status[column_name])))
-					accession_id = "epi_isl_id"
-					accession = re.search("EPI_ISL_[1-9]+", line)
-				elif "epi_id".upper() in line.upper():
-					column_name = "gs-sequence_name"
-					sample_name = list(set(filter(lambda x: (x.upper() in line.upper())==True, submission_status[column_name])))
-					accession_id = "epi_id"
-					accession = re.search("EPI[1-9]+", line)
-				else:
-					continue
-				# Get the accession number only
-				if accession is not None:
-					start = accession.span()[0]
-					end = accession.span()[1]
-					accession_number = line[start:end]
-					sample_message = submission_status.loc[submission_status[column_name].isin(sample_name), "gisaid_message"].astype(str)
-					submission_status.loc[submission_status[column_name].isin(sample_name), ("gisaid_accession_" + accession_id)] = accession_number
-					submission_status.loc[submission_status[column_name].isin(sample_name), "gisaid_message"] = sample_message + line
-				else:
-					continue
-	# Save submission status df
-	submission_status.to_csv(submission_status_file, header = True, index = False)
-	not_submitted = submission_status[~submission_status["gisaid_accession_epi_isl_id"].str.contains("EPI", na=False)].copy()
-	return not_submitted[["gs-sample_name"]]
 
 # Check user credentials information
 def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
@@ -281,57 +141,6 @@ def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
 	else:
 		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-
-# Check table2asn validation information
-def check_table2asn_submission(validation_file: str) -> str:
-	# Check if validation file exists
-	if os.path.isfile(validation_file) == False:
-		return "table2asn-error"
-	# If submission has errors reject
-	with open(validation_file, "r") as file:
-		for line in file:
-			if "error:" in line.lower():
-				print("Submission has errors after running Table2asn.", file=sys.stderr)
-				print("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.", file=sys.stderr)
-				print("Validation file: " + validation_file, file=sys.stderr)
-				return "table2asn-validation-error"
-			else:
-				return "validated"
-	return "table2asn-error"
-
-# Check raw reads files listed in metadata file
-def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> Set[str]:
-	# Check raw reads files if SRA is provided
-	raw_reads_path = os.path.join(submission_dir, submission_name, "raw_reads")
-	# If database is SRA, check if the raw reads path exists
-	if os.path.exists(raw_reads_path) == False:
-		print("Checking SRA - Sequence Read Archives", file=sys.stderr)
-		print("Cannot find the 'raw_reads' subfolder at "+ raw_reads_path, file=sys.stderr)
-		print("Please create the subfolder and place all raw reads files in that directory", file=sys.stderr)
-		sys.exit(1)
-	# Check if raw reads files are stored locally or on cloud
-	if metadata["sra-file_location"].str.contains("local|cloud").all() == False:
-		print("Error: the value of sra-file_location in metadata file can only be 'local' or 'cloud'.", file=sys.stderr)
-		sys.exit(1)
-	# Separate samples stored in local and cloud
-	local_df = metadata[metadata["sra-file_location"] == "local"]
-	validated_files = set()
-	for index, row in local_df.iterrows():
-		# If multiple files check each one
-		for file in row["sra-file_name"].split(","):
-			file = file.strip()
-			file_path = ""
-			if os.path.isabs(file):
-				file_path = file
-			else:
-				file_path = os.path.join(raw_reads_path, file)
-			if os.path.isfile(file_path) == False:
-				print("Error: Raw read files for " + row["ncbi-spuid"] + " does not exist at: " + file_path, file=sys.stderr)
-				print("Error: Please check the path or the name of the file again.", file=sys.stderr)
-				sys.exit(1)
-			else:
-				validated_files.add(file_path)
-	return validated_files
 
 # Update dataframeschema based on today's date
 # Uses regex to allow for all valid date formats: YYYY, YYYY-MM, YYYY-MM-DD
@@ -398,15 +207,7 @@ def datetime_schema_regex() -> str:
 
 # Check sample names in metadata file are listed in fasta file
 def process_fasta_samples(metadata: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
-	fasta_dict = []
-	# Convert fasta into df
-	with open(fasta_file, "r") as fsa:
-		records = SeqIO.parse(fsa, "fasta")
-		for record in records:
-			fasta_dict.append({"fasta_name_orig":record.id, "fasta_sequence_orig":record.seq, "fasta_description_orig":record.description})
-	fasta_df = pd.DataFrame(fasta_dict)
-	# Remove rows if they contain all Nan
-	fasta_df = fasta_df.dropna(how='all')
+	fasta_df = file_handler.load_fasta_file(fasta_file)
 	# Check duplicates in fasta_df
 	duplicated_df = fasta_df[fasta_df.duplicated(subset = ["fasta_name_orig"], keep = False)]
 	if not duplicated_df.empty:
@@ -427,139 +228,3 @@ def process_fasta_samples(metadata: pd.DataFrame, fasta_file: str) -> pd.DataFra
 		print("Error: Sequences in metadata file do not have an associated sequence in fasta file. Please update sequences below:\n" + merged_df[merged_df["fasta_name_orig"].isnull()]["sequence_name"].to_string(), file=sys.stderr)
 		sys.exit(1)
 	return merged_df
-
-# Update submission log
-def update_submission_status(submission_dir: str, submission_name: str, organism: str, test: bool) -> None:
-	# Check if submission log exists
-	submission_dir = os.path.abspath(submission_dir)
-	submission_log_file = os.path.join(submission_dir, "submission_log.csv")
-	if os.path.isfile(submission_log_file):
-		df = pd.read_csv(submission_log_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-	else:
-		print("There is no submission log located at " + submission_log_file, file=sys.stderr)
-		print("Error: Either a submission has not been made or submission_log.csv has been moved.", file=sys.stderr)
-		sys.exit(1)
-	# Get the submission type: test or production
-	if test == True:
-		submission_type = "Test"
-	else:
-		submission_type = "Production"
-	# Check if given organism exist in the log
-	df_partial = df.loc[(df["Organism"] == organism) & (df["Submission_Name"] == submission_name) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Type"] == submission_type)]
-	if df_partial.shape[0] == 0:
-		print("Error: Submission name: " + submission_name + " for "+organism+" "+submission_type+"-data is not found in the submission log file.", file=sys.stderr)
-		print("Error: Either a submission has not been made or an entry has been moved.", file=sys.stderr)
-		sys.exit(1)
-	# Order get a list of submitting databases
-	df_partial = df_partial.sort_values(by=["Submission_Position"])
-	database = df_partial["Database"].tolist()
-	# Output message
-	print("\n"+"Checking submission status for:"+"\n", file=sys.stdout)
-	print("Submission name: " + submission_name, file=sys.stdout)
-	print("Submission organism: " + organism, file=sys.stdout)
-	print("Submission type: " + submission_type, file=sys.stdout)
-	# Check the status of each database in its order of submission
-	for database_name in database:
-		print("\n" + "Submission database: " + database_name, file=sys.stdout)
-		df = pd.read_csv(submission_log_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False).sort_values('Submission_Position', ascending=True)
-		df_processing = df[(df["Organism"] == organism) & (df["Database"] == database_name) & (df["Submission_Directory"] == submission_dir) & (df["Submission_Name"] == submission_name) & (df["Submission_Type"] == submission_type)]
-		df_processing = df_processing.reset_index(drop=True)
-		submission_dir = df_processing["Submission_Directory"][0]
-		submission_position = df_processing["Submission_Position"][0]
-		submission_id, submission_status = df_processing["Submission_Status"][0].strip().split(";")
-		config_file = df_processing["Config_File"][0]
-		table2asn = df_processing["Table2asn"][0]
-		gff_file = df_processing["GFF_File"][0]
-		# Check if submission files exist in parent directory
-		submission_files_dir = os.path.join(submission_dir, submission_name, "submission_files", database_name)
-		if os.path.exists(submission_files_dir) == False:
-			print("Error: Submission files for "+submission_name+" does not exist at "+submission_files_dir, file=sys.stderr)
-			sys.exit(1)
-		# Check if submission report status csv exists
-		submission_status_file = os.path.join(submission_dir, submission_name, "submission_report_status.csv")
-		if os.path.isfile(submission_status_file) == False:
-			print("Error: Submission status report for "+submission_name+" does not exist at "+submission_status_file, file=sys.stderr)
-			sys.exit(1)
-		# Check if config file exists
-		if os.path.isfile(config_file) == False:
-			print("Error: Config file for "+submission_name+" does not exist at "+config_file, file=sys.stderr)
-			sys.exit(1)
-		else:
-			config_dict = get_config(config_file=config_file, database=database)
-		# IF GISAID in a list of submitting databases, check if CLI is downloaded and store in the correct directory
-		gisaid_cli = None
-		if "GISAID" in database_name:
-			gisaid_cli = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
-		# Check if the gisaid_cli exists
-		if (gisaid_cli is not None) and os.path.isfile(gisaid_cli) == False:
-			print("There is no GISAID CLI package for " + organism + " located at "+ gisaid_cli, file=sys.stderr)
-			print("Please download the CLI package from GISAID platform", file=sys.stderr)
-			print("Then place a copy of the CLI binary at "+ gisaid_cli, file=sys.stderr)
-			sys.exit(1)
-		# Check the status of the submission
-		if "processed-ok" in submission_status:
-			print("Submission status: " + submission_status, file=sys.stdout)
-		else:
-			# Pull download submission report and update its status
-			if database_name in ["BIOSAMPLE", "SRA", "GENBANK"]:
-				# If report exists, processing the report and output status of the submission
-				if database_name in ["BIOSAMPLE", "SRA"]:
-					report_file = report.get_ncbi_process_report(database=database_name, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict['NCBI'], submission_type=submission_type)
-					if report_file is not None and os.path.isfile(report_file):
-						submission_status, submission_id = report.process_biosample_sra_report(report_file=report_file, submission_status_file=submission_status_file)
-				elif database_name == "GENBANK":
-					# Update submission
-					if "---" in submission_status:
-						# Check if biosample, sra, and gisaid are in a list of submitting databases
-						if int(submission_position) == 1:
-							other_submitting_db = [x for x in database if x in ["BIOSAMPLE", "SRA"]]
-						elif int(submission_position) == 2:
-							other_submitting_db = [x for x in database if x in ["BIOSAMPLE", "SRA", "GISAID"]]
-						# Update biosample, sra, gisaid accession on genbank submission
-						if len(other_submitting_db) > 0:
-							all_status = []
-							for db in other_submitting_db:
-								db_df = df.loc[df["Database"] == db]
-								db_df = db_df.reset_index(drop=True)
-								db_status = db_df["Submission_Status"][0]
-								# If the status of biosample or sra is processed-ok, then go ahead and submit to Genbank
-								if "processed-ok" in db_status:
-									all_status += [1]
-									report.update_genbank_files(database=database, organism=organism, submission_files_dir=submission_files_dir, submission_status_file=submission_status_file)
-								else:
-									all_status += [0]
-							# Submit via Table2asn
-							if all(all_status):
-								if table2asn == True:
-									if os.path.isfile(str(gff_file)) == False:
-										gff_file = None
-									submission_id, submission_status = create.create_genbank_table2asn(submission_name=submission_name, submission_files_dir=submission_files_dir, gff_file=gff_file)
-									if submission_status == "validated":
-										submission_status = submit.sendmail(database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict['NCBI'], test=test)
-								else:
-									# Submit via FTP
-									create.create_genbank_zip(submission_name=submission_name, submission_files_dir=submission_files_dir)
-									submit.submit_ncbi(database=database_name, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
-									submission_status = "submitted"
-									submission_id = "pending"
-					else:
-						# If report exists, processing the report and output status of the submission
-						report_file = report.get_ncbi_process_report(database=database_name, submission_name=submission_name, submission_files_dir=submission_files_dir, config_dict=config_dict['NCBI'], submission_type=submission_type)
-						if report_file is not None and os.path.isfile(report_file):
-							submission_status, submission_id = report.process_genbank_report(report_file=report_file, submission_status_file=submission_status_file, submission_files_dir=submission_files_dir)
-			elif database_name == "GISAID":
-				if ("---" in submission_status) and (int(submission_position) == 1):
-					assert isinstance(gisaid_cli, str)
-					submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
-					submission_id = ""
-				elif ("---" in submission_status) and ("GENBANK" in database) and (int(submission_position) == 2):
-					db_status = df[(df["Database"] == "GENBANK"), "Submission_Status"][0]
-					if "processed-ok" in db_status:
-						report.update_gisaid_files(organism=organism, submission_files_dir=submission_files_dir, submission_status_file=submission_status_file)
-						assert isinstance(gisaid_cli, str)
-						submission_status = submit.submit_gisaid(organism=organism, database=database_name, submission_dir=submission_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], gisaid_cli=gisaid_cli, submission_status_file=submission_status_file, submission_type=submission_type)
-						submission_id = ""
-			# Update status in the submission log
-			create.create_submission_log(database=database_name, submission_position=submission_position, organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_file=config_file, submission_status=submission_status, submission_id=submission_id, submission_type=submission_type)
-			# Print out the submission status
-			print("Submission status: " + submission_status, file=sys.stdout)

@@ -51,6 +51,18 @@ schema = DataFrameSchema(
 			description="Short unique identifier for sequencing library.",
 			title="sequencing library",
 		),
+		"sra-loader": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="SRA loader selection. If NCBI says your SRA files need to be uploaded with a certain loader, you can select it here.",
+			title="sra loader",
+		),
 		"sra-library_strategy": Column(
 			dtype="object",
 			checks=[
