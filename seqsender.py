@@ -111,15 +111,16 @@ def main():
 	command = args.command
 
 	# Determine databases
-	# database = []
-	# if args.biosample != None:
-	# 	database += [args.biosample]
-	# if args.sra:
-	# 	database += [args.sra]
-	# if args.genbank:
-	# 	database += [args.genbank]
-	# if args.gisaid:
-	# 	database += [args.gisaid]
+	if command in ["prep", "submit", "test_data"]:
+		database = []
+		if args.biosample != None:
+			database += [args.biosample]
+		if args.sra:
+			database += [args.sra]
+		if args.genbank:
+			database += [args.genbank]
+		if args.gisaid:
+			database += [args.gisaid]
 
 	# Clean submission dir
 	submission_dir = os.path.abspath(args.submission_dir)

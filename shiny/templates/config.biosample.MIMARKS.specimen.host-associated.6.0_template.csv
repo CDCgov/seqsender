@@ -1,0 +1,75 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-strain,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". microbial or eukaryotic strain name"
+bs-isolate,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". identification or description of the specific individual from which this sample was obtained"
+bs-cultivar,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". cultivar name - cultivated variety of plant"
+bs-ecotype,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". a population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat, e.g., Columbia"
+bs-env_broad_scale,Required,Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]
+bs-env_local_scale,Required,"Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]"
+bs-env_medium,Required,Add terms that identify the material displaced by the entity at time of sampling. Recommend subclasses of environmental material [ENVO:00010483]. Multiple terms can be separated by pipes e.g.: estuarine water [ENVO:01000301]|estuarine mud [ENVO:00002160]
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-host,Required,"The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, ""Homo sapiens""."
+bs-isol_growth_condt,Required,PMID or url for isolation and growth condition specifications
+bs-lat_lon,Required,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
+bs-altitude,Optional,The altitude of the sample is the vertical distance between Earth's surface above Sea Level and the sampled position in the air.
+bs-ances_data,Optional,"Information about either pedigree or other ancestral information description, e.g., parental variety in case of mutant or selection, A/3*B (meaning [(A x B) x B] x B)"
+bs-biol_stat,Optional,"The level of genome modification, e.g., wild, natural, semi-natural, inbred line, breeder's line, hybrid, clonal selection, mutant"
+bs-biotic_relationship,Optional,Free-living or from host (define relationship)
+bs-chem_administration,Optional,"list of chemical compounds administered to the host or site where sampling occurred, and when (e.g. antibiotics, N fertilizer, air filter); can include multiple compounds. For Chemical Entities of Biological Interest ontology (CHEBI) (v1.72), please see http://bioportal.bioontology.org/visualize/44603"
+bs-collection_method,Optional,"Process used to collect the sample, e.g., bronchoalveolar lavage (BAL)"
+bs-depth,Optional,"Depth is defined as the vertical distance below surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly. Depth can be reported as an interval for subsurface samples."
+bs-elev,Optional,The elevation of the sampling site as measured by the vertical distance from mean sea level.
+bs-extrachrom_elements,Optional,Plasmids that have significance phenotypic consequence
+bs-genetic_mod,Optional,"Genetic modifications of the genome of an organism, which may occur naturally by spontaneous mutation, or be introduced by some experimental means, e.g. specification of a transgene or the gene knocked-out or details of transient transfection"
+bs-gravidity,Optional,"whether or not subject is gravid, and if yes date due or date post-conception, specifying which is used"
+bs-host_age,Optional,Age of host at the time of sampling
+bs-host_blood_press_diast,Optional,"resting diastolic blood pressureof the host, measured as mm mercury"
+bs-host_blood_press_syst,Optional,"resting systolic blood pressure of the host, measured as mm mercury"
+bs-host_body_habitat,Optional,original body habitat where the sample was obtained from
+bs-host_body_product,Optional,"substance produced by the host, e.g. stool, mucus, where the sample was obtained from"
+bs-host_body_temp,Optional,core body temperature of the host when sample was collected
+bs-host_color,Optional,the color of host
+bs-host_common_name,Optional,"The natural language (non-taxonomic) name of the host organism, e.g., mouse"
+bs-host_diet,Optional,"type of diet depending on the sample for animals omnivore, herbivore etc., for humans high-fat, meditteranean etc.; can include multiple diet types"
+bs-host_disease,Optional,"Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, http://bioportal.bioontology.org/ontologies/1009 or http://www.ncbi.nlm.nih.gov/mesh"
+bs-host_dry_mass,Optional,measurement of dry mass
+bs-host_family_relationship,Optional,
+bs-host_genotype,Optional,
+bs-host_growth_cond,Optional,literature reference giving growth conditions of the host
+bs-host_height,Optional,the height of subject
+bs-host_last_meal,Optional,content of last meal and time since feeding; can include multiple values
+bs-host_length,Optional,the length of subject
+bs-host_life_stage,Optional,description of host life stage
+bs-host_phenotype,Optional,
+bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_shape,Optional,morphological shape of host
+bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
+bs-host_subspecf_genlin,Optional,"Information about the genetic distinctness of the host organism below the subspecies level e.g., serovar, serotype, biotype, ecotype, variety, cultivar, or any relevant genetic typing schemes like Group I plasmid. Subspecies should not be recorded in this term, but in the NCBI taxonomy. Supply both the lineage name and the lineage rank separated by a colon, e.g., biovar:abc123"
+bs-host_substrate,Optional,the growth substrate of the host
+bs-host_symbiont,Optional,"The taxonomic name of the organism(s) found living in mutualistic, commensalistic, or parasitic symbiosis with the specific host"
+bs-host_taxid,Optional,"NCBI taxonomy ID of the host, e.g. 9606"
+bs-host_tissue_sampled,Optional,"name of body site where the sample was obtained from, such as a specific organ or tissue, e.g., tongue, lung. For foundational model of anatomy ontology (fma) (v 4.11.0) or Uber-anatomy ontology (UBERON) (v releases/2014-06-15) terms, please see http://purl.bioontology.org/ontology/FMA or http://purl.bioontology.org/ontology/UBERON"
+bs-host_tot_mass,Optional,"total mass of the host at collection, the unit depends on host"
+bs-isolation_source,Optional,"Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-misc_param,Optional,"any other measurement performed or parameter collected, that is not listed here"
+bs-neg_cont_type,Optional,"The substance or equipment used as a negative control in an investigation, e.g., distilled water, phosphate buffer, empty collection device, empty collection tube, DNA-free PCR mix, sterile swab, sterile syringe"
+bs-omics_observ_id,Optional,"A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory."
+bs-organism_count,Optional,"total count of any organism per gram or volume of sample,should include name of organism followed by count; can include multiple organism counts"
+bs-oxy_stat_samp,Optional,oxygenation status of sample
+bs-perturbation,Optional,"type of perturbation, e.g. chemical administration, physical disturbance, etc., coupled with time that perturbation occurred; can include multiple perturbation types"
+bs-pos_cont_type,Optional,"The substance, mixture, product, or apparatus used to verify that a process which is part of an investigation delivers a true positive"
+bs-rel_to_oxygen,Optional,"Is this organism an aerobe, anaerobe? Please note that aerobic and anaerobic are valid descriptors for microbial environments, eg, aerobe, anaerobe, facultative, microaerophilic, microanaerobe, obligate aerobe, obligate anaerobe, missing, not applicable, not collected, not provided, restricted access"
+bs-samp_capt_status,Optional,"Reason for the sample, e.g., active surveillance in response to an outbreak, active surveillance not initiated by an outbreak, farm sample, market sample"
+bs-samp_collect_device,Optional,Method or device employed for collecting sample
+bs-samp_dis_stage,Optional,"Stage of the disease at the time of sample collection, e.g., dissemination, growth and reproduction, infection, inoculation, penetration"
+bs-samp_mat_process,Optional,Processing applied to the sample during or after isolation
+bs-samp_salinity,Optional,
+bs-samp_size,Optional,"Amount or size of sample (volume, mass or area) that was collected"
+bs-samp_store_dur,Optional,
+bs-samp_store_loc,Optional,
+bs-samp_store_temp,Optional,
+bs-samp_vol_we_dna_ext,Optional,volume (mL) or weight (g) of sample processed for DNA extraction
+bs-source_material_id,Optional,"unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples."
+bs-subspecf_gen_lin,Optional,"Information about the genetic distinctness of the lineage (eg., biovar, serovar)"
+bs-temp,Optional,temperature of the sample at time of sampling
+bs-trophic_level,Optional,"Feeding position in food chain (eg., chemolithotroph)"

@@ -78,11 +78,14 @@ def load_upload_log(submission_dir: str) -> pd.DataFrame:
 		sys.exit(1)
 	return df
 
+def update_individual_submission(submission_dir, submission_name):
+
 # Update submission log
 def update_submission_status(submission_dir: str, submission_name: Optional[str]) -> None:
 	df = load_upload_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Submission_Directory", "Config_File"])
 	for name, group in grouped_submissions:
+		print("Checking Submission:")			
 		print(f"Group_name: {name}")
 		print(group)
 	sys.exit(1)

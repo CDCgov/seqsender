@@ -107,9 +107,9 @@ def args_parser(organism_choices: List[str]):
 
 	# check_submission_status command
 	update_module = subparser_modules.add_parser(
-		'check_submission_status',
+		'submission_status',
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		description='Check existing process of a submission',
+		description='Check existing process of either all submissions or a single submission if given a name.',
 		parents=[submission_dir_parser, submission_name_parser]
 	)
 

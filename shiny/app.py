@@ -319,6 +319,7 @@ testing_body = [
         ui.nav_panel("I have my own data", user_data_content),
         ui.nav_panel("I don't have my own data", example_data_content),
         id="testing_tab",
+        selected="I don't have my own data",
     ),
 ]
 
@@ -389,34 +390,12 @@ def read_file():
     df = df.transpose()
     return df
 
-@reactive.file_reader(dir / "templates/config.biosample.Pathogen.cl.1.0_template.csv")
-def read_biosample_file():
-    df = pd.read_csv(dir / "templates/config.biosample.Pathogen.cl.1.0_template.csv", index_col = "column_name")
-    df = df.fillna("")
-    df = df.transpose()
-    return df
-
 @reactive.file_reader(dir / "templates/config.sra.schema_template.csv")
 def read_sra_file():
     df = pd.read_csv(dir / "templates/config.sra.schema_template.csv", index_col = "column_name")
     df = df.fillna("")
     df = df.transpose()
     return df
-
-@reactive.file_reader(dir / "templates/config.genbank.genbank.schema_template.csv")
-def read_genbank_file():
-    df = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
-    df = df.fillna("")
-    df = df.transpose()
-    return df
-
-@reactive.file_reader(dir / "templates/config.gisaid.gisaid.FLU.schema_template.csv")
-def read_gisaid_file():
-    df = pd.read_csv(dir / "templates/config.gisaid.gisaid.FLU.schema_template.csv", index_col = "column_name")
-    df = df.fillna("")
-    df = df.transpose()
-    return df
-
 
 # Function to style metadata shiny index
 def metadata_index_css(index):
@@ -442,6 +421,28 @@ def metadata_database_css(column):
 
 
 def server(input, output, session):
+    @reactive.Calc
+    @reactive.file_reader(dir / "templates/")
+    def read_biosample_file():
+        df = pd.read_csv(dir / ("templates/config.biosample." + input.BioSample_packages() + "_template.csv"), index_col = "column_name")
+        df = df.fillna("")
+        df = df.transpose()
+        return df
+
+    @reactive.file_reader(dir / "templates/")
+    def read_genbank_file():
+        df = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
+        df = df.fillna("")
+        df = df.transpose()
+        return df
+
+    @reactive.file_reader(dir / "templates/")
+    def read_gisaid_file():
+        df = pd.read_csv(dir / ("templates/config.gisaid.gisaid." + input.GISAID_databases() + ".schema_template.csv"), index_col = "column_name")
+        df = df.fillna("")
+        df = df.transpose()
+        return df
+
     @render.text
     def BioSample_Package_Name():
         return input.BioSample_packages()

@@ -1,2 +1,0 @@
-column_name,required_column,description
-((?:StructuredComment)(?:Prefix|Suffix)),Required,"Structured comment keyword. For FLU use ""FluData"", HIV use ""HIV-DataBaseData"", and for COV and other organisms use ""Assembly-Data""."

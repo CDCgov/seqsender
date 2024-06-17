@@ -134,7 +134,7 @@ setup_body = [
                         config_text_input("ncbi_config_org_name", placeholder = "Organization Name", help_msg = "Submitting group's name."),
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         # Address category
-                        config_indent(5, "Address:"),
+                        config_indent(5, "Address:", custom_style = ""),
                         # submitter affiliation
                         config_indent(6, "Affil:"),
                         config_text_input("ncbi_config_affil", placeholder = "Submitter Affiliation", help_msg = "Submitting organization's full name."),
