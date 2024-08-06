@@ -23,7 +23,7 @@ CDC and its partners to share information and collaborate on software.
 CDC use of GitHub does not imply an endorsement of any one particular
 service, product, or enterprise.
 
-# [Documentation](https://dthoward96.github.io/seqsender_test_website/)
+# [Documentation](https://cdcgov.github.io/seqsender/)
 
 ## Overview
 
