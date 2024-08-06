@@ -1,0 +1,28 @@
+column_name,required_column,description
+sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.
+gs-sample_name,Required,Identifier name used for GISAID. Max length is 50 characters.
+gs-segment,Required,Segment name for sequence.
+gs-Subtype,Required,Influenza subtype (e.g. H5N1).
+gs-Lineage,Optional,Lineage information.
+gs-Passage_History,Required,"""Original"" if the sample was sequenced directly from swabs, otherwise add the name of the cell line (e.g., ""Vero"") used to culture the specimen."
+gs-Location,Required,Country.
+gs-province,Required,Province/State.
+gs-sub_province,Optional,"Local region name, county, territory, etc."
+gs-Location_Additional_info,Optional,"Additional location information (e.g. Cruise Ship, Convention, Live animal market)."
+gs-Host,Required,"Host species name. For Wastewater use ""Environment""."
+gs-Host_Additional_info,Optional,Additional information regarding patient (e.g. Patient infected while interacting with animal).
+gs-Submitting_Sample_Id,Optional,ID used by submitting lab.
+gs-Originating_Lab_Id,Optional,ID used for originating lab.
+gs-Originating_Sample_Id,Optional,ID used by originating lab.
+gs-Antigen_Character,Optional,
+gs-Adamantanes_Resistance_geno,Optional,
+gs-Oseltamivir_Resistance_geno,Optional,
+gs-Zanamivir_Resistance_geno,Optional,
+gs-Peramivir_Resistance_geno,Optional,
+gs-Other_Resistance_geno,Optional,
+gs-Host_Gender,Required,"Synonym for ""Biological sex"". Should be ""Female"", ""Male"", or ""Unknown""."
+gs-Host_Age,Required,Numeric age for host.
+gs-Host_Age_Unit,Required,"Unit of time for host age (e.g. Year is ""Y"", Month is ""M"")."
+gs-Health_Status,Required,"E.g., ""Hospitalized"", ""Released"", ""Live"", ""Deceased"", ""Unknown""."
+gs-Note,Optional,Sequence note.
+gs-PMID,Optional,PubMed ID
