@@ -23,8 +23,20 @@ schema = DataFrameSchema(
 			unique=True,
 			coerce=False,
 			required=True,
-			description="Identifier name used for GISAID. Max length is 50 characters.",
+			description="Identifier name for sample segment used for GISAID. Max length is 50 characters.",
 			title="sample name",
+		),
+		"gs-Isolate_Name": Column(
+			dtype="object",
+			checks=[
+				Check.str_length(min_value=1,max_value=50),
+			],
+			nullable=False,
+			unique=False,
+			coerce=False,
+			required=True,
+			description="Identifier name for sample used for GISAID. Max length is 50 characters.",
+			title="isolate name",
 		),
 		"gs-segment": Column(
 			dtype="object",

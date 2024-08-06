@@ -49,6 +49,9 @@ schema = DataFrameSchema(
 
 # Create example data for testing
 def create_test_data(organism: str, database: List[str], submission_dir: str) -> None:
+	if organism not in ["FLU", "COV"]:
+		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ", file=sys.stdout)
+		sys.exit(0)
 	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
 	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
@@ -74,7 +77,7 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 	print("\n"+"Generating submission test_data", file=sys.stdout)
 	# Get combined metadata for all given databases
 	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "ncbi-spuid", "ncbi-spuid_namespace", "ncbi-bioproject"]
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:

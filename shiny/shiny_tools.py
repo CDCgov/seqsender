@@ -200,6 +200,11 @@ fasta_parameter = ui.div(
     ui.tags.ul("Full path to fasta file if not stored in ", ui.code("--submission_dir"), " location."),
 )
 
+table2asn_parameter = ui.div(
+    ui.strong(ui.code("--table2asn")),
+    ui.tags.ul("Flag to enable a \"table2asn\" submission for GenBank. Automatically enabled for organisms other than \"FLU\" and \"COV\"."),
+)
+
 gff_parameter = ui.div(
     ui.strong(ui.code("--gff_file")),
     ui.tags.ul("Full path to gff file if not stored in ", ui.code("--submission_dir"), " location."),
@@ -208,6 +213,11 @@ gff_parameter = ui.div(
 test_parameter = ui.div(
     ui.strong(ui.code("--test")),
     ui.tags.ul("Flag to enable a \"test\" submission to each database selected."),
+)
+
+validation_parameter = ui.div(
+    ui.strong(ui.code("--skip_validation")),
+    ui.tags.ul("Flag to skip pandera validation for ", ui.code("--metadata_file"), ". Warning, skipping validation can cause unexpected errors when missing required data."),
 )
 
 def seqsender_submit_help_output_msg(version):
@@ -290,14 +300,22 @@ def get_parameters(command, output):
     if command in ["prep", "submit"]:
         command_string += " [--fasta_file &lt;fasta_file_path&gt;]"
         parameters.append(fasta_parameter)
+    # Add table2asn parameter
+    if command in ["prep", "submit"]:
+        command_string += " [--table2asn]"
+        parameters.append(table2asn_parameter)
     # Add gff_file parameter
     if command in ["prep", "submit"]:
         command_string += " [--gff_file &lt;gff_file_path&gt;]"
         parameters.append(gff_parameter)
     # Add test parameter
-    if command in ["prep", "submit"]:
+    if command in ["submit"]:
         command_string += " [--test]"
-        parameters.append(gff_parameter)
+        parameters.append(test_parameter)
+    # Add skip pandera validation parameter
+    if command in ["prep", "submit"]:
+        command_string += " [--skip_validation]"
+        parameters.append(validation_parameter)
     if output == "string":
         return command_string
     elif output == "description":
@@ -349,6 +367,25 @@ def command_accordion_panel(command, description):
         ),
         seqsender_example_command("local", command, ""),
         command_submenu_accordion(command),)
+
+def file_output_column_info(column_name, description, controlled_fields):
+    list_item = ui.tags.li(
+        ui.strong(
+            ui.code(column_name),
+        ),
+        ui.tags.ul(
+            ui.p(description),
+            file_output_controlled_field_info(controlled_fields),
+        )
+    )
+    return list_item
+
+def file_output_controlled_field_info(controlled_fields):
+    keywords = []
+    if controlled_fields:
+        for key, description in controlled_fields:
+            keywords.append(ui.tags.li(ui.p(ui.strong(key, ": "), description), style="margin-top:10px;"))
+    return keywords
 
 def create_help_tooltip(id, description, position):
     return ui.tooltip(ui.p("❓"),description,id=id,style="display:inline-block;float:" + position + ";",)

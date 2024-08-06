@@ -7,8 +7,12 @@ from shinyswatch import theme
 import shiny_tools
 from index import index_body
 from setup import setup_body
+from about import about_body
+from prerequisites import prerequisites_body
+from my_first_submission import first_submission_body
 import pathlib
 import yaml
+from yaml import SafeDumper
 
 terminal_css = ""
 yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;margin-top:-15px;font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;-webkit-user-select: none; -ms-user-select: none; user-select: none;"
@@ -17,9 +21,6 @@ header = (
     ui.card_header(
         ui.HTML(
             """<p><strong>Beta Version</strong>: 1.2.0. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
-        ),
-        ui.card(
-            ui.strong("Documentation Page is Under Development. Not all buttons are functioning correctly/some documentation is not yet available. This should be resolved shortly."),
         )
     ),
 )
@@ -43,52 +44,8 @@ ui.input_checkbox_group(
     },
 ),
 
-
-####################### PREREQUISITES PAGE ###########################
-ncbi_prereq = [
-    ui.HTML(
-        """
-<strong>NCBI Submissions</strong>
-<p><code>seqsender</code> utilizes an UI-Less Data Submission Protocol to bulk upload submission files (e.g., <em>submission.xml</em>, <em>submission.zip</em>, etc.) to NCBI archives. The submission files are uploaded to the NCBI server via FTP on the command line. Before attempting to submit a submission using <code>seqsender</code>, submitter will need to</p>
-<ol style="list-style-type: decimal">
-<li><p>Have a NCBI account. To sign up, visit <a href="https://account.ncbi.nlm.nih.gov/">NCBI website</a>.</p></li>
-<li><p>Required for CDC users and highly recommended for others is creating a center account for your institution/lab <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/sra/#step6">NCBI Center Account Instructions</a>. Center accounts allow you to perform submissions UI-less submissions as your institution/lab.</p></li>
-<li><p>Required for CDC users and also recommended is creating a submission group in <a href="https://submit.ncbi.nlm.nih.gov">NCBI Submission Portal</a>. A group should include all individuals who need access to UI-less submissions through the web interface with your center account. Each member of the group must also have an individual NCBI account. <a href="https://account.ncbi.nlm.nih.gov/">NCBI website</a>.</p></li>
-<li><p>Refer to this page for information regarding requirements for GenBank submissions via FTP only. This page applies only for COVID and Influenza <a href="https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5">NCBI GenBank FTP Submissions</a> For further questions contact <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a> to discuss requirements for submissions.</p></li>
-<li><p>Coordinate a NCBI namespace name (<strong>spuid_namespace</strong>)</p></li>
-</ol>
-"""
-    ),
-]
-gisaid_prereq = [
-    ui.HTML(
-        """
-<strong>GISAID Submissions</strong>
-<p><code>seqsender</code> makes use of GISAID’s Command Line Interface tools to bulk uploading meta- and sequence-data to GISAID databases. Presently, the pipeline only allows upload to EpiFlu (<strong>Influenza A Virus</strong>) and EpiCoV (<strong>SARS-COV-2</strong>) databases. Before uploading, submitter needs to</p>
-<ol style="list-style-type: decimal">
-<li><p>Have a GISAID account. To sign up, visit <a href="https://gisaid.org/">GISAID Platform</a>.</p></li>
-<li><p>Request a client-ID for EpiFlu or EpiCoV database in order to use its CLI tool. The CLI utilizes the client-ID along with the username and password to authenticate the database prior to make a submission. To obtain a client-ID, please email <a href="mailto:clisupport@gisaid.org">clisupport@gisaid.org</a> to request. <em><strong>Important note</strong>: If submitter would like to upload a “test” submission first to familiarize themselves with the submission process prior to make a real submission, one should additionally request a test client-id to perform such submissions.</em></p></li>
-<li><p>Download the <a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a> or <a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a> CLI from the <strong>GISAID platform</strong> and stored them in the destination of choice prior to perform a batch upload.</p></li>
-</ol>
-"""
-    ),
-]
-prerequisites_body = [
-    ui.h2("Prerequisites"),
-    ui.navset_tab(
-        ui.nav_panel("NCBI", ncbi_prereq),
-        ui.nav_panel("GISAID", gisaid_prereq),
-        id="prerequisites_tab",
-    ),
-]
 ####################### INSTALLATION PAGE ###########################
 #### LOCAL INSTALLATION
-gisaid_installation_content = [
-    ui.HTML(
-        """<p>Here is a quick look of where to store the downloaded <strong>GISAID CLI</strong> package.</p>
-"""
-    ),
-]
 local_installation_content = [
     shiny_tools.software_requirements("Local"),
     ui.HTML(
@@ -260,14 +217,9 @@ singularity exec ~/singularity/seqsender.sif seqsender-kickoff --help</code></pr
 installation_body = [
     ui.h2("Installation"),
     ui.navset_tab(
-        ui.nav_panel("Local", local_installation_content + gisaid_installation_content),
-        ui.nav_panel(
-            "Docker", docker_installation_content + gisaid_installation_content
-        ),
-        ui.nav_panel(
-            "Singularity",
-            singularity_installation_content + gisaid_installation_content,
-        ),
+        ui.nav_panel("Local", local_installation_content),
+        ui.nav_panel("Docker", docker_installation_content),
+        ui.nav_panel("Singularity",singularity_installation_content),
         id="installation_tab",
     ),
 ]
@@ -323,6 +275,255 @@ testing_body = [
     ),
 ]
 
+####################### OUTPUT FILE PAGE ###################
+
+output_body = [
+    ui.h2("SeqSender Output Files"),
+    ui.p("Output files described below are split into two categories: ", ui.strong("SeqSender output"), " or ", ui.strong("database specific"), " which lists all the files that can appear in your database submission directory (", ui.code("<--submission_dir>/<--submission_name>/submission_files/<Database Name>"), "). Files generated will also change for each directory based on the SeqSender submission process for the database, metadata provided, and database submission response files. "),
+    ui.h4("SeqSender script output:"),
+    ui.hr(),
+    ui.h6("submission_log.csv"),
+    ui.tags.ul(
+        ui.p("The ", ui.strong("submission_log.csv"), " is used by Seqender to track the submission status of each of your submissions made. SeqSender updates each ", ui.strong("Submission_Name"), " that does not have a complete ", ui.strong("Submission_Status"), " by loading the relevant ", ui.strong("Submission_Directory"), " and ", ui.strong("Config_File"), "."),
+        ui.tags.ul(
+            shiny_tools.file_output_column_info(column_name="Submission_Name",
+                description=("Unique ", ui.code("--submission_name"), " used when making your submission via the ", ui.code("submit"), " command. Used by SeqSender to locate the currect submission directory and to name your batch submission during the upload process."),
+                controlled_fields=None
+            ),
+            shiny_tools.file_output_column_info(column_name="Organism",
+                description=("Submission organism option ", ui.code("--organism"), " when making your submission which can enable certain additional submission options."),
+                controlled_fields=[((ui.code("FLU"), "|", ui.code("COV")), ("For ", ui.strong("Influenza Virus A"), " or ", ui.strong("Severe Acute Respiratory Syndrome Coronavirus 2"), ", it enables GISAID and GenBank (via FTP) as submission options.")),
+                    ((ui.code("POX"), "|", ui.code("ARBO")), ("For ", ui.strong("Mpox"), " or ", ui.strong("Arbovirus"), ", it enables GISAID as a submission option.")),
+                    ((ui.code("OTHER")), ("For any organism without additional submission options. It provides access to the default available databases: BioSample, SRA, and GenBank (table2asn via email)."))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Database",
+                description="Database being submitted to.",
+                controlled_fields=[((ui.code("BIOSAMPLE"), "|", ui.code("SRA"), "|", ui.code("GENBANK-TBL2ASN"), "|", ui.code("GENBANK-FTP"), "|", ui.code("GISAID")), ("Specifies the database being submitted to. For GenBank, it also includes the submission method for table2asn as \"-TBL2ASN\" or FTP as \"-FTP\"."))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Submission_Type",
+                description="Whether the submission you're making is live or a test.",
+                controlled_fields=[((ui.code("TEST"), "|", ui.code("PRODUCTION")), ("Test or live (production) submission."))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Submission_Date",
+                description=("Date submission was started with the SeqSender ", ui.code("submit"), " command."),
+                controlled_fields=[((ui.code("YYYY-MM-DD")), ("ISO-8601 standard date format. (i.e. 2024-01-01, 2024-12-31)"))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Submission_Status",
+                description=("Current status of the submission to the database specified. \"GISAID\" only uses ", ui.strong("WAITING"), ", ", ui.strong("PROCESSING"), ", ", ui.strong("PROCESSED"), ", and ", ui.strong("ERROR"), ". \"GENBANK-TBL2ASN\" uses ", ui.strong("EMAILED"), " instead of ", ui.strong("PROCESSED"), " to designate the submission is complete."),
+                controlled_fields=[((ui.code("SUBMITTED")), ("Submission has been uploaded to NCBI database.")),
+                    ((ui.code("CREATED")), ("NCBI is currently loading the submission files.")),
+                    ((ui.code("QUEUED")), ("NCBI has queued your submission for processing.")),
+                    ((ui.code("PROCESSING")), ("Submission is currently processing for NCBI database. For GISAID this means that when SeqSender attempted to upload your samples, it was unable to completely upload them all. When the ", ui.code("submission_status"), " command is ran again it will attempt to submit the rest of the samples.")),
+                    ((ui.code("FAILED")), ("Submission failed processing for NCBI database.")),
+                    ((ui.code("PROCESSED")), ("Submission has been successfully uploaded to NCBI or GISAID database.")),
+                    ((ui.code("ERROR")), ("SeqSender failed to process report for NCBI database. For GISAID, SeqSender is failing to upload or samples are unable to be submitted to GISAID.")),
+                    ((ui.code("WAITING")), ("Submission is waiting on other submissions to complete processing, to correctly link information.")),
+                    ((ui.code("DELETED")), ("NCBI has deleted your submission. This could be because your submission remained errored for too long without resolution or you requested to have the submission removed.")),
+                    ((ui.code("RETRIED")), ("NCBI has attempted retrying processing of your submission.")),
+                    ((ui.code("EMAILED")), ("SeqSender has successfully emailed your table2asn submission to upload it to GenBank."))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Submission_ID",
+                description=("NCBI submission ID tied to the ", ui.code("Submission_Name"), "."),
+                controlled_fields=[((ui.code("PENDING"), "|", ui.code("SUB#"), "|", ui.code("SUBMITTED")), ("Until submission ID is generated it will use ", ui.strong("PENDING"), ". GISAID uses ", ui.strong("SUBMITTED"), " to designate a submission is complete in lieu of a submission ID."))]
+            ),
+            shiny_tools.file_output_column_info(column_name="Submission_Directory",
+                description=("Full file path for the specified ", ui.strong("Submission_Name"), ", ", ui.strong("Database"), ", submission directory."),
+                controlled_fields=None
+            ),
+            shiny_tools.file_output_column_info(column_name="Config_File",
+                description=("Full file path for the ", ui.code("--config_file"), " input provided during the ", ui.code("submit"), " command."),
+                controlled_fields=None
+            ),
+            shiny_tools.file_output_column_info(column_name="Update_Date",
+                description=("Date submission was last updated with SeqSender via the ", ui.code("submission_status"), " command."),
+                controlled_fields=[((ui.code("YYYY-MM-DD")), ("ISO-8601 standard date format. (i.e. 2024-01-01, 2024-12-31)"))]
+            ),
+        ),
+    ),
+    ui.h6("submission_status_report.csv"),
+    ui.tags.ul(
+        ui.p("The ", ui.strong("submission_status_report.csv"), " is used by SeqSender to record/link the samples submitted to each database. When SeqSender is linking accessions between NCBI databases, it will use this file to retrieve the recorded accessions and update the relevant submisison files."),
+        ui.tags.ul(
+            shiny_tools.file_output_column_info(column_name="bs-sample_name",
+                description=("Sample name used for submission to BioSample."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="biosample_status",
+                description=("Status of the sample submitted to BioSample."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="biosample_accession",
+                description=("Accession assigned to sample by BioSample."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="biosample_message",
+                description=("Message related to sample from BioSample."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="sra-sample_name",
+                description=("Sample name used for submission to SRA."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="sra_status",
+                description=("Status of the sample submitted to SRA."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="sra_accession",
+                description=("Accession assigned to sample by SRA."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="sra_message",
+                description=("Message related to sample from SRA."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gb-sample_name",
+                description=("Sample name used for submission to GenBank."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="genbank_status",
+                description=("Status of the sample submitted to GenBank."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="genbank_accession",
+                description=("Accession assigned to sample by GenBank."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="genbank_message",
+                description=("Message related to sample from GenBank."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gs-sample_name",
+                description=("Sample name used for submission to GISAID."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gs-segment_name",
+                description=("Sample name of influenza genome segment used for submission to GISAID."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gisaid_accession_epi_isl_id",
+                description=("Accession assigned to sample by GISAID."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gisaid_accession_epi_isl_id",
+                description=("Accession assigned by GISAID to sample influenza genome segment."),
+                controlled_fields=None,
+            ),
+            shiny_tools.file_output_column_info(column_name="gisaid_message",
+                description=("Message related to sample from GISAID."),
+                controlled_fields=None,
+            ),
+        ),
+    ),
+    ui.hr(),
+    ui.h4("BioSample Directory:"),
+    ui.hr(),
+    ui.h6("metadata.tsv"),
+    ui.tags.ul(
+        ui.p("BioSample submission metadata file. Can be used to submit your BioSample data to NCBI via their submission website instead of FTP."),
+    ),
+    ui.h6("report.xml"),
+    ui.tags.ul(
+        ui.p("Report generated by BioSample regarding the status of the current submission and sample information."),
+    ),
+    ui.h6("submission.xml"),
+    ui.tags.ul(
+        ui.p("BioSample submission xml file. Used by SeqSender to submit your BioSample data to NCBI via their FTP submission option."),
+    ),
+    ui.hr(),
+    ui.h4("SRA Directory:"),
+    ui.hr(),
+    ui.h6("metadata.tsv"),
+    ui.tags.ul(
+        ui.p("SRA submission metadata file. Can be used to submit your SRA data to NCBI via their submission website instead of FTP."),
+    ),
+    ui.h6("raw_reads_location.txt"),
+    ui.tags.ul(
+        ui.p("SeqSender file, used to record the location of all raw reads files to be uploaded to SRA via FTP."),
+    ),
+    ui.h6("report.xml"),
+    ui.tags.ul(
+        ui.p("Report generated by SRA regarding the status of the current submission and sample information."),
+    ),
+    ui.h6("submission.xml"),
+    ui.tags.ul(
+        ui.p("SRA submission xml file. Used by SeqSender to submit your SRA data to NCBI via FTP."),
+    ),
+    ui.hr(),
+    ui.h4("GenBank Directory:"),
+    ui.hr(),
+    ui.h6("AccessionReport.tsv"),
+    ui.tags.ul(
+        ui.p("GenBank FTP output file. Contains the status of each sample and its corrsponding accession.."),
+    ),
+    ui.h6("authorset.sbt"),
+    ui.tags.ul(
+        ui.p("GenBank submission file for author/organization information."),
+    ),
+    ui.h6("comment.cmt"),
+    ui.tags.ul(
+        ui.p("Optional tab-delimited, GenBank submission file. Contains additional sequencing and assembly information."),
+    ),
+    ui.h6("email.txt"),
+    ui.tags.ul(
+        ui.p("GenBank FTP output file. This is a copy of the email sent by GenBank to every member of your group account after your GenBank sequences have been ", ui.strong("PROCESSED"), "."),
+    ),
+    ui.h6("flatfile.txt"),
+    ui.tags.ul(
+        ui.p("GenBank FTP output file. This is a copy of the annotated sample GenBank record, in GenBank flatfile format. This is how your sample looks like live on GenBank. "),
+    ),
+    ui.h6("report.xml"),
+    ui.tags.ul(
+        ui.p("Report generated by GenBank regarding the status of the current submission."),
+    ),
+    ui.h6("seq-edit-report.html"),
+    ui.tags.ul(
+        ui.p("Optional GenBank FTP output file. If your samples were automatically modified by GenBank during the submission process to adhere to GenBank standards then the changes to each sample will be listed here. This does not mean your sample failed to upload, this usually is to just a minor typo or incorrect syntax. If your config file field ", ui.code("GenBank_Auto_Remove_Failed_Samples"), " is set to ", ui.code("True"), " then the samples automatically removed by GenBank for failing to meet their submission criteria will also be listed here with the reason."),
+    ),
+    ui.h6("sequence.fsa"),
+    ui.tags.ul(
+        ui.p("GenBank fasta file. Can be used to submit your data to GenBank via their website or it is used by SeqSender to upload via FTP or to create the tabl2asn sqn file."),
+    ),
+    ui.h6("source.src"),
+    ui.tags.ul(
+        ui.p("GenBank metadata file. Can be used to submit your data to GenBank via their website or it is used by SeqSender to upload via FTP or to create the tabl2asn sqn file."),
+    ),
+    ui.h6("submission.xml"),
+    ui.tags.ul(
+        ui.p("GenBank FTP submission xml file. Used to identify submission information and GenBank submission zip file."),
+    ),
+    ui.h6("<submission_name>.zip"),
+    ui.tags.ul(
+        ui.p("GenBank FTP submission zip file. When submitting to GenBank via FTP, this contains all of your submission files: ", ui.strong("sequence.fsa"), ", ", ui.strong("source.src"), ", ", ui.strong("authorset.sbt"), ", ", ui.strong("comment.cmt"), "."),
+    ),
+    ui.h6("<submission_name>.gff"),
+    ui.tags.ul(
+        ui.p("Copy of gff file provided via command ", ui.code("--gff_file"), " when submitting via table2asn. It is used by SeqSender to create the table2asn sqn file."),
+    ),
+    ui.hr(),
+    ui.h4("GISAID Directory:"),
+    ui.hr(),
+    ui.h6("gisaid_upload_log_#.txt"),
+    ui.tags.ul(
+        ui.p("GISAID CLI output log where \"#\" is the numbered attempt. When SeqSender is attempting to uplo5ad to GISAID, if it fails during the submission it will attempt the submission again ", ui.strong("3"), " times. When SeqSender command ", ui.code("submission_status"), ", is ran, if the GISAID submission is still incomplete, it will attempt the process again, overwriting the previous log files until it reaches ", ui.strong("3"), " again or completes the submission."),
+    ),
+    ui.h6("metadata.csv"),
+    ui.tags.ul(
+        ui.p("GISAID metadata file. Can be used to submit your data to GISAID via their website or it is used by SeqSender to upload it to GISAID."),
+    ),
+    ui.h6("orig_metadata.csv"),
+    ui.tags.ul(
+        ui.p("Unmodified copy of the GISAID metadata file. As SeqSender uploads to GISAID, if it fails during the submission process, the samples successfully loaded to GISAID need to be removed from the ", ui.strong("metadata.csv"), " in order to reattempt uploading the remaining samples.")
+    ),
+    ui.h6("orig_sequence.fsa"),
+    ui.tags.ul(
+        ui.p("Unmodified copy of the GISAID fasta file. As SeqSender uploads to GISAID, if it fails during the submission process, the samples successfully loaded to GISAID need to be removed from the ", ui.strong("sequence.fsa"), " in order to reattempt uploading the remaining samples.")
+    ),
+    ui.h6("sequence.fsa"),
+    ui.tags.ul(
+        ui.p("GISAID fasta file. Can be used to submit your data to GISAID via their website or it is used by SeqSender to upload it to GISAID.")
+    ),
+]
+
 ####################### COMMANDS PAGE ###################
 
 commands_body = [
@@ -365,12 +566,14 @@ app_ui = ui.page_fluid(
     ui.head_content(ui.include_css(pathlib.Path(__file__).parent / "seqsender.css")),
     ui.page_navbar(
         ui.nav_panel("SeqSender", index_body),
-        ui.nav_panel("Prerequisites", prerequisites_body),
+        ui.nav_panel("About", about_body),
         ui.nav_panel("Installation", installation_body),
-        ui.nav_panel("Setup", setup_body),
-        ui.nav_panel("First Submission", testing_body),
+        ui.nav_panel("Prerequisites", prerequisites_body),
+        ui.nav_panel("Submission Wizard", setup_body),
+        ui.nav_panel("My First Submission", first_submission_body),
+        ui.nav_panel("Output Files", output_body),
         ui.nav_panel("Commands", commands_body),
-        ui.nav_panel("FAQ", faq_body),
+        # ui.nav_panel("FAQ", faq_body),
         selected="SeqSender",
         header=header,
         footer=footer,
@@ -381,7 +584,6 @@ app_ui = ui.page_fluid(
 import pathlib
 
 dir = pathlib.Path(__file__).parent
-
 
 @reactive.file_reader(dir / "templates/config.seqsender.schema_template.csv")
 def read_file():
@@ -400,7 +602,6 @@ def read_sra_file():
 # Function to style metadata shiny index
 def metadata_index_css(index):
     return "background-color: #f0f0f0;"
-
 
 # Function to style metadata shiny column headers
 def metadata_database_css(column):
@@ -530,63 +731,62 @@ def server(input, output, session):
     @reactive.Calc
     @render.download(filename="seqsender_config.yaml")
     def download_config():
-        config_file = dict()
-        if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox():
-            config_file["Submission"] = {
-            "NCBI":{
-                "Username": input.ncbi_config_username(),
-                "Password": input.ncbi_config_password(),
-                "BioSample_Package": input.config_bs_package(),
-                "Submission_Position": input.ncbi_submission_position(),
+        config_file = initialize_config()
+        yield yaml.safe_dump(config_file, sort_keys=False).replace(r"''", '')
+
+    @reactive.Calc
+    def initialize_config():
+        config_file = {"Submission": {
+            **({"NCBI":{
+                "Username": input.ncbi_config_username() or "",
+                "Password": input.ncbi_config_password() or "",
+                "Spuid_Namespace": input.ncbi_config_spuid_namespace() or "",
+                **({"BioSample_Package": input.BioSample_packages() or ""} if input.BioSample_checkbox() else {}),
+                **({"GenBank_Auto_Remove_Failed_Samples": input.ncbi_config_auto_remove_genbank() or ""} if input.GenBank_checkbox() else {}),
+                "Publication_Title": input.ncbi_config_publication_title() or "",
+                "Publication_Status": input.ncbi_config_publication_status() or "",
+                **({"Submission_Position": input.ncbi_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
+                "Specified_Release_Date": input.ncbi_config_release_date() or "",
+                "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
                 "Description": {
-                    "Title": input.ncbi_config_title(),
-                    "Comment": input.ncbi_config_comment(),
+                    "Title": input.ncbi_config_title() or "",
+                    "Comment": input.ncbi_config_comment() or "",
                     "Organization": {
-                        "@role": input.ncbi_config_role(),
-                        "@type": input.ncbi_config_type(),
-                        "Name": input.ncbi_config_org_name(),
+                        "Role": input.ncbi_config_role() or "",
+                        "Type": input.ncbi_config_type() or "",
+                        "Name": input.ncbi_config_org_name() or "",
                         "Address": {
-                            "Affil": input.ncbi_config_affil(),
-                            "Div": input.ncbi_config_div(),
-                            "Street": input.ncbi_config_street(),
-                            "City": input.ncbi_config_city(),
-                            "Sub": input.ncbi_config_state(),
-                            "Postal_code": input.ncbi_config_postal(),
-                            "Country": input.ncbi_config_country(),
-                            "Email": input.ncbi_config_email(),
-                            "Phone": input.ncbi_config_phone(),
+                            "Affil": input.ncbi_config_affil() or "",
+                            "Div": input.ncbi_config_div() or "",
+                            "Street": input.ncbi_config_street() or "",
+                            "City": input.ncbi_config_city() or "",
+                            "Sub": input.ncbi_config_state() or "",
+                            "Postal_Code": input.ncbi_config_postal() or "",
+                            "Country": input.ncbi_config_country() or "",
+                            "Email": input.ncbi_config_email() or "",
+                            "Phone": input.ncbi_config_phone() or "",
                             "Submitter": {
-                                "@email": input.ncbi_sub_email_one(),
-                                "@alt_email": input.ncbi_sub_email_two(),
+                                "Email": input.ncbi_sub_email_one() or "",
+                                "Alt_Email": input.ncbi_sub_email_two() or "",
                                 "Name": {
-                                    "First": input.ncbi_config_first_name(),
-                                    "Last": input.ncbi_config_last_name(),
+                                    "First": input.ncbi_config_first_name() or "",
+                                    "Last": input.ncbi_config_last_name() or "",
                                     }
                                 }
                             }
                         }
                     }
-                }
+                }} if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox() else {}),
+            **({"GISAID": {
+                "Client-Id": input.gisaid_config_client() or "",
+                "Username": input.gisaid_config_username() or "",
+                "Password": input.gisaid_config_password() or "",
+                **({"Submission_Position": input.gisaid_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
+                }} if input.GISAID_checkbox() else {})
             }
-        if input.GISAID_checkbox():
-            if config_file:
-                config_file["Submission"]["GISAID"] = {
-                    "Client-Id": input.gisaid_config_client(),
-                    "Username": input.gisaid_config_username(),
-                    "Password": input.gisaid_config_password(),
-                    "Submission_Position": input.gisaid_submission_position(),
-                }
-            else:
-                config_file["Submission"] = {
-                "GISAID": {
-                    "Client-Id": input.gisaid_config_client(),
-                    "Username": input.gisaid_config_username(),
-                    "Password": input.gisaid_config_password(),
-                    "Submission_Position": input.gisaid_submission_position(),
-                    }
-                }
-        with open("seqsender_config.yaml", "w") as file:
-            yaml.dump(config_file, file, default_flow_style = False)
+        }
+        config_file = {key: (None if value == "" else value) for key, value in config_file.items()}
+        return config_file
 
     @reactive.Calc
     @render.download(filename="metadata_template.csv")
@@ -604,6 +804,7 @@ def server(input, output, session):
         if input.GISAID_checkbox():
             gisaid_df = initialize_gisaid_dataframes()
             database_df = pd.concat([database_df, gisaid_df], axis=1)
+        database_df = database_df.loc[:,~database_df.columns.duplicated()].copy()
         yield database_df.to_csv()
 
 

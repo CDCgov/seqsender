@@ -1,15 +1,21 @@
 Submission:
   NCBI:
-    Username: username
-    Password: password
+    Username: group_username
+    Password: group_password
+    Spuid_Namespace: test_group
     BioSample_Package: SARS-CoV-2.cl.1.0
-    Submission_Position: 2
+    GenBank_Auto_Remove_Failed_Samples: True
+    Publication_Title: COVID-19 test submission
+    Publication_Status: unpublished
+    Submission_Position: 1
+    Specified_Release_Date: ""
+    Link_Sample_Between_NCBI_Databases: True
     Description:
       Title: cov_test_submission
-      Comment: This is a test submission
+      Comment: This is a test submission.
       Organization:
-        '@role': owner
-        '@type': institute
+        Role: owner
+        Type: institute
         Name: CDC
         Address:
            Affil: Centers for Disease Control and Prevention
@@ -17,13 +23,13 @@ Submission:
            Street: 1600 Clifton Rd
            City: Atlanta
            Sub: GA
-           Postal_code: 30329
+           Postal_Code: 30329
            Country: USA
            Email: email@myemail.com
            Phone: ""
         Submitter:
-          '@email': email@myemail.com
-          '@alt_email':
+          Email: email@myemail.com
+          Alt_Email: ""
           Name:
             First: Jane
             Last: Doe
@@ -31,4 +37,4 @@ Submission:
     Client-Id: TEST-EA76875B00C3
     Username: username
     Password: password
-    Submission_Position: 1
+    Submission_Position: 2
