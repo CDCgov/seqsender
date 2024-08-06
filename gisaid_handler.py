@@ -97,7 +97,6 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
 	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
 	time.sleep(5)
-	sub = process_gisaid_log(log_file=os.path.join(submission_dir, "gisaid_upload_log_" + str(1) + ".txt"), submission_dir=submission_dir)
 	# Set number of attempt to 3 if erroring out occurs
 	attempts = 1
 	# Submit to GISAID
