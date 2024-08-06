@@ -1,0 +1,13 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-strain,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". microbial or eukaryotic strain name"
+bs-isolate,"At least one field required. Group: At least one required: Group ""Organism","At least one required: Group ""Organism"". identification or description of the specific individual from which this sample was obtained"
+bs-beta_lactamase_family,Required,Specify the beta-lactamase family for this gene.
+bs-carbapenemase,Required,"Does the enzyme exhibit carbapenemase activity? If the enzyme does exhibit carbapenemase activity, the response should be ""yes"", otherwise ""no."""
+bs-edta_inhibitor_tested,Required,"Was carbapenemase activity tested in the presence of EDTA? If carbapenemase activity was tested in the presence of EDTA, the response should be ""yes"", otherwise ""no”."
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-collected_by,Optional,Name of persons or institute who collected the sample
+bs-host,Optional,"The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, ""Homo sapiens""."
+bs-isolation_source,Optional,"Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-lab_host,Optional,"Scientific name and description of the laboratory host used to propagate the source organism or material from which the sample was obtained, e.g., Escherichia coli DH5a, or Homo sapiens HeLa cells"
+bs-lat_lon,Optional,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"

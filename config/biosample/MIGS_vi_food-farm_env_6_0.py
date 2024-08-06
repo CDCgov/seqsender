@@ -2,6 +2,18 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
+		"bs-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for BioSample. Max length is 50 characters.",
+			title="sample_name",
+		),
 		"bs-strain": Column(
 			dtype="object",
 			checks=None,
@@ -9,7 +21,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="microbial or eukaryotic strain name",
+			description="At least one required: Group \"Organism\". microbial or eukaryotic strain name",
 			title="strain",
 		),
 		"bs-isolate": Column(
@@ -19,7 +31,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="identification or description of the specific individual from which this sample was obtained",
+			description="At least one required: Group \"Organism\". identification or description of the specific individual from which this sample was obtained",
 			title="isolate",
 		),
 		"bs-biotic_regm": Column(
@@ -1560,7 +1572,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package MIGS.vi.food-farm_env.6.0 schema",
 	description="Schema validation for BioSample database using MIGS.vi.food-farm_env.6.0 package.",
 )

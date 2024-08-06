@@ -2,6 +2,18 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
+		"bs-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for BioSample. Max length is 50 characters.",
+			title="sample_name",
+		),
 		"bs-collected_by": Column(
 			dtype="object",
 			checks=None,
@@ -432,7 +444,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package SARS-CoV-2.cl.1.0 schema",
 	description="Schema validation for BioSample database using SARS-CoV-2.cl.1.0 package.",
 )

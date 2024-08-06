@@ -1,0 +1,3 @@
+organism,collection_date,authors,bioproject,bs-sample_name,bs-isolate,bs-description,bs-collected_by, bs-host, bs-host_disease,bs-isolation_source,bs-geo_loc_name,bs-host_sex,bs-host_age
+Severe acute respiratory syndrome coronavirus 2,2020-03-28,John Doe; Jane Doe;,PRJNA512913,SARS-CoV-2/human/USA/GA_2741/2020,SARS-CoV-2/human/USA/GA_2741/2020,Sars CoV2 Sequencing Baseline Constellation,Helix,Homo sapiens,COVID-19,nasal swab,United States: Georgia,Male,28
+Severe acute respiratory syndrome coronavirus 2,2020-04-29,John Doe; Jane Doe;,PRJNA512962,SARS-CoV-2/human/USA/GA_3742/2020,SARS-CoV-2/human/USA/GA_3742/2020,Sars CoV2 Sequencing Baseline Constellation,Helix,Homo sapiens,COVID-20,nasal swab,United States: Georgia,Male,45

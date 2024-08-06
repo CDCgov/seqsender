@@ -26,11 +26,11 @@ github_pages_url <- description$GITHUB_PAGES
 
 <p style="font-size: 16px;"><em>Public Database Submission Pipeline</em></p>
 
-**Beta Version**: `r version`. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome! 
+**Beta Version**: v1.2.0. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome! 
 
 **General Disclaimer**: This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
-# [Documentation](`r github_pages_url`/index.html)
+# [Documentation](https://dthoward96.github.io/seqsender_test_website/)
 
 ## Overview
 
@@ -58,7 +58,7 @@ github_pages_url <- description$GITHUB_PAGES
 
 4. Refer to this page for information regarding requirements for GenBank submissions via FTP only. This page applies only for COVID and Influenza [NCBI GenBank FTP Submissions](https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5) For further questions contact <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a> to discuss requirements for submissions.
 
-5. Coordinate a NCBI namespace name (**spuid_namespace**) that will be used with Submitter Provided Unique Identifiers (**spuid**) in the submission. The liaison of **spuid_namespace** and **spuid** is used to report back assigned accessions as well as for cross-linking objects within submission. The values of **spuid_namespace** are up to the submitter to decide but they must be unique and well-coordinated prior to make a submission. For more information about these two fields, see [BioSample](`r github_pages_url`/articles/biosample_submission.html#metadata) / [SRA](`r github_pages_url`/articles/sra_submission.html#metadata) / [GENBANK](`r github_pages_url`/articles/genbank_submission.html#metadata) metadata requirements.
+5. Coordinate a NCBI namespace name (**spuid_namespace**) that will be used with Submitter Provided Unique Identifiers (**spuid**) in the submission. The liaison of **spuid_namespace** and **spuid** is used to report back assigned accessions as well as for cross-linking objects within submission. The values of **spuid_namespace** are up to the submitter to decide but they must be unique and well-coordinated prior to make a submission.
 
 - **GISAID Submissions**
 
@@ -74,34 +74,6 @@ Here is a quick look of where to store the downloaded **GISAID CLI** package.
 
 ![](man/figures/gisaid_cli_dir.png)
 
-
-
-## Requirement Files
-
-Before submitters can perform a batch submission using ``r program``, they must make sure the requirement files (such as *config.yaml*, *metadata.csv*, *sequence.fasta*, *raw reads*, etc.) are already prepared and stored in a submission directory of choice.
-
-To prep for submissions, select one of the databases below to get started:
-*to submit to multiple databases just combine the required metadata for each database into one file.
-
-**NCBI:**
-
-> <a href="`r github_pages_url`/articles/biosample_submission.html" target="_blank">BioSample</a> <br>
-> <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
-> <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
-
-**GISAID:**
-
-> <a href="`r github_pages_url`/articles/gisaid_flu_submission.html" target="_blank">EpiFlu</a> <br>
-> <a href="`r github_pages_url`/articles/gisaid_cov_submission.html" target="_blank">EpiCoV</a> <br>
-> <a href="`r github_pages_url`/articles/gisaid_pox_submission.html" target="_blank">EpiPox</a> <br>
-> <a href="`r github_pages_url`/articles/gisaid_arbo_submission.html" target="_blank">EpiArbo</a> <br>
-
-## Quick Start
-
-- [How to run seqsender locally](`r github_pages_url`/articles/local_installation.html)
-- [How to run seqsender with Docker](`r github_pages_url`/articles/docker_installation.html)
-- [How to run seqsender with Compose](`r github_pages_url`/articles/compose_installation.html)
-- [How to run seqsender with Singularity](`r github_pages_url`/articles/singularity_installation.html)
 
 ## Code Attributions
 

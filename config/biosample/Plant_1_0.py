@@ -2,6 +2,18 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
+		"bs-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for BioSample. Max length is 50 characters.",
+			title="sample_name",
+		),
 		"bs-isolate": Column(
 			dtype="object",
 			checks=None,
@@ -9,7 +21,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="identification or description of the specific individual from which this sample was obtained",
+			description="At least one required: Group \"Organism\". identification or description of the specific individual from which this sample was obtained",
 			title="isolate",
 		),
 		"bs-cultivar": Column(
@@ -19,7 +31,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="cultivar name - cultivated variety of plant",
+			description="At least one required: Group \"Organism\". cultivar name - cultivated variety of plant",
 			title="cultivar",
 		),
 		"bs-ecotype": Column(
@@ -29,7 +41,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="a population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat, e.g., Columbia",
+			description="At least one required: Group \"Organism\". a population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat, e.g., Columbia",
 			title="ecotype",
 		),
 		"bs-age": Column(
@@ -39,7 +51,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="age at the time of sampling; relevant scale depends on species and study, e.g. could be seconds for amoebae or centuries for trees",
+			description="At least one required: Group \"Age/stage\". age at the time of sampling; relevant scale depends on species and study, e.g. could be seconds for amoebae or centuries for trees",
 			title="age",
 		),
 		"bs-dev_stage": Column(
@@ -49,7 +61,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Developmental stage at the time of sampling.",
+			description="At least one required: Group \"Age/stage\". Developmental stage at the time of sampling.",
 			title="development stage",
 		),
 		"bs-geo_loc_name": Column(
@@ -273,7 +285,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package Plant.1.0 schema",
 	description="Schema validation for BioSample database using Plant.1.0 package.",
 )

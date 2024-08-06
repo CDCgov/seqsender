@@ -1,0 +1,189 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-isolate,Required,identification or description of the specific individual from which this sample was obtained
+bs-host,"At least one field required. Group: At least one required: Group ""Source","At least one required: Group ""Source"". The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, ""Homo sapiens""."
+bs-isolation_source,"At least one field required. Group: At least one required: Group ""Source","At least one required: Group ""Source"". Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-abs_air_humidity,Required,actual mass of water vapor - mh20 - present in the air water vapor mixture
+bs-air_temp,Required,temperature of the air at the time of sampling
+bs-build_occup_type,Required,primary function for which a building or discrete part of a building is intended to be used
+bs-building_setting,Required,location (geography) where a building is set
+bs-carb_dioxide,Required,carbon dioxide (gas) amount or concentration at the time of sampling
+bs-env_broad_scale,Required,Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]
+bs-env_local_scale,Required,"Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]"
+bs-env_medium,Required,Add terms that identify the material displaced by the entity at time of sampling. Recommend subclasses of environmental material [ENVO:00010483]. Multiple terms can be separated by pipes e.g.: estuarine water [ENVO:01000301]|estuarine mud [ENVO:00002160]
+bs-filter_type,Required,device which removes solid particulates or airborne molecular contaminants
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-heat_cool_type,Required,methods of conditioning or heating a room or building
+bs-indoor_space,Required,"a distinguishable space within a structure, the purpose for which discrete areas of a building is used"
+bs-lat_lon,Required,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
+bs-light_type,Required,"application of light to achieve some practical or aesthetic effect. Lighting includes the use of both artificial light sources such as lamps and light fixtures, as well as natural illumination by capturing daylight. Can also include absence of light"
+bs-occup_samp,Required,number of occupants present at time of sample within the given space
+bs-occupant_dens_samp,Required,average number of occupants at time of sampling per square footage
+bs-organism_count,Required,"total count of any organism per gram or volume of sample,should include name of organism followed by count; can include multiple organism counts"
+bs-rel_air_humidity,Required,"partial vapor and air pressure, density of the vapor and air, or by the actual mass of the vapor and air"
+bs-source_uvig,Required,Type of dataset from which the UViG was obtained
+bs-space_typ_state,Required,customary or normal state of the space
+bs-typ_occupant_dens,Required,customary or normal density of occupants
+bs-ventilation_type,Required,ventilation system used in the sampled premises
+bs-virus_enrich_appr,Required,"Approach used to enrich the sample for viruses, if any. If more than one approach was used, include multiple ‘virus_enrich_appr’ fields."
+bs-address,Optional,The street name and building number where the sampling occurred
+bs-adj_room,Optional,"List of rooms (room number, room name) immediately adjacent to the sampling room"
+bs-aero_struc,Optional,"Aerospace structures typically consist of thin plates with stiffeners for the external surfaces, bulkheads and frames to support the shape and fasteners such as welds, rivets, screws and bolts to hold the components together, e.g., plane, glider"
+bs-amount_light,Optional,"The unit of illuminance and luminous emittance, measuring luminous flux per unit area"
+bs-arch_struc,Optional,"An architectural structure is a human-made, free-standing, immobile outdoor construction, e.g., building, shed, home"
+bs-avg_dew_point,Optional,The average of dew point measures taken at the beginning of every hour over a 24 hour period on the sampling day
+bs-avg_occup,Optional,Daily average occupancy of room. Indicate the number of person(s) daily occupying the sampling room
+bs-avg_temp,Optional,The average of temperatures taken at the beginning of every hour over a 24 hour period on the sampling day
+bs-bathroom_count,Optional,The number of bathrooms in the building
+bs-bedroom_count,Optional,The number of bedrooms in the building
+bs-biotic_relationship,Optional,Free-living or from host (define relationship)
+bs-build_docs,Optional,"The building design, construction and operation documents, e.g., building information model, commissioning report, complaint logs, contract administration, cost estimate, janitorial schedules or logs, maintenance plans, schedule, sections, shop drawings, submittals, ventilation system, windows"
+bs-built_struc_age,Optional,The age of the built structure since construction
+bs-built_struc_set,Optional,"The characterization of the location of the built structure as high or low human density, e.g., urban, rural"
+bs-built_struc_type,Optional,A physical structure that is a body or assemblage of bodies in space to form a system capable of supporting loads
+bs-ceil_area,Optional,The area of the ceiling space within the room
+bs-ceil_cond,Optional,"The physical condition of the ceiling at the time of sampling, e.g., new, visible wear, needs repair, damaged, rupture"
+bs-ceil_finish_mat,Optional,"The type of material used to finish a ceiling, e.g., drywall, mineral fibre, tiles, PVC, plasterboard, metal, fiberglass, stucco, mineral wool/calcium silicate, wood"
+bs-ceil_struc,Optional,"The construction format of the ceiling, e.g., wood frame, concrete"
+bs-ceil_texture,Optional,"The feel, appearance, or consistency of a ceiling surface, e.g., crows feet, crows-foot stomp, double skip, hawk and trowel, knockdown, popcorn, orange peel, rosebud stomp, Santa-Fe texture, skip trowel, smooth, stomp knockdown, swirl"
+bs-ceil_thermal_mass,Optional,The ability of the ceiling to provide inertia against temperature fluctuations. Generally this means concrete that is exposed. A metal deck that supports a concrete slab will act thermally as long as it is exposed to room air flow
+bs-ceil_type,Optional,"The type of ceiling according to the ceiling's appearance or construction, e.g., cathedral, dropped, concave, barrel-shaped, coffered, cove, stretched"
+bs-ceil_water_mold,Optional,"Signs of the presence of mold or mildew on the ceiling, e.g., presence of mold visible, no presence of mold visible"
+bs-collection_method,Optional,"Process used to collect the sample, e.g., bronchoalveolar lavage (BAL)"
+bs-cool_syst_id,Optional,The cooling system identifier
+bs-date_last_rain,Optional,The date of the last time it rained
+bs-dew_point,Optional,"temperature to which a given parcel of humid air must be cooled, at constant barometric pressure, for water vapor to condense into water."
+bs-door_comp_type,Optional,"The composite type of the door, e.g., metal covered, revolving, sliding, telescopic"
+bs-door_cond,Optional,"The physical condition of the door, e.g., damaged, needs repair, new, rupture, visible wear"
+bs-door_direct,Optional,"The direction the door opens, e.g., inward, outward, sideways"
+bs-door_loc,Optional,"The relative location of the door in the room, e.g., north, south, east, west"
+bs-door_mat,Optional,"The material the door is composed of, e.g., aluminum, cellular PVC, engineered plastic, fiberboard, fiberglass, metal, thermoplastic alloy, vinyl, wood, wood/plastic composite"
+bs-door_move,Optional,"The type of movement of the door, e.g., collapsible, folding, revolving, rolling shutter, sliding, swinging"
+bs-door_size,Optional,The size of the door
+bs-door_type,Optional,"The type of door material, e.g., composite, metal, wooden"
+bs-door_type_metal,Optional,"The type of metal door, e.g., collapsible, corrugated steel, hollow, rolling shutters, steel plate"
+bs-door_type_wood,Optional,"The type of wood door, e.g., bettened and ledged, battened, ledged and braced, battened, ledged and framed, battened, ledged, braced and frame, framed and paneled, glashed or sash, flush, louvered, wire gauged"
+bs-door_water_mold,Optional,"Signs of the presence of mold or mildew on a door, e.g., presence of mold visible, no presence of mold visible"
+bs-drawings,Optional,"The buildings architectural drawings, e.g., operation, as built, construction, bid, design, building navigation map, diagram, sketch"
+bs-elevator,Optional,The number of elevators within the built structure
+bs-escalator,Optional,The number of escalators within the built structure
+bs-estimated_size,Optional,Estimated size of genome
+bs-exp_duct,Optional,The amount of exposed ductwork in the room
+bs-exp_pipe,Optional,The number of exposed pipes in the room
+bs-experimental_factor,Optional,Variable aspect of experimental design
+bs-ext_door,Optional,The number of exterior doors in the built structure
+bs-ext_wall_orient,Optional,"The orientation of the exterior wall, e.g., north, south, east, west, northeast, southeast, southwest, northwest"
+bs-ext_window_orient,Optional,"The compass direction the exterior window of the room is facing, e.g., north, south, east, west, northeast, southeast, southwest, northwest"
+bs-fireplace_type,Optional,"A firebox with chimney, e.g., gas burning, wood burning"
+bs-floor_age,Optional,The time period since installment of the carpet or flooring
+bs-floor_area,Optional,The area of the floor space within the room
+bs-floor_cond,Optional,"The physical condition of the floor at the time of sampling, e.g., new, visible wear, needs repair, damaged, rupture"
+bs-floor_count,Optional,"The number of floors in the building, including basements and mechanical penthouse"
+bs-floor_finish_mat,Optional,"The floor covering type; the finished surface that is walked on, e.g., tile, wood strip or parquet, carpet, rug, laminate wood, lineoleum, vinyl composition tile, sheet vinyl, stone, bamboo, cork, terrazo, concrete, none;specify unfinished, sealed, clear finish, paint"
+bs-floor_struc,Optional,"Refers to the structural elements and subfloor upon which the finish flooring is installed, e.g., balcony, floating floor, glass floor, raised floor, sprung floor, wood-framed, concrete"
+bs-floor_thermal_mass,Optional,The ability of the floor to provide inertia against temperature fluctuations
+bs-floor_water_mold,Optional,"Signs of the presence of mold or mildew in a room, e.g., mold odor, wet floor, water stains, wall discoloration, floor discoloration, ceiling discoloration, peeling paint or wallpaper, bulging walls, condensation"
+bs-freq_clean,Optional,"The number of times the sample location is cleaned, e.g., daily, weekly, monthly, quarterly, annually"
+bs-freq_cook,Optional,The number of times a meal is cooked per week
+bs-furniture,Optional,"The types of furniture present in the sampled room, e.g., cabinet, chair, desks"
+bs-gender_restroom,Optional,"The gender type of the restroom, e.g., all gender, female, gender neutral, male, male and female, unisex"
+bs-hall_count,Optional,The total count of hallways and cooridors in the built structure
+bs-handidness,Optional,"The handidness of the individual sampled, e.g., ambidexterity, left handedness, mixed-handedness, right handedness"
+bs-heat_deliv_loc,Optional,"The location of heat delivery within the room, e.g., north, south, east, west"
+bs-heat_sys_deliv_meth,Optional,"The method by which the heat is delivered through the system, e.g., conductive, radiant"
+bs-heat_system_id,Optional,The heating system identifier
+bs-height_carper_fiber,Optional,The average carpet fiber height in the indoor environment
+bs-host_disease,Optional,"Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, http://bioportal.bioontology.org/ontologies/1009 or http://www.ncbi.nlm.nih.gov/mesh"
+bs-host_taxid,Optional,"NCBI taxonomy ID of the host, e.g. 9606"
+bs-indoor_surf,Optional,type of indoor surface
+bs-inside_lux,Optional,The recorded value at sampling time (power density)
+bs-int_wall_cond,Optional,"The physical condition of the wall at the time of sampling, e.g., new, visible wear, needs repair, damaged, rupture"
+bs-last_clean,Optional,"The last time the floor was cleaned (swept, mopped, vacuumed)"
+bs-max_occup,Optional,The maximum amount of people allowed in the indoor environment
+bs-mech_struc,Optional,"Mechanical structure: a moving structure, e.g., subway, coach, carriage, elevator, escalator, boat, train, car, bus"
+bs-neg_cont_type,Optional,"The substance or equipment used as a negative control in an investigation, e.g., distilled water, phosphate buffer, empty collection device, empty collection tube, DNA-free PCR mix, sterile swab, sterile syringe"
+bs-number_pets,Optional,The number of pets residing in the sampled space
+bs-number_plants,Optional,The number of plant(s) in the sampling space
+bs-number_resident,Optional,The number of individuals currently occupying in the sampling location
+bs-occup_document,Optional,"The type of documentation of occupancy, e.g., automated count, estimate, manual count, videos"
+bs-omics_observ_id,Optional,"A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory."
+bs-pathogenicity,Optional,To what is the entity pathogenic
+bs-pos_cont_type,Optional,"The substance, mixture, product, or apparatus used to verify that a process which is part of an investigation delivers a true positive"
+bs-pres_animal_insect,Optional,"The type and number of animals or insects present in the sampling space, e.g., cat 10, dog 2, rodent 100, snake 1"
+bs-quad_pos,Optional,"The quadrant position of the sampling room within the building, e.g., north side, west side, south side, east side"
+bs-ref_biomaterial,Optional,Primary publication or genome report
+bs-rel_humidity_out,Optional,The recorded outside relative humidity value at the time of sampling
+bs-rel_samp_loc,Optional,"The sampling location within the train car, e.g., edge of car, center of car, under a seat"
+bs-room_air_exch_rate,Optional,The rate at which outside air replaces indoor air in a given space
+bs-room_architec_elem,Optional,"The unique details and component parts that, together, form the architecture of a distinguisahable space within a built structure"
+bs-room_condt,Optional,"The condition of the room at the time of sampling, e.g., new, visible wear, needs repair, damaged, rupture, visible signs of mold/mildew"
+bs-room_connected,Optional,"List of rooms connected to the sampling room by a doorway, e.g., attic, bathroom, closet, conference room, elevator, examining room, hallway, kitchen, mail room, office, stairwell"
+bs-room_count,Optional,The total count of rooms in the built structure including all room types
+bs-room_dim,Optional,"The length, width and height of sampling room"
+bs-room_door_dist,Optional,Distance between doors (meters) in the hallway between the sampling room and adjacent rooms
+bs-room_door_share,Optional,"List of room(s) (room number, room name) sharing a door with the sampling room"
+bs-room_hallway,Optional,"List of room(s) (room number, room name) located in the same hallway as sampling room"
+bs-room_loc,Optional,"The position of the room within the building, e.g., corner room, interior room, exterior wall"
+bs-room_moist_dam_hist,Optional,The history of moisture damage or mold in the past 12 months. Number of events of moisture damage or mold observed
+bs-room_net_area,Optional,The net floor area of sampling room. Net area excludes wall thicknesses
+bs-room_occup,Optional,Count of room occupancy at time of sampling
+bs-room_samp_pos,Optional,"The horizontal sampling position in the room relative to architectural elements, e.g., north corner, south corner, west corner, east corner, northeast corner, northwest corner, southeast corner, southwest corner, center"
+bs-room_type,Optional,"The main purpose or activity of the sampling room. A room is any distinguishable space within a structure, e.g., attic, bathroom, closet, conference room, elevator, examining room, hallway, kitchen, mail room, private office, open office, stairwell,restroom, lobby, vestibule, mechanical or electrical room, data center, laboratory_wet, laboratory_dry, gymnasium, natatorium, auditorium, lockers, cafe, warehouse"
+bs-room_vol,Optional,Volume of sampling room
+bs-room_wall_share,Optional,"List of room(s) (room number, room name) sharing a wall with the sampling room"
+bs-room_window_count,Optional,Number of windows in the room
+bs-samp_collect_device,Optional,Method or device employed for collecting sample
+bs-samp_floor,Optional,"The floor of the building, where the sampling room is located, e.g., 1st floor, 2nd floor, basement, lobby"
+bs-samp_mat_process,Optional,Processing applied to the sample during or after isolation
+bs-samp_room_id,Optional,Sampling room number. This ID should be consistent with the designations on the building floor plans
+bs-samp_size,Optional,"Amount or size of sample (volume, mass or area) that was collected"
+bs-samp_sort_meth,Optional,method by which samples are sorted
+bs-samp_time_out,Optional,The recent and long term history of outside sampling
+bs-samp_vol_we_dna_ext,Optional,volume (mL) or weight (g) of sample processed for DNA extraction
+bs-samp_weather,Optional,"The weather on the sampling day, e.g., clear sky, cloudy, foggy, hail, rain, snow, sleet, sunny, windy"
+bs-season,Optional,The season when sampling occurred. Any of the four periods into which the year is divided by the equinoxes and solstices. This field accepts terms listed under season (http://purl.obolibrary.org/obo/NCIT_C94729)
+bs-season_use,Optional,"The seasons the space is occupied, e.g., spring, summer, fall, winter"
+bs-shad_dev_water_mold,Optional,"Signs of the presence of mold or mildew on the shading device, e.g., presence of mold visible, no presence of mold visible"
+bs-shading_device_cond,Optional,"The physical condition of the shading device at the time of sampling, e.g., damaged, needs repair, new, rupture, visible wear"
+bs-shading_device_loc,Optional,"The location of the shading device in relation to the built structure, e.g., exterior, interior"
+bs-shading_device_mat,Optional,The material the shading device is composed of
+bs-shading_device_type,Optional,"The type of shading device, e.g., bahama shutters, exterior roll blind, gambrel awning, hood awning, porchroller awning, sarasota shutters, slatted aluminum, solid aluminum awning, sun screen, tree, trellis, venetian awning"
+bs-size_frac,Optional,"Filtering pore size used in sample preparation, e.g., 0-0.22 micrometer"
+bs-source_material_id,Optional,"unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples."
+bs-specific,Optional,"The building specifications, e.g., operation, as built, construction, bid, design, photos"
+bs-specific_humidity,Optional,"The mass of water vapour in a unit mass of moist air, usually expressed as grams of vapour per kilogram of air, or, in air conditioning, as grains per pound"
+bs-substructure_type,Optional,substructure or under building is that largely hidden section of the building which is built off the foundations to the ground floor level
+bs-surf_air_cont,Optional,contaminant identified on surface
+bs-surf_humidity,Optional,surfaces: water activity as a function of air and material moisture
+bs-surf_material,Optional,surface materials at the point of sampling
+bs-surf_moisture,Optional,water held on a surface
+bs-surf_moisture_ph,Optional,pH measurement of surface
+bs-surf_temp,Optional,temperature of the surface at the time of sampling
+bs-temp_out,Optional,The recorded temperature value at sampling time outside
+bs-train_line,Optional,"The subway line name, e.g., red, green, orange"
+bs-train_stat_loc,Optional,"The train station collection location, e.g., south station above ground, south station underground, south station amtrak, forest hills, riverside"
+bs-train_stop_loc,Optional,"The train stop collection location, e.g., end, mid, downtown"
+bs-vis_media,Optional,"The building visual media, e.g., photos, videos, commonly of the building, site context (adjacent buildings, vegetation, terrain, streets), interiors, equipment, 3D scans"
+bs-wall_area,Optional,The total area of the sampled room's walls
+bs-wall_const_type,Optional,"The building class of the wall defined by the composition of the building elements and fire-resistance rating, e.g., frame construction, joisted masonry, light noncombustible, masonry noncombustible, modified fire resistive, fire resistive"
+bs-wall_finish_mat,Optional,"The material utilized to finish the outer most layer of the wall, e.g., plaster, gypsum plaster, veneer plaster, gypsum board, tile, terrazzo, stone facing, acoustical treatment, wood, metal, masonry"
+bs-wall_height,Optional,The average height of the walls in the sampled room
+bs-wall_loc,Optional,"The relative location of the wall within the room, e.g., north, south, east, west"
+bs-wall_surf_treatment,Optional,"The surface treatment of interior wall, e.g., painted, wall paper, no treatment, paneling, stucco, fabric"
+bs-wall_texture,Optional,"The feel, appearance, or consistency of a wall surface, e.g., crows feet, crows-foot stomp, double skip, hawk and trowel, knockdown, popcorn, orange peel, rosebud stomp, Santa-Fe texture, skip trowel, smooth, stomp knockdown, swirl"
+bs-wall_thermal_mass,Optional,The ability of the wall to provide inertia against temperature fluctuations. Generally this means concrete or concrete block that is either exposed or covered only with paint
+bs-wall_water_mold,Optional,"Signs of the presence of mold or mildew on a wall, e.g., presence of mold visible, no presence of mold visible"
+bs-water_feat_size,Optional,The size of the water feature
+bs-water_feat_type,Optional,"The type of water feature present within the building being sampled, e.g., fountain, pool, standing feature, stream, waterfall"
+bs-weekday,Optional,"The day of the week when sampling occurred, e.g., monday, tuesday, wednesday, thursday, friday, saturday, sunday"
+bs-window_cond,Optional,"The physical condition of the window at the time of sampling, e.g., damaged, needs repair, new, rupture, visible wear"
+bs-window_cover,Optional,"The type of window covering, e.g., blinds, curtains, none"
+bs-window_horiz_pos,Optional,"The horizontal position of the window on the wall, e.g., left, middle, right"
+bs-window_loc,Optional,"The relative location of the window within the room, e.g., north, south, east, west"
+bs-window_mat,Optional,"The type of material used to finish a window, e.g., clad, fiberglass, metal, vinyl, wood"
+bs-window_open_freq,Optional,The number of times windows are opened per week
+bs-window_size,Optional,The window's length and width
+bs-window_status,Optional,"Defines whether the windows were open or closed during environmental testing, e.g., closed, open"
+bs-window_type,Optional,"The type of windows, e.g., single-hung sash window, horizontal sash window, fixed window"
+bs-window_vert_pos,Optional,"The vertical position of the window on the wall, e.g., bottom, middle, top, low, middle, high"
+bs-window_water_mold,Optional,"Signs of the presence of mold or mildew on the window, e.g., presence of mold visible, no presence of mold visible"

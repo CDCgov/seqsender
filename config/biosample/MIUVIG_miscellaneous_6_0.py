@@ -2,6 +2,18 @@ from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
+		"bs-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for BioSample. Max length is 50 characters.",
+			title="sample_name",
+		),
 		"bs-isolate": Column(
 			dtype="object",
 			checks=None,
@@ -19,7 +31,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, \"Homo sapiens\".",
+			description="At least one required: Group \"Source\". The natural (as opposed to laboratory) host to the organism from which the sample was obtained. Use the full taxonomic name, eg, \"Homo sapiens\".",
 			title="host",
 		),
 		"bs-isolation_source": Column(
@@ -29,7 +41,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived.",
+			description="At least one required: Group \"Source\". Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived.",
 			title="isolation source",
 		),
 		"bs-env_broad_scale": Column(
@@ -711,7 +723,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package MIUVIG.miscellaneous.6.0 schema",
 	description="Schema validation for BioSample database using MIUVIG.miscellaneous.6.0 package.",
 )
