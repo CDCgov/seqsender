@@ -1,14 +1,19 @@
 
 <!-- ![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg) -->
+
 <!-- ![GitHub issues](https://img.shields.io/github/issues/montilab/cadra) -->
+
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
+
 <p style="font-size: 16px;">
+
 <em>Public Database Submission Pipeline</em>
+
 </p>
 
-**Beta Version**: 1.1.0. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.2.0. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
-Feedback and suggestions are welcome!
+Feedback and suggestions are welcome\!
 
 **General Disclaimer**: This repository was created for use by CDC
 programs to collaborate on public health related projects in support of
@@ -18,20 +23,31 @@ CDC and its partners to share information and collaborate on software.
 CDC use of GitHub does not imply an endorsement of any one particular
 service, product, or enterprise.
 
+# [Documentation](https://dthoward96.github.io/seqsender_test_website/)
+
 ## Overview
 
 `seqsender` is a Python program that is developed to automate the
 process of generating necessary submission files and batch uploading
 them to <ins>NCBI archives</ins> (such as **BioSample**, **SRA**, and
-**Genbank**) and <ins>GISAID databases</ins> (e.g. **EpiFlu** and
-**EpiCoV**). Presently, the pipeline is capable of uploading **Influenza
-A Virus** (FLU) and **SARS-COV-2** (COV) data. However, the dynamic
-nature of this pipeline can allow for additional uploads of other
-organisms in future updates or requests.
+**Genbank**) and <ins>GISAID databases</ins> (e.g. **EpiFlu**,
+**EpiCoV**, **EpiPox**, **EpiArbo**). Presently, the pipeline is capable
+of uploading **Influenza A Virus** (FLU), **SARS-COV-2** (COV),
+**Monkeypox** (POX), **Arbovirus** (ARBO), and a wide variety of other
+organisms. If you’d like to have `seqsender` support your virus create a
+issue.
+
+## Contacts
+
+| Role       | Contact                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| Creator    | [Dakota Howard](https://github.com/dthoward96), [Reina Chau](https://github.com/rchau88) |
+| Maintainer | [Dakota Howard](https://github.com/dthoward96)                                           |
+| Back-Up    | [Reina Chau](https://github.com/rchau88), [Brian Lee](https://github.com/leebrian)       |
 
 ## Prerequisites
 
-- **NCBI Submissions**
+  - **NCBI Submissions**
 
 `seqsender` utilizes an UI-Less Data Submission Protocol to bulk upload
 submission files (e.g., *submission.xml*, *submission.zip*, etc.) to
@@ -63,35 +79,32 @@ FTP on the command line. Before attempting to submit a submission using
     <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a>
     to discuss requirements for submissions.
 
-5.  Coordinate a NCBI namespace name (**spuid_namespace**) that will be
+5.  Coordinate a NCBI namespace name (**spuid\_namespace**) that will be
     used with Submitter Provided Unique Identifiers (**spuid**) in the
-    submission. The liaison of **spuid_namespace** and **spuid** is used
-    to report back assigned accessions as well as for cross-linking
-    objects within submission. The values of **spuid_namespace** are up
+    submission. The liaison of **spuid\_namespace** and **spuid** is
+    used to report back assigned accessions as well as for cross-linking
+    objects within submission. The values of **spuid\_namespace** are up
     to the submitter to decide but they must be unique and
-    well-coordinated prior to make a submission. For more information
-    about these two fields, see
-    [BioSample](https://cdcgov.github.io/seqsender/articles/biosample_submission.html#metadata)
-    /
-    [SRA](https://cdcgov.github.io/seqsender/articles/sra_submission.html#metadata)
-    /
-    [GENBANK](https://cdcgov.github.io/seqsender/articles/genbank_submission.html#metadata)
-    metadata requirements.
+    well-coordinated prior to make a submission.
 
-- **GISAID Submissions**
+<!-- end list -->
+
+  - **GISAID Submissions**
 
 `seqsender` makes use of GISAID’s Command Line Interface tools to bulk
 uploading meta- and sequence-data to GISAID databases. Presently, the
-pipeline only allows upload to EpiFlu (**Influenza A Virus**) and EpiCoV
-(**SARS-COV-2**) databases. Before uploading, submitter needs to
+pipeline supports upload to EpiFlu (**Influenza A Virus**), EpiCoV
+(**SARS-COV-2**), EpiPox (**Monkeypox**), and EpiArbo (**Arbovirus**).
+Before uploading, submitter needs to
 
 1.  Have a GISAID account. To sign up, visit [GISAID
     Platform](https://gisaid.org/).
 
-2.  Request a client-ID for EpiFlu or EpiCoV database in order to use
-    its CLI tool. The CLI utilizes the client-ID along with the username
-    and password to authenticate the database prior to make a
-    submission. To obtain a client-ID, please email
+2.  Request a client-ID for your specified Epi(Flu/CoV/Pox/Arbo)
+    database in order to use its CLI tool. The CLI utilizes the
+    client-ID along with the username and password to authenticate the
+    database prior to make a submission. To obtain a client-ID, please
+    email
     <a href="mailto:clisupport@gisaid.org" >clisupport@gisaid.org</a> to
     request. ***Important note**: If submitter would like to upload a
     “test” submission first to familiarize themselves with the
@@ -110,49 +123,11 @@ package.
 
 ![](man/figures/gisaid_cli_dir.png)
 
-## Requirement Files
+## Code Attributions
 
-Before submitters can perform a batch submission using `seqsender`, they
-must make sure the requirement files (such as *config.yaml*,
-*metadata.csv*, *sequence.fasta*, *raw reads*, etc.) are already
-prepared and stored in a submission directory of choice.
-
-1)  To prep for FLU submissions, select one of the databases below to
-    get started:
-
-> <a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/gisaid_flu_submission.html" target="_blank">GISAID</a>
-> <br>
-> <!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_flu_submission.html" target="_blank">Multiple databases</a> -->
-
-2)  To prep for COV submissions, select one of the databases below to
-    get started:
-
-> <a href="https://cdcgov.github.io/seqsender/articles/biosample_submission.html" target="_blank">BioSample</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/sra_submission.html" target="_blank">SRA</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/genbank_submission.html" target="_blank">Genbank</a>
-> <br>
-> <a href="https://cdcgov.github.io/seqsender/articles/gisaid_cov_submission.html" target="_blank">GISAID</a>
-> <br>
-> <!-- > <a href="https://cdcgov.github.io/seqsender/articles/multiple_databases_cov_submission.html" target="_blank">Multiple databases</a> -->
-
-## Quick Start
-
-- [How to run seqsender
-  locally](https://cdcgov.github.io/seqsender/articles/local_installation.html)
-- [How to run seqsender with
-  Docker](https://cdcgov.github.io/seqsender/articles/docker_installation.html)
-- [How to run seqsender with
-  Compose](https://cdcgov.github.io/seqsender/articles/compose_installation.html)
-- [How to run seqsender with
-  Singularity](https://cdcgov.github.io/seqsender/articles/singularity_installation.html)
+Dakota Howard and Reina Chau for majority of the code base with input
+and testing from
+[colleagues](https://cdcgov.github.io/seqsender/authors.html).
 
 ## Public Domain Standard Notice
 

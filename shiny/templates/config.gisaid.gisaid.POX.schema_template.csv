@@ -1,0 +1,28 @@
+column_name,required_column,description
+sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.
+gs-sample_name,Required,"Identifier name used for GISAID. Max length is 50 characters. This field is the same as ""pox_sequence_name"" in GISAID's metadata template."
+gs-pox_passage,Required,"""Original"" if the sample was sequenced directly from swabs, otherwise add the name of the cell line (e.g., ""Vero"") used to culture the specimen."
+gs-pox_location,Required,"Format as ""Continent / Country / Region / Sub-region""."
+gs-pox_add_location,Optional,"Additional location information (e.g. Cruise Ship, Convention, Live animal market)."
+gs-pox_host,Required,"Host species name. For Wastewater use ""Environment""."
+gs-pox_add_host_info,Optional,Additional information regarding patient (e.g. Patient infected while interacting with animal).
+gs-pox_sampling_strategy,Optional,"Sampling strategy for sequence (e.g. Sentinel surveillance (ILI), Sentinel surveillance (ARI), Sentinel surveillance (SARI), Non-sentinel-surveillance (hospital), Non-sentinel-surveillance (GP network), Longitudinal sampling on same patient(s), S gene dropout)."
+gs-pox_gender,Required,"Synonym for ""Biological sex"". Should be ""Female"", ""Male"", or ""Unknown""."
+gs-pox_patient_age,Required,"Age in years of the person from whom the specimen was collected. May take format other than numeric years, for example, ""0.5"" (i.e., 6 months), ""5 days"", ""7 months"". If units are not given, they are assumed in years. If missing, use ""Unknown""."
+gs-pox_patient_status,Required,"E.g., ""Hospitalized"", ""Released"", ""Live"", ""Deceased"", ""Unknown""."
+gs-pox_specimen,Optional,"Specimen source. For wastewater it must be ""Wastewater surveillance""."
+gs-pox_outbreak,Optional,"Outbreak information (Date, Location e.g. type of gathering, Family cluster, etc.)."
+gs-pox_last_vaccinated,Optional,Provide details if applicable.
+gs-pox_treatment,Optional,"Provide details if applicable (e.g. Drug name, dosage)."
+gs-pox_seq_technology,Required,"Add the sequencer brand and model (e.g. Illumina MiSeq, Sanger, Nanopore MinION)."
+gs-pox_assembly_method,Optional,"Genome assembly algorithm (e.g. CLC Genomics Workbench 12, Geneious 10.2.4, SPAdes/MEGAHIT v1.2.9, UGENE v. 33)."
+gs-pox_coverage,Optional,"Average genome coverage (e.g. 50x, 100x, 1,000x)."
+gs-pox_orig_lab,Required,Full name of laboratory from where sample originated.
+gs-pox_orig_lab_addr,Required,Complete building address of laboratory from where sample originated.
+gs-pox_provider_sample_id,Optional,ID used by originating lab.
+gs-pox_subm_lab,Required,Full name of laboratory submitting this record to GISAID.
+gs-pox_subm_lab_addr,Required,Complete building address of the submitting laboratory.
+gs-pox_subm_sample_id,Optional,ID used by submitting lab.
+gs-pox_consortium,Optional,Sequencing consortium the submitting lab is affiliated with.
+gs-pox_comment,Required,Leave blank.
+gs-comment_type,Required,Leave blank.

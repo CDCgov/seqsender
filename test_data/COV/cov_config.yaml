@@ -1,0 +1,40 @@
+Submission:
+  NCBI:
+    Username: group_username
+    Password: group_password
+    Spuid_Namespace: test_group
+    BioSample_Package: SARS-CoV-2.cl.1.0
+    GenBank_Auto_Remove_Failed_Samples: True
+    Publication_Title: COVID-19 test submission
+    Publication_Status: unpublished
+    Submission_Position: 1
+    Specified_Release_Date: ""
+    Link_Sample_Between_NCBI_Databases: True
+    Description:
+      Title: cov_test_submission
+      Comment: This is a test submission.
+      Organization:
+        Role: owner
+        Type: institute
+        Name: CDC
+        Address:
+           Affil: Centers for Disease Control and Prevention
+           Div: Respiratory Viruses Branch, Division of Viral Diseases
+           Street: 1600 Clifton Rd
+           City: Atlanta
+           Sub: GA
+           Postal_Code: 30329
+           Country: USA
+           Email: email@myemail.com
+           Phone: ""
+        Submitter:
+          Email: email@myemail.com
+          Alt_Email: ""
+          Name:
+            First: Jane
+            Last: Doe
+  GISAID:
+    Client-Id: TEST-EA76875B00C3
+    Username: username
+    Password: password
+    Submission_Position: 2

@@ -368,23 +368,20 @@ Before you can perform a `test` submission with your own dataset, make sure you 
 
 #### 1. Assemble your meta- and sequence-data
 
-(a) To prep for FLU submissions, select one of the databases below for more details
+**NCBI:**
 
 > <a href="`r github_pages_url`/articles/biosample_submission.html" target="_blank">BioSample</a> <br>
 > <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
 > <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
-> <a href="`r github_pages_url`/articles/gisaid_flu_required_fields.html" target="_blank">GISAID</a> <br>
-> <a href="`r github_pages_url`/articles/multiple_databases_submission.html" target="_blank">Multiple databases</a>
 
-(b) To prep for COV submissions, select one of the databases below for more details 
+**GISAID:**
 
-> <a href="`r github_pages_url`/articles/biosample_submission.html" target="_blank">BioSample</a> <br>
-> <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
-> <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
-> <a href="`r github_pages_url`/articles/gisaid_cov_submission.html" target="_blank">GISAID</a> <br>
-> <a href="`r github_pages_url`/articles/multiple_databases_submission.html" target="_blank">Multiple databases</a>
+> <a href="`r github_pages_url`/articles/gisaid_flu_submission.html" target="_blank">EpiFlu</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_cov_submission.html" target="_blank">EpiCoV</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_pox_submission.html" target="_blank">EpiPox</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_arbo_submission.html" target="_blank">EpiArbo</a> <br>
 
-After you have finished prepping for your database of choices in `(a)` or `(b)`, create a submission folder and store all your metadata and sequence files there.
+After you've finished prepping for your databases, create a submission folder and store your metadata and sequence files there.
 
 Here is a quick look at the folder structure
 
@@ -529,6 +526,102 @@ Here is a list of submission statuses and its meanings:
 > 6.  Otherwise submission status is **Submitted**
 
 <br>
+
+</div>
+
+### <a onclick="ToggleOperation('manual')"><i class="fas fa-play" role="presentation" aria-label="play icon"></i> [Optional] Make a manual submission.</a>
+
+<div id="manual-block" style="display: none;">
+
+If you'd not like to use the automated upload feature of ``r program`` you can still use it to create the files for manual submission to each database.
+
+#### 1. Assemble your meta- and sequence-data
+
+**NCBI:**
+
+> <a href="`r github_pages_url`/articles/biosample_submission.html" target="_blank">BioSample</a> <br>
+> <a href="`r github_pages_url`/articles/sra_submission.html" target="_blank">SRA</a> <br>
+> <a href="`r github_pages_url`/articles/genbank_submission.html" target="_blank">Genbank</a> <br>
+
+**GISAID:**
+
+> <a href="`r github_pages_url`/articles/gisaid_flu_submission.html" target="_blank">EpiFlu</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_cov_submission.html" target="_blank">EpiCoV</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_pox_submission.html" target="_blank">EpiPox</a> <br>
+> <a href="`r github_pages_url`/articles/gisaid_arbo_submission.html" target="_blank">EpiArbo</a> <br>
+
+After you've finished prepping for your databases, create a submission folder and store your metadata and sequence files there.
+
+Here is a quick look at the folder structure
+
+![](images/submission_dir.png)
+
+Finally, make sure additional requirements below are met before you can proceed to the next steps.
+
+:::{style="padding: 10px; border: 1px solid blue !important;"}
+- If **SRA** is in your list of submitting databases, the raw reads for all samples must be provided and stored in a subfolder called `raw_reads` inside your submission directory of choice.
+
+#### 2. Prepare your files for submission.
+
+```bash
+python seqsender.py prep \
+--organism FLU \
+-bsng \
+--submission_dir $HOME \
+--submission_name flu-test-submission \
+--config_file config.yaml \
+--metadata_file metadata.csv \
+--fasta_file sequence.fasta \
+```
+
+- **`--organism`** specifies the type of data to upload. Currently, **Influenza A Virus** (FLU) and **SARS-COV-2** (COV) are the only two options. <br>
+- **`-bsng`** is a combination flag of databases: **Biosample** *(`-b` or `--biosample`)*, **SRA** *(`-s` or `--sra`)*, **Genbank** *(`-n` or `--genbank`)*, and **GISAID** *(`-g` or `--gisaid`)*. This combination flag tells ``r program`` to prep and submit to each given database. See `python seqsender.py submit --help` for more details. <br>
+- **`--submission_dir`** is the directory where you store all of the submission histories. <br>
+- **`--submission_name`** is the submission folder inside the `--submission_dir` directory where it contains all necessary files (such as *config.yaml*, *metadata.csv*, *sequence.fasta*, *raw reads*, etc.) in order to make a submission. <br>
+- **`--config_file`** is the config file inside the `--submission_name` directory. <br> 
+- **`--metadata_file`** is the metadata file inside the `--submission_name` directory. <br> 
+- **`--fasta_file`** is the fasta file inside the `--submission_name` directory. <br>
+
+A quick look at the standard output.
+
+```bash
+Creating submission files for BIOSAMPLE
+Files are stored at: /home/snu3/flu-test-submission/submission_files/BIOSAMPLE
+
+Creating submission files for SRA
+Files are stored at: /home/snu3/flu-test-submission/submission_files/SRA
+
+Creating submission files for GENBANK
+Files are stored at: /home/snu3/flu-test-submission/submission_files/GENBANK
+
+Creating submission files for GISAID
+Files are stored at: /home/snu3/flu-test-submission/submission_files/GISAID
+```
+
+#### 3. Upload your files to each database.
+
+After prepping all of your files. You're ready to manually upload your files to each database.
+
+**BioSample**
+Note: If you're also uploading to SRA then skip this step and attach your biosample `metadata.tsv` to your SRA submission.
+
+For your BioSample submission you'll only need the `metadata.tsv`.
+Here is an example of where the file is and where to attach for your manual submission:
+
+**SRA**
+Note: If you're also uploading to BIoSample then attach your biosample `metadata.tsv` to your SRA submission.
+
+Here is an example of where the file is and where to attach for your manual submission:
+
+**GenBank**
+
+Here is an example of where the files are and where to attach for your manual submission:
+ attach to your manual submission:
+ 
+**GISAID**
+
+For your GISAID submission you'll need the `metadata.csv` and `sequence.fsa` files.
+Here is an example of where the files are and where to attach for your manual submission:
 
 </div>
 

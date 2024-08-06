@@ -1,0 +1,103 @@
+column_name,required_column,description
+bs-sample_name,Required,Identifier name used for BioSample. Max length is 50 characters.
+bs-isolate,Required,identification or description of the specific individual from which this sample was obtained
+bs-api,Required,"API gravity is a measure of how heavy or light a petroleum liquid is compared to water (source: https://en.wikipedia.org/wiki/API_gravity), e.g. 31.1 API"
+bs-basin_name,Required,"Name of the basin, e.g. Campos"
+bs-env_broad_scale,Required,Add terms that identify the major environment type(s) where your sample was collected. Recommend subclasses of biome [ENVO:00000428]. Multiple terms can be separated by one or more pipes e.g.:  mangrove biome [ENVO:01000181]|estuarine biome [ENVO:01000020]
+bs-env_local_scale,Required,"Add terms that identify environmental entities having causal influences upon the entity at time of sampling, multiple terms can be separated by pipes, e.g.:  shoreline [ENVO:00000486]|intertidal zone [ENVO:00000316]"
+bs-env_medium,Required,Add terms that identify the material displaced by the entity at time of sampling. Recommend subclasses of environmental material [ENVO:00010483]. Multiple terms can be separated by pipes e.g.: estuarine water [ENVO:01000301]|estuarine mud [ENVO:00002160]
+bs-geo_loc_name,Required,"Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg ""Canada: Vancouver"" or ""Germany: halfway down Zugspitze, Alps"""
+bs-hc_produced,Required,"Main hydrocarbon type produced from resource, e.g., oil, gas-condensate, gas, bitumen, coalbed methane"
+bs-hcr,Required,"Main hydrocarbon resource type. The term Hydrocarbon Resource is defined as a natural environmental feature containing large amounts of hydrocarbons at high concentrations potentially suitable for commercial exploitation, e.g., oil reservoir, gas reservoir, oil sand, coalbed, shale, tight oil reservoir, tight gas reservoir"
+bs-hcr_temp,Required,Original temperature of the hydrocarbon resource
+bs-isolation_source,Required,"Describes the physical, environmental and/or local geographical source of the biological sample from which the sample was derived."
+bs-lat_lon,Required,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
+bs-samp_mat_type,Required,"The type of material from which the sample was obtained. For the Hydrocarbon package, samples include types like core, rock trimmings, drill cuttings, piping section, coupon, pigging debris, solid deposit, produced fluid, produced water, injected water, swabs, etc. For the Food Package, samples are usually categorized as food, body products or tissues, or environmental material. This field accepts terms listed under environmental specimen (http://purl.obolibrary.org/obo/GENEPIO_0001246)"
+bs-sulfate_fw,Required,Original sulfate concentration in the hydrocarbon resource
+bs-temp,Required,temperature of the sample at time of sampling
+bs-vfa_fw,Required,Original volatile fatty acid concentration in the hydrocarbon resource
+bs-additional_info,Optional,Information that doesn't fit anywhere else
+bs-alkalinity,Optional,"alkalinity, the ability of a solution to neutralize acids to the equivalence point of carbonate or bicarbonate"
+bs-alkalinity_method,Optional,Method used for alkalinity measurement
+bs-ammonium,Optional,concentration of ammonium
+bs-aromatics_pc,Optional,"Saturate, Aromatic, Resin and Asphaltene (SARA) is an analysis method that divides crude oil components according to their polarizability and polarity. There are three main methods to obtain SARA results. The most popular one is known as the Iatroscan TLC-FID and is referred to as IP-143 (source: https://en.wikipedia.org/wiki/Saturate,_aromatic,_resin_and_asphaltene)"
+bs-asphaltenes_pc,Optional,"Saturate, Aromatic, Resin and Asphaltene (SARA) is an analysis method that divides crude oil components according to their polarizability and polarity. There are three main methods to obtain SARA results. The most popular one is known as the Iatroscan TLC-FID and is referred to as IP-143 (source: https://en.wikipedia.org/wiki/Saturate,_aromatic,_resin_and_asphaltene)"
+bs-benzene,Optional,Concentration of benzene in the sample
+bs-calcium,Optional,concentration of calcium
+bs-chloride,Optional,concentration of chloride
+bs-collection_method,Optional,"Process used to collect the sample, e.g., bronchoalveolar lavage (BAL)"
+bs-density,Optional,density of sample
+bs-depos_env,Optional,"Main depositional environment (https://en.wikipedia.org/wiki/Depositional_environment), e.g., continental - alluvial, continental - aeolian, continental - fluvial, continental - lacustrine, transitional - deltaic, transitional - tidal, transitional - lagoonal, transitional - beach, transitional - lake, marine - shallow, marine - deep, marine - reef, other - evaporite, other - glacial, other - volcanic"
+bs-derived_from,Optional,Indicates when one BioSample was derived from another BioSample. Value should include BioSample accession number(s) (SAMNxxxxxxxx).
+bs-diss_carb_dioxide,Optional,concentration of dissolved carbon dioxide
+bs-diss_inorg_carb,Optional,dissolved inorganic carbon concentration
+bs-diss_inorg_phosp,Optional,concentration of dissolved inorganic phosphorus
+bs-diss_iron,Optional,Concentration of dissolved iron in the sample
+bs-diss_org_carb,Optional,concentration of dissolved organic carbon
+bs-diss_oxygen_fluid,Optional,"Concentration of dissolved oxygen in the oil field produced fluids as it contributes to oxgen-corrosion and microbial activity, e.g. Mic"
+bs-elev,Optional,The elevation of the sampling site as measured by the vertical distance from mean sea level.
+bs-ethylbenzene,Optional,Concentration of ethylbenzene in the sample
+bs-experimental_factor,Optional,Variable aspect of experimental design
+bs-field,Optional,"Name of the hydrocarbon field, e.g., Albacora"
+bs-hcr_fw_salinity,Optional,Original formation water salinity (prior to secondary recovery e.g. Waterflooding) expressed as TDS
+bs-hcr_geol_age,Optional,"Geological age of hydrocarbon resource (additional info: https://en.wikipedia.org/wiki/Period_(geology)), e.g., archean, cambrian, carboniferous, cenozoic, cretaceous, devonian, jurassic, mesozoic, neogene, ordovician, paleogene, paleozoic, permian, precambrian, proterozoic, silurian, triassic"
+bs-hcr_pressure,Optional,Original pressure of the hydrocarbon resource
+bs-lithology,Optional,"Hydrocarbon resource main lithology (Additional information: http://petrowiki.org/Lithology_and_rock_type_determination), e.g., basement, chalk, chert, coal, conglomerate, diatomite, dolomite, limestone, sandstone, shale, siltstone, volcanic"
+bs-magnesium,Optional,concentration of magnesium
+bs-metagenome_source,Optional,"describes the original source of a metagenome assembled genome (MAG). Examples: soil metagenome, gut metagenome"
+bs-misc_param,Optional,"any other measurement performed or parameter collected, that is not listed here"
+bs-neg_cont_type,Optional,"The substance or equipment used as a negative control in an investigation, e.g., distilled water, phosphate buffer, empty collection device, empty collection tube, DNA-free PCR mix, sterile swab, sterile syringe"
+bs-nitrate,Optional,concentration of nitrate
+bs-nitrite,Optional,concentration of nitrite
+bs-omics_observ_id,Optional,"A unique identifier of the omics-enabled observatory (or comparable time series) your data derives from. This identifier should be provided by the OMICON ontology; if you require a new identifier for your time series, contact the ontology's developers. Information is available here: https://github.com/GLOMICON/omicon. This field is only applicable to records which derive from an omics time-series or observatory."
+bs-org_count_qpcr_info,Optional,"If qpcr was used for the cell count, the target gene name, the primer sequence and the cycling conditions should also be provided, e.g., 16S rrna; FWD:ACGTAGCTATGACGT REV:GTGCTAGTCGAGTAC; initial denaturation:90C_5min; denaturation:90C_2min; annealing:52C_30 sec; elongation:72C_30 sec; 90 C for 1 min; final elongation:72C_5min; 30 cycles"
+bs-organism_count,Optional,"total count of any organism per gram or volume of sample,should include name of organism followed by count; can include multiple organism counts"
+bs-owc_tvdss,Optional,Depth of the original oil water contact (OWC) zone (average) (m TVDSS)
+bs-oxy_stat_samp,Optional,oxygenation status of sample
+bs-permeability,Optional,Measure of the ability of a hydrocarbon resource to allow fluids to pass through it. Additional information: https://en.wikipedia.org/wiki/Permeability_(earth_sciences)
+bs-ph,Optional,pH measurement
+bs-porosity,Optional,porosity of deposited sediment is volume of voids divided by the total volume of sample
+bs-pos_cont_type,Optional,"The substance, mixture, product, or apparatus used to verify that a process which is part of an investigation delivers a true positive"
+bs-potassium,Optional,concentration of potassium
+bs-pour_point,Optional,"Temperature at which a liquid becomes semi solid and loses its flow characteristics. In crude oil a high pour point is generally associated with a high paraffin content, typically found in crude deriving from a larger proportion of plant material (source: https://en.wikipedia.org/wiki/pour_point)"
+bs-pressure,Optional,"pressure to which the sample is subject, in atmospheres"
+bs-ref_biomaterial,Optional,Primary publication or genome report
+bs-rel_to_oxygen,Optional,"Is this organism an aerobe, anaerobe? Please note that aerobic and anaerobic are valid descriptors for microbial environments, eg, aerobe, anaerobe, facultative, microaerophilic, microanaerobe, obligate aerobe, obligate anaerobe, missing, not applicable, not collected, not provided, restricted access"
+bs-reservoir_name,Optional,"Name of the reservoir, e.g., Carapebus"
+bs-resins_pc,Optional,"Saturate, Aromatic, Resin and Asphaltene (SARA) is an analysis method that divides crude oil components according to their polarizability and polarity. There are three main methods to obtain SARA results. The most popular one is known as the Iatroscan TLC-FID and is referred to as IP-143 (source: https://en.wikipedia.org/wiki/Saturate,_aromatic,_resin_and_asphaltene)"
+bs-salinity,Optional,salinity measurement
+bs-samp_collect_device,Optional,Method or device employed for collecting sample
+bs-samp_mat_process,Optional,Processing applied to the sample during or after isolation
+bs-samp_md,Optional,"In non deviated well, measured depth is equal to the true vertical depth, TVD (TVD=TVDSS plus the reference or datum it refers to). In deviated wells, the MD is the length of trajectory of the borehole measured from the same reference or datum. Common datums used are ground level (GL), drilling rig floor (DF), rotary table (RT), kelly bushing (KB) and mean sea level (MSL). If ""other"" is specified, please propose entry in ""additional info"" field"
+bs-samp_size,Optional,"Amount or size of sample (volume, mass or area) that was collected"
+bs-samp_store_dur,Optional,
+bs-samp_store_loc,Optional,
+bs-samp_store_temp,Optional,
+bs-samp_subtype,Optional,"Name of sample sub-type, e.g., oil phase, water phase, biofilm, not applicable"
+bs-samp_transport_cond,Optional,"Sample transport duration (in days or hrs) and temperature the sample was exposed to (e.g., 5.5 days; 20C)"
+bs-samp_tvdss,Optional,"Depth of the sample i.e. The vertical distance between the sea level and the sampled position in the subsurface. Depth can be reported as an interval for subsurface samples e.g., 1325.75-1362.25 m"
+bs-samp_vol_we_dna_ext,Optional,volume (mL) or weight (g) of sample processed for DNA extraction
+bs-samp_well_name,Optional,"Name of the well where sample was taken, e.g., BXA1123"
+bs-saturates_pc,Optional,"Saturate, Aromatic, Resin and Asphaltene (SARA) is an analysis method that divides crude oil components according to their polarizability and polarity. There are three main methods to obtain SARA results. The most popular one is known as the Iatroscan TLC-FID and is referred to as IP-143 (source: https://en.wikipedia.org/wiki/Saturate,_aromatic,_resin_and_asphaltene)"
+bs-size_frac,Optional,"Filtering pore size used in sample preparation, e.g., 0-0.22 micrometer"
+bs-sodium,Optional,sodium concentration
+bs-source_material_id,Optional,"unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples."
+bs-sr_dep_env,Optional,"Source rock depositional environment (https://en.wikipedia.org/wiki/Source_rock), e.g., lacustine, fluvioldeltaic, fluviomarine, marine"
+bs-sr_geol_age,Optional,"Geological age of source rock (Additional info: https://en.wikipedia.org/wiki/Period_(geology)), e.g., archean, cambrian, carboniferous, cenozoic, cretaceous, devonian, jurassic, mesozoic, neogene, ordovician, paleogene, paleozoic, permian, precambrian, proterozoic, silurian, triassic"
+bs-sr_kerog_type,Optional,"Origin of kerogen. Type I: Algal (aquatic), Type II: planktonic and soft plant material (aquatic or terrestrial), Type III: terrestrial woody/ fibrous plant material (terrestrial), Type IV: oxidized recycled woody debris (terrestrial) (additional information: https://en.wikipedia.org/wiki/Kerogen), e.g., type I, type II, type III, type IV"
+bs-sr_lithology,Optional,"Lithology of source rock (https://en.wikipedia.org/wiki/Source_rock), e.g., clastic, carbonate, coal, biosilicieous"
+bs-sulfate,Optional,concentration of sulfate
+bs-sulfide,Optional,concentration of sulfide
+bs-suspend_solids,Optional,"concentration of substances including a wide variety of material, such as silt, decaying plant and animal matter, etc,; can include multiple substances"
+bs-tan,Optional,Total Acid Number (TAN) is a measurement of acidity that is determined by the amount of potassium hydroxide in milligrams that is needed to neutralize the acids in one gram of oil. It is an important quality measurement of crude oil. (source: https://en.wikipedia.org/wiki/Total_acid_number)
+bs-toluene,Optional,Concentration of toluene in the sample
+bs-tot_iron,Optional,Concentration of total iron in the sample
+bs-tot_nitro,Optional,total nitrogen content of the sample
+bs-tot_phosp,Optional,"total phosphorus concentration, calculated by: total phosphorus = total dissolved phosphorus + particulate phosphorus. Can also be measured without filtering, reported as phosphorus"
+bs-tot_sulfur,Optional,Concentration of total sulfur in the sample
+bs-tvdss_of_hcr_press,Optional,"True vertical depth subsea (TVDSS) of the hydrocarbon resource where the original pressure was measured, e.g., 1578 m"
+bs-tvdss_of_hcr_temp,Optional,"True vertical depth subsea (TVDSS) of the hydrocarbon resource where the original temperature was measured, e.g., 1345 m"
+bs-vfa,Optional,Concentration of Volatile Fatty Acids in the sample
+bs-viscosity,Optional,"A measure of oil's resistance to gradual deformation by shear stress or tensile stress (e.g., 3.5 cp; 100C)"
+bs-win,Optional,A unique identifier of a well or wellbore. This is part of the Global Framework for Well Identification initiative which is compiled by the Professional Petroleum Data Management Association (PPDM) in an effort to improve well identification systems. (Supporting information: https://ppdm.org/ and http://dl.ppdm.org/dl/690)
+bs-xylene,Optional,Concentration of xylene in the sample
