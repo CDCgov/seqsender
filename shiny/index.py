@@ -6,7 +6,7 @@ index_body = [
     ui.HTML(
         """
 <h2>Overview</h2>
-<p><code>seqsender</code> is a Python program that is developed to automate the process of generating necessary submission files and batch uploading them to <ins>NCBI archives</ins> (such as <strong>BioSample</strong>, <strong>SRA</strong>, and <strong>Genbank</strong>) and <ins>GISAID databases</ins> (e.g. <strong>EpiFlu</strong> and <strong>EpiCoV</strong>). Presently, the pipeline is capable of uploading <strong>Influenza A Virus</strong> (FLU) and <strong>SARS-COV-2</strong> (COV) data. However, the dynamic nature of this pipeline can allow for additional uploads of other organisms in future updates or requests.</p>
+<p><code>seqsender</code> is a Python program that is developed to automate the process of generating necessary submission files and batch uploading them to <ins>NCBI archives</ins> (such as <strong>BioSample</strong>, <strong>SRA</strong>, and <strong>Genbank</strong>) and <ins>GISAID databases</ins> (e.g. <strong>EpiFlu</strong>, <strong>EpiPox</strong>, and <strong>EpiCoV</strong>).</p>
 <h2>Public Domain Standard Notice</h2>
 <p>This repository constitutes a work of the United States Government and is not subject to domestic copyright protection under 17 USC § 105. This repository is in the public domain within the United States, and copyright and related rights in the work worldwide are waived through the <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal public domain dedication</a>. All contributions to this repository will be released under the CC0 dedication. By submitting a pull request you are agreeing to comply with this waiver of copyright interest.</p>
 <h2>License Standard Notice</h2>
