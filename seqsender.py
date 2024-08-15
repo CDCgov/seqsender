@@ -25,6 +25,8 @@ import tools
 
 from settings import VERSION
 
+import sys
+
 # Define current time
 STARTTIME = datetime.now()
 
