@@ -141,9 +141,10 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 	)
 	# If there are empty biosample or sra columns in the metadata sheet, assume they are unused optional columns and drop them before pandera attempts to validate
 	columns_to_drop = [col for col in metadata.columns if (col.startswith('bs-') or col.startswith('sra-')) and metadata[col].replace('', pd.NA).apply(lambda x: x.strip() if isinstance(x, str) else x).isna().all()]
-	metadata = metadata.drop(columns=columns_to_drop)
-	shutil.copy(metadata_file, metadata_file + ".bak")
-	file_handler.save_csv(metadata, metadata_file)
+	if columns_to_drop:
+		metadata = metadata.drop(columns=columns_to_drop)
+		shutil.copy(metadata_file, metadata_file + ".bak")
+		file_handler.save_csv(metadata, metadata_file)
 	# Update seqsender base schema to include needed checks
 	if "BioSample" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
