@@ -62,6 +62,9 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 			file_dict[file_type] = updated_path # type: ignore
 	# load config file
 	config_dict = tools.get_config(config_file=file_dict["config_file"], database=database)
+	# warn if user is submitting biosample & sra together with Link_Sample_Between_NCBI_Databases off
+	if not config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"] and 'SRA' in database and 'BIOSAMPLE' in database:
+		print("Warning: You are submitting to BioSample and SRA together, but Link_Sample_Between_NCBI_Databases is off. If you did not intend to do this, SRA submission is likely to fail.\nIf this was unintentional, cancel the submission and set 'Link_Sample_Between_NCBI_Databases: on' in your config yaml.")
 	# load metadata file
 	metadata = tools.get_metadata(database=database, organism=organism, metadata_file=file_dict["metadata_file"], config_dict=config_dict, skip_validation=skip_validation)
 	# Load fasta file into metadata
