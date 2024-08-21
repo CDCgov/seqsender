@@ -134,11 +134,12 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	# Adding some default handling for bs-description here - it's not mandatory for biosample submission, but is required in the workflow
-	if 'bs-description' not in metadata.columns:
-	# Create 'bs-description' by joining 'organism', 'bs-host', and 'bs-host_disease' columns
-		metadata['bs-description'] = metadata[['organism', 'bs-host', 'bs-host_disease']].apply(
-		lambda row: ' '.join(row.dropna().astype(str)), axis=1
-	)
+	if "BIOSAMPLE" in database:
+		if 'bs-description' not in metadata.columns:
+		# Create 'bs-description' by joining 'organism', 'bs-host', and 'bs-host_disease' columns
+			metadata['bs-description'] = metadata[['organism', 'bs-host', 'bs-host_disease']].apply(
+			lambda row: ' '.join(row.dropna().astype(str)), axis=1
+		)
 	# If there are empty biosample or sra columns in the metadata sheet, assume they are unused optional columns and drop them before pandera attempts to validate
 	columns_to_drop = [col for col in metadata.columns if (col.startswith('bs-') or col.startswith('sra-')) and metadata[col].replace('', pd.NA).apply(lambda x: x.strip() if isinstance(x, str) else x).isna().all()]
 	if columns_to_drop:
@@ -146,7 +147,7 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 		shutil.copy(metadata_file, metadata_file + ".bak")
 		file_handler.save_csv(metadata, metadata_file)
 	# Update seqsender base schema to include needed checks
-	if "BioSample" in database or "SRA" in database:
+	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
 	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
 	# Import schemas
