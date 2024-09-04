@@ -11,9 +11,9 @@ assignees: dthoward96
 A clear and concise description of what feature is not working.
 
 **To Reproduce**
- - What databases are you submitting to?
- - Is the error related to a specific database/metadata field, if so which?
- - Steps to reproduce the behavior.
+ - Which databases are you attempting submission to?
+ - Is the error related to a specific database/metadata field? If so, which?
+ - Steps to reproduce the behavior:
 
 **Logs**
 If applicable, please attach logs to help describe your problem.
