@@ -1,44 +1,27 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+about: Create a report to help us improve SeqSender
+title: "[BUG]"
+labels: bug
+assignees: dthoward96
 
 ---
 
 **Describe the bug**
 A clear and concise description of what feature is not working.
 
-**Impact**
-Please describe the impact this bug is causing to your program or organization.
-
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+ - What databases are you submitting to?
+ - Is the error related to a specific database/metadata field, if so which?
+ - Steps to reproduce the behavior.
 
 **Logs**
 If applicable, please attach logs to help describe your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Version**
+ - Version Number: [e.g. v1.2.0.]
+ - SeqSender Version: [e.g. Singularity, Docker, Script]
+ - OS [e.g. Linux, Mac]
 
 **Additional context**
 Add any other context about the problem here.
