@@ -54,12 +54,14 @@ SRA_REGEX = "^sra-|^bioproject$|^organism$|^collection_date$"
 # Genbank metadata regex
 GENBANK_REGEX = "^gb-sample_name$"
 
+# Also added sequence_name to these Genbank entries since I needed it for GISAID, but haven't tested the GenBank workflow yet
 # GenBank source file metadata regex
-GENBANK_REGEX_SRC = "^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_date$"
+GENBANK_REGEX_SRC = "^sequence_name$|^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_date$"
 
 # GenBank comment file metadata regex
-GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-|^organism$|^collection_date$"
+GENBANK_REGEX_CMT = "^sequence_name$|^gb-sample_name$|^cmt-|^organism$|^collection_date$"
 
 ##### GISAID settings #####
 # GISAID metadata regex
-GISAID_REGEX = "^gs-|^collection_date$|^authors"
+# Added ^sequence_name$ here - it seemed to be getting filtered out too early and causing issues
+GISAID_REGEX = "^gs-|^sequence_name$|^collection_date$|^authors$"
