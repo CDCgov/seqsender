@@ -173,7 +173,7 @@ def main():
 	elif command == "test_data":
 		setup.create_test_data(organism=args.organism, database=database, submission_dir=submission_dir)
 	elif command == "version":
-		print("Version: {VERSION}", file=sys.stdout)
+		print(f"Version: {VERSION}", file=sys.stdout)
 	elif command == "update_biosample":
 		print("Updating BioSample requirements.", file=sys.stdout)
 		setup.download_biosample_xml_list()
