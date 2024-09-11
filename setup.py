@@ -296,7 +296,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		file.write(indentation + "unique=None,")
 		file.write(indentation + "report_duplicates=\"all\",")
 		file.write(indentation + "unique_column_names=True,")
-		file.write(indentation + "add_missing_columns=True,")
+		file.write(indentation + "add_missing_columns=False,")
 		file.write(indentation + "title=\"BioSample package " + name + " schema\",")
 		file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
 		# Close schema

@@ -1095,7 +1095,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package MIMS.me.food-prod_facility.6.0 schema",
 	description="Schema validation for BioSample database using MIMS.me.food-prod_facility.6.0 package.",
 )

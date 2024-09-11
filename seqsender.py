@@ -100,7 +100,7 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 		file_handler.validate_gisaid_installer(submission_dir, organism)
 	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation)
 	print("", file=sys.stdout)
-	# upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"))
+	upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"))
 	submission_type = tools.get_submission_type(test=test)
 	for database_name in database:
 		submission_status, submission_id = "WAITING", "PENDING"

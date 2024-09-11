@@ -1616,7 +1616,7 @@ schema = DataFrameSchema(
 	unique=None,
 	report_duplicates="all",
 	unique_column_names=True,
-	add_missing_columns=True,
+	add_missing_columns=False,
 	title="BioSample package MIGS.vi.food-farm_env.6.0 schema",
 	description="Schema validation for BioSample database using MIGS.vi.food-farm_env.6.0 package.",
 )

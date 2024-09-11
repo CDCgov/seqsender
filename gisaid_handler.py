@@ -129,8 +129,8 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	orig_fasta = os.path.join(submission_dir, "orig_sequence.fsa")
 	submission_status_file = os.path.join(os.path.dirname(submission_dir), "submission_status_report.csv")
 	# Extract user credentials (e.g. username, password, client-id)
-	# tools.check_credentials(config_dict=config_dict, database="GISAID")
-	# gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
+	tools.check_credentials(config_dict=config_dict, database="GISAID")
+	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
 	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
 	time.sleep(5)
 	# Set number of attempt to 3 if erroring out occurs
@@ -139,25 +139,25 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	while attempts <= 3:
 		attempts += 1
 		print("\n"+"Submission attempt: " + str(attempts), file=sys.stdout)
-		# # Create a log submission for each attempt
-		# log_file = os.path.join(submission_dir, "gisaid_upload_log_" + str(attempts) + ".txt")
-		# # If log file exists, removes it
-		# if os.path.isfile(log_file) == True:
-		# 	os.remove(log_file)
-		# # Upload submission
-		# command = subprocess.run([gisaid_cli, "upload", "--username", config_dict["Username"], "--password", config_dict["Password"], "--clientid", config_dict["Client-Id"], "--metadata", metadata, "--fasta", fasta, "--log", log_file, "--debug"],
-		# 	cwd=submission_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		# # Check if uploading is successful
-		# if command.returncode != 0:
-		# 	print("Error: upload command error", file=sys.stderr)
-		# 	print(command.stdout)
-		# 	print(command.stderr)
-		# 	sys.exit(1)
-		# # Check if log file exists
-		# while not os.path.exists(log_file):
-		# 	time.sleep(10)
-		# # Check submission log to see if all samples are uploaded successfully
-		# process_gisaid_log(log_file=log_file, submission_dir=submission_dir)
+		# Create a log submission for each attempt
+		log_file = os.path.join(submission_dir, "gisaid_upload_log_" + str(attempts) + ".txt")
+		# If log file exists, removes it
+		if os.path.isfile(log_file) == True:
+			os.remove(log_file)
+		# Upload submission
+		command = subprocess.run([gisaid_cli, "upload", "--username", config_dict["Username"], "--password", config_dict["Password"], "--clientid", config_dict["Client-Id"], "--metadata", metadata, "--fasta", fasta, "--log", log_file, "--debug"],
+			cwd=submission_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		# Check if uploading is successful
+		if command.returncode != 0:
+			print("Error: upload command error", file=sys.stderr)
+			print(command.stdout)
+			print(command.stderr)
+			sys.exit(1)
+		# Check if log file exists
+		while not os.path.exists(log_file):
+			time.sleep(10)
+		# Check submission log to see if all samples are uploaded successfully
+		process_gisaid_log(log_file=log_file, submission_dir=submission_dir)
 		# Read in the submission status report
 		status_df = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 		# Gather all required files
@@ -181,9 +181,6 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 			gisaid_status_df = gisaid_status_df[["gs-sample_name"]]
 		# Identify remaining samples
 		metadata_df = pd.read_csv(orig_metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-		print(metadata_df)
-		print(status_df)
-		print(gisaid_status_df)
 		metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=metadata_column_name, right_on="gs-sample_name")
 		if metadata_df.empty:
 			print("Uploading successfully", file=sys.stdout)
