@@ -1,0 +1,6 @@
+column_name,required_column,description
+sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.
+organism,Required,The most descriptive organism name for the samples.
+authors,Required,"Citing authors. List of <b>Last, First Middle, suffix</b> separated by a semicolon "";"" E.g.: ""Baker, Howard Henry, Jr.; Powell, Earl Alexander, III.;"""
+collection_date,Required,"Collection date for sample. Must be in a valid format based on ISO 8601: ""YYYY-MM-DD"", ""YYYY-MM"", or ""YYYY"". Time is not supported."
+bioproject,Optional,NCBI BioProject ID.

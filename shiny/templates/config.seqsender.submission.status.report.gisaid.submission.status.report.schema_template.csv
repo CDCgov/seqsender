@@ -1,0 +1,6 @@
+column_name,required_column,description
+gs-sample_name,Required,Sample name used for GISAID submission.
+gs-segment_name,Optional,Segment name of sample used for GISAID submission.
+gisaid_accession_epi_isl_id,Required,Sample accession ID used to identify submission to GISAID.
+gisaid_accession_epi_id,Required,Sample accession ID used to identify submission in GISAID.
+gisaid_message,Required,"If there is a message tied to the sequence submitted to GISAID, it will appear here."

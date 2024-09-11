@@ -67,16 +67,6 @@
                         'required': False,
                         'type': 'dict',
                         'schema': {
-                            'Title': {
-                                'required': False,
-                                'type': 'string',
-                                'nullable': True
-                            },
-                            'Comment': {
-                                'required': False,
-                                'type': 'string',
-                                'nullable': True
-                            },
                             'Organization': {
                                 'required': False,
                                 'type': 'dict',

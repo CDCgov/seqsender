@@ -1,0 +1,5 @@
+column_name,required_column,description
+bs-sample_name,Required,Sample name used for BioSample submission.
+biosample_status,Required,Current status of the BioSample submission.
+biosample_accession,Required,Sample accession ID used to identify BioSample submission NCBI.
+biosample_message,Required,"If there is a message tied to the sample submitted to BioSample, it will appear here."

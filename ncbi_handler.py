@@ -127,9 +127,6 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 	tools.check_credentials(config_dict=config_dict, database="NCBI")
 	# Submit sequences to NCBI via FTP Server
 	print(f"Uploading sample files to NCBI-{database}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
-	if submission_type != "TEST":
-		print("Error: submission_type " + str(submission_type))
-		sys.exit(1)
 	time.sleep(5)
 	try:
 		# Login into NCBI FTP Server

@@ -11,8 +11,6 @@ Submission:
     Specified_Release_Date: ""
     Link_Sample_Between_NCBI_Databases: True
     Description:
-      Title: cov_test_submission
-      Comment: This is a test submission.
       Organization:
         Role: owner
         Type: institute
