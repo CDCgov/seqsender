@@ -64,14 +64,6 @@
                         'required': True,
                         'type': 'dict',
                         'schema': {
-                            'Title': {
-                                'required': True,
-                                'type': 'string'
-                            },
-                            'Comment': {
-                                'required': True,
-                                'type': 'string'
-                            },
                             'Organization': {
                                 'required': True,
                                 'type': 'dict',

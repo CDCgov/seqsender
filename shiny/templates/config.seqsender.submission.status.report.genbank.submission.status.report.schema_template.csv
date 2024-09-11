@@ -1,0 +1,5 @@
+column_name,required_column,description
+gb-sample_name,Required,Sample name used for GenBank submission.
+genbank_status,Required,Current status of the GenBank submission.
+genbank_accession,Required,Sample accession ID used to identify GenBank submission NCBI.
+genbank_message,Required,"If there is a message tied to the sequence submitted to GenBank, it will appear here."

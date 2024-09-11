@@ -6,7 +6,7 @@
 
 import shutil
 import subprocess
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Match
 import os
 import pandas as pd
 import file_handler
@@ -26,17 +26,18 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 	# Get column names for gisaid submission only
 	gisaid_df = metadata.filter(regex=GISAID_REGEX).copy()
 	gisaid_df.columns = gisaid_df.columns.str.replace("gs-","").str.strip()
-	#Add required GISAID fields
+	# Add required GISAID fields
+	# covCLI returns an error when authors or collection_date are capitalized
 	if organism in ["COV", "POX", "ARBO"]:
-		gisaid_df = gisaid_df.rename(columns = {"sample_name": "virus_name", "authors": "Authors", "collection_date": "Collection_Date"})
 		if organism == "COV":
-			prefix_name = "covv_"
+			sample_name_column = "covv_virus_name"
 		else:
-			prefix_name = organism.lower() + "_"
-		gisaid_df = gisaid_df.add_prefix(prefix_name)
+			sample_name_column = organism.lower() + "_virus_name"
+		gisaid_df = gisaid_df.rename(columns = {"sample_name": sample_name_column})
 		gisaid_df["submitter"] = config_dict["Username"]
-		gisaid_df["fn"] = ""
-		first_cols = ["submitter", "fn", (prefix_name + "virus_name")]
+		# fn field is for fasta file name
+		gisaid_df["fn"] = "sequence.fsa"
+		first_cols = ["submitter", "fn", sample_name_column]
 	elif "FLU" in organism:
 		gisaid_df = gisaid_df.rename(columns = {"authors": "Authors", "collection_date": "Collection_Date"})
 		gisaid_df["Isolate_Id"] = ""
@@ -68,21 +69,55 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 		while line:
 			# If accession generated record it
 			# Pattern options: "msg:": "<Sample Name>; <EPI_ISL/EPI_ID>_<Accession Numbers>" OR <epi_isl_id/epi_id>: <Sample Name>; <EPI_ISL/EPI_ID>_<Accession Numbers>
-			if re.match("(?i)(\W|^)(\"msg\":\s*\"\S+.*;\s*(EPI_ISL|EPI_ID)_\d{6,}\"|(epi_id|epi_isl_id):\s*\S.*;\s*(EPI_ISL_|EPI)\d+)(\W|$)", line):
-				gisaid_string = re.sub("(\W|^)\"msg\":\s*\"", "", line)
-				gisaid_string_list: List[str] = gisaid_string.strip().replace("\"", "").split(";")
-				sample_name = re.sub("(epi_isl_id|epi_id):\s*", "", gisaid_string_list[0].strip())
-				accession = gisaid_string_list[1].strip()
-				if re.match("EPI_ISL_\d+", accession):
-					gisaid_isolate_log.append({"gs-sample_name":sample_name, "gisaid_accession_epi_isl_id":accession})
-				elif re.match("EPI\d+", accession):
-					gisaid_segment_log.append({"gs-segment_name":sample_name, "gisaid_accession_epi_id":accession})
+			if re.search("(?i)(\W|^)(\"msg\":\s*\"\S+.*;\s*(EPI_ISL|EPI_ID)_\d*\"|(epi_id|epi_isl_id):\s*\S.*;\s*(EPI_ISL_|EPI)\d+)(\W|$)", line):
+				gisaid_string_search = re.findall(r'(?:[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)+|EPI_\w*)', line)
+				gisaid_string = ' '.join(gisaid_string_search)
+				gisaid_string_list: List[str] = gisaid_string.split(' ')
+				sample_name = gisaid_string_list[0].strip()
+				accession_string = gisaid_string_list[1].strip()
+				if re.match("EPI_ISL_\d+", accession_string):
+					gisaid_isolate_log.append({"gs-sample_name":sample_name, "gisaid_accession_epi_isl_id":accession_string})
+				elif re.match("EPI\d+", accession_string):
+					gisaid_segment_log.append({"gs-segment_name":sample_name, "gisaid_accession_epi_id":accession_string})
+			# Handling if submitting samples have already been registered in GISAID
+			elif re.search(r'"code":\s*"validation_error".*?already exists;\s*existing_virus_name:', line):
+				sample_name_search = re.search(r"(hCoV[^;]+);", line)
+				if sample_name_search:
+					sample_name = sample_name_search.group(1)
+					if re.search(r"\['(EPI_ISL_\d+)'\]", line):
+						accession_search = re.search(r"\['(EPI_ISL_\d+)'\]", line)
+						if accession_search:
+							accession = accession_search.group(1)
+						else:
+							accession = ""
+						gisaid_isolate_log.append({"gs-sample_name":sample_name, "gisaid_accession_epi_isl_id":accession})
+					elif re.search(r"\['(EPI_\d+)'\]", line):
+						accession_search = re.search(r"\['(EPI_\d+)'\]", line)
+						if accession_search:
+							accession = accession_search.group(1)
+						else:
+							accession = ""
+						gisaid_segment_log.append({"gs-segment_name":sample_name, "gisaid_accession_epi_id":accession})
+			else:
+				print("Finished reading GISAID log. If workflow has failed here, it's likely no GISAID IDs were returned. Check results in GISAID upload log.")
 			line = file.readline().strip()
 	gisaid_isolate_df = pd.DataFrame(gisaid_isolate_log)
 	gisaid_segment_df = pd.DataFrame(gisaid_segment_log)
-	upload_log.update_submission_status_csv(submission_dir=submission_dir.replace("/GISAID", "/"), update_database="GISAID", update_df=gisaid_isolate_df)
-	upload_log.update_submission_status_csv(submission_dir=submission_dir.replace("/GISAID", "/"), update_database="GISAID", update_df=gisaid_segment_df)
-	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d{6,}", regex = True, na = False)].copy()
+	# Update GISAID submission status
+	if not gisaid_isolate_df.empty and not gisaid_segment_df.empty:
+		print("GISAID isolates and GISAID segments found.")
+		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_isolate_df)
+		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_segment_df)
+	elif not gisaid_isolate_df.empty:
+		print("GISAID isolates found.")
+		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_isolate_df)
+	elif not gisaid_segment_df.empty:
+		print("GISAID segments found.")
+		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_segment_df)
+	else:
+		print("Warning: no GISAID isolates or segments found")
+	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
+	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
 	return gisaid_isolate_df[["gs-sample_name"]]
 
 # Submit to GISAID
@@ -92,15 +127,17 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	orig_metadata = os.path.join(submission_dir, "orig_metadata.csv")
 	fasta = os.path.join(submission_dir, "sequence.fsa")
 	orig_fasta = os.path.join(submission_dir, "orig_sequence.fsa")
+	submission_status_file = os.path.join(os.path.dirname(submission_dir), "submission_status_report.csv")
 	# Extract user credentials (e.g. username, password, client-id)
 	tools.check_credentials(config_dict=config_dict, database="GISAID")
 	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
 	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
 	time.sleep(5)
 	# Set number of attempt to 3 if erroring out occurs
-	attempts = 1
+	attempts = 0
 	# Submit to GISAID
 	while attempts <= 3:
+		attempts += 1
 		print("\n"+"Submission attempt: " + str(attempts), file=sys.stdout)
 		# Create a log submission for each attempt
 		log_file = os.path.join(submission_dir, "gisaid_upload_log_" + str(attempts) + ".txt")
@@ -120,34 +157,50 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 		while not os.path.exists(log_file):
 			time.sleep(10)
 		# Check submission log to see if all samples are uploaded successfully
-		not_submitted_df = process_gisaid_log(log_file=log_file, submission_dir=submission_dir)
-		# If submission completed, no more attempts
-		if not_submitted_df.empty:
+		process_gisaid_log(log_file=log_file, submission_dir=submission_dir)
+		# Read in the submission status report
+		status_df = pd.read_csv(submission_status_file, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
+		# Gather all required files
+		metadata = os.path.join(submission_dir, "metadata.csv")
+		fasta = os.path.join(submission_dir, "sequence.fsa")
+		# Filter out samples with accession
+		if "FLU" in organism:
+			metadata_column_name = "Isolate_Name"
+			fasta_column_name = "gs-segment_name"
+			gisaid_status_df = status_df[~status_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_", na=False) & ~status_df["gisaid_accession_epi_id"].str.contains("EPI", na=False)].copy()
+			gisaid_status_df = gisaid_status_df[["gs-sample_name", "gs-segment_name"]]
+		elif "COV" in organism:
+			metadata_column_name = "covv_virus_name"
+			fasta_column_name = "gs-sample_name"
+			gisaid_status_df = status_df[~status_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_", na=False)].copy()
+			gisaid_status_df = gisaid_status_df[["gs-sample_name"]]
+		else:
+			metadata_column_name = organism.lower() + "_virus_name"
+			fasta_column_name = "gs-sample_name"
+			gisaid_status_df = status_df[~status_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_", na=False)].copy()
+			gisaid_status_df = gisaid_status_df[["gs-sample_name"]]
+		# Identify remaining samples
+		metadata_df = pd.read_csv(orig_metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
+		metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=metadata_column_name, right_on="gs-sample_name")
+		if metadata_df.empty:
 			print("Uploading successfully", file=sys.stdout)
 			print("Log file is stored at: " + submission_dir + "/gisaid_upload_log_attempt_" + str(attempts) +  ".txt", file=sys.stdout)
 			return "PROCESSED"
-		else:
-			# If submission is not completed, try again
-			metadata_df = pd.read_csv(metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
-			if "FLU" in organism:
-				column_name = "Isolate_Name"
-			elif "COV" in organism:
-				column_name = "virus_name"
-			metadata_df = metadata_df.merge(not_submitted_df, how="inner", left_on=column_name, right_on="gs-sample_name")
-			fasta_names = metadata_df["gs-sequence_name"].tolist()
-			metadata_df = metadata_df.drop(columns=["gs-sample_name", "gs-sequence_name"])
-			metadata_df.to_csv(orig_metadata, header = True, index = False)
-			fasta_dict = []
-			with open(orig_fasta, "r") as fsa:
-				records = SeqIO.parse(fsa, "fasta")
-				for record in records:
-					if record.id in fasta_names:
-						fasta_dict.append(record)
-			with open(fasta, "w+") as fasta_file:
-				SeqIO.write(fasta_dict, fasta_file, "fasta")
-			attempts += 1
-	if not not_submitted_df.empty:
-		print("Error: " + str(len(not_submitted_df.index)) + " sample(s) failed to upload to GISAID", file=sys.stderr)
+		# Update metadata file
+		fasta_names = gisaid_status_df[fasta_column_name].tolist()
+		metadata_df = metadata_df.drop(columns=["gs-sample_name", "gs-segment_name"], errors="ignore")
+		metadata_df.to_csv(metadata, header = True, index = False)
+		# Update fasta file
+		fasta_dict = []
+		with open(orig_fasta, "r") as fsa:
+			records = SeqIO.parse(fsa, "fasta")
+			for record in records:
+				if record.id in fasta_names:
+					fasta_dict.append(record)
+		with open(fasta, "w+") as fasta_file:
+			SeqIO.write(fasta_dict, fasta_file, "fasta")
+	if not metadata_df.empty:
+		print("Error: " + str(len(metadata_df.index)) + " sample(s) failed to upload to GISAID", file=sys.stderr)
 		print("Please check log file at: " + submission_dir + "/gisaid_upload_log_attempt_{1,2,3}.txt", file=sys.stderr)
 		return "ERROR"
 	else:
@@ -163,16 +216,23 @@ def update_gisaid_files(organism: str, submission_dir: str, submission_status_fi
 	orig_fasta = os.path.join(submission_dir, "orig_sequence.fsa")
 	# Filter out genbank that has accession number
 	genbank_status_df = status_df[status_df["genbank-status"].str.contains("processed-ok", na=False)].copy()
-	gisaid_status_df = genbank_status_df[["gs-sample_name", "gs-sequence_name"]]
 	# Add required gisaid fields
 	metadata_df = pd.read_csv(metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 	if "FLU" in organism:
-		column_name = "Isolate_Name"
+		metadata_column_name = "Isolate_Name"
+		fasta_column_name = "gs-segment_name"
+		gisaid_status_df = genbank_status_df[["gs-sample_name", "gs-segment_name"]]
 	elif "COV" in organism:
-		column_name = "virus_name"
-	metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=column_name, right_on="gs-sample_name")
-	fasta_names = metadata_df["gs-sequence_name"].tolist()
-	metadata_df = metadata_df.drop(columns=["gs-sample_name", "gs-sequence_name"])
+		metadata_column_name = "covv_virus_name"
+		fasta_column_name = "gs-sample_name"
+		gisaid_status_df = genbank_status_df[["gs-sample_name"]]
+	else:
+		metadata_column_name = organism.lower() + "_virus_name"
+		fasta_column_name = "gs-sample_name"
+		gisaid_status_df = genbank_status_df[["gs-sample_name"]]
+	metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=metadata_column_name, right_on="gs-sample_name")
+	fasta_names = metadata_df[fasta_column_name].tolist()
+	metadata_df = metadata_df.drop(columns=["gs-sample_name", "gs-segment_name"], errors="ignore")
 	metadata_df.to_csv(orig_metadata, header = True, index = False)
 	fasta_dict = []
 	with open(orig_fasta, "r") as fsa:

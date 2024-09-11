@@ -99,8 +99,17 @@ def load_fasta_file(fasta_file: str) -> pd.DataFrame:
 # Save submission xml
 def save_xml(submission_xml: bytes, submission_dir: str) -> None:
 	# Save string as submission.xml
-	with open(os.path.join(submission_dir, "submission.xml"), "wb") as file:
-		file.write(submission_xml)
+	try:
+		with open(os.path.join(submission_dir, "submission.xml"), "wb") as file:
+			file.write(submission_xml)
+	except PermissionError as e:
+		print(f"Error: Permission error when trying to save 'submission.xml' to path: {submission_dir}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)
+	except Exception as e:
+		print(f"Error: An unexpected error occurred when trying to save 'submission.xml' to path: {submission_dir}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)
 	# Waiting for the xml file to write
 	while not os.path.exists(os.path.join(submission_dir, "submission.xml")):
 		time.sleep(10)
@@ -109,13 +118,34 @@ def save_xml(submission_xml: bytes, submission_dir: str) -> None:
 def save_csv(df: pd.DataFrame, file_path: str, file_name: Optional[str] = None, sep: str = ",") -> None:
 	if file_name:
 		file_path = os.path.join(file_path, file_name)
-	df.to_csv(file_path, header = True, index = False, sep = sep)
+	try:
+		df.to_csv(file_path, header = True, index = False, sep = sep)
+	except PermissionError as e:
+		print(f"Error: Permission error when trying to save '{file_name}' to path: {file_path}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)
+	except Exception as e:
+		print(f"Error: An unexpected error occurred when trying to save '{file_name}' to path: {file_path}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)
 
 # Create fasta file based on database
 def create_fasta(database: str, metadata: pd.DataFrame, submission_dir: str) -> None:
 	records = []
 	for index, row in metadata.iterrows():
 		column_name = SAMPLE_NAME_DATABASE_PREFIX[database] + "sample_name"
-		records.append(SeqRecord(row["fasta_sequence_orig"], id = row[column_name], description = ""))
-	with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
-		SeqIO.write(records, f, "fasta")
+		if "GENBANK" in database and "gb-fasta_definition_line_modifiers" in metadata and pd.notnull(row["gb-fasta_definition_line_modifiers"]) and row["gb-fasta_definition_line_modifiers"].strip() != "":
+			records.append(SeqRecord(row["fasta_sequence_orig"], id =(row[column_name].strip() + " " + row["gb-fasta_definition_line_modifiers"].strip()), description = ""))
+		else:
+			records.append(SeqRecord(row["fasta_sequence_orig"], id = row[column_name], description = ""))
+	try:
+		with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+			SeqIO.write(records, f, "fasta")
+	except PermissionError as e:
+		print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)
+	except Exception as e:
+		print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+		print(e, file=sys.stderr)
+		sys.exit(1)

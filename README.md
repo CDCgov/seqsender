@@ -11,7 +11,7 @@
 
 </p>
 
-**Beta Version**: 1.2.0. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.2.1. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
@@ -23,7 +23,7 @@ CDC and its partners to share information and collaborate on software.
 CDC use of GitHub does not imply an endorsement of any one particular
 service, product, or enterprise.
 
-# [Documentation](https://dthoward96.github.io/seqsender_test_website/)
+# [Documentation](https://cdcgov.github.io/seqsender/)
 
 ## Overview
 
@@ -44,84 +44,6 @@ issue.
 | Creator    | [Dakota Howard](https://github.com/dthoward96), [Reina Chau](https://github.com/rchau88) |
 | Maintainer | [Dakota Howard](https://github.com/dthoward96)                                           |
 | Back-Up    | [Reina Chau](https://github.com/rchau88), [Brian Lee](https://github.com/leebrian)       |
-
-## Prerequisites
-
-  - **NCBI Submissions**
-
-`seqsender` utilizes an UI-Less Data Submission Protocol to bulk upload
-submission files (e.g., *submission.xml*, *submission.zip*, etc.) to
-NCBI archives. The submission files are uploaded to the NCBI server via
-FTP on the command line. Before attempting to submit a submission using
-`seqsender`, submitter will need to
-
-1.  Have a NCBI account. To sign up, visit [NCBI
-    website](https://account.ncbi.nlm.nih.gov/).
-
-2.  Required for CDC users and highly recommended for others is creating
-    a center account for your institution/lab [NCBI Center Account
-    Instructions](https://submit.ncbi.nlm.nih.gov/sarscov2/sra/#step6).
-    Center accounts allow you to perform submissions UI-less submissions
-    as your institution/lab.
-
-3.  Required for CDC users and also recommended is creating a submission
-    group in [NCBI Submission Portal](https://submit.ncbi.nlm.nih.gov).
-    A group should include all individuals who need access to UI-less
-    submissions through the web interface with your center account. Each
-    member of the group must also have an individual NCBI account. [NCBI
-    website](https://account.ncbi.nlm.nih.gov/).
-
-4.  Refer to this page for information regarding requirements for
-    GenBank submissions via FTP only. This page applies only for COVID
-    and Influenza [NCBI GenBank FTP
-    Submissions](https://submit.ncbi.nlm.nih.gov/sarscov2/genbank/#step5)
-    For further questions contact
-    <a href="mailto:gb-admin@ncbi.nlm.nih.gov">gb-admin@ncbi.nlm.nih.gov</a>
-    to discuss requirements for submissions.
-
-5.  Coordinate a NCBI namespace name (**spuid\_namespace**) that will be
-    used with Submitter Provided Unique Identifiers (**spuid**) in the
-    submission. The liaison of **spuid\_namespace** and **spuid** is
-    used to report back assigned accessions as well as for cross-linking
-    objects within submission. The values of **spuid\_namespace** are up
-    to the submitter to decide but they must be unique and
-    well-coordinated prior to make a submission.
-
-<!-- end list -->
-
-  - **GISAID Submissions**
-
-`seqsender` makes use of GISAID’s Command Line Interface tools to bulk
-uploading meta- and sequence-data to GISAID databases. Presently, the
-pipeline supports upload to EpiFlu (**Influenza A Virus**), EpiCoV
-(**SARS-COV-2**), EpiPox (**Monkeypox**), and EpiArbo (**Arbovirus**).
-Before uploading, submitter needs to
-
-1.  Have a GISAID account. To sign up, visit [GISAID
-    Platform](https://gisaid.org/).
-
-2.  Request a client-ID for your specified Epi(Flu/CoV/Pox/Arbo)
-    database in order to use its CLI tool. The CLI utilizes the
-    client-ID along with the username and password to authenticate the
-    database prior to make a submission. To obtain a client-ID, please
-    email
-    <a href="mailto:clisupport@gisaid.org" >clisupport@gisaid.org</a> to
-    request. ***Important note**: If submitter would like to upload a
-    “test” submission first to familiarize themselves with the
-    submission process prior to make a real submission, one should
-    additionally request a test client-id to perform such submissions.*
-
-3.  Download the
-    <a href="https://cdcgov.github.io/seqsender/articles/images/fluCLI_download.png" target="_blank">EpiFlu</a>
-    or
-    <a href="https://cdcgov.github.io/seqsender/articles/images/covCLI_download.png" target="_blank">EpiCoV</a>
-    CLI from the **GISAID platform** and stored them in the destination
-    of choice prior to perform a batch upload.
-
-Here is a quick look of where to store the downloaded **GISAID CLI**
-package.
-
-![](man/figures/gisaid_cli_dir.png)
 
 ## Code Attributions
 

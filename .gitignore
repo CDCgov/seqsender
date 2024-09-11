@@ -10,6 +10,7 @@ submit.ready
 *report.xml
 test_input/test_metadata.tsv
 upload_log.csv
+submission_log.csv
 *.vscode
 *.Rproj
 *.Rhistory
@@ -19,3 +20,7 @@ docker-compose-*.yaml
 
 # ignore folders
 **/.Rproj.user
+**/test_data/*
+**/gisaid_cli/*
+**/COV_TEST_DATA/*
+**/FLU_TEST_DATA/*
