@@ -22,10 +22,12 @@ setup_body = [
                     position="right",
                 ),
             ),
-            ui.input_checkbox("BioSample_checkbox", "BioSample", width=None, value=True),
-            ui.input_checkbox("SRA_checkbox", "SRA", width=None),
+            ui.input_checkbox("BioSample_checkbox", "BioSample", width=None),
+            ui.tooltip(ui.input_checkbox("SRA_checkbox", "SRA", width=None),
+                "When submitting to SRA, a BioSample submission is also required.",
+                style="display:inline-block;float:right;"),
             ui.input_checkbox("GenBank_checkbox", "GenBank", width=None),
-            ui.input_checkbox("GISAID_checkbox", "GISAID", width=None, value=True),
+            ui.input_checkbox("GISAID_checkbox", "GISAID", width=None),
         ),
         ui.card(
             ui.card_header(
@@ -53,7 +55,7 @@ setup_body = [
                         "MISAG": {"MISAG.6.0":"MISAG.6.0","MISAG.agriculture.6.0":"MISAG.agriculture.6.0","MISAG.air.6.0":"MISAG.air.6.0","MISAG.built.6.0":"MISAG.built.6.0","MISAG.food-animal.6.0":"MISAG.food-animal.6.0","MISAG.food-farm.env.6.0":"MISAG.food-farm.env.6.0","MISAG.food-human.foods.6.0":"MISAG.food-human.foods.6.0","MISAG.food-prod.facility.6.0":"MISAG.food-prod.facility.6.0","MISAG.host-associated.6.0":"MISAG.host-associated.6.0","MISAG.human-associated.6.0":"MISAG.human-associated.6.0","MISAG.human-gut.6.0":"MISAG.human-gut.6.0","MISAG.human-oral.6.0":"MISAG.human-oral.6.0","MISAG.human-skin.6.0":"MISAG.human-skin.6.0","MISAG.human-vaginal.6.0":"MISAG.human-vaginal.6.0","MISAG.hydrocarbon-cores.6.0":"MISAG.hydrocarbon-cores.6.0","MISAG.hydrocarbon-fluids.swabs.6.0":"MISAG.hydrocarbon-fluids.swabs.6.0","MISAG.microbial.6.0":"MISAG.microbial.6.0","MISAG.miscellaneous.6.0":"MISAG.miscellaneous.6.0","MISAG.plant-associated.6.0":"MISAG.plant-associated.6.0","MISAG.sediment.6.0":"MISAG.sediment.6.0","MISAG.soil.6.0":"MISAG.soil.6.0","MISAG.symbiont-associated.6.0":"MISAG.symbiont-associated.6.0","MISAG.wastewater.6.0":"MISAG.wastewater.6.0","MISAG.water.6.0":"MISAG.water.6.0"},
                         "MIUVIG": {"MIUVIG.6.0":"MIUVIG.6.0","MIUVIG.agriculture.6.0":"MIUVIG.agriculture.6.0","MIUVIG.air.6.0":"MIUVIG.air.6.0","MIUVIG.built.6.0":"MIUVIG.built.6.0","MIUVIG.food-animal.6.0":"MIUVIG.food-animal.6.0","MIUVIG.food-farm.env.6.0":"MIUVIG.food-farm.env.6.0","MIUVIG.food-human.foods.6.0":"MIUVIG.food-human.foods.6.0","MIUVIG.food-prod.facility.6.0":"MIUVIG.food-prod.facility.6.0","MIUVIG.host-associated.6.0":"MIUVIG.host-associated.6.0","MIUVIG.human-associated.6.0":"MIUVIG.human-associated.6.0","MIUVIG.human-gut.6.0":"MIUVIG.human-gut.6.0","MIUVIG.human-oral.6.0":"MIUVIG.human-oral.6.0","MIUVIG.human-skin.6.0":"MIUVIG.human-skin.6.0","MIUVIG.human-vaginal.6.0":"MIUVIG.human-vaginal.6.0","MIUVIG.hydrocarbon-cores.6.0":"MIUVIG.hydrocarbon-cores.6.0","MIUVIG.hydrocarbon-fluids.swabs.6.0":"MIUVIG.hydrocarbon-fluids.swabs.6.0","MIUVIG.microbial.6.0":"MIUVIG.microbial.6.0","MIUVIG.miscellaneous.6.0":"MIUVIG.miscellaneous.6.0","MIUVIG.plant-associated.6.0":"MIUVIG.plant-associated.6.0","MIUVIG.sediment.6.0":"MIUVIG.sediment.6.0","MIUVIG.soil.6.0":"MIUVIG.soil.6.0","MIUVIG.symbiont-associated.6.0":"MIUVIG.symbiont-associated.6.0","MIUVIG.wastewater.6.0":"MIUVIG.wastewater.6.0","MIUVIG.water.6.0":"MIUVIG.water.6.0"}
                         },
-                    selected="SARS",
+                    selected="Pathogen.cl.1.0",
                 ),
             ),
             # If GenBank checkbox checked then load Genbank Schema Options
@@ -61,8 +63,9 @@ setup_body = [
                 "input.GenBank_checkbox",
                 ui.input_select(
                     "GenBank_schemas",
-                    label="Select GenBank Schema:",
+                    label="Select SeqSender GenBank Schema:",
                     choices=["COV", "FLU", "OTHER"],
+                    selected="OTHER",
                 ),
             ),
             # If GISAID checkbox checked then load GISAID Database Options
@@ -71,7 +74,7 @@ setup_body = [
                 ui.input_select(
                     "GISAID_databases",
                     label="Select GISAID Database:",
-                    choices=["COV", "FLU", "POX", "ARBO"],
+                    choices=["FLU", "COV", "POX", "ARBO"],
                 ),
             ),
         ),
@@ -154,7 +157,8 @@ setup_body = [
                             div(ui.input_radio_buttons(
                                     "ncbi_submission_position",
                                     label=None,
-                                    choices=["First", "Second", "None"],
+                                    choices={1:"1", 2:"2", "":"None"},
+                                    selected=1,
                                     inline=True,
                                 ),
                                 style="display:inline-block;height:5px;font-size:medium;",
@@ -180,14 +184,6 @@ setup_body = [
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         # Description category
                         config_indent(2, "Description:", custom_style = ""),
-                        # Project Title
-                        config_indent(3, "Title:"),
-                        config_text_input("ncbi_config_title", placeholder = "Submission Title", help_msg = "Descriptive name for the samples you'll be submitting with this config file. (i.e. my flu project, my lab's flu submissions)"),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        # Project Description / Comment
-                        config_indent(3, "Comment:"),
-                        config_text_input("ncbi_config_comment", placeholder = "Submission Comment", help_msg = "Description of the samples you'll be submitting with this config file. (i.e. wastewater surveillance)"),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         # Organization category
                         config_indent(3, "Organization", custom_style = ""),
                         # Organization role
@@ -277,9 +273,9 @@ setup_body = [
                             div(ui.input_radio_buttons(
                                     "gisaid_submission_position",
                                     label=None,
-                                    choices=["First", "Second", "None"],
+                                    choices={1:"1", 2:"2", "":"None"},
                                     inline=True,
-                                    selected="Second",
+                                    selected=2,
                                 ),
                                 style="display:inline-block;height:5px;font-size:medium;",
                             ),

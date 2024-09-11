@@ -87,13 +87,13 @@ def validate_submission_status_df(metadata: pd.DataFrame, database: List[str]) -
 		sys.exit(1)
 
 # Update values of existing submission_status.csv file
-def update_submission_status_csv(submission_dir: str, update_database: str, update_df: pd.DataFrame, update_count: dict = {}):
-	# track changes to update_df
-	if update_database not in update_count:
-		update_count[update_database] = 0
+def update_submission_status_csv(submission_dir: str, update_database: str, update_df: pd.DataFrame) -> None:
+	# Check if there are updates to be made
+	if update_df.empty:
+		print(f"Error: Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'. The log file may be empty.", file=sys.stderr)
 	# Pop off directory if inside database directory
-	if os.path.split(submission_dir)[1] in ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]:
-		submission_dir = os.path.split(submission_dir)[0]
+	if os.path.split(submission_dir)[-1] in ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]:
+		submission_dir = os.path.dirname(submission_dir)
 	submission_status_file = os.path.join(submission_dir, "submission_status_report.csv")
 	file_handler.validate_file(file_type="submission status report", file_path=submission_status_file)
 	df = file_handler.load_csv(file_path=submission_status_file)
@@ -102,31 +102,14 @@ def update_submission_status_csv(submission_dir: str, update_database: str, upda
 	validate_submission_status_df(metadata=df, database=all_databases)
 	if f"{SAMPLE_NAME_DATABASE_PREFIX[update_database]}sample_name" in update_df:
 		sample_column = (SAMPLE_NAME_DATABASE_PREFIX[update_database] + "sample_name")
-		df = df.set_index(sample_column, drop = False)
-		update_df = update_df.set_index(sample_column)
-		df.update(update_df)
-		df = df.reset_index(drop = True)
-		update_count[update_database] += 1
-		validate_submission_status_df(metadata=df, database=all_databases)
-		file_handler.save_csv(df=df, file_path=submission_status_file)
 	elif f"{SAMPLE_NAME_DATABASE_PREFIX[update_database]}segment_name" in update_df:
 		sample_column = (SAMPLE_NAME_DATABASE_PREFIX[update_database] + "segment_name")
-		df = df.set_index(sample_column, drop = False)
-		update_df = update_df.set_index(sample_column)
-		df.update(update_df)
-		df = df.reset_index(drop = True)
-		update_count[update_database] += 1
-		validate_submission_status_df(metadata=df, database=all_databases)
-		file_handler.save_csv(df=df, file_path=submission_status_file)
-	else:
-		# No longer exits when unable to update since there may be valid reasons update_df is empty (submission w/only isolates or only segments).
-		# Alerts the user until this function performs at least one successful update during a submission workflow.
-		# Also changed the behavior of process_gisaid_log so that situation ideally shouldn't come up much
-		if update_count[update_database] == 0:
-			print(f"Error: Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'. The log file may be empty.", file=sys.stderr)
-			# sys.exit(1)
-
-	return update_count
+	df = df.set_index(sample_column, drop = False)
+	update_df = update_df.set_index(sample_column)
+	df.update(update_df)
+	df = df.reset_index(drop = True)
+	validate_submission_status_df(metadata=df, database=all_databases)
+	file_handler.save_csv(df=df, file_path=submission_status_file)
 
 # Create new row in submission_log.csv for database submission
 def create_submission_log(database: str, organism: str, submission_name: str, submission_dir: str, database_dir: str, config_file: str, submission_status: str, submission_id: str, submission_type: str) -> None:
@@ -151,20 +134,7 @@ def create_submission_log(database: str, organism: str, submission_name: str, su
 	df.loc[len(df)] = new_entry # type: ignore
 	# Remove duplicates and keep latest update
 	df = df.drop_duplicates(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"], keep = "last", ignore_index = True)
-	# Ran into permissions issues writing this to submission_dir - all the other outputs wrote successfully to submission_dir/submission_files and submission_dir/submission_files/GISAID
-	# Probably really uncommon, but this handles that error and tries to output submission info to stdout instead - might just add perms check for the entire submission directory tree
-	try:
-		file_handler.save_csv(df=df, file_path=submission_dir, file_name="submission_log.csv")
-		print(f"Successfully updated submission_log.csv at '{submission_dir}'.")
-	except PermissionError as e:
-		print(f"Permission error: Unable to write to 'submission_log.csv' at '{submission_dir}'. Please check file and directory permissions.", file=sys.stderr)
-		print(f"Attempting to write submission log to stdout instead.")
-		df.to_csv(sys.stdout, header=True, index=False)
-		sys.exit(1)
-	except Exception as e:
-		print(f"An unexpected error occurred while trying to save 'submission_log.csv': {e}", file=sys.stderr)
-		sys.exit(1)
-	#file_handler.save_csv(df=df, file_path=submission_dir, file_name="submission_log.csv")
+	file_handler.save_csv(df=df, file_path=submission_dir, file_name="submission_log.csv")
 
 # Update values of existing submission_log.csv file
 def update_submission_log(database: str, organism: str, submission_name: str, submission_log_dir: str, submission_dir: str, submission_status: str, submission_id: str, submission_type: str) -> None:
@@ -205,7 +175,7 @@ def validate_fields_exist(df: pd.DataFrame):
 	config_file = df["Config_File"].iloc[0]
 	file_handler.validate_directory(name = "directory", path = submission_dir)
 	file_handler.validate_file(file_type = "submission_status_report", file_path = submission_status_file)
-	file_handler.validate_file(file_type = " config file", file_path = config_file)
+	file_handler.validate_file(file_type = "config file", file_path = config_file)
 
 # Process submission status of existing biosample/sra database submission
 def process_biosample_sra(submission_name: str, database: str, organism: str, submission_log_dir: str, submission_dir: str, curr_status: str, config_dict: Dict[str, Any], submission_type: str) -> Tuple[bool, str]:

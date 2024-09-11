@@ -11,8 +11,6 @@ Submission:
     Specified_Release_Date: "2 weeks"
     Link_Sample_Between_NCBI_Databases: True
     Description:
-      Title: flu_test_submission
-      Comment: This is a test submission
       Organization:
         Role: owner
         Type: institute

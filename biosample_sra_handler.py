@@ -58,8 +58,6 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 		column_ordered = ["sample_name","library_ID"]
 		prefix = "sra-"
 		# Create SRA specific fields
-		if 'sra-title' not in metadata.columns or metadata['sra-title'].isnull().any() or (metadata['sra-title'] == '').any():
-			metadata["sra-title"] = config_dict["Description"]["Title"]
 		filename_cols = [col for col in metadata.columns.tolist() if re.match("sra-file_[1-9]\d*", col)]
 		# Correct index for filename column
 		for col in filename_cols:
@@ -70,8 +68,8 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 				rename_columns[col] = col.replace("sra-file_", "sra-filename")
 	elif "BIOSAMPLE" in database:
 		metadata_regex = "^bs-|^organism$|^collection_date$"
-		rename_columns = {"bs-description":"sample_title","bioproject":"bioproject_accession"}
-		drop_columns = ["bs-package"]
+		rename_columns = {"bioproject":"bioproject_accession"}
+		drop_columns = ["bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"]
 		column_ordered = ["sample_name"]
 		prefix = "bs-"
 	else:
@@ -93,14 +91,31 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 	file_handler.save_csv(df=database_df, file_path=submission_dir, file_name="metadata.tsv", sep="\t")
 
 # Create submission XML
-def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, failed_seqs_auto_removed: bool = True) -> bytes:
+def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> bytes:
 	# Submission XML header
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
 	title = etree.SubElement(description, "Title")
-	title.text = config_dict["Description"]["Title"]
-	comment = etree.SubElement(description, "Comment")
-	comment.text = config_dict["Description"]["Comment"]
+	if "BIOSAMPLE" in database:
+		if "bs-title" in metadata and pd.notnull(metadata["bs-title"].iloc[0]) and metadata["bs-title"].iloc[0].strip() != 0:
+			title.text = metadata["bs-title"].iloc[0]
+		else:
+			title.text = submission_name + "-BS"
+		comment = etree.SubElement(description, "Comment")
+		if "bs-comment" in metadata and pd.notnull(metadata["bs-comment"].iloc[0]) and metadata["bs-comment"].iloc[0].strip() != 0:
+			comment.text = metadata["bs-comment"].iloc[0]
+		else:
+			comment.text = "BioSample Submission"
+	elif "SRA" in database:
+		if "sra-title" in metadata and pd.notnull(metadata["sra-title"].iloc[0]) and metadata["sra-title"].iloc[0].strip() != 0:
+			title.text = metadata["sra-title"].iloc[0]
+		else:
+			title.text = submission_name + "-SRA"
+		comment = etree.SubElement(description, "Comment")
+		if "sra-comment" in metadata and pd.notnull(metadata["sra-comment"].iloc[0]) and metadata["sra-comment"].iloc[0].strip() != 0:
+			comment.text = metadata["sra-comment"].iloc[0]
+		else:
+			comment.text = "SRA Submission"
 	# Description info including organization and contact info
 	organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["Type"], role=config_dict["Description"]["Organization"]["Role"])
 	org_name = etree.SubElement(organization, "Name")
@@ -126,13 +141,18 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 			sampleid = etree.SubElement(biosample, "SampleId")
 			spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
 			spuid.text = row["bs-sample_name"]
-			descriptor = etree.SubElement(biosample, "Descriptor")
-			title = etree.SubElement(descriptor, "Title")
-			title.text = row["bs-description"]
+			if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+				descriptor = etree.SubElement(biosample, "Descriptor")
+				if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+					sample_title = etree.SubElement(descriptor, "Title")
+					sample_title.text = row["bs-sample_title"]
+				if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+					sample_description = etree.SubElement(descriptor, "Description")
+					sample_description.text = row["bs-sample_description"]
 			organismxml = etree.SubElement(biosample, "Organism")
 			organismname = etree.SubElement(organismxml, "OrganismName")
 			organismname.text = row["organism"]
-			if pd.notnull(row["bioproject"]) and row["bioproject"].strip() != "":
+			if "bioproject" in metadata and pd.notnull(row["bioproject"]) and row["bioproject"].strip() != "":
 				bioproject = etree.SubElement(biosample, "BioProject")
 				primaryid = etree.SubElement(bioproject, "PrimaryId", db="BioProject")
 				primaryid.text = row["bioproject"]
@@ -141,7 +161,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 			# Attributes
 			attributes = etree.SubElement(biosample, "Attributes")
 			# Remove columns with bs-prefix that are not attributes
-			biosample_cols = [col for col in database_df.columns.tolist() if (col.startswith('bs-')) and (col not in ["bs-sample_name", "bs-package", "bs-description"])]
+			biosample_cols = [col for col in database_df.columns.tolist() if (col.startswith('bs-')) and (col not in ["bs-sample_name", "bs-package", "bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"])]
 			for col in biosample_cols:
 				attribute_value = row[col]
 				if pd.notnull(attribute_value) and attribute_value.strip() != "":
@@ -177,7 +197,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 				datatype = etree.SubElement(file, "DataType")
 				datatype.text = "generic-data"
 			# Remove columns with sra- prefix that are not attributes
-			sra_cols = [col for col in database_df.columns.tolist() if col.startswith('sra-') and not re.match("(sra-sample_name|sra-file_location|sra-file_\d*)", col)]
+			sra_cols = [col for col in database_df.columns.tolist() if col.startswith('sra-') and not re.match("(sra-sample_name|sra-title|sra-comment|sra-file_location|sra-file_\d*)", col)]
 			for col in sra_cols:
 				attribute_value = row[col]
 				if pd.notnull(attribute_value) and attribute_value.strip() != "":
@@ -188,11 +208,10 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 				refid = etree.SubElement(attribute_ref_id, "RefId")
 				primaryid = etree.SubElement(refid, "PrimaryId")
 				primaryid.text = row["bioproject"]
-			if config_dict["Link_Sample_Between_NCBI_Databases"] and metadata.columns.str.contains("bs-sample_name").any():
-				attribute_ref_id = etree.SubElement(addfiles, "AttributeRefId", name="BioSample")
-				refid = etree.SubElement(attribute_ref_id, "RefId")
-				spuid = etree.SubElement(refid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
-				spuid.text = metadata.loc[metadata["sra-sample_name"] == row["sra-sample_name"], "bs-sample_name"].iloc[0]
+			attribute_ref_id = etree.SubElement(addfiles, "AttributeRefId", name="BioSample")
+			refid = etree.SubElement(attribute_ref_id, "RefId")
+			spuid = etree.SubElement(refid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+			spuid.text = metadata.loc[metadata["sra-sample_name"] == row["sra-sample_name"], "bs-sample_name"].iloc[0]
 			identifier = etree.SubElement(addfiles, "Identifier")
 			spuid = etree.SubElement(identifier, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
 			spuid.text = row["sra-sample_name"]
@@ -214,7 +233,7 @@ def create_biosample_sra_submission(organism: str, database: str, submission_nam
 		create_raw_reads_list(submission_dir=submission_dir, raw_files_list=raw_files_list)
 	manual_df = metadata.copy()
 	create_manual_submission_files(database=database, submission_dir=submission_dir, metadata=manual_df, config_dict=config_dict)
-	xml_str = create_submission_xml(organism=organism, database=database, submission_name=submission_name, metadata=metadata, config_dict=config_dict, failed_seqs_auto_removed=True)
+	xml_str = create_submission_xml(organism=organism, database=database, submission_name=submission_name, metadata=metadata, config_dict=config_dict)
 	file_handler.save_xml(xml_str, submission_dir)
 
 # Read xml report and get status of the submission

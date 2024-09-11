@@ -15,6 +15,18 @@ schema = DataFrameSchema(
 			description="Identifier name used for SRA. Max length is 50 characters. Name must be unique from BioSample or Genbank submission.",
 			title="sample name",
 		),
+		"bs-sample_name": Column(
+			dtype="object",
+			checks=[
+				Check.str_matches(r"^(?!\s*$).+"),
+			],
+			nullable=False,
+			unique=True,
+			coerce=False,
+			required=True,
+			description="Identifier name used for BioSample. Max length is 50 characters. Required if submitting to SRA.",
+			title="sample_name",
+		),
 		"sra-file_location": Column(
 			dtype="object",
 			checks=[
@@ -146,6 +158,30 @@ schema = DataFrameSchema(
 			description="Brief description of materials/methods used for creating sequencing library.",
 			title="design description",
 		),
+		"sra-title": Column(
+			dtype="object",
+			checks=[
+				Check(lambda s: s.nunique() == 1),
+			],
+			nullable=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="Optional internal field for how the SRA submission should be named when viewed from the NCBI submission portal. If not provided, when performing submissions <--submission_name> with the suffix \"-SRA\" will be used instead.",
+			title="sra submission portal name",
+		),
+		"sra-comment": Column(
+			dtype="object",
+			checks=[
+				Check(lambda s: s.nunique() == 1),
+			],
+			nullable=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="Optional internal field explaining the purpose of the submission for when interacting and resolving submission issues with NCBI.",
+			title="sra submission portal description",
+		)
 	},
      checks=None,
      index=None,

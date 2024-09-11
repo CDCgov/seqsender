@@ -46,9 +46,15 @@ def create_submission_xml(organism: str, submission_name: str, config_dict: Dict
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
 	title = etree.SubElement(description, "Title")
-	title.text = config_dict["Description"]["Title"]
+	if "gb-title" in metadata and pd.notnull(metadata["gb-title"].iloc[0]) and metadata["gb-title"].iloc[0].strip() != "":
+		title.text = metadata["gb-title"].iloc[0]
+	else:
+		title.text = submission_name + "-GB"
 	comment = etree.SubElement(description, "Comment")
-	comment.text = config_dict["Description"]["Comment"]
+	if "gb-comment" in metadata and pd.notnull(metadata["gb-comment"].iloc[0]) and metadata["gb-comment"].iloc[0].strip() != "":
+		comment.text = metadata["gb-comment"].iloc[0]
+	else:
+		comment.text = "GenBank Submission"
 	# Description info including organization and contact info
 	organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["Type"], role=config_dict["Description"]["Organization"]["Role"])
 	org_name = etree.SubElement(organization, "Name")
@@ -211,6 +217,8 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 
 # Create a zip file for genbank submission
 def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str]) -> None:
+	# Drop submission xml columns
+	metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
 	# Create authorset file
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir)
 	file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir)
