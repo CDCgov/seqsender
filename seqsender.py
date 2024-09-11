@@ -25,6 +25,8 @@ import tools
 
 from settings import VERSION
 
+import sys
+
 # Define current time
 STARTTIME = datetime.now()
 
@@ -46,6 +48,9 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	file_handler.validate_directory(name = "submission directory", path = submission_dir)
 	# Validate files
 	for file_type, file_path in file_dict.items():
+		if file_type == "fasta_file" and file_path is None and ("GENBANK" in database or "GISAID" in database):
+			print("Error: Submitting to GenBank or GISAID requires a fasta file for submission. Add a fasta file to your submission with the flag '--fasta_file'. ", file=sys.stderr)
+			sys.exit(1)
 		if file_type in ["fasta_file", "gff_file"] and file_path is None:
 			# If not provided
 			continue
@@ -60,6 +65,12 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 			file_dict[file_type] = updated_path # type: ignore
 	# load config file
 	config_dict = tools.get_config(config_file=file_dict["config_file"], database=database)
+	# Warn user if submitting biosample & sra together with 'Link_Sample_Between_NCBI_Databases' set to False
+	if not config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"] and "SRA" in database and "BIOSAMPLE" in database:
+		print("Warning: You are submitting to BioSample and SRA together, and your config has the field 'Link_Sample_Between_NCBI_Databases', turned off. Your BioSample and SRA submission will still be linked together as this is required for submitting to SRA.")
+	# Warn user if submitting to only SRA, they still require a BioSample submission
+	if "SRA" in database and "BIOSAMPLE" not in database:
+		print("Warning: You are submitting to SRA but not to BioSample. SRA requires a BioSample submission when submitting raw reads. Ensure you also make a BioSample submission to prevent submission errors.")
 	# load metadata file
 	metadata = tools.get_metadata(database=database, organism=organism, metadata_file=file_dict["metadata_file"], config_dict=config_dict, skip_validation=skip_validation)
 	# Load fasta file into metadata
@@ -117,7 +128,7 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 					submission_status = "SUBMITTED"
 		elif "GISAID" in database_name:
 			sub_pos = tools.get_submission_position(config_dict=config_dict, database="GISAID")
-			if sub_pos is None or sub_pos == 1:
+			if sub_pos is None or sub_pos == 1 or "GENBANK" not in database:
 				submission_status = gisaid_handler.submit_gisaid(organism=organism, submission_dir=database_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], submission_type=submission_type)
 		else:
 			print(f"Error: Database selection {database_name} is not valid.", file=sys.stderr)
@@ -143,7 +154,6 @@ def main():
 		if args.genbank:
 			database += [args.genbank]
 		if args.gisaid:
-			print("here")
 			database += [args.gisaid]
 		if len(database) == 0:
 			print("ERROR: Missing a required database selection. See USAGE below.", file=sys.stderr)

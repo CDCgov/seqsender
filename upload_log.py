@@ -87,10 +87,13 @@ def validate_submission_status_df(metadata: pd.DataFrame, database: List[str]) -
 		sys.exit(1)
 
 # Update values of existing submission_status.csv file
-def update_submission_status_csv(submission_dir: str, update_database: str, update_df: pd.DataFrame):
+def update_submission_status_csv(submission_dir: str, update_database: str, update_df: pd.DataFrame) -> None:
+	# Check if there are updates to be made
+	if update_df.empty:
+		print(f"Error: Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'. The log file may be empty.", file=sys.stderr)
 	# Pop off directory if inside database directory
-	if os.path.split(submission_dir)[1] in ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]:
-		submission_dir = os.path.split(submission_dir)[0]
+	if os.path.split(submission_dir)[-1] in ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]:
+		submission_dir = os.path.dirname(submission_dir)
 	submission_status_file = os.path.join(submission_dir, "submission_status_report.csv")
 	file_handler.validate_file(file_type="submission status report", file_path=submission_status_file)
 	df = file_handler.load_csv(file_path=submission_status_file)
@@ -101,9 +104,6 @@ def update_submission_status_csv(submission_dir: str, update_database: str, upda
 		sample_column = (SAMPLE_NAME_DATABASE_PREFIX[update_database] + "sample_name")
 	elif f"{SAMPLE_NAME_DATABASE_PREFIX[update_database]}segment_name" in update_df:
 		sample_column = (SAMPLE_NAME_DATABASE_PREFIX[update_database] + "segment_name")
-	else:
-		print(f"Error: Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'.", file=sys.stderr)
-		sys.exit(1)
 	df = df.set_index(sample_column, drop = False)
 	update_df = update_df.set_index(sample_column)
 	df.update(update_df)
@@ -175,7 +175,7 @@ def validate_fields_exist(df: pd.DataFrame):
 	config_file = df["Config_File"].iloc[0]
 	file_handler.validate_directory(name = "directory", path = submission_dir)
 	file_handler.validate_file(file_type = "submission_status_report", file_path = submission_status_file)
-	file_handler.validate_file(file_type = " config file", file_path = config_file)
+	file_handler.validate_file(file_type = "config file", file_path = config_file)
 
 # Process submission status of existing biosample/sra database submission
 def process_biosample_sra(submission_name: str, database: str, organism: str, submission_log_dir: str, submission_dir: str, curr_status: str, config_dict: Dict[str, Any], submission_type: str) -> Tuple[bool, str]:

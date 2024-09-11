@@ -1,6 +1,7 @@
 column_name,required_column,description
 sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.
-gs-sample_name,Required,Identifier name used for GISAID. Max length is 50 characters.
+gs-sample_name,Required,Identifier name for sample segment used for GISAID. Max length is 50 characters.
+gs-Isolate_Name,Required,Identifier name for sample used for GISAID. Max length is 50 characters.
 gs-segment,Required,Segment name for sequence.
 gs-Subtype,Required,Influenza subtype (e.g. H5N1).
 gs-Lineage,Optional,Lineage information.

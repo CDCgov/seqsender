@@ -133,7 +133,7 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	# Update seqsender base schema to include needed checks
-	if "BioSample" in database or "SRA" in database:
+	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
 	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
 	# Import schemas
@@ -235,6 +235,7 @@ def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.Schem
 			for column_value_msg, indices in duplicate_errors.items():
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
+
 # Check user credentials information
 def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
 	# Check username

@@ -1,0 +1,5 @@
+column_name,required_column,description
+sra-sample_name,Required,Sample name used for SRA submission.
+sra_status,Required,Current status of the SRA submission.
+sra_accession,Required,Sample accession ID used to identify SRA submission NCBI.
+sra_message,Required,"If there is a message tied to the sequence submitted to SRA, it will appear here."

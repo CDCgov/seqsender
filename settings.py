@@ -33,7 +33,7 @@ GISAID_SUBMISSION_STATUS_COLUMNS: List[str] = ["gisaid_accession_epi_isl_id", "g
 SUBMISSION_LOG_COLUMNS: List[str] = ["Submission_Name", "Organism", "Database", "Submission_Type", "Submission_Date", "Submission_ID", "Submission_Status", "Submission_Directory", "Config_File", "Update_Date"]
 
 # Shiny schema options, exclusion list
-SCHEMA_EXCLUSIONS = ["config.seqsender.upload_log_schema","config.seqsender.config_file.gisaid_schema","config.seqsender.config_file.ncbi_gisaid_schema", "config.seqsender.config_file.ncbi_schema"]
+SCHEMA_EXCLUSIONS = ["config.seqsender.upload_log_schema","config_file.ncbi_schema","config_file.ncbi_gisaid_schema", "config_file.gisaid_schema"]
 
 ##### NCBI settings #####
 # FTP website to submit samples to
@@ -49,7 +49,7 @@ TABLE2ASN_EMAIL:str  = "gb-admin@ncbi.nlm.nih.gov"
 BIOSAMPLE_REGEX = "^bs-|^bioproject$|^organism$|^collection_date$"
 
 # SRA metadata regex
-SRA_REGEX = "^sra-|^bioproject$|^organism$|^collection_date$"
+SRA_REGEX = "^sra-|^bioproject$|bs-sample_name|^organism$|^collection_date$"
 
 # Genbank metadata regex
 GENBANK_REGEX = "^gb-sample_name$"
@@ -62,4 +62,4 @@ GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-|^organism$|^collection_date$"
 
 ##### GISAID settings #####
 # GISAID metadata regex
-GISAID_REGEX = "^gs-|^collection_date$|^authors"
+GISAID_REGEX = "^gs-|^collection_date$|^authors$"

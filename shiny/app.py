@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.2.0. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.2.1. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -649,30 +649,63 @@ def server(input, output, session):
         return input.BioSample_packages()
 
     @reactive.effect
+    @reactive.event(input.SRA_checkbox)
+    def sra_submission_requires_biosample():
+        if input.SRA_checkbox() == True and input.BioSample_checkbox() == False:
+            with reactive.isolate():
+                ui.update_checkbox("BioSample_checkbox", value = True)
+
+
+    @reactive.effect
     @reactive.event(input.ncbi_submission_position)
     def gisaid_submission_position():
-        if "First" in input.ncbi_submission_position():
-            value = "Second"
+        if input.ncbi_submission_position() == "1":
+            value = "2"
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "gisaid_submission_position",
+                    selected=value,
+                )
+        elif input.ncbi_submission_position() == "2":
+            value = "1"
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "gisaid_submission_position",
+                    selected=value,
+                )
         else:
-            value = "First"
-        with reactive.isolate():
-            ui.update_radio_buttons(
-                "gisaid_submission_position",
-                selected=value,
-            )
+            value = ""
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "gisaid_submission_position",
+                    selected=value,
+                )
 
     @reactive.effect
     @reactive.event(input.gisaid_submission_position)
     def ncbi_submission_position():
-        if "First" in input.gisaid_submission_position():
-            value = "Second"
+        if input.gisaid_submission_position() == "1":
+            value = "2"
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "ncbi_submission_position",
+                    selected=value,
+                )
+        elif input.gisaid_submission_position() == "2":
+            value = "1"
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "ncbi_submission_position",
+                    selected=value,
+                )
         else:
-            value = "First"
-        with reactive.isolate():
-            ui.update_radio_buttons(
-                "ncbi_submission_position",
-                selected=value,
-            )
+            value = ""
+            with reactive.isolate():
+                ui.update_radio_buttons(
+                    "ncbi_submission_position",
+                    selected=value,
+                )
+
 
     @reactive.Calc
     def initialize_base_dataframe():
@@ -749,8 +782,6 @@ def server(input, output, session):
                 "Specified_Release_Date": input.ncbi_config_release_date() or "",
                 "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
                 "Description": {
-                    "Title": input.ncbi_config_title() or "",
-                    "Comment": input.ncbi_config_comment() or "",
                     "Organization": {
                         "Role": input.ncbi_config_role() or "",
                         "Type": input.ncbi_config_type() or "",
