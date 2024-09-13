@@ -12,7 +12,7 @@ schema = DataFrameSchema(
 			unique=True,
 			coerce=False,
 			required=True,
-			description="Identifier name used for SRA. Max length is 50 characters. Name must be unique from BioSample or Genbank submission.",
+			description="Identifier name used for SRA. Max length is 50 characters. Name must be unique from BioSample/Genbank submission.",
 			title="sample name",
 		),
 		"bs-sample_name": Column(
@@ -39,18 +39,29 @@ schema = DataFrameSchema(
 			description="Location of raw reads files. Options: \"local\" or \"cloud\".",
 			title="file location",
 		),
-		"sra-file_[1-9]\d*": Column(
+		"sra-file_1": Column(
 			dtype="object",
 			checks=[
 				Check.str_matches(r"^(?!\s*$).+"),
 			],
 			nullable=False,
 			regex=True,
-			unique=False,
+			unique=True,
 			coerce=False,
 			required=True,
-			description="Name of the raw read files. All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If there are multiple files, concatenate them with a commas (\",\"), e.g. \"sample1_R1.fastq.gz, sample1_R2.fastq.gz\". Store files in /seqsender/data/raw_reads/ or provide full html path to the raw read files.",
-			title="file name",
+			description="All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If files are stored in the cloud, provide the full cloud url. If files are stored locally, if files are stored in the folder \"<--submission_dir>/raw_reads/\", then just the file name is required; otherwise, provide the full file path for the raw read.",
+			title="raw reads file name",
+		),
+		"sra-file_[2-9]\d*": Column(
+			dtype="object",
+			checks=None,
+			nullable=True,
+			regex=True,
+			unique=False,
+			coerce=False,
+			required=False,
+			description="Repeatable column, replace the \"#\" with the file number for each file associated with the sample. (i.e. If you had 4 separate raw reads files associated with one sample, then you would have 4 columns named: \"sra-file_1\", \"sra-file_2\", \"sra-file_3\", and \"sra-file_4\".) All file names must be unique and not contain any sensitive information. Files can be compressed using gzip or bzip2, and may be submitted in a tar archive but archiving and/or compressing your files is not required. Do not use zip! If files are stored in the cloud, provide the full cloud url. If files are stored locally, if files are stored in the folder \"<--submission_dir>/raw_reads/\", then just the file name is required; otherwise, provide the full file path for the raw read.",
+			title="additional raw reads files",
 		),
 		"sra-library_name": Column(
 			dtype="object",

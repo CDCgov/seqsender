@@ -585,16 +585,16 @@ import pathlib
 
 dir = pathlib.Path(__file__).parent
 
-@reactive.file_reader(dir / "templates/config.seqsender.schema_template.csv")
+@reactive.file_reader(dir / "templates/config.seqsender.seqsender.schema_template.csv")
 def read_file():
-    df = pd.read_csv(dir / "templates/config.seqsender.schema_template.csv", index_col = "column_name")
+    df = pd.read_csv(dir / "templates/config.seqsender.seqsender.schema_template.csv", index_col = "column_name")
     df = df.fillna("")
     df = df.transpose()
     return df
 
-@reactive.file_reader(dir / "templates/config.sra.schema_template.csv")
+@reactive.file_reader(dir / "templates/config.sra.sra.schema_template.csv")
 def read_sra_file():
-    df = pd.read_csv(dir / "templates/config.sra.schema_template.csv", index_col = "column_name")
+    df = pd.read_csv(dir / "templates/config.sra.sra.schema_template.csv", index_col = "column_name")
     df = df.fillna("")
     df = df.transpose()
     return df
@@ -732,27 +732,30 @@ def server(input, output, session):
     @reactive.Calc
     def load_database_metadata_dataframe():
         database_df = initialize_base_dataframe()
-        if input.BioSample_checkbox():
-            biosample_df = initialize_biosample_dataframes()
-            database_df = pd.concat([database_df, biosample_df], axis=1)
-        if input.SRA_checkbox():
-            sra_df = initialize_sra_dataframes()
-            database_df = pd.concat([database_df, sra_df], axis=1)
         if input.GenBank_checkbox():
             genbank_df = initialize_genbank_dataframes()
             database_df = pd.concat([database_df, genbank_df], axis=1)
         if input.GISAID_checkbox():
             gisaid_df = initialize_gisaid_dataframes()
             database_df = pd.concat([database_df, gisaid_df], axis=1)
+        if input.BioSample_checkbox():
+            biosample_df = initialize_biosample_dataframes()
+            database_df = pd.concat([database_df, biosample_df], axis=1)
+            database_df.loc["required_column", "bioproject"] = "Required"
+        if input.SRA_checkbox():
+            sra_df = initialize_sra_dataframes()
+            database_df = pd.concat([database_df, sra_df], axis=1)
+            database_df.loc["required_column", "bioproject"] = "Required"
+        database_df = database_df.loc[:, ~database_df.columns.duplicated()]
         database_df = (
             database_df.style.set_table_styles(
                 [
                     dict(
-                        selector="th", props=[("border", "3px black solid !important")]
+                        selector="th", props=[("border", "3px black solid !important"), ("white-space", "nowrap"), ("vertical-align", "top")]
                     ),
-                    dict(selector="ti", props=[("background-color", "#DCDCDC")]),
+                    dict(selector="ti", props=[("background-color", "#DCDCDC"), ("vertical-align", "top")]),
                     dict(
-                        selector="td", props=[("border", "1px black solid !important")]
+                        selector="td", props=[("border", "1px black solid !important"), ("vertical-align", "top")]
                     ),
                 ]
             )
@@ -823,18 +826,20 @@ def server(input, output, session):
     @render.download(filename="metadata_template.csv")
     def download_metadata():
         database_df = initialize_base_dataframe()
-        if input.BioSample_checkbox():
-            biosample_df = initialize_biosample_dataframes()
-            database_df = pd.concat([database_df, biosample_df], axis=1)
-        if input.SRA_checkbox():
-            sra_df = initialize_sra_dataframes()
-            database_df = pd.concat([database_df, sra_df], axis=1)
         if input.GenBank_checkbox():
             genbank_df = initialize_genbank_dataframes()
             database_df = pd.concat([database_df, genbank_df], axis=1)
         if input.GISAID_checkbox():
             gisaid_df = initialize_gisaid_dataframes()
             database_df = pd.concat([database_df, gisaid_df], axis=1)
+        if input.BioSample_checkbox():
+            biosample_df = initialize_biosample_dataframes()
+            database_df = pd.concat([database_df, biosample_df], axis=1)
+            database_df.loc["required_column", "bioproject"] = "Required"
+        if input.SRA_checkbox():
+            sra_df = initialize_sra_dataframes()
+            database_df = pd.concat([database_df, sra_df], axis=1)
+            database_df.loc["required_column", "bioproject"] = "Required"
         database_df = database_df.loc[:,~database_df.columns.duplicated()].copy()
         yield database_df.to_csv()
 

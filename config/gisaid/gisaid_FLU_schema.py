@@ -11,7 +11,7 @@ schema = DataFrameSchema(
 			unique=True,
 			coerce=False,
 			required=True,
-			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.",
+			description="VSequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID by updating the sequence name in your fasta file to reflect the sample name for the specified database.",
 			title="sequence name",
 		),
 		"gs-sample_name": Column(
