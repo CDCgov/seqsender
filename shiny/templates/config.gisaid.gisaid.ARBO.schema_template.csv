@@ -1,5 +1,5 @@
 column_name,required_column,description
-sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank and/or GISAID.
+sequence_name,Required,Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID by updating the sequence name in your fasta file to reflect the sample name for the specified database.
 gs-sample_name,Required,"Identifier name used for GISAID. Max length is 50 characters. This field is the same as ""arbo_sequence_name"" in GISAID's metadata template."
 gs-arbo_type,Required,"For hCoV-19, this will always be ""Chikungunya virus""."
 gs-arbo_passage,Required,"""Original"" if the sample was sequenced directly from swabs, otherwise add the name of the cell line (e.g., ""Vero"") used to culture the specimen."

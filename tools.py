@@ -208,9 +208,14 @@ def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.Schem
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
+			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
+			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
+				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
+			# Check ordered columns
 			elif error.check == "column_ordered":
 				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
-			elif error.check == "no_regex_column_match('sra-file_[1-9]\d*')":
+			# Check sra file names
+			elif error.check == "no_regex_column_match('sra-file_[2-9]\d*')":
 				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
 			# Collect all duplicate values and print them at the end to group index positions together
 			elif error.check == "field_uniqueness":
@@ -326,6 +331,9 @@ def process_schema(schema):
 		# Update required field if required group of columns
 		if description_field and "At least one required: Group" in description_field:
 			required_field = "At least one field required. Group: " + description_field.split("Group: \"")[-1].split("\".")[0]
+		# Update SRA wildcard field for raw files
+		if column_name == "sra-file_[2-9]\d*":
+			column_name = "sra-file_#"
 		schema_contents.append({"column_name": column_name, "required_column": required_field, "description": description_field})
 	return pd.DataFrame(schema_contents)
 
