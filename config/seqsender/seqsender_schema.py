@@ -17,18 +17,6 @@ def validate_date(date):
 
 schema = DataFrameSchema(
 	columns={
-		"sequence_name": Column(
-			dtype="object",
-			checks=[
-				Check.str_matches(r"^(?!\s*$).+"),
-				Check.str_length(max_value=50),
-			],
-			nullable=False,
-			unique=True,
-			coerce=False,
-			description="Sequence identifier used in fasta file. This is used to create the fasta file for Genbank or GISAID.",
-			title="sequence name",
-		),
 		"organism": Column(
 			dtype="object",
 			checks=[
