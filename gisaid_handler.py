@@ -6,7 +6,7 @@
 
 import shutil
 import subprocess
-from typing import Dict, Any, List, Optional, Match
+from typing import Dict, Any, List, Optional, Match, Any
 import os
 import pandas as pd
 import file_handler
@@ -15,6 +15,8 @@ import time
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+import warnings
+warnings.filterwarnings("ignore", 'This pattern has match groups')
 import re
 
 import upload_log
@@ -39,13 +41,15 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 		gisaid_df["fn"] = "sequence.fsa"
 		first_cols = ["submitter", "fn", sample_name_column]
 	elif "FLU" in organism:
-		gisaid_df = gisaid_df.rename(columns = {"authors": "Authors", "collection_date": "Collection_Date"})
+		gisaid_df = gisaid_df.rename(columns = {"authors": "Authors"})
+		# Parse out dates into respective columns
+		gisaid_df[["Collection_Date", "Collection_Year", "Collection_Month"]] = gisaid_df["collection_date"].apply(process_flu_dates)
 		gisaid_df["Isolate_Id"] = ""
 		gisaid_df["Segment_Ids"] = ""
 		# Pivot FLU segment names from long form to wide form
 		gisaid_df["segment"] = "Seq_Id (" + gisaid_df["segment"].astype(str) + ")"
 		group_df = gisaid_df.pivot(index="Isolate_Name", columns="segment", values="sample_name").reset_index()
-		gisaid_df = gisaid_df.drop(columns=["sample_name", "segment"])
+		gisaid_df = gisaid_df.drop(columns=["sample_name", "segment", "collection_date"])
 		gisaid_df = gisaid_df.drop_duplicates(keep="first")
 		gisaid_df = gisaid_df.merge(group_df, on="Isolate_Name", how="inner", validate="1:1")
 		first_cols = ["Isolate_Id","Segment_Ids","Isolate_Name"]
@@ -57,6 +61,27 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 	shutil.copy(os.path.join(submission_dir, "metadata.csv"), os.path.join(submission_dir, "orig_metadata.csv"))
 	file_handler.create_fasta(database="GISAID", metadata=metadata, submission_dir=submission_dir)
 	shutil.copy(os.path.join(submission_dir, "sequence.fsa"), os.path.join(submission_dir, "orig_sequence.fsa"))
+
+# Flu collection dates require partial dates to use different columns
+def process_flu_dates(row: Any) -> pd.Series:
+	sections = row.strip().split("-")
+	if len(sections) == 1:
+		full_date = ""
+		year = sections[0]
+		month = ""
+	elif len(sections) == 2:
+		full_date = ""
+		year = sections[0]
+		month = sections[1]
+	elif len(sections) == 3:
+		full_date = row.strip()
+		year = ""
+		month = ""
+	else:
+		print(f"Error: Unable to process 'Collection_Date' column for FLU GISAID submission. The field should be in format 'YYYY-MM-DD'. Value unable to process: {row.strip()}", file=sys.stderr)
+		sys.exit(1)
+	return pd.Series([full_date, year, month])
+
 
 # Read output log from gisaid submission script
 def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
