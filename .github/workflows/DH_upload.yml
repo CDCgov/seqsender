@@ -36,9 +36,9 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            'v1.2.2'
-            'latest'
-          labels: ${{ steps.meta.outputs.labels }}
+            "v1.2.2"
+            "latest"
+          labels: " Genomic sequence pipeline to automate the process of generating necessary submission files and batch uploading them to public databases."
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
