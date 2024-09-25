@@ -26,7 +26,7 @@ github_pages_url <- description$GITHUB_PAGES
 
 <p style="font-size: 16px;"><em>Public Database Submission Pipeline</em></p>
 
-**Beta Version**: v1.2.1. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome! 
+**Beta Version**: v1.2.3. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome! 
 
 **General Disclaimer**: This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
