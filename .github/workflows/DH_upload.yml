@@ -28,6 +28,8 @@ jobs:
         with:
           images: cdcgov/seqsender
      
-      - uses: actions/checkout@v4
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ${{ steps.meta.outputs.tags }}
+
+      - name: docker images 
+        run: docker images
