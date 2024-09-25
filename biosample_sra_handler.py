@@ -244,7 +244,15 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 	if "Action" not in report_dict["SubmissionStatus"]:
 		return submission_status, submission_id
 	try:
-		for action_dict in report_dict["SubmissionStatus"]["Action"]:
+		# If only a single sample, convert into list for proper formatting
+		if isinstance(report_dict["SubmissionStatus"]["Action"], list):
+			action_list = report_dict["SubmissionStatus"]["Action"]
+		elif isinstance(report_dict["SubmissionStatus"]["Action"], dict):
+			action_list = [report_dict["SubmissionStatus"]["Action"]]
+		else:
+			print(f"Error: Unable to correctly process BioSample report at: {report_file}", file=sys.stderr)
+			return submission_status, submission_id
+		for action_dict in action_list:
 			# Skip if incorrect database
 			if "@target_db" not in action_dict or action_dict["@target_db"].lower() != database.lower():
 				continue
@@ -271,6 +279,8 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 					sample_info.append({sample_name_col:sample_name, f"{column_prefix}_status":action_dict["@status"], f"{column_prefix}_accession":accession, f"{column_prefix}_message":""})
 	except:
 		pass
+	if submission_status == "PROCESSED" and not sample_info:
+		print(f"Error: Unable to process {database} report.xml to retrieve accessions at: {report_file}", file=sys.stderr)
 	if sample_info:
 		update_df = pd.DataFrame(sample_info)
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database=database, update_df=update_df)
