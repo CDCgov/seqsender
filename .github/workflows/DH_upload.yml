@@ -29,7 +29,7 @@ jobs:
           images: cdcgov/seqsender
      
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ steps.meta.outputs.tags }}
+        run: docker build . --file Dockerfile --tag ${{ github.ref_name }}
 
       - name: docker images 
         run: docker images
