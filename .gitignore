@@ -22,5 +22,4 @@ docker-compose-*.yaml
 **/.Rproj.user
 **/test_data/*
 **/gisaid_cli/*
-**/COV_TEST_DATA/*
-**/FLU_TEST_DATA/*
+**/*_TEST_DATA/*
