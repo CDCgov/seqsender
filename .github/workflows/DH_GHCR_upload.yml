@@ -33,7 +33,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: cdcgov/seqsender
+          images: |
+            cdcgov/seqsender
+            ghcr.io/${{ github.repository }}
 
       - name: Build and push Docker image
         id: push
