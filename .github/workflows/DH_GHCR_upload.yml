@@ -47,4 +47,6 @@ jobs:
           tags: |
             "cdcgov/seqsender:v1.2.2"
             "cdcgov/seqsender:latest"
+            "ghcr.io/cdcgov/seqsender:v1.2.2"
+            "ghcr.io/cdcgov/seqsender:latest"
           labels: "Genomic sequence pipeline to automate the process of generating necessary submission files and batch uploading them to public databases."
