@@ -1,8 +1,8 @@
 name: Create and publish docker image to DockerHub and GitHub Container Repository
 
 on:
-  push:
-    branches: github-action-test
+  release:
+    types: [published]
 
 jobs:
   push_to_registry:
@@ -45,8 +45,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            "cdcgov/seqsender:v1.2.2"
-            "cdcgov/seqsender:latest"
-            "ghcr.io/cdcgov/seqsender:v1.2.2"
-            "ghcr.io/cdcgov/seqsender:latest"
+            cdcgov/seqsender:${{ github.ref_name }}
+            cdcgov/seqsender:latest
+            ghcr.io/cdcgov/seqsender:${{ github.ref_name }}
+            ghcr.io/cdcgov/seqsender:latest
           labels: "Genomic sequence pipeline to automate the process of generating necessary submission files and batch uploading them to public databases."
