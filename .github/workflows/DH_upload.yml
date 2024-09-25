@@ -42,7 +42,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          provenance: mode=max
           tags: |
             "cdcgov/seqsender:v1.2.2"
             "cdcgov/seqsender:latest"
