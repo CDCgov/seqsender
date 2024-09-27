@@ -2,24 +2,14 @@
 ARG micromamba_version
 ARG micromamba_version=${micromamba_version:-1.5.3}
 
-############# base image ##################
-FROM --platform=$BUILDPLATFORM ubuntu:focal as base
-
-# local apt mirror support
-# start every stage with updated apt sources
-ARG APT_MIRROR_NAME=
-RUN if [ -n "$APT_MIRROR_NAME" ]; then sed -i.bak -E '/security/! s^https?://.+?/(debian|ubuntu)^http://'"$APT_MIRROR_NAME"'/\1^' /etc/apt/sources.list && grep '^deb' /etc/apt/sources.list; fi
-RUN apt-get update --allow-releaseinfo-change --fix-missing
-
 ############# micromamba image ##################
 
-FROM --platform=$BUILDPLATFORM mambaorg/micromamba:${micromamba_version} as micromamba
+FROM mambaorg/micromamba:${micromamba_version} as micromamba
 RUN echo "Getting micromamba image"
 
-############# Build Stage: Final ##################
+############# base image ##################
 
-# Build the final image 
-FROM base as final
+FROM ubuntu:focal as base
 
 # if image defaults to a non-root user, then we may want to make the
 # next 3 ARG commands match the values in our image. 
@@ -39,7 +29,10 @@ COPY --from=micromamba /usr/local/bin/_dockerfile_setup_root_prefix.sh /usr/loca
 # Install system dependencies
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install system libraries of general use
+# local apt mirror support
+# start every stage with updated apt sources
+ARG APT_MIRROR_NAME=
+RUN if [ -n "$APT_MIRROR_NAME" ]; then sed -i.bak -E '/security/! s^https?://.+?/(debian|ubuntu)^http://'"$APT_MIRROR_NAME"'/\1^' /etc/apt/sources.list && grep '^deb' /etc/apt/sources.list; fi
 RUN apt-get update --allow-releaseinfo-change --fix-missing \
   && apt-get install --no-install-recommends -y \
   dos2unix \
@@ -97,6 +90,3 @@ ENV PATH="$PATH:${PROJECT_DIR}"
 
 # Activate conda environment
 ENV PATH="$PATH:${MAMBA_ROOT_PREFIX}/bin"
-
-# Execute the pipeline 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
