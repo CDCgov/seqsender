@@ -163,12 +163,47 @@ seqsender&nbsp;latest&nbsp;d9e2578d2211&nbsp;2 weeks ago&nbsp;581GB
                 ),
             ],
         ),
-        ui.nav_panel("Docker-Compose", "Panel A content"),
+        ui.nav_panel("Docker-Compose",
+            ui.h2("Update docker-compose.yaml for your local storage"),
+            ui.p(ui.strong("Note: "), ui.code("source"), " is the storage location of your local machine. This location will be mapped to ", ui.code("/data"), " directory inside of the container. Here we are mounting the local variable ", ui.code("$HOME"), " directory to ", ui.code("/data"), " inside of the container. Change the value ", ui.code("$HOME"), " to reflect your local storage system."),
+            ui.card(ui.HTML(
+                """
+<code>version: "3.9"<br>
+x-data-volumes:<br>
+&nbsp;&nbsp;&data-volume<br>
+&nbsp;&nbsp;type: bind<br>
+&nbsp;&nbsp;source: $HOME<br>
+&nbsp;&nbsp;target: /data<br>
+<br>
+services:<br>
+&nbsp;&nbsp;seqsender:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;container_name: seqsender<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image: seqsender:latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;build:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context: .<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dockerfile: Dockerfile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- micromamba_version=1.5.3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;restart: always<br>
+&nbsp;&nbsp;&nbsp;&nbsp;volumes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *data-volume<br>
+&nbsp;&nbsp;&nbsp;&nbsp;command: tail -f /dev/null<br>
+</code>"""
+                ),
+            style=terminal_css,
+            ),
+            ui.h2("Start ", ui.code("seqsender"), " container"),
+            ui.card(
+                ui.p(ui.code("docker-compose up -d")),
+            style=terminal_css,
+            ),
+            ui.p("Running docker-compose with the flag ", ui.code("-d"), " runs the container in detached mode, allowing the container to continue to run in the background. For more information refer to ", ui.a("docker-compose documentation", href="https://docs.docker.com/reference/cli/docker/compose/up/"), "."),
+        ),
         id="docker_options",
     ),
     ui.HTML(
         """
-<h2>check if the container is created successfully</h2>
+<h2>Check if the container is created successfully</h2>
 <pre><code>docker container ps</code></pre>
 """
     ),
@@ -176,7 +211,7 @@ seqsender&nbsp;latest&nbsp;d9e2578d2211&nbsp;2 weeks ago&nbsp;581GB
         ui.HTML(
             """
 docker container ps<br>
-CONTAINER ID&nbsp;|&nbsp;&nbsp;|&nbsp;IMAGE&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;COMMAND&nbsp;|&nbsp;&nbsp;|&nbsp;CREATED&nbsp;|&nbsp;&nbsp;STATUS&nbsp;|&nbsp;PORTS&nbsp;|&nbsp;NAMES
+CONTAINER ID&nbsp;|&nbsp;&nbsp;|&nbsp;IMAGE&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;COMMAND&nbsp;|&nbsp;&nbsp;|&nbsp;CREATED&nbsp;|&nbsp;&nbsp;STATUS&nbsp;|&nbsp;PORTS&nbsp;|&nbsp;NAMES<br>
 b37b6b19c4e8&nbsp;seqsender:latest&nbsp;&quot;/bin/bash&quot;&nbsp;5 hours ago&nbsp;Up 5 hours&nbsp;|&nbsp;&nbsp;|&nbsp;seqsender
 """
         ),

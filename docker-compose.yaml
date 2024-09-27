@@ -3,14 +3,19 @@ version: "3.9"
 x-data-volumes:
   &data-volume
   type: bind
-  source: $HOME/Github/Testings/seqsender
+  source: $HOME
   target: /data
 
 services:
-  seqsender: 
+  seqsender:
     container_name: seqsender
-    image: cdcgov/seqsender:latest
+    image: seqsender:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - micromamba_version=1.5.3
     restart: always
-    volumes: 
+    volumes:
       - *data-volume
-    command: tail -f /dev/null 
+    command: tail -f /dev/null
