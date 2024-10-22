@@ -126,7 +126,7 @@ setup_body = [
                             div(ui.input_radio_buttons(
                                     "ncbi_config_auto_remove_genbank",
                                     label=None,
-                                    choices=[True, False],
+                                    choices=["True", "False"],
                                     inline=True,
                                 ),
                                 style="display:inline-block;height:5px;font-size:medium;",
@@ -175,7 +175,7 @@ setup_body = [
                         div(ui.input_radio_buttons(
                                 "ncbi_config_link_samples",
                                 label=None,
-                                choices=[True, False],
+                                choices=["True", "False"],
                                 inline=True,
                             ),
                             style="display:inline-block;height:5px;font-size:medium;",

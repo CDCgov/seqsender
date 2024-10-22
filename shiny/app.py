@@ -2,6 +2,7 @@ from shiny import App, Inputs, Outputs, Session, render, req, ui, reactive
 from htmltools import TagList, div
 
 ###################### CSS #######################
+import ast
 import pandas as pd
 from shinyswatch import theme
 import shiny_tools
@@ -163,7 +164,7 @@ seqsender&nbsp;latest&nbsp;d9e2578d2211&nbsp;2 weeks ago&nbsp;581GB
                 ),
             ],
         ),
-        ui.nav_panel("Docker-Compose", "Panel A content"),
+        ui.nav_panel("Docker-Compose", [ui.h2("Run seqsender container"), ui.code("docker-compose up")]),
         id="docker_options",
     ),
     ui.HTML(
@@ -632,7 +633,15 @@ def server(input, output, session):
 
     @reactive.file_reader(dir / "templates/")
     def read_genbank_file():
-        df = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
+        # Load main schema
+        df_main = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
+        # Load source schema
+        if input.GenBank_schemas() == "FLU":
+            df_src = pd.read_csv(dir / "templates/config.genbank.genbank.flu.src.schema_template.csv", index_col = "column_name")
+        else:
+            df_src = pd.read_csv(dir / "templates/config.genbank.genbank.src.schema_template.csv", index_col = "column_name")
+        df_cmt = pd.read_csv(dir / "templates/config.genbank.genbank.cmt.schema_template.csv", index_col = "column_name")
+        df = pd.concat([df_main, df_cmt])
         df = df.fillna("")
         df = df.transpose()
         return df
@@ -778,12 +787,12 @@ def server(input, output, session):
                 "Password": input.ncbi_config_password() or "",
                 "Spuid_Namespace": input.ncbi_config_spuid_namespace() or "",
                 **({"BioSample_Package": input.BioSample_packages() or ""} if input.BioSample_checkbox() else {}),
-                **({"GenBank_Auto_Remove_Failed_Samples": input.ncbi_config_auto_remove_genbank() or ""} if input.GenBank_checkbox() else {}),
+                **({"GenBank_Auto_Remove_Failed_Samples": ast.literal_eval(input.ncbi_config_auto_remove_genbank())} if input.GenBank_checkbox() else {}),
                 "Publication_Title": input.ncbi_config_publication_title() or "",
                 "Publication_Status": input.ncbi_config_publication_status() or "",
                 **({"Submission_Position": input.ncbi_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
                 "Specified_Release_Date": input.ncbi_config_release_date() or "",
-                "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
+                "Link_Sample_Between_NCBI_Databases": ast.literal_eval(input.ncbi_config_link_samples()),
                 "Description": {
                     "Organization": {
                         "Role": input.ncbi_config_role() or "",

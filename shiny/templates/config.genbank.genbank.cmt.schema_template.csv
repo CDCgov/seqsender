@@ -1,2 +1,8 @@
 column_name,required_column,description
-((?:StructuredComment)(?:Prefix|Suffix)),Required,"Structured comment keyword. For FLU use ""FluData"", HIV use ""HIV-DataBaseData"", and for COV and other organisms use ""Assembly-Data""."
+cmt-StructuredCommentPrefix, Required if adding comment file to GenBank submission. If not provided "Assembly-Data" will be used., Structured comment keyword. For FLU use "FluData" HIV use "HIV-DataBaseData" and for COV and other organisms use "Assembly-Data".
+cmt-StructuredCommentSuffix, Required if adding comment file to GenBank submission. If not provided "Assembly-Data" will be used., Structured comment keyword. For FLU use "FluData" HIV use "HIV-DataBaseData" and for COV and other organisms use "Assembly-Data".
+cmt-Assembly Method, Required if adding comment file to GenBank submission, Assembly method of sequence with version or date the program was run. Note that 'v. ' is required between the algorithm name and its version (or the month and year it was run).
+cmt-Assembly Name, Optional if adding comment file to GenBank submission, For eukaryotic assemblies. A short name suitable for display (e.g. "LoxAfr_3.0" for a Loxodonta africana assembly version 3.0).
+cmt-Coverage, Required if adding comment file to GenBank submission, Average sequencing coverage of sample. 
+cmt-Sequencing Technology, Required if adding comment file to GenBank submission, Instrument model used to generate sequence of sample. If more than one sequencing technology was used they are separated with a semi-colon (e.g. "PacBio; Illumina GAIIx").
+cmt-#, Optional if adding comment file to GenBank submission, Add unique metadata to your GenBank submission. Replace "#" with the name of how you want this field labelled publically. Reuse this column for how ever many unique metadata fields you want to add to your GenBank submission. Any scientific unit of measurement (e.g. deg C or km) should be included with the value. 
