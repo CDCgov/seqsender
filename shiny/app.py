@@ -641,7 +641,7 @@ def server(input, output, session):
         else:
             df_src = pd.read_csv(dir / "templates/config.genbank.genbank.src.schema_template.csv", index_col = "column_name")
         df_cmt = pd.read_csv(dir / "templates/config.genbank.genbank.cmt.schema_template.csv", index_col = "column_name")
-        df = pd.concat([df_main, df_cmt])
+        df = pd.concat([df_main, df_src, df_cmt])
         df = df.fillna("")
         df = df.transpose()
         return df
