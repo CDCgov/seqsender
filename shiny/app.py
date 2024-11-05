@@ -217,6 +217,7 @@ singularity exec ~/singularity/seqsender.sif seqsender-kickoff --help</code></pr
 ]
 installation_body = [
     ui.h2("Installation"),
+    ui.p("SeqSender can be installed a couple of different ways. All SeqSender versions are updated when a new GitHub version is ", ui.a("released", "https://github.com/CDCgov/seqsender/releases"), ". SeqSender can be setup by directly cloning from GitHub or the docker image can be downloaded from the ", ui.a("GitHub Container Repository", "https://github.com/CDCgov/seqsender/pkgs/container/seqsender"), " or ", ui.a("DockerHub", "https://hub.docker.com/r/cdcgov/seqsender"), "."),
     ui.navset_tab(
         ui.nav_panel("Local", local_installation_content),
         ui.nav_panel("Docker", docker_installation_content),
