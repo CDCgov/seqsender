@@ -12,7 +12,7 @@ schema = DataFrameSchema(
 			coerce=False,
 			required=True,
 			regex=True,
-			default="FluData",
+			default="Assembly-Data",
 			description="Structured comment keyword. For FLU use \"FluData\", HIV use \"HIV-DataBaseData\", and for COV and other organisms use \"Assembly-Data\".",
 			title="Structured Comment Prefix and Suffix",
 		),

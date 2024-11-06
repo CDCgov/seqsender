@@ -3,7 +3,8 @@
 ################################################################################
 
 # Python Libraries
-import ftplib
+import paramiko
+import base64
 import os
 import sys
 import time
@@ -16,7 +17,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from typing import List, Set, Dict, Any, Union, Tuple, Optional
-from settings import NCBI_FTP_HOST, TABLE2ASN_EMAIL
+from settings import NCBI_FTP_HOST, NCBI_FTP_PORT, NCBI_FTP_PUBLIC_KEY, TABLE2ASN_EMAIL
 
 # Local imports
 import tools
@@ -29,79 +30,82 @@ def get_ncbi_report(database: str, submission_name: str, submission_dir: str, co
 	ncbi_submission_name = submission_name + "_" + database
 	# Login into NCBI FTP Server
 	try:
-		ftp = ncbi_login(config_dict=config_dict)
-		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type)
+		client, sftp = ncbi_login(config_dict=config_dict)
+		sftp_navigate_to_folder(sftp=sftp, folder_name=ncbi_submission_name, submission_type=submission_type)
 		# Check if report.xml exists
-		if "report.xml" in ftp.nlst():
+		if "report.xml" in sftp.listdir():
 			print("Downloading report.xml", file=sys.stdout)
 			report_file = os.path.join(submission_dir, "report.xml")
-			with open(report_file, 'wb') as f:
-				ftp.retrbinary('RETR report.xml', f.write, 262144)
+			sftp.get("report.xml", report_file)
 			return report_file
 		else:
 			print("The report.xml has not yet been generated.", file=sys.stdout)
 			return None
-	except ftplib.all_errors as e:
-		print("\n" + "Error: " + str(e), file=sys.stderr)
+		sftp.close()
+		client.close()
+	except paramiko.ssh_exception.AuthenticationException:
+		print("Error: Authenication failed. Please check your NCBI username and password.", file=sys.stderr)
+		sys.exit(1)
+	except paramiko.ssh_exception.BadHostKeyException:
+		print(f"Error: Bad host key. The host key could not be verified for {NCBI_FTP_HOST}.", file=sys.stderr)
 		sys.exit(1)
 
 # Create an empty submit.ready file if it not exists
-def create_submit_ready_file(ftp, submission_dir: str):
+def create_submit_ready_file(sftp, submission_dir: str) -> None:
 	try:
 		submit_ready_file = os.path.join(submission_dir, "submit.ready")
 		open(submit_ready_file, 'w+').close()
-		res = ftp.storlines("STOR " + "submit.ready", open(submit_ready_file, "rb"))
-		if not res.startswith('226 Transfer complete'):
-			print("Error: submit.ready upload failed.", file=sys.stderr)
-			sys.exit(1)
+		sftp.put(submit_ready_file)
 	except Exception as err:
 		if str(err).startswith('Error:550 submit.ready: Permission denied'):
 			print("The submission has already been made and is currently processing.", file=sys.stdout)
 		else:
 			print(f"Error: Unable to upload submit.ready file. {err}", file=sys.stderr)
 			sys.exit(1)
-	return ftp
 
 def ncbi_login(config_dict: Dict[str, Any]):
-	ftp = ftplib.FTP(NCBI_FTP_HOST)
-	ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
-	return ftp
+	client = paramiko.SSHClient()
+	client.set_missing_host_key_policy(paramiko.RejectPolicy)
+	host_key = paramiko.RSAKey(data = base64.decodebytes(NCBI_FTP_PUBLIC_KEY))
+	client.get_host_keys().add(NCBI_FTP_HOST, "ssh-rsa", host_key)
+	client.connect(hostname = NCBI_FTP_HOST, port = NCBI_FTP_PORT, username = config_dict["Username"], password = config_dict["Password"], look_for_keys = False, allow_agent = False)
+	sftp = client.open_sftp()
+	directories = sftp.listdir()
+	return client, sftp
 
-def ftp_upload_file(ftp, upload_file: str, upload_name: Optional[str] = None):
+def sftp_upload_file(sftp, upload_file: str, upload_name: Optional[str] = None) -> None:
 	if upload_name is None:
 		upload_name = os.path.basename(upload_file)
-	res = ftp.storbinary(f"STOR {upload_name}", open(upload_file, "rb"))
-	if not res.startswith('226 Transfer complete'):
-		print(f"Error: Uploading {upload_file} failed.", file=sys.stderr)
-		sys.exit(1)
-	return ftp
+	sftp.put(upload_file, upload_name)
 
-def ftp_navigate_to_folder(ftp, folder_name: str, submission_type: str, make_folder=False):
+def sftp_navigate_to_folder(sftp, folder_name: str, submission_type: str, make_folder=False) -> None:
 	# Ensure correct punctuation for folders
 	submission_type = submission_type.capitalize()
 	# Check FTP folder structure either /submit/Production/ or /Production/
-	if submission_type in ftp.nlst():
-		ftp.cwd(submission_type)
-	elif submission_type not in ftp.nlst() and "submit" not in ftp.nlst():
+	directories = sftp.listdir()
+	if submission_type in directories:
+		sftp.chdir(submission_type)
+	elif submission_type not in directories and "submit" not in directories:
 		print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
 		sys.exit(1)
 	else:
-		ftp.cwd("submit")
-		if submission_type in ftp.nlst():
-			ftp.cwd(submission_type)
+		sftp.chdir("submit")
+		directories = sftp.listdir()
+		if submission_type in directories:
+			sftp.chdir(submission_type)
 		else:
 			print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
 			sys.exit(1)
 	# Check if submission folder exists / can be created
-	if not make_folder and folder_name not in ftp.nlst():
+	directories = sftp.listdir()
+	if not make_folder and folder_name not in directories:
 		print("Error: Cannot find submission folder on NCBI FTP site.", file=sys.stderr)
 		sys.exit(1)
-	elif make_folder and folder_name not in ftp.nlst():
-		ftp.mkd(folder_name)
-	ftp.cwd(folder_name)
-	return ftp
+	elif make_folder and folder_name not in directories:
+		sftp.mkdir(f"{folder_name}")
+	sftp.chdir(folder_name)
 
-def upload_raw_reads(ftp, submission_dir: str, submission_name: str):
+def upload_raw_reads(sftp, submission_dir: str, submission_name: str) -> None:
 	raw_reads_files = os.path.join(submission_dir, "raw_reads_location.txt")
 	if os.path.isfile(raw_reads_files) is False:
 		print(f"Error: Submission {submission_name} is missing raw reads file at {raw_reads_files}", file=sys.stderr)
@@ -113,11 +117,10 @@ def upload_raw_reads(ftp, submission_dir: str, submission_name: str):
 			if line is None or line == "":
 				continue
 			elif os.path.isfile(line):
-				ftp = ftp_upload_file(ftp=ftp, upload_file=line)
+				sftp_upload_file(sftp=sftp, upload_file=line)
 			else:
 				print("Error: Uploading files to SRA database failed. Possibly files have been moved or this is not a valid file: " + line, file=sys.stderr)
 				sys.exit(1)
-	return ftp
 
 # Submit to NCBI
 def submit_ncbi(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> None:
@@ -130,22 +133,27 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 	time.sleep(5)
 	try:
 		# Login into NCBI FTP Server
-		ftp = ncbi_login(config_dict)
+		client, sftp = ncbi_login(config_dict)
 		print(f"Connecting to NCBI FTP Server", file=sys.stdout)
 		print(f"Submission name: {ncbi_submission_name}", file=sys.stdout)
-		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type, make_folder=True)
+		sftp_navigate_to_folder(sftp=sftp, folder_name=ncbi_submission_name, submission_type=submission_type, make_folder=True)
 		print(f"Submitting '{submission_name}'", file=sys.stdout)
 		# Upload submission xml
-		ftp = ftp_upload_file(ftp=ftp, upload_file=os.path.join(submission_dir, "submission.xml"))
+		sftp_upload_file(sftp=sftp, upload_file=os.path.join(submission_dir, "submission.xml"))
 		# Upload raw reads
 		if "SRA" in database:
-			ftp = upload_raw_reads(ftp=ftp, submission_dir=submission_dir, submission_name=submission_name)
+			upload_raw_reads(sftp=sftp, submission_dir=submission_dir, submission_name=submission_name)
 		# Upload zipfile
 		elif "GENBANK" in database:
-			ftp = ftp_upload_file(ftp=ftp, upload_file=os.path.join(submission_dir, f"{submission_name}.zip"))
-		ftp = create_submit_ready_file(ftp=ftp, submission_dir=submission_dir)
-	except ftplib.all_errors as e:
-		print("\n" + 'Error:' + str(e), file=sys.stderr)
+			sftp_upload_file(sftp=sftp, upload_file=os.path.join(submission_dir, f"{submission_name}.zip"))
+		create_submit_ready_file(sftp=sftp, submission_dir=submission_dir)
+		sftp.close()
+		client.close()
+	except paramiko.ssh_exception.AuthenticationException:
+		print("Error: Authenication failed. Please check your NCBI username and password.", file=sys.stderr)
+		sys.exit(1)
+	except paramiko.ssh_exception.BadHostKeyException:
+		print(f"Error: Bad host key. The host key could not be verified for {NCBI_FTP_HOST}.", file=sys.stderr)
 		sys.exit(1)
 
 # Send table2asn file through email

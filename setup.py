@@ -3,7 +3,6 @@
 import pathlib
 import sys
 from zipfile import ZipFile
-import ftplib
 import os
 import json
 import subprocess

@@ -37,7 +37,9 @@ SCHEMA_EXCLUSIONS = ["config.seqsender.upload_log_schema","config_file.ncbi_sche
 
 ##### NCBI settings #####
 # FTP website to submit samples to
-NCBI_FTP_HOST: str = "ftp-private.ncbi.nlm.nih.gov"
+NCBI_FTP_HOST: str = "sftp-private.ncbi.nlm.nih.gov"
+NCBI_FTP_PORT: int = 22
+NCBI_FTP_PUBLIC_KEY: bytes = b"""AAAAB3NzaC1yc2EAAAADAQABAAABAQCjEuJc/1pAQxGxwuk8s/1u7tDq2PiOqutAXNjPOl0BkOiJJnUa6gdRx5WcVd6HApPrw7RUvUXraOmc82Zlzeno6DkzTjLk3ztuRs1hNF3KKx044AxDC1Jew6pK96At3kAvStfamNbY8URB9tj0SF3rFQxLrWo8WfhFr9AU4SuY5S0A2a/njucmTim3vDRPbBFO7Dlz2dxzeKPBdUDB/NvmdPWHxkviXkqUby/QzjglAQTts5lNEMH8qaRcU/dnWYRKvY17RHGu9/gNf8Z9DvBg8TbU7Ek3MT5A9F3nw1ZcZe7M8L7JwIKgQUl1gzOBHFfC248YES9REQffLYPWOCy9"""
 
 # URL structure to download NCBI output files
 NCBI_API_URL: str = "https://submit.ncbi.nlm.nih.gov/api/2.0/files/FILE_ID/?format=attachment"
