@@ -11,7 +11,7 @@
 
 </p>
 
-**Beta Version**: 1.2.3. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.2.4. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
