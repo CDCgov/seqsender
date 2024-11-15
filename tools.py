@@ -21,12 +21,12 @@ from settings import SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX
 # Check the config file
 def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 	# Determine required database
-	submission_portals = []
+	submission_portals = set()
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.append("ncbi")
+			submission_portals.add("ncbi")
 		if "GISAID" in database:
-			submission_portals.append("gisaid")
+			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
