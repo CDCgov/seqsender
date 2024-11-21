@@ -298,7 +298,7 @@ def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], database=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
