@@ -10,17 +10,17 @@
                     'Username': {
                         'required': True,
                         'type': 'string',
-                        'regex': '^[a-zA-Z0-9_.+-]+'
+                        'regex': '\s*[\S]+\s*'
                     },
                     'Password': {
                         'required': True,
                         'type': 'string',
-                        'regex': '^[a-zA-Z0-9_.+-]+'
+                        'regex': '\s*[\S]+\s*'
                     },
                     'Spuid_Namespace': {
                         'required': True,
                         'type': 'string',
-                        'regex': '^[a-zA-Z0-9_.+-]+'
+                        'regex': '\s*[\S]+\s*'
                     },
                     'BioSample_Package': {
                         'required': False,
@@ -173,12 +173,12 @@
                     'Username': {
                         'required': True,
                         'type': 'string',
-                        'regex': '^[a-zA-Z0-9_.+-]+'
+                        'regex': '\s*[\S]+\s*'
                     },
                     'Password': {
                         'required': True,
                         'type': 'string',
-                        'regex': '^[a-zA-Z0-9_.+-]+'
+                        'regex': '\s*[\S]+\s*'
                     },
                     'Submission_Position': {
                         'required': True,

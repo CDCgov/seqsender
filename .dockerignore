@@ -1,3 +1,29 @@
-/shiny/*
 /vignettes/*
 /docs/*
+
+# ignore file extensions
+*.DS_Store
+*.Rmd
+*.html
+*.md
+*.Rhistory
+*.gitignore
+*.Rbuildignore
+*.Rproj
+DESCRIPTION
+
+# ignore folders
+**.git
+**.github
+**.Rproj.user
+*docs
+*vignettes
+*man
+*inst
+*pkgdown
+
+# ignore specific files
+docker-compose.yml
+docker-compose-*.yml
+_pkgdown.yml
+NAMESPACE

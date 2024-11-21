@@ -5,7 +5,17 @@
 ![Docker image size](https://img.shields.io/docker/image-size/cdcgov/seqsender)
 ![GitHub last commit](https://img.shields.io/github/last-commit/cdcgov/seqsender)
 
-**Beta Version**: 1.2.3. This pipeline is currently in Beta testing, and
+<!-- ![GitHub issues](https://img.shields.io/github/issues/montilab/cadra) -->
+
+<!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
+
+<p style="font-size: 16px;">
+
+<em>Public Database Submission Pipeline</em>
+
+</p>
+
+**Beta Version**: 1.2.5. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 

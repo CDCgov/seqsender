@@ -19,13 +19,14 @@ from config.seqsender.seqsender_schema import schema as seqsender_schema
 from settings import SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC
 
 # Check the config file
-def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
+def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 	# Determine required database
-	submission_portals = []
-	if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-		submission_portals.append("ncbi")
-	if "GISAID" in database:
-		submission_portals.append("gisaid")
+	submission_portals = set()
+	for database in databases:
+		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
+			submission_portals.add("ncbi")
+		if "GISAID" in database:
+			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -36,7 +37,7 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 	# Check if yaml forms dictionary
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", (submission_schema + "_schema.py")), 'r').read())
-		database_specific_config_schema_updates(schema, database)
+		database_specific_config_schema_updates(schema, databases)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -44,7 +45,7 @@ def get_config(config_file: str, database: List[str]) -> Dict[str, Any]:
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in database and "GISAID" in database:
+			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			return config_dict["Submission"]

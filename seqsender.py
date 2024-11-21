@@ -64,7 +64,7 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 			file_handler.validate_file(file_type=file_type, file_path=updated_path)
 			file_dict[file_type] = updated_path # type: ignore
 	# load config file
-	config_dict = tools.get_config(config_file=file_dict["config_file"], database=database)
+	config_dict = tools.get_config(config_file=file_dict["config_file"], databases=database)
 	# Warn user if submitting biosample & sra together with 'Link_Sample_Between_NCBI_Databases' set to False
 	if not config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"] and "SRA" in database and "BIOSAMPLE" in database:
 		print("Warning: You are submitting to BioSample and SRA together, and your config has the field 'Link_Sample_Between_NCBI_Databases', turned off. Your BioSample and SRA submission will still be linked together as this is required for submitting to SRA.")
