@@ -1,17 +1,15 @@
+# SeqSender
+## Public Database Submission Pipeline
 
-<!-- ![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg) -->
+![Docker pulls](https://img.shields.io/docker/pulls/cdcgov/seqsender)
+![Docker image size](https://img.shields.io/docker/image-size/cdcgov/seqsender)
+![GitHub last commit](https://img.shields.io/github/last-commit/cdcgov/seqsender)
 
 <!-- ![GitHub issues](https://img.shields.io/github/issues/montilab/cadra) -->
 
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
 
-<p style="font-size: 16px;">
-
-<em>Public Database Submission Pipeline</em>
-
-</p>
-
-**Beta Version**: 1.2.5. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.2.6. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
