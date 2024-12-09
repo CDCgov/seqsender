@@ -164,9 +164,6 @@ seqsender&nbsp;latest&nbsp;d9e2578d2211&nbsp;2 weeks ago&nbsp;581GB
                 ),
             ],
         ),
-<<<<<<< HEAD
-        ui.nav_panel("Docker-Compose", [ui.h2("Run seqsender container"), ui.code("docker-compose up")]),
-=======
         ui.nav_panel("Docker-Compose",
             ui.h2("Update docker-compose.yaml for your local storage"),
             ui.p(ui.strong("Note: "), ui.code("source"), " is the storage location of your local machine. This location will be mapped to ", ui.code("/data"), " directory inside of the container. Here we are mounting the local variable ", ui.code("$HOME"), " directory to ", ui.code("/data"), " inside of the container. Change the value ", ui.code("$HOME"), " to reflect your local storage system."),
@@ -203,7 +200,6 @@ services:<br>
             ),
             ui.p("Running docker-compose with the flag ", ui.code("-d"), " runs the container in detached mode, allowing the container to continue to run in the background. For more information refer to ", ui.a("docker-compose documentation", href="https://docs.docker.com/reference/cli/docker/compose/up/"), "."),
         ),
->>>>>>> master
         id="docker_options",
     ),
     ui.HTML(
