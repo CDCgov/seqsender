@@ -9,12 +9,6 @@
 
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
 
-<p style="font-size: 16px;">
-
-<em>Public Database Submission Pipeline</em>
-
-</p>
-
 **Beta Version**: 1.2.6. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!

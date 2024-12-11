@@ -16,7 +16,7 @@ from cerberus import Validator
 import re
 
 from config.seqsender.seqsender_schema import schema as seqsender_schema
-from settings import SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC
+from settings import SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 
 # Check the config file
 def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
@@ -129,10 +129,19 @@ def parse_hold_date(config_dict: Dict[str, Any]):
 		sys.exit(1)
 	return config_dict
 
+# Error out if deprecated submission column names detected
+def warn_deprecated_columns(database: List[str], metadata: pd.DataFrame) -> None:
+	if "GENBANK" in database:
+		deprecated_columns = [col for col in GENBANK_DEPRECATED_COLUMNS if col in metadata.columns]
+		if deprecated_columns:
+			print(f"Error: GenBank columns '{deprecated_columns}' are deprecated and are no longer supported by GenBank. Please remove them before submission.", file=sys.stderr)
+			sys.exit(1)
+
 # Read in metadata file
 def get_metadata(database: List[str], organism: str, metadata_file: str, config_dict: Dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
+	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})

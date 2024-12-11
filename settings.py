@@ -60,6 +60,9 @@ GENBANK_REGEX_SRC = "^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_
 # GenBank comment file metadata regex
 GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-|^organism$|^collection_date$"
 
+# Deprecated GenBank columns not allowed to be used
+GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Biovar", "src-Chemovar", "src-Forma", "src-Forma_specialis", "src-Identified_by", "src-Pathovar", "src-Pop_variant", "src-Serogroup", "src-Subclone", "src-Subtype", "src-Substrain", "src-Type"]
+
 ##### GISAID settings #####
 # GISAID metadata regex
 GISAID_REGEX = "^gs-|^collection_date$|^authors$"
