@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.2.6. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.2.7. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -328,7 +328,7 @@ output_body = [
             shiny_tools.file_output_column_info(column_name="Organism",
                 description=("Submission organism option ", ui.code("--organism"), " when making your submission which can enable certain additional submission options."),
                 controlled_fields=[((ui.code("FLU"), "|", ui.code("COV")), ("For ", ui.strong("Influenza Virus A"), " or ", ui.strong("Severe Acute Respiratory Syndrome Coronavirus 2"), ", it enables GISAID and GenBank (via FTP) as submission options.")),
-                    ((ui.code("POX"), "|", ui.code("ARBO")), ("For ", ui.strong("Mpox"), " or ", ui.strong("Arbovirus"), ", it enables GISAID as a submission option.")),
+                    ((ui.code("POX"), "|", ui.code("ARBO"), "|", ui.code("RSV")), ("For ", ui.strong("Mpox"), ", ", ui.strong("Arbovirus"), ", or ", ui.strong("Respiratory syncytial virus"), ", it enables GISAID as a submission option.")),
                     ((ui.code("OTHER")), ("For any organism without additional submission options. It provides access to the default available databases: BioSample, SRA, and GenBank (table2asn via email)."))]
             ),
             shiny_tools.file_output_column_info(column_name="Database",

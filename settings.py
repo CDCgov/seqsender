@@ -15,7 +15,7 @@ PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 VERSION: str = "1.2.3 (Beta)"
 
 # Organism options with unique submission options
-ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "OTHER"]
+ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
 
 # Database submisison options
 DATABASE_CHOICES: List[str] = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]

@@ -9,7 +9,7 @@
 
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
 
-**Beta Version**: 1.2.6. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.2.7. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
@@ -34,6 +34,10 @@ of uploading **Influenza A Virus** (FLU), **SARS-COV-2** (COV),
 **Monkeypox** (POX), **Arbovirus** (ARBO), and a wide variety of other
 organisms. If you’d like to have `seqsender` support your virus create a
 issue.
+
+## Available Versions
+
+SeqSender can be installed a couple of different ways. All SeqSender versions are updated when a new GitHub version is [released](https://github.com/CDCgov/seqsender/releases). SeqSender can be setup by directly cloning from GitHub or the docker image can be downloaded from the [GitHub Container Repository](https://github.com/CDCgov/seqsender/pkgs/container/seqsender) or [DockerHub](https://hub.docker.com/r/cdcgov/seqsender).
 
 ## Contacts
 

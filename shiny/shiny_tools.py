@@ -119,7 +119,7 @@ databases_parameter = [
 organisms_parameter = [
     ui.strong("Organism"),
     ui.div(
-        ui.strong(ui.code("--organism "), "{'FLU', 'COV', 'POX', 'ARBO', 'OTHER'}"),
+        ui.strong(ui.code("--organism "), "{'FLU', 'COV', 'POX', 'ARBO', 'RSV', 'OTHER'}"),
         inline=True,
     ),
     ui.p(
@@ -162,6 +162,14 @@ organisms_parameter = [
             ),
             ui.tags.ul(
                 " For ", ui.strong("Arbovirus"), ", enables GISAID CLI submission."
+            ),
+        ),
+        ui.tags.li(
+            ui.strong(
+                ui.code("RSV"),
+            ),
+            ui.tags.ul(
+                " For ", ui.strong("Respiratory syncytial virus"), ", enables GISAID CLI submission."
             ),
         ),
         ui.tags.li(
@@ -222,7 +230,7 @@ validation_parameter = ui.div(
 
 def seqsender_submit_help_output_msg(version):
     message = """
-usage: seqsender.py submit [-h] [--biosample] [--sra] [--genbank] [--gisaid] --organism {FLU,COV,POX,ARBO,OTHER}
+usage: seqsender.py submit [-h] [--biosample] [--sra] [--genbank] [--gisaid] --organism {FLU,COV,POX,ARBO,RSV,OTHER}
 --submission_name SUBMISSION_NAME --submission_dir SUBMISSION_DIR --config_file CONFIG_FILE --metadata_file METADATA_FILE
 --fasta_file FASTA_FILE [--table2asn] [--gff_file GFF_FILE] [--test]</p>
 <p>Create submission files and then batch uploading them to databases of choices.</p>
@@ -237,7 +245,7 @@ Submit to SRA database. (default: )<br>
 Submit to Genbank database. (default: )<br>
 &nbsp;--gisaid, -g &nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Submit to GISAID database. (default: )<br>
-&nbsp;--organism {FLU,COV,POX,ARBO,OTHER} <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
+&nbsp;--organism {FLU,COV,POX,ARBO,RSV,OTHER} <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Type of organism data (default: FLU)<br>
 &nbsp;--submission_name SUBMISSION_NAME <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Name of the submission (default: None)<br>
