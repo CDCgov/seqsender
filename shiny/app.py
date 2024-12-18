@@ -2,7 +2,6 @@ from shiny import App, Inputs, Outputs, Session, render, req, ui, reactive
 from htmltools import TagList, div
 
 ###################### CSS #######################
-import ast
 import pandas as pd
 from shinyswatch import theme
 import shiny_tools
@@ -21,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.2.6. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.2.7. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -252,7 +251,6 @@ singularity exec ~/singularity/seqsender.sif seqsender-kickoff --help</code></pr
 ]
 installation_body = [
     ui.h2("Installation"),
-    ui.p("SeqSender can be installed a couple of different ways. All SeqSender versions are updated when a new GitHub version is ", ui.a("released", "https://github.com/CDCgov/seqsender/releases"), ". SeqSender can be setup by directly cloning from GitHub or the docker image can be downloaded from the ", ui.a("GitHub Container Repository", "https://github.com/CDCgov/seqsender/pkgs/container/seqsender"), " or ", ui.a("DockerHub", "https://hub.docker.com/r/cdcgov/seqsender"), "."),
     ui.navset_tab(
         ui.nav_panel("Local", local_installation_content),
         ui.nav_panel("Docker", docker_installation_content),
@@ -330,7 +328,7 @@ output_body = [
             shiny_tools.file_output_column_info(column_name="Organism",
                 description=("Submission organism option ", ui.code("--organism"), " when making your submission which can enable certain additional submission options."),
                 controlled_fields=[((ui.code("FLU"), "|", ui.code("COV")), ("For ", ui.strong("Influenza Virus A"), " or ", ui.strong("Severe Acute Respiratory Syndrome Coronavirus 2"), ", it enables GISAID and GenBank (via FTP) as submission options.")),
-                    ((ui.code("POX"), "|", ui.code("ARBO")), ("For ", ui.strong("Mpox"), " or ", ui.strong("Arbovirus"), ", it enables GISAID as a submission option.")),
+                    ((ui.code("POX"), "|", ui.code("ARBO"), "|", ui.code("RSV")), ("For ", ui.strong("Mpox"), ", ", ui.strong("Arbovirus"), ", or ", ui.strong("Respiratory syncytial virus"), ", it enables GISAID as a submission option.")),
                     ((ui.code("OTHER")), ("For any organism without additional submission options. It provides access to the default available databases: BioSample, SRA, and GenBank (table2asn via email)."))]
             ),
             shiny_tools.file_output_column_info(column_name="Database",
@@ -669,15 +667,7 @@ def server(input, output, session):
 
     @reactive.file_reader(dir / "templates/")
     def read_genbank_file():
-        # Load main schema
-        df_main = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
-        # Load source schema
-        if input.GenBank_schemas() == "FLU":
-            df_src = pd.read_csv(dir / "templates/config.genbank.genbank.flu.src.schema_template.csv", index_col = "column_name")
-        else:
-            df_src = pd.read_csv(dir / "templates/config.genbank.genbank.src.schema_template.csv", index_col = "column_name")
-        df_cmt = pd.read_csv(dir / "templates/config.genbank.genbank.cmt.schema_template.csv", index_col = "column_name")
-        df = pd.concat([df_main, df_src, df_cmt])
+        df = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
         df = df.fillna("")
         df = df.transpose()
         return df
@@ -823,12 +813,12 @@ def server(input, output, session):
                 "Password": input.ncbi_config_password() or "",
                 "Spuid_Namespace": input.ncbi_config_spuid_namespace() or "",
                 **({"BioSample_Package": input.BioSample_packages() or ""} if input.BioSample_checkbox() else {}),
-                **({"GenBank_Auto_Remove_Failed_Samples": ast.literal_eval(input.ncbi_config_auto_remove_genbank())} if input.GenBank_checkbox() else {}),
+                **({"GenBank_Auto_Remove_Failed_Samples": input.ncbi_config_auto_remove_genbank() or ""} if input.GenBank_checkbox() else {}),
                 "Publication_Title": input.ncbi_config_publication_title() or "",
                 "Publication_Status": input.ncbi_config_publication_status() or "",
                 **({"Submission_Position": input.ncbi_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
                 "Specified_Release_Date": input.ncbi_config_release_date() or "",
-                "Link_Sample_Between_NCBI_Databases": ast.literal_eval(input.ncbi_config_link_samples()),
+                "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
                 "Description": {
                     "Organization": {
                         "Role": input.ncbi_config_role() or "",

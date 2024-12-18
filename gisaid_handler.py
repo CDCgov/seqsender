@@ -30,7 +30,7 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 	gisaid_df.columns = gisaid_df.columns.str.replace("gs-","").str.strip()
 	# Add required GISAID fields
 	# covCLI returns an error when authors or collection_date are capitalized
-	if organism in ["COV", "POX", "ARBO"]:
+	if organism in ["COV", "POX", "ARBO", "RSV"]:
 		if organism == "COV":
 			sample_name_column = "covv_virus_name"
 		else:

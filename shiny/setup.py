@@ -74,7 +74,7 @@ setup_body = [
                 ui.input_select(
                     "GISAID_databases",
                     label="Select GISAID Database:",
-                    choices=["FLU", "COV", "POX", "ARBO"],
+                    choices=["FLU", "COV", "POX", "ARBO", "RSV"],
                 ),
             ),
         ),
