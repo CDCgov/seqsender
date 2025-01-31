@@ -43,7 +43,7 @@ bs-host_last_meal,Optional,content of last meal and time since feeding; can incl
 bs-host_length,Optional,the length of subject
 bs-host_life_stage,Optional,description of host life stage
 bs-host_phenotype,Optional,
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_shape,Optional,morphological shape of host
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
 bs-host_subspecf_genlin,Optional,"Information about the genetic distinctness of the host organism below the subspecies level e.g., serovar, serotype, biotype, ecotype, variety, cultivar, or any relevant genetic typing schemes like Group I plasmid. Subspecies should not be recorded in this term, but in the NCBI taxonomy. Supply both the lineage name and the lineage rank separated by a colon, e.g., biovar:abc123"

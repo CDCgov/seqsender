@@ -8,7 +8,7 @@ gs-rsv_add_location,Optional,"Additional location information (e.g. Cruise Ship,
 gs-rsv_host,Required,"Host species name. For Wastewater use ""Environment""."
 gs-rsv_add_host_info,Optional,Additional information regarding patient (e.g. Patient infected while interacting with animal).
 gs-rsv_sampling_strategy,Optional,"Sampling strategy for sequence (e.g. Sentinel surveillance (ILI), Sentinel surveillance (ARI), Sentinel surveillance (SARI), Non-sentinel-surveillance (hospital), Non-sentinel-surveillance (GP network), Longitudinal sampling on same patient(s), S gene dropout)."
-gs-rsv_gender,Required,"Synonym for ""Biological sex"". Should be ""Female"", ""Male"", or ""Unknown""."
+gs-rsv_sex,Required,"Biological sex. Should be ""Female"", ""Male"", or ""Unknown""."
 gs-rsv_patient_age,Required,"Age in years of the person from whom the specimen was collected. May take format other than numeric years, for example, ""0.5"" (i.e., 6 months), ""5 days"", ""7 months"". If units are not given, they are assumed in years. If missing, use ""Unknown""."
 gs-rsv_patient_status,Required,"E.g., ""Hospitalized"", ""Released"", ""Live"", ""Deceased"", ""Unknown""."
 gs-rsv_specimen,Optional,"Specimen source. For wastewater it must be ""Wastewater surveillance""."

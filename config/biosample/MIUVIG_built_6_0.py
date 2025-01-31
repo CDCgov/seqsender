@@ -896,16 +896,6 @@ schema = DataFrameSchema(
 			description="The types of furniture present in the sampled room, e.g., cabinet, chair, desks",
 			title="furniture",
 		),
-		"bs-gender_restroom": Column(
-			dtype="object",
-			checks=None,
-			nullable=True,
-			unique=False,
-			coerce=False,
-			required=False,
-			description="The gender type of the restroom, e.g., all gender, female, gender neutral, male, male and female, unisex",
-			title="gender of restroom",
-		),
 		"bs-hall_count": Column(
 			dtype="object",
 			checks=None,

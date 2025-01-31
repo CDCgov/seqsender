@@ -17,7 +17,7 @@ bs-host_description,Optional,Additional information not included in other define
 bs-host_disease_outcome,Optional,"Final outcome of disease, e.g., death, chronic disease, recovery"
 bs-host_disease_stage,Optional,Stage of disease at the time of sampling
 bs-host_health_state,Optional,Information regarding health state of the individual sampled at the time of sampling
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
 bs-host_tissue_sampled,Optional,"name of body site where the sample was obtained from, such as a specific organ or tissue, e.g., tongue, lung. For foundational model of anatomy ontology (fma) (v 4.11.0) or Uber-anatomy ontology (UBERON) (v releases/2014-06-15) terms, please see http://purl.bioontology.org/ontology/FMA or http://purl.bioontology.org/ontology/UBERON"
 bs-passage_history,Optional,Number of passages and passage method

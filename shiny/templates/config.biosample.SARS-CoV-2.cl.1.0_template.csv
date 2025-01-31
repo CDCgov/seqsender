@@ -26,7 +26,7 @@ bs-host_disease_outcome,Optional,"Final outcome of disease, e.g., death, chronic
 bs-host_health_state,Optional,Information regarding health state of the individual sampled at the time of sampling
 bs-host_recent_travel_loc,Optional,"The name of the country that was the destination of most recent travel. Specify the countries (and more granular locations if known) travelled, e.g., United Kingdom. Can include multiple travels; separate multiple travel events with a semicolon."
 bs-host_recent_travel_return_date,Optional,"The date of a person's most recent return to some residence from a journey originating at that residence, e.g., 2021-03-30"
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_specimen_voucher,Optional,"Identifier for the physical specimen. Include a URI (Uniform Resource Identifier) in the form of a URL providing a direct link to the physical host specimen. If the specimen was destroyed in the process of analysis, electronic images (e-vouchers) are an adequate substitute for a physical host voucher specimen. If a URI is not available, a museum-provided globally unique identifier (GUID) can be used. URI example:  http://portal.vertnet.org/o/fmnh/mammals?id=33e55cfe-330b-40d9-aaae-8d042cba7542; INSDC triplet example: UAM:Mamm:52179"
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
 bs-lat_lon,Optional,"The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format ""d[d.dddd] N|S d[dd.dddd] W|E"", eg, 38.98 N 77.11 W"
