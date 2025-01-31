@@ -370,7 +370,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=False,
-			description="Gender or physical sex of the host",
+			description="Biological sex of the host",
 			title="host sex",
 		),
 		"bs-host_subject_id": Column(

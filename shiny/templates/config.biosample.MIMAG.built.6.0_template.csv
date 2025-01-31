@@ -84,7 +84,6 @@ bs-floor_water_mold,Optional,"Signs of the presence of mold or mildew in a room,
 bs-freq_clean,Optional,"The number of times the sample location is cleaned, e.g., daily, weekly, monthly, quarterly, annually"
 bs-freq_cook,Optional,The number of times a meal is cooked per week
 bs-furniture,Optional,"The types of furniture present in the sampled room, e.g., cabinet, chair, desks"
-bs-gender_restroom,Optional,"The gender type of the restroom, e.g., all gender, female, gender neutral, male, male and female, unisex"
 bs-hall_count,Optional,The total count of hallways and cooridors in the built structure
 bs-handidness,Optional,"The handidness of the individual sampled, e.g., ambidexterity, left handedness, mixed-handedness, right handedness"
 bs-heat_deliv_loc,Optional,"The location of heat delivery within the room, e.g., north, south, east, west"

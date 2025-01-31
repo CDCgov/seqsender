@@ -340,7 +340,7 @@ schema = DataFrameSchema(
 			description="",
 			title="other resistances phenotype",
 		),
-		"gs-Host_Gender": Column(
+		"gs-Host_Sex": Column(
 			dtype="object",
 			checks=[
 				Check.str_matches(r"(?i)(\W|^)(male|m|female|f|unknown|missing)(\W|$)"),
@@ -349,8 +349,8 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Synonym for \"Biological sex\". Should be \"Female\", \"Male\", or \"Unknown\".",
-			title="gender",
+			description="Biological sex. Should be \"Female\", \"Male\", or \"Unknown\".",
+			title="sex",
 		),
 		"gs-Host_Age": Column(
 			dtype="object",

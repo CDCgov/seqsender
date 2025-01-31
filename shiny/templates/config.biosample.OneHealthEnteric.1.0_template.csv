@@ -49,7 +49,7 @@ bs-host_body_product,Optional,"substance produced by the host, e.g. stool, mucus
 bs-host_disease,Optional,"Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled vocabulary, http://bioportal.bioontology.org/ontologies/1009 or http://www.ncbi.nlm.nih.gov/mesh"
 bs-host_group_size,Optional,"The number of food animals of the same species that are maintained together as a unit, i.e. a herd or flock, e.g., 80"
 bs-host_housing,Optional,"Description of the housing system of the livestock. This field encourages terms listed under terrestrial management housing system (http://opendata.inra.fr/EOL/EOL_0001605), e.g., pen [EOL:0001902]"
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
 bs-host_tissue_sampled,Optional,"name of body site where the sample was obtained from, such as a specific organ or tissue, e.g., tongue, lung. For foundational model of anatomy ontology (fma) (v 4.11.0) or Uber-anatomy ontology (UBERON) (v releases/2014-06-15) terms, please see http://purl.bioontology.org/ontology/FMA or http://purl.bioontology.org/ontology/UBERON"
 bs-host_variety,Optional,"The variety or cultivar of the host organism; the name given to a particular variety of organism to distinguish it from otherwise similar organisms of the same species, e.g., romaine lettuce; Athena melons; Patio Snacker cucumbers"

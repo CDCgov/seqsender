@@ -47,7 +47,7 @@ bs-host_of_host_sub_id,Optional,"A unique identifier by which each host of the s
 bs-host_of_host_taxid,Optional,NCBI taxon id of the host of the symbiotic host organism
 bs-host_of_host_totmass,Optional,"Total mass of the host of the symbiotic host organism at collection, the unit depends on the host"
 bs-host_phenotype,Optional,
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_shape,Optional,morphological shape of host
 bs-host_specificity,Optional,"Level of specificity of symbiont-host interaction, e.g., family-specific, generalist, genus-specific, species-specific"
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"

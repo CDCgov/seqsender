@@ -33,15 +33,19 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 	if organism in ["COV", "POX", "ARBO", "RSV"]:
 		if organism == "COV":
 			sample_name_column = "covv_virus_name"
+			sex_field_sanitized = "covv_sex"
+			sex_field_required = "covv_gender"
 		else:
 			sample_name_column = organism.lower() + "_virus_name"
-		gisaid_df = gisaid_df.rename(columns = {"sample_name": sample_name_column})
+			sex_field_sanitized = organism.lower() + "_sex"
+			sex_field_required = organism.lower() + "_gender"
+		gisaid_df = gisaid_df.rename(columns = {"sample_name": sample_name_column, sex_field_sanitized: sex_field_required})
 		gisaid_df["submitter"] = config_dict["Username"]
 		# fn field is for fasta file name
 		gisaid_df["fn"] = "sequence.fsa"
 		first_cols = ["submitter", "fn", sample_name_column]
 	elif "FLU" in organism:
-		gisaid_df = gisaid_df.rename(columns = {"authors": "Authors"})
+		gisaid_df = gisaid_df.rename(columns = {"authors": "Authors", "Host_Sex": "Host_Gender"})
 		# Parse out dates into respective columns
 		gisaid_df[["Collection_Date", "Collection_Year", "Collection_Month"]] = gisaid_df["collection_date"].apply(process_flu_dates)
 		gisaid_df["Isolate_Id"] = ""

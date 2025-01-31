@@ -33,7 +33,7 @@ bs-host_last_meal,Optional,content of last meal and time since feeding; can incl
 bs-host_occupation,Optional,most frequent job performed by subject
 bs-host_phenotype,Optional,
 bs-host_pulse,Optional,"resting pulse of the host, measured as beats per minute"
-bs-host_sex,Optional,Gender or physical sex of the host
+bs-host_sex,Optional,Biological sex of the host
 bs-host_subject_id,Optional,"a unique identifier by which each subject can be referred to, de-identified, e.g. #131"
 bs-host_symbiont,Optional,"The taxonomic name of the organism(s) found living in mutualistic, commensalistic, or parasitic symbiosis with the specific host"
 bs-host_tissue_sampled,Optional,"name of body site where the sample was obtained from, such as a specific organ or tissue, e.g., tongue, lung. For foundational model of anatomy ontology (fma) (v 4.11.0) or Uber-anatomy ontology (UBERON) (v releases/2014-06-15) terms, please see http://purl.bioontology.org/ontology/FMA or http://purl.bioontology.org/ontology/UBERON"

@@ -105,7 +105,7 @@ schema = DataFrameSchema(
 			description="Sampling strategy for sequence (e.g. Sentinel surveillance (ILI), Sentinel surveillance (ARI), Sentinel surveillance (SARI), Non-sentinel-surveillance (hospital), Non-sentinel-surveillance (GP network), Longitudinal sampling on same patient(s), S gene dropout).",
 			title="sampling strategy",
 		),
-		"gs-covv_gender": Column(
+		"gs-covv_sex": Column(
 			dtype="object",
 			checks=[
 				Check.str_matches(r"(?i)(\W|^)(male|m|female|f|unknown|missing)(\W|$)"),
@@ -114,8 +114,8 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="Synonym for \"Biological sex\". Should be \"Female\", \"Male\", or \"Unknown\".",
-			title="gender",
+			description="Biological sex. Should be \"Female\", \"Male\", or \"Unknown\".",
+			title="sex",
 		),
 		"gs-covv_patient_age": Column(
 			dtype="object",

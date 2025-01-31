@@ -209,7 +209,7 @@ def download_biosample_xml_list() -> None:
 				except Exception as error:
 					print("Error: BioSample package " + name + " failed to convert to schema.", file=sys.stderr)
 					print(error, file=sys.stderr)
-				time.sleep(5)
+				time.sleep(1)
 			line = file.readline()
 	tools.update_all_schema_templates()
 
@@ -226,7 +226,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		file.writelines(SCHEMA_HEADER)
 		for attribute in report_dict["BioSamplePackages"]["Package"]["Attribute"]:
 			# If attribute in reserved words skip
-			if attribute["HarmonizedName"] in ["collection_date"]:
+			if attribute["HarmonizedName"] in ["collection_date", "gender_restroom"]:
 				continue
 			# NCBI canonical field name for submission
 			file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
@@ -268,7 +268,11 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 				file.write(indentation + "required=False,")
 			# NCBI column description
 			if attribute["Description"]:
-				file.write(indentation + "description=\"" + group_message + attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ") + "\",")
+				# Sanitize description
+				attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ")
+				if "gender or physical sex" in attribute_description.lower():
+					attribute_description = attribute_description.replace("Gender or physical sex", "Biological sex")
+				file.write(indentation + "description=\"" + group_message + attribute_description + "\",")
 			# Human readable field name for submission
 			file.write(indentation + "title=\"" + attribute["Name"] + "\",")
 			# Close attribute
@@ -304,3 +308,4 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		# Close schema
 		indentation = indentation[:-1]
 		file.write(indentation + ")")
+	os.remove(xml_file)

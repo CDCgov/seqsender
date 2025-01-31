@@ -31,7 +31,7 @@ gs-Peramivir_Resistance_geno,Optional,
 gs-Peramivir_Resistance_pheno,Optional,
 gs-Other_Resistance_geno,Optional,
 gs-Other_Resistance_pheno,Optional,
-gs-Host_Gender,Required,"Synonym for ""Biological sex"". Should be ""Female"", ""Male"", or ""Unknown""."
+gs-Host_Sex,Required,"Biological sex. Should be ""Female"", ""Male"", or ""Unknown""."
 gs-Host_Age,Required,Numeric age for host.
 gs-Host_Age_Unit,Required,"Unit of time for host age (e.g. Year is ""Y"", Month is ""M"")."
 gs-Health_Status,Required,"E.g., ""Hospitalized"", ""Released"", ""Live"", ""Deceased"", ""Unknown""."
