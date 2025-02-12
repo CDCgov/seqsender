@@ -6,7 +6,7 @@ import importlib
 import pathlib
 import pandas as pd
 from settings import PROG_DIR
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Any, Optional, Union, Set
 import file_handler
 import json
 import pandera
@@ -31,12 +31,12 @@ def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema = "_".join(submission_portals)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
 	# Check if yaml forms dictionary
 	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", (submission_schema + "_schema.py")), 'r').read())
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
 		validator = Validator(schema)
 		# Validate based on schema
@@ -52,6 +52,15 @@ def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
+
+def get_submission_schema_config_name(submission_portals: Set[str]) -> str:
+	submission_schema_file_name = ""
+	if "ncbi" in submission_portals:
+		submission_schema_file_name += "ncbi_"
+	if "gisaid" in submission_portals:
+		submission_schema_file_name += "gisaid_"
+	submission_schema_file_name += "schema.py"
+	return submission_schema_file_name
 
 def validate_submission_position(config_dict: Dict[str, Any]):
 	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
