@@ -160,6 +160,8 @@ def load_submission_log(submission_dir: str) -> pd.DataFrame:
 	df = df.drop(columns=["Submission_Position", "Table2asn", "GFF_File"], errors="ignore")
 	# Remove duplicates and keep latest update
 	df = df.drop_duplicates(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"], keep = "last", ignore_index = True)
+	# Force uppercase on columns if they are required to be uppercase
+	df[["Organism", "Database", "Submission_Type", "Submission_Status", "Submission_ID"]] = df[["Organism", "Database", "Submission_Type", "Submission_Status", "Submission_ID"]].astype(str).apply(lambda col: col.str.upper())
 	try:
 		upload_schema.validate(df, lazy = True)
 	except pandera.errors.SchemaErrors as schema_error:
