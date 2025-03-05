@@ -1,0 +1,109 @@
+2025-01-14 12:26:03.550 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:26:03.550 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:41:12.411 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:41:12.411 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:44:03.724 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:44:03.724 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:47:59.409 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:47:59.409 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:56:22.637 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:56:22.637 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:59:51.440 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 12:59:51.440 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:01:16.155 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:01:16.155 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:03:34.343 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:03:34.343 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:05:14.436 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:05:14.436 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:06:53.123 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:06:53.123 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:08:03.792 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:08:03.792 | ERROR    | tools:import_schema:157 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:12:42.615 | ERROR    | tools:import_schema:159 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:12:42.615 | ERROR    | tools:import_schema:159 - Database config.biosample.Pathogen_cl_1_0 schema not found.
+2025-01-14 13:20:33.677 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:20:33.677 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:20:33.694 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:20:33.694 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:20:33.695 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'Assembly Method', ensure the file has not been modified and retry.
+2025-01-14 13:20:33.695 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'Assembly Method', ensure the file has not been modified and retry.
+2025-01-14 13:22:14.904 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:22:14.904 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:22:14.921 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:22:14.921 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:22:14.923 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-Assembly Method', ensure the file has not been modified and retry.
+2025-01-14 13:22:14.923 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-Assembly Method', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.384 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:38:13.384 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 13:38:13.406 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:38:13.406 | ERROR    | tools:pretty_print_pandera_errors:258 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 13:38:13.408 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-type', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.408 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-type', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.408 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-segment_name', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.408 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-segment_name', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.409 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-host_age', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.409 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-host_age', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.409 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-host_gender', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.409 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-host_gender', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.410 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-passage', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.410 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-passage', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.410 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-location', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.410 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-location', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-lineage', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-lineage', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-resist_to_oseltamivir', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-resist_to_oseltamivir', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-resist_to_zanamvir', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.411 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-resist_to_zanamvir', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.412 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-specimen_id', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.412 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-specimen_id', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.412 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-sender_lab', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.412 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-sender_lab', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.413 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-seqlab_sample_id', ensure the file has not been modified and retry.
+2025-01-14 13:38:13.413 | ERROR    | tools:pretty_print_pandera_errors:264 - Missing required column 'cmt-seqlab_sample_id', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.780 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 14:20:17.780 | ERROR    | tools:validate_metadata:230 - Metadata failed GenBank comment schema.
+2025-01-14 14:20:17.794 | ERROR    | tools:pretty_print_pandera_errors:268 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 14:20:17.794 | ERROR    | tools:pretty_print_pandera_errors:268 - File /scicomp/home-pure/psv4/seqsender_master/seqsender/FLU_TEST_DATA/metadata.csv has the following error('s):
+(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)
+
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-type', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-type', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-segment_name', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-segment_name', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-host_age', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-host_age', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-host_gender', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.795 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-host_gender', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-passage', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-passage', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-location', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-location', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-lineage', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-lineage', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-resist_to_oseltamivir', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-resist_to_oseltamivir', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-resist_to_zanamvir', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.796 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-resist_to_zanamvir', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-specimen_id', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-specimen_id', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-sender_lab', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-sender_lab', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-seqlab_sample_id', ensure the file has not been modified and retry.
+2025-01-14 14:20:17.797 | ERROR    | tools:pretty_print_pandera_errors:274 - Missing required column 'cmt-seqlab_sample_id', ensure the file has not been modified and retry.
+2025-01-16 15:13:50.854 | WARNING  | ncbi_handler:submit_ncbi:140 - Uploading sample files to NCBI-BIOSAMPLE, as a 'TEST' submission. If this is not intended, interrupt immediately.

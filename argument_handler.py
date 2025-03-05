@@ -23,6 +23,8 @@ def args_parser():
 	config_file_parser = argparse.ArgumentParser(add_help=False)
 	file_parser = argparse.ArgumentParser(add_help=False)
 	test_parser = argparse.ArgumentParser(add_help=False)
+	verbose_parser = argparse.ArgumentParser(add_help=False)
+	submit_function_parser = argparse.ArgumentParser(add_help=False)
 
 	database_parser.add_argument("--biosample", "-b",
 		help="Create/Submit BioSample data.",
@@ -55,23 +57,39 @@ def args_parser():
 		action="store_const",
 		default=False,
 		const=True)
+	validate_parser.add_argument("--custom_validation",
+		help="Overwrite initial validation for metadata file with custom version. Default validation schema's are overwritten if present at '/seqsender/config/custom/<CUSTOM_VALIDATION>/'.",
+		required=False,
+		default="")
+	submit_function_parser.add_argument("--skip_overwrite_check",
+		help="Skip check for an existing submission to prevent overwriting existing submission information.",
+		required=False,
+		action="store_const",
+		default=False,
+		const=True)
+	submit_function_parser.add_argument("--merge",
+		help="Update an existing submission to add an additonal database to the submission. Metadata must include the '<DATABASE_PREFIX>-sample_name'('s) used in the original submission to correctly join the submission.",
+		required=False,
+		action="store_const",
+		default=False,
+		const=True)
 	submission_name_parser.add_argument("--submission_name",
-		help="Unique name for the submission of your data. Reusing the same name can cause issues during the submission process. A folder will be created at: 'submission_dir/submission_name'.",
+		help="Unique name for the submission of your data. Reusing the same name can cause issues during the submission process. A folder will be created at: '<SUBMISSION_DIR>/<SUBMISSION_NAME>'.",
 		required=True)
 	upload_log_submission_name_parser.add_argument("--submission_name",
 		help="Unique name for the submission of your data. This is an optional field if you want Seqsender to only update the specified submission in the 'submission_log.csv'.",
 		required=False)
 	submission_dir_parser.add_argument("--submission_dir",
-		help="Output directory where all files for your submission will be stored. A folder will be created at '<submission_dir>/<submission_name>'; this is the location where: all of the submission files will be created, SeqSender will stage each step of the submission process automatically, and where SeqSender will generate all the output from your submission.",
+		help="Output directory where all files for your submission will be stored. A folder will be created at '<SUBMISSION_DIR>/<SUBMISSION_NAME>'; this is the location where: all of the submission files will be created, SeqSender will stage each step of the submission process automatically, and where SeqSender will generate all the output from your submission.",
 		required=True)
 	config_file_parser.add_argument("--config_file",
-		help="Config file to be used in the creation/submission of your samples. SeqSender will store this file location in your 'submission_log.csv' where it will use it to manage your submission, be careful when modifying and ensure SeqSender maintains access to this file. Input either full file path or if just file name it must be stored at '<submission_dir>/<submission_name>/<config_file>'.",
+		help="Config file to be used in the creation/submission of your samples. SeqSender will store this file location in your 'submission_log.csv' where it will use it to manage your submission, be careful when modifying and ensure SeqSender maintains access to this file. Input either full file path or if just file name it must be stored at '<SUBMISSION_DIR>/<SUBMISSION_NAME>/<CONFIG_FILE>'.",
 		required=True)
 	file_parser.add_argument("--metadata_file",
-		help="Metadata file to be used in the creation/submission of your samples. Input either full file path or if just file name it must be stored at '<submission_dir>/<submission_name>/<metadata_file>'.",
+		help="Metadata file to be used in the creation/submission of your samples. Input either full file path or if just file name it must be stored at '<SUBMISSION_DIR>/<SUBMISSION_NAME>/<METADATA_FILE>'.",
 		required=True)
 	file_parser.add_argument("--fasta_file",
-		help="Fasta file used to generate submission files; fasta header should match the column 'sequence_name' stored in your metadata. Input either full file path or if just file name it must be stored at '<submission_dir>/<submission_name>/<fasta_file>'.",
+		help="Fasta file used to generate submission files; fasta header should match the column 'sequence_name' stored in your metadata. Input either full file path or if just file name it must be stored at '<SUBMISSION_DIR>/<SUBMISSION_NAME>/<FASTA_FILE>'.",
 		default = None)
 	file_parser.add_argument("--table2asn",
 		help="Perform a table2asn submission instead of GenBank FTP submission for organism choices 'FLU' or 'COV'.",
@@ -87,6 +105,11 @@ def args_parser():
 		action="store_const",
 		default=False,
 		const=True)
+	verbose_parser.add_argument("--verbose",
+		help="Print verbose output.",
+		action="store_const",
+		default=False,
+		const=True)
 
 	# Create the submodule commands
 	subparser_modules = parser.add_subparsers(dest="command")
@@ -96,7 +119,7 @@ def args_parser():
 		"prep",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Generate all files required to submit to databases selected.",
-		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, validate_parser]
+		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, validate_parser, verbose_parser]
 	)
 
 	# submit command
@@ -104,7 +127,7 @@ def args_parser():
 		"submit",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Generate all files required and begin the submission process to databases selected.",
-		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, test_parser, validate_parser]
+		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, test_parser, validate_parser, verbose_parser, submit_function_parser]
 	)
 
 	# check_submission_status command
@@ -112,7 +135,7 @@ def args_parser():
 		"submission_status",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Checks the submission status for (all/specified <submission_name>) submission('s) which will for each database: update the status of the submission('s), download output file('s), submit to subsequent specified databases if linking information requires output of previous database('s).",
-		parents=[submission_dir_parser, upload_log_submission_name_parser]
+		parents=[submission_dir_parser, upload_log_submission_name_parser, verbose_parser]
 	)
 
 	# Generate test data command
@@ -120,7 +143,7 @@ def args_parser():
 		"test_data",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Returns a set of test data examples (config_file, metadata_file, fasta_file, etc.) to the specified 'submission_dir' based on organism and database selections.",
-		parents=[database_parser, organism_parser, submission_dir_parser]
+		parents=[database_parser, organism_parser, submission_dir_parser, verbose_parser]
 	)
 
 	# biosample xml download command

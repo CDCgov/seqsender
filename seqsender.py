@@ -6,7 +6,9 @@ import os
 import sys
 from datetime import datetime
 import subprocess
+import shutil
 import argparse
+from argparse import Namespace
 import pandas as pd
 from distutils.util import strtobool
 from typing import List, Dict, Set, Optional, Tuple, Any, TypedDict
@@ -24,6 +26,7 @@ import upload_log
 import tools
 
 from settings import VERSION
+from logging_handler import CONFIGURED_LOGGER as logger
 
 import sys
 
@@ -32,10 +35,28 @@ STARTTIME = datetime.now()
 
 # Get execution time
 def get_execution_time() -> None:
-	print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
+	logger.info(f"Total runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
+
+def initialize_logger(args: Namespace):
+	if args.verbose is not None and args.verbose:
+		logger.add(sys.stdout, format="<level>{message}</level>", level = "HEADER", colorize = True, filter = lambda record: record["level"].name == "HEADER")
+		logger.add(sys.stdout, format="<level>{level} | {message}</level>", level = "DEBUG", colorize = True)
+	else:
+		logger.add(sys.stdout, format="<level>{level} | {message}</level>", level = "INFO", colorize = True)
+		logger.add(sys.stdout, format="<level>{level} | {message}</level>", level = "SUCCESS", colorize = True)
+		logger.add(sys.stdout, format="<level>{level} | {message}</level>", level = "WARNING", colorize = True)
+	logger.log("HEADER","========================================================================================================================")
+	logger.log("HEADER",f"					  SEQSENDER - {args.command.upper()}")
+	logger.log("HEADER","========================================================================================================================")
+	logger.log("HEADER",f"Version: {VERSION}")
+	logger.log("HEADER","Repo: https://github.com/CDCgov/seqsender")
+	logger.log("HEADER",f"Date: {datetime.now().strftime('%Y-%m-%d')}")
+	logger.log("HEADER",f"Command: {vars(args)}")
+	logger.log("HEADER","========================================================================================================================")
+	logger.info(f"SeqSender {args.command} {args.submission_name}")
 
 # Setup needed requirements for running
-def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
+def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, skip_validation: bool = False, custom_validation: str = "") -> Tuple[str, Dict[str, Any], pd.DataFrame]:
 	# Create the appropriate files
 	File_Dict = TypedDict("File_Dict", {"config_file": str, "metadata_file": str, "fasta_file": Optional[str], "gff_file": Optional[str]})
 	file_dict: File_Dict = {
@@ -49,7 +70,7 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	# Validate files
 	for file_type, file_path in file_dict.items():
 		if file_type == "fasta_file" and file_path is None and ("GENBANK" in database or "GISAID" in database):
-			print("Error: Submitting to GenBank or GISAID requires a fasta file for submission. Add a fasta file to your submission with the flag '--fasta_file'. ", file=sys.stderr)
+			logger.error("Submitting to GenBank or GISAID requires a fasta file for submission. Add a fasta file to your submission with the flag '--fasta_file'. ")
 			sys.exit(1)
 		if file_type in ["fasta_file", "gff_file"] and file_path is None:
 			# If not provided
@@ -67,18 +88,18 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	config_dict = tools.get_config(config_file=file_dict["config_file"], databases=database)
 	# Warn user if submitting biosample & sra together with 'Link_Sample_Between_NCBI_Databases' set to False
 	if not config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"] and "SRA" in database and "BIOSAMPLE" in database:
-		print("Warning: You are submitting to BioSample and SRA together, and your config has the field 'Link_Sample_Between_NCBI_Databases', turned off. Your BioSample and SRA submission will still be linked together as this is required for submitting to SRA.")
+		logger.warning("You are submitting to BioSample and SRA together, and your config has the field 'Link_Sample_Between_NCBI_Databases', turned off. Your BioSample and SRA submission will still be linked together as this is required for submitting to SRA.")
 	# Warn user if submitting to only SRA, they still require a BioSample submission
 	if "SRA" in database and "BIOSAMPLE" not in database:
-		print("Warning: You are submitting to SRA but not to BioSample. SRA requires a BioSample submission when submitting raw reads. Ensure you also make a BioSample submission to prevent submission errors.")
+		logger.warning("You are submitting to SRA but not to BioSample. SRA requires a BioSample submission when submitting raw reads. Ensure you also make a BioSample submission to prevent submission errors.")
 	# load metadata file
-	metadata = tools.get_metadata(database=database, organism=organism, metadata_file=file_dict["metadata_file"], config_dict=config_dict, skip_validation=skip_validation)
+	metadata = tools.get_metadata(database=database, organism=organism, metadata_file=file_dict["metadata_file"], config_dict=config_dict, skip_validation=skip_validation, custom_validation=custom_validation)
 	# Load fasta file into metadata
 	if file_dict["fasta_file"]:
 		metadata = tools.process_fasta_samples(metadata=metadata, fasta_file=file_dict["fasta_file"])
 	# Prepping submission files for each given database
 	for database_name in database:
-		print(f"Creating submission files for {database_name}", file=sys.stdout)
+		logger.info(f"Creating submission files for {database_name}")
 		database_dir = os.path.join(submission_dir, submission_name, "submission_files", database_name)
 		file_handler.create_directory(database_dir)
 		if database_name in ["BIOSAMPLE", "SRA"]:
@@ -88,19 +109,19 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 		elif database_name == "GISAID":
 			gisaid_handler.create_gisaid_files(organism=organism, database=database_name, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["GISAID"], metadata=metadata)
 		else:
-			print(f"Error: Database {database_name} is not a valid database selection.", file=sys.stderr)
+			logger.error(f"Database {database_name} is not a valid database selection.")
 			sys.exit(1)
-		print(f"Files are stored at: {database_dir}", file=sys.stdout)
+		logger.success(f"{database_name} files created.")
+	logger.success("Submission prepared.")
 	return (file_dict["config_file"], config_dict, metadata)
 
 # Setup needed requirements for running
-def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
+def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool = False, test: bool = False, skip_validation: bool = False, custom_validation: str = "", skip_overwrite_check: bool = False, merge: bool = False) -> None:
 	# IF database is GISAID, check if CLI is in the correct directory
 	if "GISAID" in database:
 		file_handler.validate_gisaid_installer(submission_dir, organism)
-	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation)
-	print("", file=sys.stdout)
-	upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"))
+	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation, custom_validation=custom_validation)
+	upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"), skip_overwrite_check=skip_overwrite_check, merge=merge)
 	submission_type = tools.get_submission_type(test=test)
 	for database_name in database:
 		submission_status, submission_id = "WAITING", "PENDING"
@@ -131,16 +152,14 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 			if sub_pos is None or sub_pos == 1 or "GENBANK" not in database:
 				submission_status = gisaid_handler.submit_gisaid(organism=organism, submission_dir=database_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], submission_type=submission_type)
 		else:
-			print(f"Error: Database selection {database_name} is not valid.", file=sys.stderr)
+			logger.error(f"Database selection {database_name} is not valid.")
 			sys.exit(1)
 		upload_log.create_submission_log(database=database_name, organism=organism, submission_name=submission_name, submission_dir=submission_dir, database_dir=database_dir, config_file=config_file_path, submission_status=submission_status, submission_id=submission_id, submission_type=submission_type)
 
 def main():
 	"""The main routine"""
-	print("")
 	parser = argument_handler.args_parser()
 	args = parser.parse_args()
-
 	# Parse the command argument
 	command = args.command
 
@@ -156,26 +175,27 @@ def main():
 		if args.gisaid:
 			database += [args.gisaid]
 		if len(database) == 0:
-			print("ERROR: Missing a required database selection. See USAGE below.", file=sys.stderr)
+			logger.info("Missing a required database selection. See USAGE below.")
 			parser.print_help()
 			sys.exit(0)
 
 	if command in ["prep", "submit", "submission_status", "test_data"]:
 		submission_dir = os.path.abspath(args.submission_dir)
+		initialize_logger(args=args)
 
 	# Execute the command
 	if command == "prep":
-		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation)
+		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation, custom_validation=args.custom_validation)
 	elif command == "submit":
-		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, test=args.test, skip_validation=args.skip_validation)
+		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, test=args.test, skip_validation=args.skip_validation, custom_validation=args.custom_validation, skip_overwrite_check=args.skip_overwrite_check, merge=args.merge)
 	elif command == "submission_status":
 		upload_log.update_submission_status(submission_dir=submission_dir, submission_name=args.submission_name)
 	elif command == "test_data":
 		setup.create_test_data(organism=args.organism, database=database, submission_dir=submission_dir)
 	elif command == "version":
-		print(f"Version: {VERSION}", file=sys.stdout)
+		logger.info(f"Version: {VERSION}")
 	elif command == "update_biosample":
-		print("Updating BioSample requirements.", file=sys.stdout)
+		logger.info("Updating BioSample requirements.")
 		setup.download_biosample_xml_list()
 	else:
 		# If no command display help

@@ -16,7 +16,7 @@ schema = DataFrameSchema(
 			description="Structured comment keyword. For FLU use \"FluData\", HIV use \"HIV-DataBaseData\", and for COV and other organisms use \"Assembly-Data\".",
 			title="Structured Comment Prefix and Suffix",
 		),
-		"Assembly Method": Column(
+		"cmt-Assembly-Method": Column(
 			dtype="object",
 			checks=[
 				Check.str_length(max_value=50),

@@ -15,13 +15,15 @@ import file_handler
 import upload_log
 
 from settings import BIOSAMPLE_REGEX, SRA_REGEX
+from logging_handler import CONFIGURED_LOGGER as logger
 
 # Check raw reads files listed in metadata file
-def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> Set[str]:
+def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> List[str]:
 	# Pop off the end directories of submission_dir 'submission_files/SRA'
 	raw_reads_path_default = os.path.join(os.path.split(os.path.split(submission_dir)[0])[0], "raw_reads")
 	# Separate samples stored in local and cloud
 	local_df = metadata[metadata["sra-file_location"] == "local"]
+	logger.debug("Checking for any 'local' raw reads...")
 	file_columns = [col for col in local_df.columns if re.match("sra-file_[1-9]\d*", col)]
 	validated_files = set()
 	invalid_raw_files = []
@@ -43,14 +45,16 @@ def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd
 				invalid_raw_files.append(f"Error: Raw read files for {row['sra-sample_name']} could not be found. Field '{column_name}' must either be the full file path, or if just the file name it must be stored at '<submission_dir>/<submission_name>/raw_reads/<sra-file>'.")
 			else:
 				validated_files.add(file_path)
+	logger.debug(f"Local raw read file(s) found: {len(validated_files)}")
 	if invalid_raw_files:
 		for error_msg in invalid_raw_files:
-			print(error_msg, file=sys.stderr)
+			logger.error(f"Invalid raw reads files:\n{error_msg}")
 		sys.exit(1)
-	return validated_files
+	return list(validated_files)
 
 # Create files for optional manual submission to repositories biosample and sra
 def create_manual_submission_files(database: str, submission_dir: str, metadata: pd.DataFrame, config_dict: Dict[str, Any]) -> None:
+	logger.debug("Creating manual submission files...")
 	if "SRA" in database:
 		metadata_regex = "^sra-|^organism$|^collection_date$"
 		rename_columns = {"sra-library_name":"sra-library_ID"}
@@ -73,7 +77,7 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 		column_ordered = ["sample_name"]
 		prefix = "bs-"
 	else:
-		print("Error: create_manual_submission_files function only for databases SRA/BioSample. Not '{database}'.", file=sys.stderr)
+		logger.error(f"'create_manual_submission_files' function only for databases SRA/BioSample. Not '{database}'.")
 		sys.exit(1)
 	# Filter only needed columns
 	database_df = metadata.filter(regex=metadata_regex).copy()
@@ -89,9 +93,11 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 	column_ordered = column_ordered + columns_no_order
 	database_df = database_df.reindex(columns=column_ordered)
 	file_handler.save_csv(df=database_df, file_path=submission_dir, file_name="metadata.tsv", sep="\t")
+	logger.debug("Manual submission files created.")
 
 # Create submission XML
 def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> bytes:
+	logger.debug("Creating FTP submission XML...")
 	# Submission XML header
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
@@ -177,13 +183,14 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 		database_df = metadata.filter(regex=(SRA_REGEX)).copy()
 		database_df = database_df.drop_duplicates()
 		file_columns = [col for col in database_df.columns if re.match("sra-file_[1-9]\d*", col)]
+		debug_stats: Dict[int, int] = dict()
 		for index, row in database_df.iterrows():
 			action = etree.SubElement(root, "Action")
 			addfiles = etree.SubElement(action, "AddFiles", target_db="SRA")
-			for column_name in file_columns:
+			for file_number, column_name in enumerate(file_columns, start=1):
 				# extra file columns can be empty but not first file column
 				if column_name == "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
-					print(f"Error: metadata must contain a file for {row['sra-sample_name']} in column sra-file_1", file=sys.stderr)
+					logger.error(f"Metadata must contain a file for {row['sra-sample_name']} in column sra-file_1")
 					sys.exit(1)
 				elif column_name != "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
 					continue
@@ -192,10 +199,16 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 				elif row["sra-file_location"].strip().lower() == "local":
 					file = etree.SubElement(addfiles, "File", file_path = os.path.basename(row[column_name].strip()))
 				else:
-					print("Error: Metadata field file_location must be either cloud or local. Field currently contains: " + row["sra-file_location"].strip().lower(), file=sys.stderr)
+					logger.error(f"Metadata field file_location must be either cloud or local. Field currently contains: {row['sra-file_location'].strip().lower()}")
 					sys.exit(1)
 				datatype = etree.SubElement(file, "DataType")
 				datatype.text = "generic-data"
+				if file_number in debug_stats:
+					debug_stats[file_number] += 1
+				else:
+					debug_stats[file_number] = 1
+				if file_number > 1:
+					debug_stats[(file_number - 1)] -= 1
 			# Remove columns with sra- prefix that are not attributes
 			sra_cols = [col for col in database_df.columns.tolist() if col.startswith('sra-') and not re.match("(sra-sample_name|sra-title|sra-comment|sra-file_location|sra-file_\d*)", col)]
 			for col in sra_cols:
@@ -215,22 +228,21 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 			identifier = etree.SubElement(addfiles, "Identifier")
 			spuid = etree.SubElement(identifier, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
 			spuid.text = row["sra-sample_name"]
+		for file_number, number_of_samples in debug_stats.items():
+			if number_of_samples == 0:
+				continue
+			logger.debug(f"{number_of_samples} have {file_number} raw read file(s).")
 	# Pretty print xml
 	xml_str = etree.tostring(root, encoding="utf-8", pretty_print=True, xml_declaration=True)
+	logger.debug("Submission XML created.")
 	return xml_str
-
-# Create list of raw read paths inside sra submission folder
-def create_raw_reads_list(submission_dir: str, raw_files_list: Set[str]) -> None:
-	with open(os.path.join(submission_dir, "raw_reads_location.txt"), "w+") as file:
-		for line in raw_files_list:
-			file.write(line + "\n")
 
 # Main create function for BioSample/SRA
 def create_biosample_sra_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame):
 	if database == "SRA":
 		# Validate and write raw reads location
 		raw_files_list = check_raw_read_files(submission_name=submission_name, submission_dir=submission_dir, metadata=metadata)
-		create_raw_reads_list(submission_dir=submission_dir, raw_files_list=raw_files_list)
+		file_handler.save_text(text_content=raw_files_list, submission_dir=submission_dir, file_name="raw_reads_location.txt")
 	manual_df = metadata.copy()
 	create_manual_submission_files(database=database, submission_dir=submission_dir, metadata=manual_df, config_dict=config_dict)
 	xml_str = create_submission_xml(organism=organism, database=database, submission_name=submission_name, metadata=metadata, config_dict=config_dict)
@@ -250,7 +262,7 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 		elif isinstance(report_dict["SubmissionStatus"]["Action"], dict):
 			action_list = [report_dict["SubmissionStatus"]["Action"]]
 		else:
-			print(f"Error: Unable to correctly process BioSample report at: {report_file}", file=sys.stderr)
+			logger.error(f"Unable to correctly process BioSample report at: {report_file}")
 			return submission_status, submission_id
 		for action_dict in action_list:
 			# Skip if incorrect database
@@ -280,7 +292,7 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 	except:
 		pass
 	if submission_status == "PROCESSED" and not sample_info:
-		print(f"Error: Unable to process {database} report.xml to retrieve accessions at: {report_file}", file=sys.stderr)
+		logger.error(f"Unable to process {database} report.xml to retrieve accessions at: {report_file}")
 	if sample_info:
 		update_df = pd.DataFrame(sample_info)
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database=database, update_df=update_df)

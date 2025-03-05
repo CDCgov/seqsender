@@ -17,6 +17,7 @@ from datetime import datetime
 import biosample_sra_handler
 import ncbi_handler
 import tools
+from logging_handler import CONFIGURED_LOGGER as logger
 
 from config.seqsender.submission_status_report.biosample_submission_status_report_schema import schema as status_report_bs_schema
 from config.seqsender.submission_status_report.sra_submission_status_report_schema import schema as status_report_sra_schema
@@ -25,8 +26,41 @@ from config.seqsender.submission_status_report.gisaid_submission_status_report_s
 
 from settings import SAMPLE_NAME_DATABASE_PREFIX, BIOSAMPLE_SUBMISSION_STATUS_COLUMNS, SRA_SUBMISSION_STATUS_COLUMNS, GENBANK_SUBMISSION_STATUS_COLUMNS, GISAID_SUBMISSION_STATUS_COLUMNS, SUBMISSION_LOG_COLUMNS
 
+# Merge a new submission into a existing submission to submit to an additional database
+def merge_submission_status_csv(database: List[str], new_df: pd.DataFrame, submission_dir: str) -> pd.DataFrame:
+	logger.info("Merging existing submission status report...")
+	submission_status_file = os.path.join(submission_dir, "submission_status_report.csv")
+	file_handler.validate_file(file_type="submission status report", file_path=submission_status_file)
+	logger.debug("Existing submission_status_report.csv located.")
+	existing_df = file_handler.load_csv(file_path=submission_status_file)
+	# Identify database schemas based on <database_prefix>_sample_name
+	existing_databases = [database_name for database_name, database_prefix in SAMPLE_NAME_DATABASE_PREFIX.items() if (database_prefix + "sample_name") in existing_df.columns]
+	existing_sample_name_columns = [(database_prefix + "sample_name") for database_name, database_prefix in SAMPLE_NAME_DATABASE_PREFIX.items() if (database_prefix + "sample_name") in existing_df.columns]
+	validate_submission_status_df(metadata=existing_df, database=existing_databases)
+	# Drop empty submission status info of new dataframe before merging into existing submission status info
+	protect_status_overwrite = []
+	if "BIOSAMPLE" in existing_databases:
+		protect_status_overwrite += BIOSAMPLE_SUBMISSION_STATUS_COLUMNS
+	if "SRA" in existing_databases:
+		protect_status_overwrite += SRA_SUBMISSION_STATUS_COLUMNS
+	if "GENBANK" in existing_databases:
+		protect_status_overwrite += GENBANK_SUBMISSION_STATUS_COLUMNS
+	if "GISAID" in existing_databases:
+		protect_status_overwrite += GISAID_SUBMISSION_STATUS_COLUMNS
+	new_df = new_df.drop(columns=protect_status_overwrite, errors="ignore")
+	try:
+		merged_df = existing_df.merge(new_df, on=existing_sample_name_columns, how="inner")
+	except Exception as e:
+		logger.error("Unable to merge new submission into existing submission.")
+		logger.error(e)
+		sys.exit(1)
+	existing_databases += database
+	validate_submission_status_df(metadata=merged_df, database=existing_databases)
+	return merged_df
+
 # create new submission_status.csv based on databases submitting to
-def create_submission_status_csv(database: List[str], metadata: pd.DataFrame, submission_dir: str) -> None:
+def create_submission_status_csv(database: List[str], metadata: pd.DataFrame, submission_dir: str, skip_overwrite_check: bool = False, merge: bool = False) -> None:
+	logger.info("Creating submission status report...")
 	submission_status_file = os.path.join(submission_dir, "submission_status_report.csv")
 	database_columns: List[str]  = []
 	sample_name_columns: List[str] = []
@@ -56,10 +90,16 @@ def create_submission_status_csv(database: List[str], metadata: pd.DataFrame, su
 	sample_name_df = sample_name_df.reindex(columns = ordered_database_columns)
 	if "gs-Isolate_Name" in sample_name_df:
 		sample_name_df = sample_name_df.rename(columns={"gs-Isolate_Name":"gs-sample_name", "gs-sample_name":"gs-segment_name"})
+	if merge:
+		sample_name_df = merge_submission_status_csv(database=database, new_df=sample_name_df, submission_dir=submission_dir)
+	else:
+		file_handler.allow_file_overwrite(file_path=submission_status_file, allow_overwrite=skip_overwrite_check)
 	file_handler.save_csv(df=sample_name_df, file_path=submission_status_file)
+	logger.success("Submission status report created.")
 
 # Validate data in submission_status.csv file is correctly formatted
 def validate_submission_status_df(metadata: pd.DataFrame, database: List[str]) -> None:
+	logger.debug("Validating format of submission_status_report.csv")
 	error_msg_list: List[pandera.errors.SchemaErrors] = []
 	if "BIOSAMPLE" in database:
 		try:
@@ -82,15 +122,15 @@ def validate_submission_status_df(metadata: pd.DataFrame, database: List[str]) -
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 	if error_msg_list:
-		print(metadata.head())
 		tools.pretty_print_pandera_errors(file="submission_status_report.csv", error_msgs=error_msg_list)
 		sys.exit(1)
+	logger.debug("File validated.")
 
 # Update values of existing submission_status.csv file
 def update_submission_status_csv(submission_dir: str, update_database: str, update_df: pd.DataFrame) -> None:
 	# Check if there are updates to be made
 	if update_df.empty:
-		print(f"Error: Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'. The log file may be empty.", file=sys.stderr)
+		logger.error(f"Unable to update 'submission_status.csv' for '{update_database}' at '{submission_dir}'. The log file may be empty.")
 	# Pop off directory if inside database directory
 	if os.path.split(submission_dir)[-1] in ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]:
 		submission_dir = os.path.dirname(submission_dir)
@@ -112,7 +152,7 @@ def update_submission_status_csv(submission_dir: str, update_database: str, upda
 	file_handler.save_csv(df=df, file_path=submission_status_file)
 
 # Create new row in submission_log.csv for database submission
-def create_submission_log(database: str, organism: str, submission_name: str, submission_dir: str, database_dir: str, config_file: str, submission_status: str, submission_id: str, submission_type: str) -> None:
+def create_submission_log(database: str, organism: str, submission_name: str, submission_dir: str, database_dir: str, config_file: str, submission_status: str, submission_id: str, submission_type: str, skip_overwrite_check: bool = False, merge: bool = False) -> None:
 	# if log exists load existing one
 	if os.path.isfile(os.path.join(submission_dir, "submission_log.csv")):
 		df = load_submission_log(submission_dir=submission_dir)
@@ -132,8 +172,16 @@ def create_submission_log(database: str, organism: str, submission_name: str, su
 				 'Update_Date': datetime.now().strftime("%Y-%m-%d")
 				}
 	df.loc[len(df)] = new_entry # type: ignore
+	if merge:
+		df = df.drop_duplicates(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"], keep = "first", ignore_index = True)
+	elif skip_overwrite_check:
+		df = df.drop_duplicates(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"], keep = "last", ignore_index = True)
+	else:
+		if df.duplicated(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"]).any():
+			logger.error(f"Submission appears to already exist for: '{submission_name}' `{database}`")
+			logger.error("If you want to overwrite this submission include the flag `--skip_overwrite_check` or the flag `--merge` if you want to submit to an additional database.")
+			sys.exit(1)
 	# Remove duplicates and keep latest update
-	df = df.drop_duplicates(subset = ["Submission_Name", "Organism", "Database", "Submission_Type", "Config_File"], keep = "last", ignore_index = True)
 	file_handler.save_csv(df=df, file_path=submission_dir, file_name="submission_log.csv")
 
 # Update values of existing submission_log.csv file
@@ -147,7 +195,7 @@ def update_submission_log(database: str, organism: str, submission_name: str, su
 		df.loc[df_partial.index.values, "Submission_Status"] = submission_status
 		df.loc[df_partial.index.values, "Update_Date"] = datetime.now().strftime("%Y-%m-%d")
 	else:
-		print(f"Error: '{submission_name}' '{database}' is not present in the submission log at '{submission_log_dir}'.", file=sys.stderr)
+		logger.error(f"'{submission_name}' '{database}' is not present in the submission log at '{submission_log_dir}'.")
 		sys.exit(1)
 	file_handler.save_csv(df=df, file_path=submission_log_dir, file_name="submission_log.csv")
 
@@ -163,7 +211,7 @@ def load_submission_log(submission_dir: str) -> pd.DataFrame:
 	try:
 		upload_schema.validate(df, lazy = True)
 	except pandera.errors.SchemaErrors as schema_error:
-		print("Error: Upload log columns are incorrect. Cannot process submissions.", file=sys.stderr)
+		logger.error("Upload log columns are incorrect. Cannot process submissions.")
 		tools.pretty_print_pandera_errors(file=submission_log_file, error_msgs=[schema_error])
 		sys.exit(1)
 	return df
@@ -205,7 +253,7 @@ def upload_log_submit_genbank(genbank_type: str, submission_name: str, organism:
 		ncbi_handler.submit_ncbi(database="GENBANK", submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
 		submission_id, submission_status = "PENDING", "SUBMITTED"
 	else:
-		print(f"Error: {genbank_type} is not a valid GenBank submission option.", file=sys.stderr)
+		logger.error(f"'{genbank_type}' is not a valid GenBank submission option.")
 		sys.exit(1)
 	update_submission_log(database=genbank_type, organism=organism, submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, submission_status=submission_status, submission_id=submission_id, submission_type=submission_type)
 	return submission_status
@@ -303,18 +351,18 @@ def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
 		submission_requirements["BIOSAMPLE"], biosample_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="BIOSAMPLE", curr_status=biosample_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
-		print(f"\tBioSample: {biosample_status}", file=sys.stdout)
+		logger.info(f"\tBioSample: {biosample_status}")
 	if "SRA" in databases:
 		sra_status = group_df.loc[group_df["Database"] == "SRA", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "SRA", "Submission_Directory"].iloc[0]
 		submission_requirements["SRA"], sra_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="SRA", curr_status=sra_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
-		print(f"\tSRA: {sra_status}", file=sys.stdout)
+		logger.info(f"\tSRA: {sra_status}")
 	# If GISAID submitted to first, check it now
 	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") == 1:
 		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
 		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
-		print(f"\tGISAID: {gisaid_status}", file=sys.stdout)
+		logger.info(f"\tGISAID: {gisaid_status}")
 	# Same requirements for GENBANK-FTP and GENBANK-TBL2ASN
 	if any("GENBANK" in database for database in databases):
 		if "GENBANK-FTP" in databases:
@@ -322,31 +370,31 @@ def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
 		elif "GENBANK-TBL2ASN" in databases:
 			genbank_type = "GENBANK-TBL2ASN"
 		else:
-			print(f"Error: Incorrect database option for GenBank in 'submission_log.csv' databases '{databases}' for '{submission_name}'.")
+			logger.error(f"Incorrect database option for GenBank in 'submission_log.csv' databases '{databases}' for '{submission_name}'.")
 			sys.exit(1)
 		genbank_status = group_df.loc[group_df["Database"] == genbank_type, "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == genbank_type, "Submission_Directory"].iloc[0]
 		submission_requirements["GENBANK"], genbank_status = process_genbank(genbank_type=genbank_type, submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, curr_status=genbank_status, organism=submission_organism, config_dict=config_dict["NCBI"], submission_type=submission_type, linking_databases=submission_requirements)
-		print(f"\tGenBank: {genbank_status}", file=sys.stdout)
+		logger.info(f"\tGenBank: {genbank_status}")
 	# If GISAID was not previously submitted to, try again
 	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") != 1:
 		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
 		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
-		print(f"\tGISAID: {gisaid_status}", file=sys.stdout)
+		logger.info(f"\tGISAID: {gisaid_status}")
 
 # Update submission log, if given submission_name only update that specific submission
 def update_submission_status(submission_dir: str, submission_name: Optional[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
-	print("Checking Submissions:", file=sys.stdout)
+	logger.info("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
-			print(f"Submission: {name[0]}", file=sys.stdout)
+			logger.info(f"Submission: {name[0]}")
 			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
 			# try:
 			# 	print(f"Submission: {name[0]}", file=sys.stdout)
 			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
 			# except Exception as e:
 			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
-	print("\nUpdating submissions complete.", file=sys.stdout)
+	logger.success("\nUpdating submissions complete.")

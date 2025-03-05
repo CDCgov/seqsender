@@ -23,6 +23,7 @@ from typing import List, Dict, Any
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import tools
+from logging_handler import CONFIGURED_LOGGER as logger
 
 # Get program directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
@@ -98,7 +99,7 @@ SCHEMA_COLUMNS_FOOTER: str = """
 # Create example data for testing
 def create_test_data(organism: str, database: List[str], submission_dir: str) -> None:
 	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ", file=sys.stdout)
+		logger.info("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions.")
 		sys.exit(0)
 	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
@@ -122,7 +123,7 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
 	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
 	# Print generating message
-	print("\n"+"Generating submission test_data", file=sys.stdout)
+	logger.info("Generating submission test_data")
 	# Get combined metadata for all given databases
 	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
@@ -148,10 +149,11 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir), file=sys.stdout)
+	logger.info(f"Files are stored at: {os.path.join(out_dir)}")
 
 def download_table2asn(table2asn_dir: str) -> None:
 	# Determine which platform to download table2asn
+	logger.debug("Installing table2asn...")
 	if platform.system() == "Windows":
 		zip_url = "https://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/table2asn/win64.table2asn.zip"
 		with urlopen(zip_url) as zip_response:
@@ -163,19 +165,21 @@ def download_table2asn(table2asn_dir: str) -> None:
 	elif platform.system() == "Linux":
 		zip_url = "https://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/table2asn/linux64.table2asn.gz"
 	else:
-		print("Error: Cannot identify correct system platform. Please download correct Table2asn version for system and place it in script directory.", file=sys.stderr)
+		logger.error("Cannot identify correct system platform. Please download correct Table2asn version for system and place it in script directory.")
 		sys.exit(1)
+	logger.debug(f"OS identified: {zip_url.split('/')[-1].split('.')[0]}")
 	# Extract table2asn to tmp folder
 	try:
+		logger.debug(f"Downloading: {zip_url}")
 		with open(table2asn_dir, "wb") as file:
 			with urlopen(zip_url) as zip_response:
 				file.write(gzip.decompress(zip_response.read()))
 		st = os.stat(table2asn_dir)
 		os.chmod(table2asn_dir, st.st_mode | stat.S_IXOTH | stat.S_IRWXU)
-	except Exception as error:
-		print("Downloading table2asn error", file=sys.stderr)
-		print(error, file=sys.stderr)
+	except Exception as e:
+		logger.error(f"Downloading table2asn error:\n{e}")
 		sys.exit(1)
+	logger.debug("table2asn installed.")
 
 # Download xml and write to a file
 def download_xml(xml_url: str, output_file: str) -> None:
@@ -198,17 +202,15 @@ def download_biosample_xml_list() -> None:
 				if "Generic.1.0" in name:
 					line = file.readline()
 					continue
-				print("Downloading Package: " + name)
+				logger.info(f"Downloading Package: {name}")
 				try:
 					download_xml(xml_url = (BIOSAMPLE_HTML_PREFIX + "/" + name + BIOSAMPLE_HTML_SUFFIX), output_file = os.path.join(PROG_DIR, "config", "biosample", (name + ".xml")))
-				except Exception as error:
-					print("Error: BioSample package " + name + " failed to download.", file=sys.stderr)
-					print(error, file=sys.stderr)
+				except Exception as e:
+					logger.error(f"BioSample package '{name}' failed to download:\n{e}")
 				try:
 					biosample_package_to_pandera_schema(os.path.join(PROG_DIR, "config", "biosample", (name + ".xml")), name)
-				except Exception as error:
-					print("Error: BioSample package " + name + " failed to convert to schema.", file=sys.stderr)
-					print(error, file=sys.stderr)
+				except Exception as e:
+					logger.error(f"BioSample package '{name}' failed to convert to schema:\n{e}")
 				time.sleep(5)
 			line = file.readline()
 	tools.update_all_schema_templates()

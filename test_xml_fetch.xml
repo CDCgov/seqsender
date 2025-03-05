@@ -1,0 +1,724 @@
+{
+    "EXPERIMENT_PACKAGE_SET": {
+        "EXPERIMENT_PACKAGE": [
+            {
+                "EXPERIMENT": {
+                    "@accession": "SRX19084916",
+                    "@alias": "QDX44902110",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRX19084916",
+                        "EXTERNAL_ID": {
+                            "@namespace": "CDC-OAMD",
+                            "#text": "QDX44902110",
+                        },
+                    },
+                    "TITLE": None,
+                    "STUDY_REF": {
+                        "@accession": "SRP314645",
+                        "IDENTIFIERS": {
+                            "PRIMARY_ID": "SRP314645",
+                            "EXTERNAL_ID": {
+                                "@namespace": "BioProject",
+                                "#text": "PRJNA716985",
+                            },
+                        },
+                    },
+                    "DESIGN": {
+                        "DESIGN_DESCRIPTION": None,
+                        "SAMPLE_DESCRIPTOR": {
+                            "@accession": "SRS16499756",
+                            "IDENTIFIERS": {
+                                "PRIMARY_ID": "SRS16499756",
+                                "EXTERNAL_ID": {
+                                    "@namespace": "CDC-OAMD",
+                                    "#text": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                                },
+                            },
+                        },
+                        "LIBRARY_DESCRIPTOR": {
+                            "LIBRARY_NAME": "Unknown",
+                            "LIBRARY_STRATEGY": "AMPLICON",
+                            "LIBRARY_SOURCE": "VIRAL RNA",
+                            "LIBRARY_SELECTION": "RT-PCR",
+                            "LIBRARY_LAYOUT": {"PAIRED": None},
+                            "LIBRARY_CONSTRUCTION_PROTOCOL": "LDT, ARTIC v4.1 primer on Novaseq",
+                        },
+                    },
+                    "PLATFORM": {
+                        "ILLUMINA": {"INSTRUMENT_MODEL": "Illumina NovaSeq 6000"}
+                    },
+                },
+                "SUBMISSION": {
+                    "@lab_name": "",
+                    "@center_name": "CDC-OAMD",
+                    "@accession": "SRA1576601",
+                    "@alias": "SUB12552069",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRA1576601",
+                        "SUBMITTER_ID": {
+                            "@namespace": "CDC-OAMD",
+                            "#text": "SUB12552069",
+                        },
+                    },
+                },
+                "Organization": {
+                    "@type": "institute",
+                    "@org_id": "20768",
+                    "@url": "",
+                    "Name": {"@abbr": "CDC-OAMD", "#text": "CDC-OAMD"},
+                    "Address": {
+                        "@postal_code": "30329",
+                        "Department": "Coronavirus and Other Respiratory Viruses Division",
+                        "Institution": "CDC-OAMD",
+                        "Street": "1600 Clifton Rd",
+                        "City": "Atlanta",
+                        "Sub": "GA",
+                        "Country": "USA",
+                    },
+                    "Contact": [
+                        {
+                            "@email": "qgx6@cdc.gov",
+                            "Name": {"First": "Kristine", "Last": "Lacek"},
+                        },
+                        {
+                            "@email": "psv4@cdc.gov",
+                            "Name": {"First": "Dakota", "Last": "Howard"},
+                        },
+                        {
+                            "@email": "ooj4@cdc.gov",
+                            "Name": {"First": "Peter", "Last": "Cook"},
+                        },
+                        {
+                            "@email": "bun3@cdc.gov",
+                            "Name": {"First": "Dhwani", "Last": "Batra"},
+                        },
+                        {
+                            "@email": "fep2@cdc.gov",
+                            "Name": {"First": "Clinton", "Last": "Paden"},
+                        },
+                    ],
+                },
+                "STUDY": {
+                    "@center_name": "BioProject",
+                    "@alias": "PRJNA716985",
+                    "@accession": "SRP314645",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRP314645",
+                        "EXTERNAL_ID": {
+                            "@namespace": "BioProject",
+                            "@label": "primary",
+                            "#text": "PRJNA716985",
+                        },
+                    },
+                    "DESCRIPTOR": {
+                        "STUDY_TITLE": "SARS-CoV-2 Genome sequencing and assembly - QUEST",
+                        "STUDY_TYPE": {"@existing_study_type": "Other"},
+                        "STUDY_ABSTRACT": "SARS-CoV-2 sequencing by QUEST",
+                        "CENTER_PROJECT_NAME": "Severe acute respiratory syndrome coronavirus 2",
+                    },
+                    "STUDY_ATTRIBUTES": {
+                        "STUDY_ATTRIBUTE": {
+                            "TAG": "parent_bioproject",
+                            "VALUE": "PRJNA615625",
+                        }
+                    },
+                },
+                "SAMPLE": {
+                    "@alias": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                    "@accession": "SRS16499756",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRS16499756",
+                        "EXTERNAL_ID": {
+                            "@namespace": "BioSample",
+                            "#text": "SAMN32640329",
+                        },
+                        "SUBMITTER_ID": {
+                            "@namespace": "CDC-OAMD",
+                            "#text": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                        },
+                    },
+                    "TITLE": "CDC Sars CoV2 Sequencing Baseline Constellation",
+                    "SAMPLE_NAME": {
+                        "TAXON_ID": "2697049",
+                        "SCIENTIFIC_NAME": "Severe acute respiratory syndrome coronavirus 2",
+                    },
+                    "SAMPLE_LINKS": {
+                        "SAMPLE_LINK": {
+                            "XREF_LINK": {
+                                "DB": "bioproject",
+                                "ID": "716985",
+                                "LABEL": "PRJNA716985",
+                            }
+                        }
+                    },
+                    "SAMPLE_ATTRIBUTES": {
+                        "SAMPLE_ATTRIBUTE": [
+                            {
+                                "TAG": "Isolate",
+                                "VALUE": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                            },
+                            {
+                                "TAG": "collected_by",
+                                "VALUE": "Quest Diagnostics Incorporated",
+                            },
+                            {"TAG": "collection_date", "VALUE": "2022-12-19"},
+                            {"TAG": "isolation_source", "VALUE": "Nasal Swabs"},
+                            {"TAG": "geo_loc_name", "VALUE": "USA: Arizona"},
+                            {"TAG": "host", "VALUE": "Homo sapiens"},
+                            {"TAG": "host_disease", "VALUE": "COVID-19"},
+                            {"TAG": "host_sex", "VALUE": "female"},
+                            {"TAG": "host_age", "VALUE": "76"},
+                            {"TAG": "host_race", "VALUE": "Unknown"},
+                            {"TAG": "collection_device", "VALUE": "Nasal Swabs"},
+                            {"TAG": "collection_method", "VALUE": "Nasal Swabs"},
+                            {"TAG": "diagnostic_pcr_protocol_1", "VALUE": "LDT"},
+                            {"TAG": "diagnostic_pcr_Ct_value_1", "VALUE": "18"},
+                            {"TAG": "lineage/clade name", "VALUE": "BF.10"},
+                            {
+                                "TAG": "BioSampleModel",
+                                "VALUE": "SARS-CoV-2: clinical or host-associated",
+                            },
+                        ]
+                    },
+                },
+                "Pool": {
+                    "Member": {
+                        "@member_name": "",
+                        "@accession": "SRS16499756",
+                        "@sample_name": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                        "@sample_title": "CDC Sars CoV2 Sequencing Baseline Constellation",
+                        "@spots": "588066",
+                        "@bases": "147015302",
+                        "@tax_id": "2697049",
+                        "@organism": "Severe acute respiratory syndrome coronavirus 2",
+                        "IDENTIFIERS": {
+                            "PRIMARY_ID": "SRS16499756",
+                            "EXTERNAL_ID": {
+                                "@namespace": "BioSample",
+                                "#text": "SAMN32640329",
+                            },
+                        },
+                    }
+                },
+                "RUN_SET": {
+                    "@runs": "1",
+                    "@bases": "147015302",
+                    "@spots": "588066",
+                    "@bytes": "40121850",
+                    "RUN": {
+                        "@accession": "SRR23134079",
+                        "@alias": "QDX44902110",
+                        "@total_spots": "588066",
+                        "@total_bases": "147015302",
+                        "@size": "40121850",
+                        "@load_done": "true",
+                        "@published": "2023-01-19 18:10:05",
+                        "@is_public": "true",
+                        "@cluster_name": "public",
+                        "@has_taxanalysis": "1",
+                        "@static_data_available": "1",
+                        "@filtered_data_available": "true",
+                        "IDENTIFIERS": {
+                            "PRIMARY_ID": "SRR23134079",
+                            "EXTERNAL_ID": {
+                                "@namespace": "CDC-OAMD",
+                                "#text": "QDX44902110",
+                            },
+                        },
+                        "EXPERIMENT_REF": {
+                            "@accession": "SRX19084916",
+                            "IDENTIFIERS": {
+                                "EXTERNAL_ID": {
+                                    "@namespace": "CDC-OAMD",
+                                    "#text": "QDX44902110",
+                                }
+                            },
+                        },
+                        "Pool": {
+                            "Member": {
+                                "@member_name": "",
+                                "@accession": "SRS16499756",
+                                "@sample_name": "SARS-CoV-2/Human/USA/AZ-CDC-QDX44902110/2022",
+                                "@sample_title": "CDC Sars CoV2 Sequencing Baseline Constellation",
+                                "@spots": "588066",
+                                "@bases": "147015302",
+                                "@tax_id": "2697049",
+                                "@organism": "Severe acute respiratory syndrome coronavirus 2",
+                                "IDENTIFIERS": {
+                                    "PRIMARY_ID": "SRS16499756",
+                                    "EXTERNAL_ID": {
+                                        "@namespace": "BioSample",
+                                        "#text": "SAMN32640329",
+                                    },
+                                },
+                            }
+                        },
+                        "SRAFiles": {
+                            "SRAFile": [
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "SRR23134079",
+                                    "@url": "https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR23134079/SRR23134079",
+                                    "@size": "40123630",
+                                    "@date": "2024-02-20 19:25:55",
+                                    "@md5": "24419f6a0c7c7419a26758ccd69b0174",
+                                    "@version": "3",
+                                    "@semantic_name": "SRA Normalized",
+                                    "@supertype": "Primary ETL",
+                                    "@sratoolkit": "1",
+                                    "Alternatives": {
+                                        "@url": "https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR23134079/SRR23134079",
+                                        "@free_egress": "worldwide",
+                                        "@access_type": "anonymous",
+                                        "@org": "AWS",
+                                    },
+                                },
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "SRR23134079.lite",
+                                    "@url": "https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos3/sra-pub-zq-24/SRR023/23134/SRR23134079/SRR23134079.lite.2",
+                                    "@size": "24543478",
+                                    "@date": "2024-02-20 19:58:29",
+                                    "@md5": "828c985ef376979ac79b09f3c1a7d063",
+                                    "@version": "2",
+                                    "@semantic_name": "SRA Lite",
+                                    "@supertype": "Primary ETL",
+                                    "@sratoolkit": "1",
+                                    "Alternatives": [
+                                        {
+                                            "@url": "https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos3/sra-pub-zq-24/SRR023/23134/SRR23134079/SRR23134079.lite.2",
+                                            "@free_egress": "worldwide",
+                                            "@access_type": "anonymous",
+                                            "@org": "NCBI",
+                                        },
+                                        {
+                                            "@url": "s3://sra-pub-zq-7/SRR23134079/SRR23134079.lite.2",
+                                            "@free_egress": "s3.us-east-1",
+                                            "@access_type": "aws identity",
+                                            "@org": "AWS",
+                                        },
+                                        {
+                                            "@url": "gs://sra-pub-zq-104/SRR23134079/SRR23134079.lite.2",
+                                            "@free_egress": "gs.us-east1",
+                                            "@access_type": "gcp identity",
+                                            "@org": "GCP",
+                                        },
+                                    ],
+                                },
+                            ]
+                        },
+                        "CloudFiles": {
+                            "CloudFile": [
+                                {
+                                    "@filetype": "activ_sars2_vcf",
+                                    "@provider": "gs",
+                                    "@location": "gs.US",
+                                },
+                                {
+                                    "@filetype": "activ_sars2_vcf",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                                {
+                                    "@filetype": "run",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                                {
+                                    "@filetype": "run.zq",
+                                    "@provider": "gs",
+                                    "@location": "gs.us-east1",
+                                },
+                                {
+                                    "@filetype": "run.zq",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                            ]
+                        },
+                        "Statistics": {
+                            "@nreads": "1",
+                            "@nspots": "588066",
+                            "Read": {
+                                "@index": "0",
+                                "@count": "588066",
+                                "@average": "250.00",
+                                "@stdev": "9.45",
+                            },
+                        },
+                        "Databases": {
+                            "Database": {
+                                "Table": {
+                                    "@name": "SEQUENCE",
+                                    "Statistics": {
+                                        "@source": "meta",
+                                        "Rows": {"@count": "588066"},
+                                        "Elements": {"@count": "147015302"},
+                                    },
+                                }
+                            }
+                        },
+                        "Bases": {
+                            "@cs_native": "false",
+                            "@count": "147015302",
+                            "Base": [
+                                {"@value": "A", "@count": "46268477"},
+                                {"@value": "C", "@count": "29167220"},
+                                {"@value": "G", "@count": "27741288"},
+                                {"@value": "T", "@count": "43836778"},
+                                {"@value": "N", "@count": "1539"},
+                            ],
+                        },
+                    },
+                },
+            },
+            {
+                "EXPERIMENT": {
+                    "@accession": "SRX18976209",
+                    "@alias": "C94",
+                    "IDENTIFIERS": {"PRIMARY_ID": "SRX18976209"},
+                    "TITLE": "WGS of Acinetobacter baumannii",
+                    "STUDY_REF": {
+                        "@accession": "SRP416541",
+                        "IDENTIFIERS": {"PRIMARY_ID": "SRP416541"},
+                    },
+                    "DESIGN": {
+                        "DESIGN_DESCRIPTION": "Nextera XT",
+                        "SAMPLE_DESCRIPTOR": {
+                            "@accession": "SRS16398694",
+                            "IDENTIFIERS": {"PRIMARY_ID": "SRS16398694"},
+                        },
+                        "LIBRARY_DESCRIPTOR": {
+                            "LIBRARY_NAME": "C94",
+                            "LIBRARY_STRATEGY": "WGS",
+                            "LIBRARY_SOURCE": "GENOMIC",
+                            "LIBRARY_SELECTION": "RANDOM",
+                            "LIBRARY_LAYOUT": {"PAIRED": None},
+                        },
+                    },
+                    "PLATFORM": {
+                        "ILLUMINA": {"INSTRUMENT_MODEL": "Illumina NovaSeq 6000"}
+                    },
+                },
+                "SUBMISSION": {
+                    "@lab_name": "Discovery & Exploratory Research",
+                    "@center_name": "GARDP",
+                    "@accession": "SRA1571185",
+                    "@alias": "SUB12521225",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRA1571185",
+                        "SUBMITTER_ID": {"@namespace": "GARDP", "#text": "SUB12521225"},
+                    },
+                },
+                "Organization": {
+                    "@type": "institute",
+                    "@url": "https://gardp.org/",
+                    "Name": "GARDP",
+                    "Address": {
+                        "@postal_code": "1202",
+                        "Department": "Discovery & Exploratory Research",
+                        "Institution": "GARDP",
+                        "Street": "15 Chemin Camille-Vidart",
+                        "City": "Geneva",
+                        "Country": "Switzerland",
+                    },
+                    "Contact": {
+                        "@email": "der@gardp.org",
+                        "Address": {
+                            "@postal_code": "1202",
+                            "Department": "Discovery & Exploratory Research",
+                            "Institution": "GARDP",
+                            "Street": "15 Chemin Camille-Vidart",
+                            "City": "Geneva",
+                            "Country": "Switzerland",
+                        },
+                        "Name": {"First": "GARDP", "Last": "DER"},
+                    },
+                },
+                "STUDY": {
+                    "@center_name": "BioProject",
+                    "@alias": "PRJNA921970",
+                    "@accession": "SRP416541",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRP416541",
+                        "EXTERNAL_ID": {
+                            "@namespace": "BioProject",
+                            "@label": "primary",
+                            "#text": "PRJNA921970",
+                        },
+                    },
+                    "DESCRIPTOR": {
+                        "STUDY_TITLE": "Whole genome sequencing of Acinetobacter baumannii isolates",
+                        "STUDY_TYPE": {"@existing_study_type": "Other"},
+                    },
+                },
+                "SAMPLE": {
+                    "@alias": "Ab_C94",
+                    "@accession": "SRS16398694",
+                    "IDENTIFIERS": {
+                        "PRIMARY_ID": "SRS16398694",
+                        "EXTERNAL_ID": {
+                            "@namespace": "BioSample",
+                            "#text": "SAMN32640330",
+                        },
+                        "SUBMITTER_ID": {
+                            "@namespace": "pda|der@orcid",
+                            "@label": "Sample name",
+                            "#text": "Ab_C94",
+                        },
+                    },
+                    "SAMPLE_NAME": {
+                        "TAXON_ID": "470",
+                        "SCIENTIFIC_NAME": "Acinetobacter baumannii",
+                    },
+                    "SAMPLE_LINKS": {
+                        "SAMPLE_LINK": {
+                            "XREF_LINK": {
+                                "DB": "bioproject",
+                                "ID": "921970",
+                                "LABEL": "PRJNA921970",
+                            }
+                        }
+                    },
+                    "SAMPLE_ATTRIBUTES": {
+                        "SAMPLE_ATTRIBUTE": [
+                            {"TAG": "isolate", "VALUE": "C94"},
+                            {"TAG": "collected_by", "VALUE": "QMUL"},
+                            {"TAG": "collection_date", "VALUE": "2010"},
+                            {"TAG": "geo_loc_name", "VALUE": "United Kingdom"},
+                            {"TAG": "isolation_source", "VALUE": "Tissue"},
+                            {"TAG": "lat_lon", "VALUE": "NA"},
+                            {"TAG": "host", "VALUE": "Homo sapiens"},
+                            {"TAG": "host_disease", "VALUE": "femoral haematoma"},
+                            {"TAG": "BioSampleModel", "VALUE": "Pathogen.cl"},
+                        ]
+                    },
+                },
+                "Pool": {
+                    "Member": {
+                        "@member_name": "",
+                        "@accession": "SRS16398694",
+                        "@sample_name": "Ab_C94",
+                        "@spots": "798720",
+                        "@bases": "400957440",
+                        "@tax_id": "470",
+                        "@organism": "Acinetobacter baumannii",
+                        "IDENTIFIERS": {
+                            "PRIMARY_ID": "SRS16398694",
+                            "EXTERNAL_ID": {
+                                "@namespace": "BioSample",
+                                "#text": "SAMN32640330",
+                            },
+                        },
+                    }
+                },
+                "RUN_SET": {
+                    "@runs": "1",
+                    "@bases": "400957440",
+                    "@spots": "798720",
+                    "@bytes": "140466837",
+                    "RUN": {
+                        "@accession": "SRR23020566",
+                        "@alias": "AB_C94_1.fastq.gz",
+                        "@total_spots": "798720",
+                        "@total_bases": "400957440",
+                        "@size": "140466837",
+                        "@load_done": "true",
+                        "@published": "2023-01-10 09:51:08",
+                        "@is_public": "true",
+                        "@cluster_name": "public",
+                        "@static_data_available": "1",
+                        "IDENTIFIERS": {
+                            "PRIMARY_ID": "SRR23020566",
+                            "SUBMITTER_ID": {
+                                "@namespace": "SUB12521225",
+                                "@label": "0",
+                                "#text": "AB_C94_1.fastq.gz",
+                            },
+                        },
+                        "EXPERIMENT_REF": {
+                            "@accession": "SRX18976209",
+                            "IDENTIFIERS": {
+                                "SUBMITTER_ID": {
+                                    "@namespace": "SUB12521225",
+                                    "#text": "C94",
+                                }
+                            },
+                        },
+                        "Pool": {
+                            "Member": {
+                                "@member_name": "",
+                                "@accession": "SRS16398694",
+                                "@sample_name": "Ab_C94",
+                                "@spots": "798720",
+                                "@bases": "400957440",
+                                "@tax_id": "470",
+                                "@organism": "Acinetobacter baumannii",
+                                "IDENTIFIERS": {
+                                    "PRIMARY_ID": "SRS16398694",
+                                    "EXTERNAL_ID": {
+                                        "@namespace": "BioSample",
+                                        "#text": "SAMN32640330",
+                                    },
+                                },
+                            }
+                        },
+                        "SRAFiles": {
+                            "SRAFile": [
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "AB_C94_1.fastq.gz",
+                                    "@size": "103738182",
+                                    "@date": "2023-01-09 06:17:09",
+                                    "@md5": "ede48fd10863089e27847efb686c144b",
+                                    "@version": "1",
+                                    "@semantic_name": "fastq",
+                                    "@supertype": "Original",
+                                    "@sratoolkit": "0",
+                                    "Alternatives": {
+                                        "@url": "s3://sra-pub-src-10/SRR23020566/AB_C94_1.fastq.gz.1",
+                                        "@free_egress": "-",
+                                        "@access_type": "Use Cloud Data Delivery",
+                                        "@org": "AWS",
+                                    },
+                                },
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "AB_C94_2.fastq.gz",
+                                    "@size": "105005068",
+                                    "@date": "2023-01-09 06:17:12",
+                                    "@md5": "32b40e98bd8941d2e3060dad1aee862f",
+                                    "@version": "1",
+                                    "@semantic_name": "fastq",
+                                    "@supertype": "Original",
+                                    "@sratoolkit": "0",
+                                    "Alternatives": {
+                                        "@url": "s3://sra-pub-src-10/SRR23020566/AB_C94_2.fastq.gz.1",
+                                        "@free_egress": "-",
+                                        "@access_type": "Use Cloud Data Delivery",
+                                        "@org": "AWS",
+                                    },
+                                },
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "SRR23020566",
+                                    "@url": "https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR23020566/SRR23020566",
+                                    "@size": "140468061",
+                                    "@date": "2023-01-09 06:17:26",
+                                    "@md5": "51831fb1b24d68dc50ddf7f8006d0085",
+                                    "@version": "1",
+                                    "@semantic_name": "SRA Normalized",
+                                    "@supertype": "Primary ETL",
+                                    "@sratoolkit": "1",
+                                    "Alternatives": {
+                                        "@url": "https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR23020566/SRR23020566",
+                                        "@free_egress": "worldwide",
+                                        "@access_type": "anonymous",
+                                        "@org": "AWS",
+                                    },
+                                },
+                                {
+                                    "@cluster": "public",
+                                    "@filename": "SRR23020566.lite",
+                                    "@url": "https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-zq-20/SRR023/23020/SRR23020566/SRR23020566.lite.1",
+                                    "@size": "100319965",
+                                    "@date": "2023-01-10 10:43:41",
+                                    "@md5": "f86d31557b7fcf0d57fb837801a73d5a",
+                                    "@version": "1",
+                                    "@semantic_name": "SRA Lite",
+                                    "@supertype": "Primary ETL",
+                                    "@sratoolkit": "1",
+                                    "Alternatives": [
+                                        {
+                                            "@url": "https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos2/sra-pub-zq-20/SRR023/23020/SRR23020566/SRR23020566.lite.1",
+                                            "@free_egress": "worldwide",
+                                            "@access_type": "anonymous",
+                                            "@org": "NCBI",
+                                        },
+                                        {
+                                            "@url": "s3://sra-pub-zq-3/SRR23020566/SRR23020566.lite.1",
+                                            "@free_egress": "s3.us-east-1",
+                                            "@access_type": "aws identity",
+                                            "@org": "AWS",
+                                        },
+                                        {
+                                            "@url": "gs://sra-pub-zq-105/SRR23020566/SRR23020566.lite.1",
+                                            "@free_egress": "gs.us-east1",
+                                            "@access_type": "gcp identity",
+                                            "@org": "GCP",
+                                        },
+                                    ],
+                                },
+                            ]
+                        },
+                        "CloudFiles": {
+                            "CloudFile": [
+                                {
+                                    "@filetype": "fastq",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                                {
+                                    "@filetype": "run",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                                {
+                                    "@filetype": "run.zq",
+                                    "@provider": "gs",
+                                    "@location": "gs.us-east1",
+                                },
+                                {
+                                    "@filetype": "run.zq",
+                                    "@provider": "s3",
+                                    "@location": "s3.us-east-1",
+                                },
+                            ]
+                        },
+                        "Statistics": {
+                            "@nreads": "2",
+                            "@nspots": "798720",
+                            "Read": [
+                                {
+                                    "@index": "0",
+                                    "@count": "798720",
+                                    "@average": "251",
+                                    "@stdev": "0",
+                                },
+                                {
+                                    "@index": "1",
+                                    "@count": "798720",
+                                    "@average": "251",
+                                    "@stdev": "0",
+                                },
+                            ],
+                        },
+                        "Databases": {
+                            "Database": {
+                                "Table": {
+                                    "@name": "SEQUENCE",
+                                    "Statistics": {
+                                        "@source": "meta",
+                                        "Rows": {"@count": "798720"},
+                                        "Elements": {"@count": "400957440"},
+                                    },
+                                }
+                            }
+                        },
+                        "Bases": {
+                            "@cs_native": "false",
+                            "@count": "400957440",
+                            "Base": [
+                                {"@value": "A", "@count": "126392851"},
+                                {"@value": "C", "@count": "73960502"},
+                                {"@value": "G", "@count": "74791116"},
+                                {"@value": "T", "@count": "125809577"},
+                                {"@value": "N", "@count": "3394"},
+                            ],
+                        },
+                    },
+                },
+            },
+        ]
+    }
+}

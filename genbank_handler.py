@@ -25,6 +25,7 @@ import setup
 import file_handler
 import ncbi_handler
 import upload_log
+from logging_handler import CONFIGURED_LOGGER as logger
 
 # Main create function for BioSample/SRA
 def create_genbank_submission(organism: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str], table2asn: bool):
@@ -43,6 +44,7 @@ def create_genbank_submission(organism: str, submission_name: str, submission_di
 # Create GenBank XML
 def create_submission_xml(organism: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> bytes:
 	# Submission XML header
+	logger.debug("Creating FTP submission XML...")
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
 	title = etree.SubElement(description, "Title")
@@ -83,10 +85,12 @@ def create_submission_xml(organism: str, submission_name: str, config_dict: Dict
 	spuid.set("spuid_namespace", config_dict["Spuid_Namespace"])
 	# Pretty print xml
 	xml_str = etree.tostring(root, encoding="utf-8", pretty_print=True, xml_declaration=True)
+	logger.debug("Submission XML created.")
 	return xml_str
 
 # Create a authorset file
 def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str) -> None:
+	logger.debug("Creating authorset...")
 	submitter_first = config_dict["Description"]["Organization"]["Submitter"]["Name"]["First"]
 	submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
 	submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
@@ -214,6 +218,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("    }\n")
 		f.write("  }\n")
 		f.write("}\n")
+	logger.debug(f"Authorset saved: {os.path.join(submission_dir, 'authorset.sbt')}")
 
 # Create a zip file for genbank submission
 def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str]) -> None:
@@ -222,7 +227,8 @@ def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFr
 	# Create authorset file
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir)
 	file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir)
-	# Retrieve the source df"
+	# Retrieve the source df
+	logger.debug(f"Creating source modifier table...")
 	source_df = metadata.filter(regex=GENBANK_REGEX_SRC).copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
 	source_df = source_df.rename(columns = {"gb-sample_name":"Sequence_ID", "collection_date":"Collection_date"})
@@ -232,22 +238,28 @@ def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFr
 	# Make sure Sequence_ID stays in first column
 	shift_col = source_df.pop("Sequence_ID")
 	source_df.insert(0, "Sequence_ID", shift_col)
+	logger.debug("Source modifier table created.")
 	file_handler.save_csv(df=source_df, file_path=submission_dir, file_name="source.src", sep="\t")
 	# Retrieve Structured Comment df
 	comment_df = metadata.filter(regex="^cmt-")
 	if not comment_df.empty:
+		logger.debug(f"Creating structured comment...")
 		comment_df = metadata.filter(regex=GENBANK_REGEX_CMT).copy()
 		comment_df.columns = comment_df.columns.str.replace("cmt-", "").str.strip()
 		comment_df = comment_df.rename(columns = {"gb-sample_name": "SeqID"})
 		columns_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix"])==True, comment_df.columns))
 		ordered_columns = ["SeqID", "StructuredCommentPrefix"] + columns_no_prefix_suffix + ["StructuredCommentSuffix"]
 		comment_df = comment_df.reindex(columns=ordered_columns)
+		logger.debug("Structured comment created.")
 		file_handler.save_csv(df=comment_df, file_path=submission_dir, file_name="comment.cmt", sep="\t")
 	if gff_file:
+		logger.debug(f"Copying GFF file to submission directory: {os.path.join(submission_dir, f'{submission_name}.gff')}")
 		file_handler.copy_file(source = gff_file, destination = os.path.join(submission_dir, f"{submission_name}.gff"))
+		logger.debug("GFF file copied.")
 
 # Create a zip file for genbank submission
 def create_zip(submission_name: str, submission_dir: str) -> None:
+	logger.debug(f"Zipping file: {os.path.join(submission_dir, submission_name + '.zip')}")
 	with ZipFile(os.path.join(submission_dir, submission_name + ".zip"), 'w') as zip:
 		zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
 		zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
@@ -257,14 +269,15 @@ def create_zip(submission_name: str, submission_dir: str) -> None:
 	# Waiting for the zip file to write
 	while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
 		time.sleep(10)
+	logger.debug("Zip file saved.")
 
 # Run Table2asn to generate sqn file for submission
 def create_table2asn(submission_name: str, submission_dir: str) -> str:
 	# Create a temp file to store the downloaded table2asn
+	logger.debug("Creating table2asn sqn file...")
 	table2asn_dir = "/tmp/table2asn"
 	# Download the table2asn
 	if os.path.isfile(table2asn_dir) is False:
-		print("Downloading Table2asn.", file=sys.stdout)
 		setup.download_table2asn(table2asn_dir=table2asn_dir)
 	# Command to generate table2asn submission file
 	command = [table2asn_dir, "-V","vb","-a","s","-t", os.path.join(submission_dir, "authorset.sbt"), "-i", os.path.join(submission_dir, "sequence.fsa"), "-src-file", os.path.join(submission_dir, "source.src"), "-o", os.path.join(submission_dir, submission_name + ".sqn")]
@@ -274,34 +287,37 @@ def create_table2asn(submission_name: str, submission_dir: str) -> str:
 	if os.path.isfile(os.path.join(submission_dir, f"{submission_name}.gff")):
 		command.append("-f")
 		command.append(os.path.join(submission_dir, f"{submission_name}.gff"))
-	print("Running Table2asn.", file=sys.stdout)
-	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
+	logger.debug(f"table2asn command: {' '.join(command)}")
+	logger.debug("Running table2asn...")
+	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))), text = True)
 	if proc.returncode != 0:
-		print("Table2asn-Error", file=sys.stderr)
-		print(proc.stdout, file=sys.stdout)
-		print(proc.stderr, file=sys.stderr)
+		logger.error(f"table2asn-Error:\n{proc.stdout}\n{proc.stderr}")
 		sys.exit(1)
-	print("Validating Table2asn submission.", file=sys.stdout)
+	logger.debug("table2asn ran successfully.")
 	validation_file = os.path.join(submission_dir, submission_name + ".val")
 	submission_id = check_table2asn_submission(validation_file=validation_file)
+	logger.debug("sqn saved.")
 	return submission_id
 
 # Check table2asn validation information
 def check_table2asn_submission(validation_file: str) -> str:
 	# Check if validation file exists
+	logger.debug("Validating table2asn sqn file...")
 	if os.path.isfile(validation_file) == False:
+		logger.error(f"Validation file '{validation_file}' does not exist.")
 		return "ERROR"
 	# If submission has errors reject
 	with open(validation_file, "r") as file:
 		for line in file:
 			if "error:" in line.lower():
-				print("Submission has errors after running Table2asn.", file=sys.stderr)
-				print("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.", file=sys.stderr)
-				print(F"Validation file: {validation_file}", file=sys.stderr)
+				logger.error("Submission has errors after running Table2asn.")
+				logger.error("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.")
+				logger.error(F"Validation file: {validation_file}")
 				return "ERROR"
 			else:
 				return "VALIDATED"
 	return "ERROR"
+	logger.debug("sqn file validated.")
 
 # Convert AccessionReport.tsv into format for report status file and update submission status report
 def accession_report_to_status_report(submission_dir: str, accession_report_df: pd.DataFrame):
@@ -343,12 +359,14 @@ def update_genbank_files(linking_databases: Dict[str, bool], organism: str, subm
 	submission_status_df = file_handler.load_csv(submission_status_file)
 	# Read in genbank source file
 	if os.path.isfile(os.path.join(submission_dir, "source.src")):
+		logger.debug(f"Loading GenBank source file: {os.path.join(submission_dir, 'source.src')}")
 		source_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "source.src"), sep="\t")
 	else:
-		print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+		logger.error(f"Submission source file does not exist at: {os.path.join(submission_dir, 'source.src')}")
 		sys.exit(1)
 	# Read in genbank comment file
 	if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+		logger.debug(f"Loading GenBank comment file: {os.path.join(submission_dir, 'comment.cmt')}")
 		cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
 	# Retrieve accession info
 	src_accessions = dict()

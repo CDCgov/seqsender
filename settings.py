@@ -7,12 +7,14 @@
 import os
 from typing import List, Dict
 
-##### SeqSender settings #####
+#################################################
+        ##### SeqSender settings #####
+#################################################
 # Script directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # SeqSender version
-VERSION: str = "1.2.3 (Beta)"
+VERSION: str = "1.3.0 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
@@ -35,7 +37,9 @@ SUBMISSION_LOG_COLUMNS: List[str] = ["Submission_Name", "Organism", "Database", 
 # Shiny schema options, exclusion list
 SCHEMA_EXCLUSIONS = ["config.seqsender.upload_log_schema","config_file.ncbi_schema","config_file.ncbi_gisaid_schema", "config_file.gisaid_schema"]
 
-##### NCBI settings #####
+#################################################
+        ##### NCBI settings #####
+#################################################
 # FTP website to submit samples to
 NCBI_FTP_HOST: str = "ftp-private.ncbi.nlm.nih.gov"
 
@@ -63,6 +67,11 @@ GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-|^organism$|^collection_date$"
 # Deprecated GenBank columns not allowed to be used
 GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Biovar", "src-Chemovar", "src-Forma", "src-Forma_specialis", "src-Identified_by", "src-Pathovar", "src-Pop_variant", "src-Serogroup", "src-Subclone", "src-Subtype", "src-Substrain", "src-Type"]
 
-##### GISAID settings #####
+# ENTREZ API search settings
+BATCH_SIZE, DEFAULT_RATE_LIMIT, API_RATE_LIMIT = 500, 3, 10 # Limits set by NCBI
+#################################################
+        ##### GISAID settings #####
+#################################################
+
 # GISAID metadata regex
 GISAID_REGEX = "^gs-|^collection_date$|^authors$"

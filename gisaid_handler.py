@@ -22,6 +22,7 @@ import re
 import upload_log
 import tools
 from settings import GISAID_REGEX
+from logging_handler import CONFIGURED_LOGGER as logger
 
 # Create directory and files for GISAID submission
 def create_gisaid_files(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> None:
@@ -78,7 +79,7 @@ def process_flu_dates(row: Any) -> pd.Series:
 		year = ""
 		month = ""
 	else:
-		print(f"Error: Unable to process 'Collection_Date' column for FLU GISAID submission. The field should be in format 'YYYY-MM-DD'. Value unable to process: {row.strip()}", file=sys.stderr)
+		logger.error(f"Unable to process 'Collection_Date' column for FLU GISAID submission. The field should be in format 'YYYY-MM-DD'. Value unable to process: {row.strip()}")
 		sys.exit(1)
 	return pd.Series([full_date, year, month])
 
@@ -124,23 +125,23 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 							accession = ""
 						gisaid_segment_log.append({"gs-segment_name":sample_name, "gisaid_accession_epi_id":accession})
 			else:
-				print("Finished reading GISAID log. If workflow has failed here, it's likely no GISAID IDs were returned. Check results in GISAID upload log.")
+				logger.info("Finished reading GISAID log. If workflow has failed here, it's likely no GISAID IDs were returned. Check results in GISAID upload log.")
 			line = file.readline().strip()
 	gisaid_isolate_df = pd.DataFrame(gisaid_isolate_log)
 	gisaid_segment_df = pd.DataFrame(gisaid_segment_log)
 	# Update GISAID submission status
 	if not gisaid_isolate_df.empty and not gisaid_segment_df.empty:
-		print("GISAID isolates and GISAID segments found.")
+		logger.info("GISAID isolates and GISAID segments found.")
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_isolate_df)
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_segment_df)
 	elif not gisaid_isolate_df.empty:
-		print("GISAID isolates found.")
+		logger.info("GISAID isolates found.")
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_isolate_df)
 	elif not gisaid_segment_df.empty:
-		print("GISAID segments found.")
+		logger.info("GISAID segments found.")
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_segment_df)
 	else:
-		print("Warning: no GISAID isolates or segments found")
+		logger.warning("No GISAID isolates or segments found.")
 	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
 	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
 	return gisaid_isolate_df[["gs-sample_name"]]
@@ -156,27 +157,25 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	# Extract user credentials (e.g. username, password, client-id)
 	tools.check_credentials(config_dict=config_dict, database="GISAID")
 	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
-	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
+	logger.warning(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.")
 	time.sleep(5)
 	# Set number of attempt to 3 if erroring out occurs
 	attempts = 0
 	# Submit to GISAID
 	while attempts <= 3:
 		attempts += 1
-		print("\n"+"Submission attempt: " + str(attempts), file=sys.stdout)
+		logger.info(f"Submission attempt: {str(attempts)}")
 		# Create a log submission for each attempt
 		log_file = os.path.join(submission_dir, "gisaid_upload_log_" + str(attempts) + ".txt")
 		# If log file exists, removes it
 		if os.path.isfile(log_file) == True:
 			os.remove(log_file)
 		# Upload submission
-		command = subprocess.run([gisaid_cli, "upload", "--username", config_dict["Username"], "--password", config_dict["Password"], "--clientid", config_dict["Client-Id"], "--metadata", metadata, "--fasta", fasta, "--log", log_file, "--debug"],
-			cwd=submission_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		proc = subprocess.run([gisaid_cli, "upload", "--username", config_dict["Username"], "--password", config_dict["Password"], "--clientid", config_dict["Client-Id"], "--metadata", metadata, "--fasta", fasta, "--log", log_file, "--debug"],
+			cwd=submission_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text = True)
 		# Check if uploading is successful
-		if command.returncode != 0:
-			print("Error: upload command error", file=sys.stderr)
-			print(command.stdout)
-			print(command.stderr)
+		if proc.returncode != 0:
+			logger.error(f"Upload command error:\n{proc.stdout}\n{proc.stderr}")
 			sys.exit(1)
 		# Check if log file exists
 		while not os.path.exists(log_file):
@@ -208,8 +207,8 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 		metadata_df = pd.read_csv(orig_metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 		metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=metadata_column_name, right_on="gs-sample_name")
 		if metadata_df.empty:
-			print("Uploading successfully", file=sys.stdout)
-			print("Log file is stored at: " + submission_dir + "/gisaid_upload_log_attempt_" + str(attempts) +  ".txt", file=sys.stdout)
+			logger.success("Uploading successfully")
+			logger.info(f"Log file is stored at: {submission_dir}/gisaid_upload_log_attempt_{str(attempts)}.txt")
 			return "PROCESSED"
 		# Update metadata file
 		fasta_names = gisaid_status_df[fasta_column_name].tolist()
@@ -225,8 +224,8 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 		with open(fasta, "w+") as fasta_file:
 			SeqIO.write(fasta_dict, fasta_file, "fasta")
 	if not metadata_df.empty:
-		print("Error: " + str(len(metadata_df.index)) + " sample(s) failed to upload to GISAID", file=sys.stderr)
-		print("Please check log file at: " + submission_dir + "/gisaid_upload_log_attempt_{1,2,3}.txt", file=sys.stderr)
+		logger.error(f"{str(len(metadata_df.index))} sample(s) failed to upload to GISAID")
+		logger.error(f"Please check log file at: {submission_dir}/gisaid_upload_log_attempt_#.txt")
 		return "ERROR"
 	else:
 		return "PROCESSED"
