@@ -20,6 +20,7 @@ from settings import NCBI_FTP_HOST, TABLE2ASN_EMAIL
 
 # Local imports
 import tools
+import setup
 
 # Process NCBI Report file
 def get_ncbi_report(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> Optional[str]:
@@ -63,8 +64,16 @@ def create_submit_ready_file(ftp, submission_dir: str):
 	return ftp
 
 def ncbi_login(config_dict: Dict[str, Any]):
-	ftp = ftplib.FTP(NCBI_FTP_HOST)
-	ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	try:
+		ftp = ftplib.FTP(NCBI_FTP_HOST)
+		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	except ftplib.error_perm as err:
+		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException{err}", file=sys.stderr)
+	except Exception as err:
+		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
+		setup.test_internet_connection(databases=["NCBI"])
+		print(f"Exception: {err}", file=sys.stderr)
+		sys.exit(1)
 	return ftp
 
 def ftp_upload_file(ftp, upload_file: str, upload_name: Optional[str] = None):

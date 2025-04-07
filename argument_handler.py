@@ -130,6 +130,13 @@ def args_parser():
 		description="Downloads the BioSample Package XML from NCBI and updates SeqSender's metadata schema options for the BioSample database."
 	)
 
+	# check_submission_status command
+	test_network_module = subparser_modules.add_parser(
+		"test_network_connection",
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+		description="Runs a series of test network connections to NCBI and GISAID to troubleshoot submission issues."
+	)
+
 	# version command
 	version_module = subparser_modules.add_parser(
 		"version",

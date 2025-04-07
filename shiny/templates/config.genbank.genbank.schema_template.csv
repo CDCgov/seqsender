@@ -3,4 +3,4 @@ sequence_name,Required,Sequence identifier used in fasta file. This is used to c
 gb-sample_name,Required,Identifier name used for GenBank. Max length is 50 characters.
 gb-fasta_definition_line_modifiers,Optional,"NCBI fasta definition line modifiers can be added here. As many modifiers as you like can be added, but each must bounded by a set of brackets. Some of the available keywords are listed at ""https://www.ncbi.nlm.nih.gov/genbank/mods_fastadefline/""."
 gb-title,Optional,"Optional internal field for how the GenBank submission should be named when viewed from the NCBI submission portal, . If not provided, when performing submissions <--submission_name> with the suffix ""-GB"" will be used instead."
-sra-comment,Optional,Optional internal field explaining the purpose of the submission for when interacting and resolving submission issues with NCBI.
+gb-comment,Optional,Optional internal field explaining the purpose of the submission for when interacting and resolving submission issues with NCBI.

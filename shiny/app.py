@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.3.2. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.3.3. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -583,6 +583,8 @@ commands_body = [
         shiny_tools.command_accordion_panel("test_data", description=" command is used generate test data for seqsender, to be used for testing the prep and submit commands."),
         # Update biosample command
         shiny_tools.command_accordion_panel("update_biosample", description=" command is used to update biosample schema options based on available BioSample Packages."),
+        # Update biosample command
+        shiny_tools.command_accordion_panel("test_network_connection", description=" command is used to run a series of test network connections to NCBI and GISAID to troubleshoot submission issues."),
         # version command
         shiny_tools.command_accordion_panel("version", description=" command prints the current seqsender version."),
     ),
@@ -609,6 +611,8 @@ app_ui = ui.page_fluid(
         ui.nav_panel("Output Files", output_body),
         ui.nav_panel("Commands", commands_body),
         # ui.nav_panel("FAQ", faq_body),
+        ui.nav_spacer(),
+        ui.nav_control(ui.a("GitHub", href="https://github.com/CDCgov/seqsender/", target="_blank")),
         selected="SeqSender",
         header=header,
         footer=footer,
@@ -668,6 +672,19 @@ def server(input, output, session):
     @reactive.file_reader(dir / "templates/")
     def read_genbank_file():
         df = pd.read_csv(dir / "templates/config.genbank.genbank.schema_template.csv", index_col = "column_name")
+        if input.GenBank_schemas() == "FLU":
+            src_df = pd.read_csv(dir / "templates/config.genbank.genbank.flu.src.schema_template.csv", index_col = "column_name")
+        else:
+            src_df = pd.read_csv(dir / "templates/config.genbank.genbank.src.schema_template.csv", index_col = "column_name")
+        cmt_df = pd.DataFrame({
+            "column_name": ["cmt-StructuredCommentPrefix", "cmt-StructuredCommentSuffix", "cmt-Assembly Method"],
+            "required_column": ["Required", "Required", "Required"],
+            "description": ["Structured comment keyword. ONLY REQUIRED IF INCLUDING COMMENT FILE. For FLU use 'FluData', HIV use 'HIV-DataBaseData', and for COV and other organisms use 'Assembly-Data'.",
+            "Structured comment keyword. ONLY REQUIRED IF INCLUDING COMMENT FILE. For FLU use 'FluData', HIV use 'HIV-DataBaseData', and for COV and other organisms use 'Assembly-Data'.",
+            "ONLY REQUIRED IF INCLUDING COMMENT FILE. Process used to assemble genome."]
+        })
+        cmt_df = cmt_df.set_index("column_name")
+        df = pd.concat([df, src_df, cmt_df])
         df = df.fillna("")
         df = df.transpose()
         return df

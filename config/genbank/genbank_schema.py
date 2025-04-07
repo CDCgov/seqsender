@@ -49,7 +49,7 @@ schema = DataFrameSchema(
 			description="Optional internal field for how the GenBank submission should be named when viewed from the NCBI submission portal, . If not provided, when performing submissions <--submission_name> with the suffix \"-GB\" will be used instead.",
 			title="genbank submission portal title",
 		),
-		"sra-comment": Column(
+		"gb-comment": Column(
 			dtype="object",
 			checks=[
 				Check(lambda s: s.nunique() == 1),

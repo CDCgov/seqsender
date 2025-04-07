@@ -4,13 +4,15 @@ import pathlib
 import sys
 from zipfile import ZipFile
 import ftplib
+import io
 import os
 import json
 import subprocess
+import socket
 import pandas as pd
 import shutil
 import platform
-from urllib.request import urlopen
+import urllib
 import gzip
 import stat
 import requests
@@ -23,6 +25,7 @@ from typing import List, Dict, Any
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import tools
+from settings import NCBI_FTP_HOST
 
 # Get program directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
@@ -95,6 +98,14 @@ SCHEMA_COLUMNS_FOOTER: str = """
 			title=\"biosample submission portal description\",
 		)"""
 
+TEST_CONNECTIONS = {"HTTP": {"website":"http://www.google.com", "database": "GENERAL", "error_msg": "Possible internet connectivity issues; unable to connect to 'http://www.google.com'."},
+"HTTPS": {"website": "https://www.google.com", "database": "GENERAL", "error_msg": "Possible internet connectivity issues; unable to connect to 'https://www.google.com'."},
+"NCBI": {"website": "https://www.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://www.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
+"NCBI API": {"website": "https://submit.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://submit.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
+"GISAID": {"website": "https://www.epicov.org/epi3/start", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."},
+"GISAID": {"website": "https://gisaid.org/", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."}
+}
+
 # Create example data for testing
 def create_test_data(organism: str, database: List[str], submission_dir: str) -> None:
 	if organism not in ["FLU", "COV"]:
@@ -154,7 +165,7 @@ def download_table2asn(table2asn_dir: str) -> None:
 	# Determine which platform to download table2asn
 	if platform.system() == "Windows":
 		zip_url = "https://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/table2asn/win64.table2asn.zip"
-		with urlopen(zip_url) as zip_response:
+		with urllib.request.urlopen(zip_url) as zip_response:
 			with ZipFile(BytesIO(zip_response.read())) as zip_file:
 				zip_file.extractall(table2asn_dir)
 		return
@@ -168,7 +179,7 @@ def download_table2asn(table2asn_dir: str) -> None:
 	# Extract table2asn to tmp folder
 	try:
 		with open(table2asn_dir, "wb") as file:
-			with urlopen(zip_url) as zip_response:
+			with urllib.request.urlopen(zip_url) as zip_response:
 				file.write(gzip.decompress(zip_response.read()))
 		st = os.stat(table2asn_dir)
 		os.chmod(table2asn_dir, st.st_mode | stat.S_IXOTH | stat.S_IRWXU)
@@ -309,3 +320,42 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		indentation = indentation[:-1]
 		file.write(indentation + ")")
 	os.remove(xml_file)
+
+def test_internet_connection(databases: List[str]) -> None:
+	error_list = []
+	print("Checking network settings...", file=sys.stdout)
+	for test, info in TEST_CONNECTIONS.items():
+		if info["database"] == "GENERAL" or info["database"] in databases:
+			print(f"Checking {test} connection...", file=sys.stdout)
+			try:
+				query = requests.get(info['website'])
+				response = query.status_code
+			except Exception as e:
+				error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
+			if response in (200, 204, 301, 302):
+				print(f"{test} '{info['website']}' connectivity test ok.", file=sys.stdout)
+			else:
+				error_list.append(f"{info['error_msg']} Error code received:'{response}'")
+	if "NCBI" in databases:
+		print("Checking DNS resolution for FTP site...", file=sys.stdout)
+		try:
+			ip_address = socket.gethostbyname(NCBI_FTP_HOST)
+		except Exception as e:
+			error_list.append(f"Unable to reach '{NCBI_FTP_HOST}'; possible DNS error. \nException:{e}")
+		if not ip_address:
+			error_list.append(f"Unable to resolve address for '{NCBI_FTP_HOST}'; check DNS server settings for possible issues.")
+		else:
+			print(f"DNS resolution test ok. Able to reach ('{NCBI_FTP_HOST} -> {ip_address})", file=sys.stdout)
+			print("Checking port status...", file=sys.stdout)
+			try:
+				ftp = ftplib.FTP()
+				ftp.connect(NCBI_FTP_HOST, 21, timeout=10)
+				ftp.quit()
+				print(f"{NCBI_FTP_HOST} open on port 21.", file=sys.stdout)
+			except Exception as e:
+				error_list.append(f"Port 21 not open for {NCBI_FTP_HOST}. Check possible firewall/server issues. \nException:{e}")
+	if error_list:
+		for error_string in error_list:
+			print(error_string, file=sys.stderr)
+	else:
+		print("No network connection issues detected.", file=sys.stdout)
