@@ -177,6 +177,8 @@ def main():
 	elif command == "update_biosample":
 		print("Updating BioSample requirements.", file=sys.stdout)
 		setup.download_biosample_xml_list()
+	elif command == "test_network_connection":
+		setup.test_internet_connection(databases=["GENERAL","NCBI","GISAID"])
 	else:
 		# If no command display help
 		parser.print_help()
