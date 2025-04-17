@@ -304,7 +304,8 @@ def check_table2asn_submission(validation_file: str) -> str:
 	# Check if validation file exists
 	logger.debug("Validating table2asn sqn file...")
 	if os.path.isfile(validation_file) == False:
-		logger.error(f"Validation file '{validation_file}' does not exist.")
+		logger.error(f"Table2asn validation file '{validation_file}' does not exist.")
+		logger.error("Please check that table2asn completed successfully and that the files have not been moved.")
 		return "ERROR"
 	# If submission has errors reject
 	with open(validation_file, "r") as file:
@@ -326,8 +327,7 @@ def accession_report_to_status_report(submission_dir: str, accession_report_df: 
 	accession_report_df = accession_report_df[["gb-sample_name", "genbank_status", "genbank_accession", "genbank_message"]]
 	upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GENBANK", update_df=accession_report_df)
 
-def process_genbank_report(report_file: str, submission_dir: str) -> Tuple[str, str]:
-	report_dict, submission_status, submission_id = ncbi_handler.process_report_header(report_file=report_file)
+def process_genbank_report(report_dict: Dict[str, Any], submission_dir: str) -> None:
 	try:
 		if report_dict["SubmissionStatus"]["Action"]["@status"] == "processed-ok":
 			try:
@@ -350,7 +350,6 @@ def process_genbank_report(report_file: str, submission_dir: str) -> Tuple[str, 
 				pass
 	except:
 		pass
-	return submission_status, submission_id
 
 # Check if it has BioSample and BioProject accession number (update status report)
 def update_genbank_files(linking_databases: Dict[str, bool], organism: str, submission_dir: str) -> None:

@@ -51,7 +51,7 @@ def merge_submission_status_csv(database: List[str], new_df: pd.DataFrame, submi
 	try:
 		merged_df = existing_df.merge(new_df, on=existing_sample_name_columns, how="inner")
 	except Exception as e:
-		logger.error("Unable to merge new submission into existing submission.")
+		logger.error(f"Unable to merge new submission into existing submission. Please check the '{submission_status_file}' for possible issue's that could prevent the accessions from being added.")
 		logger.error(e)
 		sys.exit(1)
 	existing_databases += database
@@ -196,6 +196,7 @@ def update_submission_log(database: str, organism: str, submission_name: str, su
 		df.loc[df_partial.index.values, "Update_Date"] = datetime.now().strftime("%Y-%m-%d")
 	else:
 		logger.error(f"'{submission_name}' '{database}' is not present in the submission log at '{submission_log_dir}'.")
+		logger.error("Please ensure you have ran the SeqSender 'submit' command for this submission and check that the file location has not been moved.")
 		sys.exit(1)
 	file_handler.save_csv(df=df, file_path=submission_log_dir, file_name="submission_log.csv")
 
@@ -211,7 +212,7 @@ def load_submission_log(submission_dir: str) -> pd.DataFrame:
 	try:
 		upload_schema.validate(df, lazy = True)
 	except pandera.errors.SchemaErrors as schema_error:
-		logger.error("Upload log columns are incorrect. Cannot process submissions.")
+		logger.error(f"Upload log columns are incorrect for '{submission_log_file}'. Cannot process submissions.")
 		tools.pretty_print_pandera_errors(file=submission_log_file, error_msgs=[schema_error])
 		sys.exit(1)
 	return df
@@ -229,9 +230,9 @@ def validate_fields_exist(df: pd.DataFrame):
 def process_biosample_sra(submission_name: str, database: str, organism: str, submission_log_dir: str, submission_dir: str, curr_status: str, config_dict: Dict[str, Any], submission_type: str) -> Tuple[bool, str]:
 	if curr_status == "PROCESSED":
 		return True, curr_status
-	report_file = ncbi_handler.get_ncbi_report(database=database, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
-	if report_file:
-		new_submission_status, submission_id = biosample_sra_handler.process_biosample_sra_report(report_file=report_file, database=database, submission_dir=submission_dir)
+	report_dict, submission_status, submission_id = ncbi_handler.get_ncbi_report(database=database, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
+	if report_dict:
+		new_submission_status = biosample_sra_handler.process_biosample_sra_report(report_dict=report_dict, submission_status=curr_status, database=database, submission_dir=submission_dir)
 	else:
 		new_submission_status = curr_status
 		submission_id = "PENDING"
@@ -250,7 +251,7 @@ def upload_log_submit_genbank(genbank_type: str, submission_name: str, organism:
 			submission_status = "PENDING"
 	elif genbank_type == "GENBANK-FTP":
 		genbank_handler.create_zip(submission_name=submission_name, submission_dir=submission_dir)
-		ncbi_handler.submit_ncbi(database="GENBANK", submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
+		ncbi_handler.submit_ncbi(database="GENBANK", organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
 		submission_id, submission_status = "PENDING", "SUBMITTED"
 	else:
 		logger.error(f"'{genbank_type}' is not a valid GenBank submission option.")
@@ -270,9 +271,9 @@ def process_genbank(genbank_type: str, submission_name: str, submission_log_dir:
 	elif curr_status == "WAITING":
 		return False, curr_status
 	else:
-		report_file = ncbi_handler.get_ncbi_report("GENBANK", submission_name, submission_dir, config_dict, submission_type)
-		if report_file:
-			new_submission_status, submission_id = genbank_handler.process_genbank_report(report_file=report_file, submission_dir=submission_dir)
+		report_dict, new_submission_status, submission_id = ncbi_handler.get_ncbi_report("GENBANK", submission_name, submission_dir, config_dict, submission_type)
+		if report_dict:
+			genbank_handler.process_genbank_report(report_dict=report_dict, submission_dir=submission_dir)
 		else:
 			new_submission_status = curr_status
 			submission_id = "PENDING"

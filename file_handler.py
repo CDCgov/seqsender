@@ -37,12 +37,14 @@ def copy_file(source: str, destination: str):
 def validate_file(file_type: str, file_path: str):
 	if not os.path.isfile(file_path):
 		logger.error(f"File {file_type.replace('_',' ')} does not exist at: {file_path}")
+		logger.error("Please ensure files have not been moved.")
 		sys.exit(1)
 	logger.debug(f"{file_type} : {file_path}")
 
 def validate_directory(name: str, path: str):
 	if not os.path.exists(path):
 		logger.error(f"There is no {name} at: {path}")
+		logger.error("Please ensure files have not been moved.")
 		sys.exit(1)
 	logger.debug(f"Directory found: {path}")
 

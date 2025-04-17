@@ -29,16 +29,28 @@ def create_entrez_query(database: str, query_list: List[str]) -> Tuple[str]:
     return web_env, query_key
 
 def search_entrez(database: str, submission_dir: str, config_dict: Dict[str, Any], query_type: str, query_list: List[str]):
-    web_env, query_key = create_entrez_query(query_list=query_list)
+    web_env, query_key = create_entrez_query(database=database, query_list=query_list)
     xml_document = []
     # Limit requests
     delay = calculate_entrez_rate_limit(config_dict=config_dict)
     for index in range(0, len(query_list), BATCH_SIZE):
-        with Entrez.efetch(db=database, query_key=query_key, WebEnv=web_env, rettype="xml", retstart=index, retmax=BATCH_SIZE) as connection:
-            xml_document.append(connection.read())
+        try:
+            with Entrez.efetch(db=database, query_key=query_key, WebEnv=web_env, rettype="xml", retstart=index, retmax=BATCH_SIZE) as connection:
+                xml_document.append(connection.read())
+        except Exception as e:
+            logger.error("Unable to perfom NCBI Entrez EFetch query.")
     for index, entrez_query in enumerate(batch_query):
         connection = Entrez.efetch(db=database, id = entrez_query, rettype = "xml")
         xml_string = xmltodict(connection.read().decode("utf-8"))
         time.sleep(delay)
 
-def search_entrez_for_linking_databases():
+def search_entrez_for_linking_databases(database_one: str, database_two: str, submission_dir: str, query_list: List[str]):
+    web_env, query_key = create_entrez_query(database=database_one, query_list=query_list)
+    if web_env and query_key:
+        try:
+            with Entrez.elink(dbfrom=database_one, dbto=database_two, query_key=query_key, WebEnv=webenv) as connection:
+                elink_info = Entrez.read(connection)
+        except Exception as e:
+            logger.error("Unable to perfom NCBI Entrez ELink query to validate linkage between database submissions.")
+    else:
+        logger.error("Unable to perform NCBI Entrez query.")

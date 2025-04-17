@@ -31,7 +31,7 @@ def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
-		logger.error("Submission portals list cannot be empty.")
+		logger.error("Submission portals list cannot be empty when loading config file.")
 		sys.exit(1)
 	submission_schema = "_".join(submission_portals)
 	# Read in user config file
@@ -157,13 +157,13 @@ def import_schema(database: str, schema_name: str, schema_regex: str, custom_val
 		schema_import = (schema_regex, importlib.import_module(schema_path).schema)
 		logger.debug("Schema successfully imported.")
 	except ModuleNotFoundError:
-		logger.error(f"Database {schema_name} schema not found.")
+		logger.error(f"Database validation '{schema_name}' schema not found.")
 		sys.exit(1)
 	except ImportError as e:
-		logger.error(f"Issue when importing database schema '{schema_name}':\n{e}")
+		logger.error(f"Issue when importing database validation schema '{schema_name}':\n{e}")
 		sys.exit(1)
 	except Exception as e:
-		logger.critical(f"An unexpected error occured when importing database schema '{schema_name}':\n{e}")
+		logger.critical(f"An unexpected error occured when importing database validation schema '{schema_name}':\n{e}")
 		sys.exit(1)
 		logger.debug("Schema module imported.")
 	return schema_import
@@ -173,9 +173,9 @@ def load_custom_validation(custom_validation):
 	custom_validation_dir = os.path.join(PROG_DIR, "config", "custom", custom_validation)
 	logger.debug(f"Checking custom validation location: '{custom_validation_dir}'")
 	if os.path.isdir(custom_validation_dir) == False:
-		logger.warn(f"Custom validation '{custom_validation}' enabled but directory '{custom_validation_dir}' not found")
+		logger.warn(f"Custom validation '{custom_validation}' enabled but directory '{custom_validation_dir}' not found.")
 	if custom_validation_dir not in sys.path:
-		logger.debug(f"Adding custom validation directory to sys.path")
+		logger.debug(f"Adding custom validation directory to 'sys.path'.")
 		sys.path.append(custom_validation_dir)
 		cleanup_sys_path = True
 	logger.success(f"Custom validation added: '{custom_validation}'")

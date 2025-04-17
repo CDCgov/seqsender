@@ -5,6 +5,7 @@
 # Python Libraries
 import ftplib
 import os
+import re
 import sys
 import time
 import subprocess
@@ -18,11 +19,15 @@ from email.mime.application import MIMEApplication
 from typing import List, Set, Dict, Any, Union, Tuple, Optional
 from settings import NCBI_FTP_HOST, TABLE2ASN_EMAIL
 from logging_handler import CONFIGURED_LOGGER as logger
+from collections import OrderedDict
 # Local imports
 import tools
+import upload_log
+import biosample_sra_handler
+import genbank_handler
 
 # Process NCBI Report file
-def get_ncbi_report(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> Optional[str]:
+def get_ncbi_report(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> Tuple[Dict[str, Any], str, str]:
 	# Check user credentials
 	tools.check_credentials(config_dict=config_dict, database="NCBI")
 	# Create submission name
@@ -31,20 +36,11 @@ def get_ncbi_report(database: str, submission_name: str, submission_dir: str, co
 	try:
 		ftp = ncbi_login(config_dict=config_dict)
 		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type)
-		# Check if report.xml exists
-		if "report.xml" in ftp.nlst():
-			logger.info("Downloading report.xml")
-			report_file = os.path.join(submission_dir, "report.xml")
-			with open(report_file, 'wb') as f:
-				ftp.retrbinary('RETR report.xml', f.write, 262144)
-			logger.success("Download successful.")
-			return report_file
-		else:
-			logger.info("The report.xml has not yet been generated.")
-			return None
+		report_dict, submission_status, submission_id = check_for_existing_submission(ftp, submission_dir=submission_dir)
 	except ftplib.all_errors as e:
-		logger.error(f"FTP error:\n{e}")
+		logger.error(f"Unable to perform submission. FTP error:\n{e}")
 		sys.exit(1)
+	return report_dict, submission_status, submission_id
 
 # Create an empty submit.ready file if it not exists
 def create_submit_ready_file(ftp, submission_dir: str):
@@ -53,22 +49,76 @@ def create_submit_ready_file(ftp, submission_dir: str):
 		open(submit_ready_file, 'w+').close()
 		res = ftp.storlines("STOR " + "submit.ready", open(submit_ready_file, "rb"))
 		if not res.startswith('226 Transfer complete'):
-			logger.error("'submit.ready' upload failed.")
+			logger.error("Unable to complete submission, 'submit.ready' upload failed.")
 			sys.exit(1)
 	except Exception as e:
 		if str(e).startswith('Error:550 submit.ready: Permission denied'):
 			logger.info("The submission has already been made and is currently processing.")
 		else:
-			logger.error(f"Unable to upload submit.ready file.\n{e}")
+			logger.error(f"Unable to complete submission. Unable to upload submit.ready file.\n{e}")
 			sys.exit(1)
 	return ftp
 
 def ncbi_login(config_dict: Dict[str, Any]):
 	logger.debug("Logging into NCBI FTP...")
-	ftp = ftplib.FTP(NCBI_FTP_HOST)
-	ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	try:
+		ftp = ftplib.FTP(NCBI_FTP_HOST)
+		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	except Exception as e:
+		logger.error(f"Unable to login to NCBI FTP site.\n{e}")
+		sys.exit(1)
 	logger.debug("Login successful.")
 	return ftp
+
+# Read report file on FTP site
+def load_ftp_report_file(ftp, report_file_name: str) -> OrderedDict[str, Any]:
+	try:
+		file_contents: List[str] = []
+		ftp.retrlines(f'RETR {report_file_name}', file_contents.append)
+		xml_str = '\n'.join(file_contents)
+		report_dict = xmltodict.parse(xml_str)
+	except Exception as e:
+		logger.error(f"Unable to load NCBI report.xml from FTP site.\n{e}")
+		sys.exit(1)
+	return report_dict
+
+def download_ftp_report_file(ftp, report_file: str) -> None:
+	logger.info("Downloading report.xml")
+	try:
+		with open(report_file, 'wb') as f:
+			ftp.retrbinary('RETR report.xml', f.write, 262144)
+	except Exception as e:
+		logger.error(f"Unable to download NCBI report.xml from FTP site.\n{e}")
+		sys.exit(1)
+	logger.success("Download successful.")
+
+def check_for_existing_submission(ftp, submission_dir: str) -> Tuple[Dict[str, Any], str, str]:
+	logger.debug("Checking for existing 'report.xml' files...")
+	local_report_file = os.path.join(submission_dir, "report.xml")
+	report_dict: Dict[str, Any] = Dict()
+	# If local report.xml exists, use it if processed
+	if os.path.isfile(local_report_file):
+		# Convert xml to dictionary
+		tree = ET.parse(local_report_file)
+		root = tree.getroot()
+		xmlstr = ET.tostring(root, encoding="utf8", method="xml")
+		report_dict = xmltodict.parse(xmlstr)
+		report_dict, submission_status, submission_id = process_report_header(report_dict=report_dict)
+		if submission_status == "PROCESSED":
+			return report_dict, submission_status, submission_id
+	file_list = ftp.nlst()
+	report_files = []
+	if "report.xml" in file_list:
+		report_files.append("report.xml")
+	report_files += [file for file in file_list if re.match(r'report\.\d+\.xml$', file)]
+	# Check report.xml and all report.*.xml for any complete submissions
+	for file in report_files:
+		report_dict = load_ftp_report_file(ftp, report_file_name=file)
+		report_dict, submission_status, submission_id = process_report_header(report_dict=report_dict)
+		if submission_status == "PROCESSED":
+			download_ftp_report_file(ftp, report_file=file)
+			return report_dict, submission_status, submission_id
+	return report_dict, "SUBMITTED", "PENDING"
 
 def ftp_upload_file(ftp, upload_file: str, upload_name: Optional[str] = None):
 	if upload_name is None:
@@ -90,6 +140,8 @@ def ftp_navigate_to_folder(ftp, folder_name: str, submission_type: str, make_fol
 		ftp.cwd(submission_type)
 	elif submission_type not in ftp.nlst() and "submit" not in ftp.nlst():
 		logger.error("Cannot find submission folder on NCBI FTP site.")
+		logger.error("Please ensure you are using a NCBI group account setup for UI-Less submissions.")
+		logger.error("For more information refer to the documentation 'https://cdcgov.github.io/seqsender/' under the 'Prerequisites' -> 'NCBI' tab.")
 		sys.exit(1)
 	else:
 		logger.debug("Located 'submit' folder.")
@@ -99,10 +151,12 @@ def ftp_navigate_to_folder(ftp, folder_name: str, submission_type: str, make_fol
 			ftp.cwd(submission_type)
 		else:
 			logger.error("Cannot find submission folder on NCBI FTP site.")
+			logger.error("Please ensure you are using a NCBI group account setup for UI-Less submissions.")
+			logger.error("For more information refer to the documentation 'https://cdcgov.github.io/seqsender/' under the 'Prerequisites' -> 'NCBI' tab.")
 			sys.exit(1)
 	# Check if submission folder exists / can be created
 	if not make_folder and folder_name not in ftp.nlst():
-		logger.error("Cannot find submission folder on NCBI FTP site.")
+		logger.error("Cannot find submission folder on NCBI FTP site. Please ensure you have performed the submission and the files have not been moved.")
 		sys.exit(1)
 	elif make_folder and folder_name not in ftp.nlst():
 		ftp.mkd(folder_name)
@@ -131,7 +185,7 @@ def upload_raw_reads(ftp, submission_dir: str, submission_name: str):
 	return ftp
 
 # Submit to NCBI
-def submit_ncbi(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> None:
+def submit_ncbi(database: str, organism: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> None:
 	# Create submission name
 	ncbi_submission_name = submission_name + "_" + database
 	# Check user credentials
@@ -144,6 +198,19 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 		logger.info(f"Preparing submission: {ncbi_submission_name}")
 		ftp = ncbi_login(config_dict)
 		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type, make_folder=True)
+		report_dict, submission_status, submission_id = check_for_existing_submission(ftp=ftp, submission_dir=submission_dir)
+		if report_dict:
+			logger.info("Submission already exists, processing...")
+			if database in ["SRA", "BIOSAMPLE"]:
+				new_submission_status = biosample_sra_handler.process_biosample_sra_report(report_dict=report_dict, submission_status=submission_status, database=database, submission_dir=submission_dir)
+			elif database in ["GENBANK"]:
+				genbank_handler.process_genbank_report(report_dict=report_dict, submission_dir=submission_dir)
+			else:
+				new_submission_status = submission_status
+				submission_id = "PENDING"
+			upload_log.update_submission_log(database=database, organism=organism, submission_name=submission_name, submission_log_dir=submission_dir, submission_dir=submission_dir, submission_status=new_submission_status, submission_id=submission_id, submission_type=submission_type)
+			logger.info(f"Submission info for {database} updated.")
+			return
 		logger.info(f"Submitting: '{submission_name}'")
 		# Upload submission xml
 		ftp = ftp_upload_file(ftp=ftp, upload_file=os.path.join(submission_dir, "submission.xml"))
@@ -156,7 +223,7 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 		ftp = create_submit_ready_file(ftp=ftp, submission_dir=submission_dir)
 		logger.success(f"Submission '{submission_name}' uploaded successfully.")
 	except ftplib.all_errors as e:
-		logger.error(f"FTP error {e}")
+		logger.error(f"Unable to perform submission. FTP error:\n{e}")
 		sys.exit(1)
 
 # Send table2asn file through email
@@ -224,13 +291,7 @@ def standardize_submission_status(submission_status: str) -> str:
 	else:
 		return "ERROR"
 
-def process_report_header(report_file: str) -> Tuple[Dict[str, Any], str, str]:
-	# Read in report.xml
-	tree = ET.parse(report_file)
-	root = tree.getroot()
-	xmlstr = ET.tostring(root, encoding='utf8', method='xml')
-	# Convert xml to dictionary
-	report_dict = xmltodict.parse(xmlstr)
+def process_report_header(report_dict: OrderedDict[str, Any]) -> Tuple[Dict[str, Any], str, str]:
 	# Get submission status
 	try:
 		# Get submission status and id from report.xml

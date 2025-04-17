@@ -249,12 +249,11 @@ def create_biosample_sra_submission(organism: str, database: str, submission_nam
 	file_handler.save_xml(xml_str, submission_dir)
 
 # Read xml report and get status of the submission
-def process_biosample_sra_report(report_file: str, database: str, submission_dir: str) -> Tuple[str, str]:
-	report_dict, submission_status, submission_id = ncbi_handler.process_report_header(report_file=report_file)
+def process_biosample_sra_report(report_dict: Dict[str, Any], submission_status: str, database: str, submission_dir: str) -> str:
 	sample_name_prefix = {"BIOSAMPLE":"bs-", "SRA":"sra-"}
 	sample_info = []
 	if "Action" not in report_dict["SubmissionStatus"]:
-		return submission_status, submission_id
+		return submission_status
 	try:
 		# If only a single sample, convert into list for proper formatting
 		if isinstance(report_dict["SubmissionStatus"]["Action"], list):
@@ -262,8 +261,8 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 		elif isinstance(report_dict["SubmissionStatus"]["Action"], dict):
 			action_list = [report_dict["SubmissionStatus"]["Action"]]
 		else:
-			logger.error(f"Unable to correctly process BioSample report at: {report_file}")
-			return submission_status, submission_id
+			logger.error(f"Unable to correctly process BioSample report at: {submission_dir}")
+			return submission_status
 		for action_dict in action_list:
 			# Skip if incorrect database
 			if "@target_db" not in action_dict or action_dict["@target_db"].lower() != database.lower():
@@ -292,8 +291,8 @@ def process_biosample_sra_report(report_file: str, database: str, submission_dir
 	except:
 		pass
 	if submission_status == "PROCESSED" and not sample_info:
-		logger.error(f"Unable to process {database} report.xml to retrieve accessions at: {report_file}")
+		logger.error(f"Unable to process {database} report.xml to retrieve accessions at: {submission_dir}")
 	if sample_info:
 		update_df = pd.DataFrame(sample_info)
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database=database, update_df=update_df)
-	return submission_status, submission_id
+	return submission_status
