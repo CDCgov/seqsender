@@ -34,7 +34,7 @@ BIOSAMPLE_HTML_PREFIX: str = "https://www.ncbi.nlm.nih.gov/biosample/docs/packag
 # BioSample atribute html suffix
 BIOSAMPLE_HTML_SUFFIX: str = "/?format=xml"
 # Schema file header
-SCHEMA_HEADER: str = """from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
+SCHEMA_HEADER: str = r"""from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 
 schema = DataFrameSchema(
 	columns={
@@ -249,7 +249,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 				if "@type" in attribute["Format"] and attribute["Format"]["@type"] == "select":
 					# For columns with only certain valid values
 					valid_values = attribute["Format"]["Description"].strip().split(" | ")
-					file.write(indentation + "checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + ")(\W|$)\"),")
+					file.write(indentation + r"checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + r")(\W|$)\"),")
 				else:
 					file.write(indentation + "checks=None,")
 			else:

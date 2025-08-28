@@ -6,7 +6,7 @@
 
 import sys
 import os
-from typing import Dict
+from typing import Dict, Any
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -33,7 +33,7 @@ def validate_directory(name: str, path: str):
 		sys.exit(1)
 
 # Validate gisaid cli exists or error out
-def validate_gisaid_installer(submission_dir: str, organism: str) -> str:
+def validate_gisaid_installer(submission_dir: str, organism: str, config_dict: Dict[str, Any]) -> str:
 	# /<submission_dir>/gisaid_cli/<organism>_CLI
 	gisaid_cli_path_option_one = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI")
 	# /seqsender/gisaid_cli/<organism>_CLI
@@ -42,7 +42,10 @@ def validate_gisaid_installer(submission_dir: str, organism: str) -> str:
 	gisaid_cli_path_option_three = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
 	# /seqsender>/gisaid_cli/<organism>_CLI/<organism>_CLI
 	gisaid_cli_path_option_four = os.path.join(PROG_DIR, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
-	if os.path.isfile(gisaid_cli_path_option_one):
+	# gisaid cli path provided by config file
+	if "CLI_Path" in config_dict and config_dict["CLI_Path"] is not None and config_dict["CLI_Path"].strip() != "" and os.path.isfile(config_dict["CLI_Path"].strip()):
+		return config_dict["CLI_Path"].strip()
+	elif os.path.isfile(gisaid_cli_path_option_one):
 		return gisaid_cli_path_option_one
 	elif os.path.isfile(gisaid_cli_path_option_two):
 		return gisaid_cli_path_option_two
@@ -51,6 +54,9 @@ def validate_gisaid_installer(submission_dir: str, organism: str) -> str:
 	elif os.path.isfile(gisaid_cli_path_option_four):
 		return gisaid_cli_path_option_four
 	else:
+		if "CLI_Path" in config_dict and config_dict["CLI_Path"] is not None and config_dict["CLI_Path"].strip() != "":
+			cli_path_error = config_dict["CLI_Path"]
+			print(f"Error: There is not a GISAID CLI for {organism} provided via config file at: '{cli_path_error}'", file=sys.stderr)
 		print(f"Error: There is not a GISAID CLI for {organism} located at: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'", file=sys.stderr)
 		print(f"Download the GISAID CLI for {organism} from \"https://gisaid.org/\".", file=sys.stderr)
 		print(f"Extract the zip file and place the CLI binary at either: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'", file=sys.stderr)

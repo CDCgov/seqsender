@@ -23,7 +23,7 @@ def args_parser():
 	config_file_parser = argparse.ArgumentParser(add_help=False)
 	file_parser = argparse.ArgumentParser(add_help=False)
 	test_parser = argparse.ArgumentParser(add_help=False)
-
+	publication_parser = argparse.ArgumentParser(add_help=False)
 	database_parser.add_argument("--biosample", "-b",
 		help="Create/Submit BioSample data.",
 		action="store_const",
@@ -87,6 +87,15 @@ def args_parser():
 		action="store_const",
 		default=False,
 		const=True)
+	publication_parser.add_argument("--publication_title",
+		help="Publication Title associated with sample submission. For GenBank only, overwrites value given via config file.",
+		required=False,
+		default=None)
+	publication_parser.add_argument("--publication_status",
+		help="Status of publication associated with sample submission. For GenBank only, overwrites value given via config file.",
+		required=False,
+		default=None,
+		choices=["Unpublished", "In-press", "Published"])
 
 	# Create the submodule commands
 	subparser_modules = parser.add_subparsers(dest="command")
@@ -96,7 +105,7 @@ def args_parser():
 		"prep",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Generate all files required to submit to databases selected.",
-		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, validate_parser]
+		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, validate_parser, publication_parser]
 	)
 
 	# submit command
@@ -104,7 +113,7 @@ def args_parser():
 		"submit",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Generate all files required and begin the submission process to databases selected.",
-		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, test_parser, validate_parser]
+		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, test_parser, validate_parser, publication_parser]
 	)
 
 	# check_submission_status command

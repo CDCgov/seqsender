@@ -188,6 +188,11 @@
                         'type': 'integer',
                         'allowed': [1, 2],
                         'nullable': True
+                    },
+                    'CLI_Path': {
+                        'required': False,
+                        'type': 'string',
+                        'nullable': True
                     }
                 }
             }
