@@ -12,7 +12,7 @@ from typing import List, Dict
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # SeqSender version
-VERSION: str = "1.3.3 (Beta)"
+VERSION: str = "1.3.4 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
@@ -58,7 +58,7 @@ GENBANK_REGEX = "^gb-sample_name$"
 GENBANK_REGEX_SRC = "^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_date$"
 
 # GenBank comment file metadata regex
-GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-|^organism$|^collection_date$"
+GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-"
 
 # Deprecated GenBank columns not allowed to be used
 GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Biovar", "src-Chemovar", "src-Forma", "src-Forma_specialis", "src-Identified_by", "src-Pathovar", "src-Pop_variant", "src-Serogroup", "src-Subclone", "src-Subtype", "src-Substrain", "src-Type"]

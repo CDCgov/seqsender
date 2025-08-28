@@ -8,7 +8,6 @@ from datetime import datetime
 import subprocess
 import argparse
 import pandas as pd
-from distutils.util import strtobool
 from typing import List, Dict, Set, Optional, Tuple, Any, TypedDict
 
 # Local imports
@@ -35,7 +34,7 @@ def get_execution_time() -> None:
 	print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
 
 # Setup needed requirements for running
-def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
+def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, publication_title: Optional[str], publication_status: Optional[str], skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
 	# Create the appropriate files
 	File_Dict = TypedDict("File_Dict", {"config_file": str, "metadata_file": str, "fasta_file": Optional[str], "gff_file": Optional[str]})
 	file_dict: File_Dict = {
@@ -84,7 +83,7 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 		if database_name in ["BIOSAMPLE", "SRA"]:
 			biosample_sra_handler.create_biosample_sra_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], metadata=metadata)
 		elif database_name == "GENBANK":
-			genbank_handler.create_genbank_submission(organism=organism, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], metadata=metadata, gff_file=file_dict["gff_file"], table2asn=table2asn)
+			genbank_handler.create_genbank_submission(organism=organism, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], metadata=metadata, gff_file=file_dict["gff_file"], table2asn=table2asn, publication_title=publication_title, publication_status=publication_status)
 		elif database_name == "GISAID":
 			gisaid_handler.create_gisaid_files(organism=organism, database=database_name, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["GISAID"], metadata=metadata)
 		else:
@@ -94,11 +93,11 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	return (file_dict["config_file"], config_dict, metadata)
 
 # Setup needed requirements for running
-def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
-	# IF database is GISAID, check if CLI is in the correct directory
+def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str], table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
+	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation, publication_title=publication_title, publication_status=publication_status)
+	# if database is GISAID, check if CLI is in the correct directory
 	if "GISAID" in database:
-		file_handler.validate_gisaid_installer(submission_dir, organism)
-	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation)
+		file_handler.validate_gisaid_installer(submission_dir, organism, config_dict["GISAID"])
 	print("", file=sys.stdout)
 	upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"))
 	submission_type = tools.get_submission_type(test=test)
@@ -165,9 +164,9 @@ def main():
 
 	# Execute the command
 	if command == "prep":
-		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation)
+		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submit":
-		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, test=args.test, skip_validation=args.skip_validation)
+		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, test=args.test, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submission_status":
 		upload_log.update_submission_status(submission_dir=submission_dir, submission_name=args.submission_name)
 	elif command == "test_data":

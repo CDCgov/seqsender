@@ -14,7 +14,6 @@ from lxml import etree
 from datetime import datetime
 import time
 from zipfile import ZipFile
-from distutils.util import strtobool
 import requests
 from pathlib import Path
 from nameparser import HumanName
@@ -27,8 +26,8 @@ import ncbi_handler
 import upload_log
 
 # Main create function for BioSample/SRA
-def create_genbank_submission(organism: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str], table2asn: bool):
-	create_files(organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, metadata=metadata, gff_file=gff_file)
+def create_genbank_submission(organism: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str], table2asn: bool, publication_title: Optional[str], publication_status: Optional[str]):
+	create_files(organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, metadata=metadata, gff_file=gff_file, publication_title=publication_title, publication_status=publication_status)
 	# If using Table2asn do not generate extra genbank files
 	if organism not in ["FLU", "COV"] or table2asn:
 		create_table2asn(submission_name=submission_name, submission_dir=submission_dir)
@@ -86,7 +85,7 @@ def create_submission_xml(organism: str, submission_name: str, config_dict: Dict
 	return xml_str
 
 # Create a authorset file
-def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str) -> None:
+def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, publication_title: Optional[str], publication_status: Optional[str]) -> None:
 	submitter_first = config_dict["Description"]["Organization"]["Submitter"]["Name"]["First"]
 	submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
 	submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
@@ -96,8 +95,14 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		alt_submitter_email = None
 	affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
 	div = config_dict["Description"]["Organization"]["Address"]["Div"]
-	publication_title = config_dict["Publication_Title"]
-	publication_status = config_dict["Publication_Status"]
+	if publication_title:
+		publication_title_string = publication_title
+	else:
+		publication_title_string = config_dict["Publication_Title"]
+	if publication_status:
+		publication_status_string = publication_status
+	else:
+		publication_status_string = config_dict["Publication_Status"]
 	street = config_dict["Description"]["Organization"]["Address"]["Street"]
 	city = config_dict["Description"]["Organization"]["Address"]["City"]
 	sub = config_dict["Description"]["Organization"]["Address"]["Sub"]
@@ -169,7 +174,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("Seqdesc ::= pub {\n")
 		f.write("  pub {\n")
 		f.write("    gen {\n")
-		f.write("      cit \"" + publication_status + "\",\n")
+		f.write("      cit \"" + publication_status_string + "\",\n")
 		f.write("      authors {\n")
 		f.write("        names std {\n")
 		authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(";") if x.strip() != ""]
@@ -191,7 +196,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 				f.write("          },\n")
 		f.write("        }\n")
 		f.write("      },\n")
-		f.write("      title \"" + publication_title + "\"\n")
+		f.write("      title \"" + publication_title_string + "\"\n")
 		f.write("    }\n")
 		f.write("  }\n")
 		f.write("}\n")
@@ -216,11 +221,11 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("}\n")
 
 # Create a zip file for genbank submission
-def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str]) -> None:
+def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str]) -> None:
 	# Drop submission xml columns
 	metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
 	# Create authorset file
-	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir)
+	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=publication_status)
 	file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir)
 	# Retrieve the source df"
 	source_df = metadata.filter(regex=GENBANK_REGEX_SRC).copy()

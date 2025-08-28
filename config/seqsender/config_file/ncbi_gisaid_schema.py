@@ -185,6 +185,11 @@
                         'type': ['integer', 'string'],
                         'allowed': [1, 2, 'None'],
                         'nullable': True
+                    },
+                    'CLI_Path': {
+                        'required': False,
+                        'type': 'string',
+                        'nullable': True
                     }
                 }
             }

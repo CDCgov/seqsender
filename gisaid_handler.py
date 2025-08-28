@@ -98,15 +98,15 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 		while line:
 			# If accession generated record it
 			# Pattern options: "msg:": "<Sample Name>; <EPI_ISL/EPI_ID>_<Accession Numbers>" OR <epi_isl_id/epi_id>: <Sample Name>; <EPI_ISL/EPI_ID>_<Accession Numbers>
-			if re.search("(?i)(\W|^)(\"msg\":\s*\"\S+.*;\s*(EPI_ISL|EPI_ID)_\d*\"|(epi_id|epi_isl_id):\s*\S.*;\s*(EPI_ISL_|EPI)\d+)(\W|$)", line):
+			if re.search(r"(?i)(\W|^)(\"msg\":\s*\"\S+.*;\s*(EPI_ISL|EPI_ID)_\d*\"|(epi_id|epi_isl_id):\s*\S.*;\s*(EPI_ISL_|EPI)\d+)(\W|$)", line):
 				gisaid_string_search = re.findall(r'(?:[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)+|EPI_\w*)', line)
 				gisaid_string = ' '.join(gisaid_string_search)
 				gisaid_string_list: List[str] = gisaid_string.split(' ')
 				sample_name = gisaid_string_list[0].strip()
 				accession_string = gisaid_string_list[1].strip()
-				if re.match("EPI_ISL_\d+", accession_string):
+				if re.match(r"EPI_ISL_\d+", accession_string):
 					gisaid_isolate_log.append({"gs-sample_name":sample_name, "gisaid_accession_epi_isl_id":accession_string})
-				elif re.match("EPI\d+", accession_string):
+				elif re.match(r"EPI\d+", accession_string):
 					gisaid_segment_log.append({"gs-segment_name":sample_name, "gisaid_accession_epi_id":accession_string})
 			# Handling if submitting samples have already been registered in GISAID
 			elif re.search(r'"code":\s*"validation_error".*?already exists;\s*existing_virus_name:', line):
@@ -145,8 +145,8 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 		upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GISAID", update_df=gisaid_segment_df)
 	else:
 		print("Warning: no GISAID isolates or segments found")
-	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
-	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains("EPI_ISL_\d*", regex = True, na = False)].copy()
+	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains(r"EPI_ISL_\d*", regex = True, na = False)].copy()
+	gisaid_isolate_df = gisaid_isolate_df[~gisaid_isolate_df["gisaid_accession_epi_isl_id"].str.contains(r"EPI_ISL_\d*", regex = True, na = False)].copy()
 	return gisaid_isolate_df[["gs-sample_name"]]
 
 # Submit to GISAID
@@ -159,7 +159,7 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	submission_status_file = os.path.join(os.path.dirname(submission_dir), "submission_status_report.csv")
 	# Extract user credentials (e.g. username, password, client-id)
 	tools.check_credentials(config_dict=config_dict, database="GISAID")
-	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism)
+	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism, config_dict=config_dict)
 	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
 	time.sleep(5)
 	# Set number of attempt to 3 if erroring out occurs

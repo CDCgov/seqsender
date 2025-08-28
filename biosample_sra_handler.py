@@ -22,7 +22,7 @@ def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd
 	raw_reads_path_default = os.path.join(os.path.split(os.path.split(submission_dir)[0])[0], "raw_reads")
 	# Separate samples stored in local and cloud
 	local_df = metadata[metadata["sra-file_location"] == "local"]
-	file_columns = [col for col in local_df.columns if re.match("sra-file_[1-9]\d*", col)]
+	file_columns = [col for col in local_df.columns if re.match(r"sra-file_[1-9]\d*", col)]
 	validated_files = set()
 	invalid_raw_files = []
 	for index, row in local_df.iterrows():
@@ -58,7 +58,7 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 		column_ordered = ["sample_name","library_ID"]
 		prefix = "sra-"
 		# Create SRA specific fields
-		filename_cols = [col for col in metadata.columns.tolist() if re.match("sra-file_[1-9]\d*", col)]
+		filename_cols = [col for col in metadata.columns.tolist() if re.match(r"sra-file_[1-9]\d*", col)]
 		# Correct index for filename column
 		for col in filename_cols:
 			# Remove 0 index
@@ -176,7 +176,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 	if "SRA" in database:
 		database_df = metadata.filter(regex=(SRA_REGEX)).copy()
 		database_df = database_df.drop_duplicates()
-		file_columns = [col for col in database_df.columns if re.match("sra-file_[1-9]\d*", col)]
+		file_columns = [col for col in database_df.columns if re.match(r"sra-file_[1-9]\d*", col)]
 		for index, row in database_df.iterrows():
 			action = etree.SubElement(root, "Action")
 			addfiles = etree.SubElement(action, "AddFiles", target_db="SRA")
@@ -197,7 +197,7 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 				datatype = etree.SubElement(file, "DataType")
 				datatype.text = "generic-data"
 			# Remove columns with sra- prefix that are not attributes
-			sra_cols = [col for col in database_df.columns.tolist() if col.startswith('sra-') and not re.match("(sra-sample_name|sra-title|sra-comment|sra-file_location|sra-file_\d*)", col)]
+			sra_cols = [col for col in database_df.columns.tolist() if col.startswith('sra-') and not re.match(r"(sra-sample_name|sra-title|sra-comment|sra-file_location|sra-file_\d*)", col)]
 			for col in sra_cols:
 				attribute_value = row[col]
 				if pd.notnull(attribute_value) and attribute_value.strip() != "":

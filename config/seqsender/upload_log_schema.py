@@ -17,7 +17,7 @@ schema = DataFrameSchema(
 		"Organism": Column(
 			dtype="object",
 			checks=[
-				Check.isin(["FLU", "COV", "POX", "ARBO", "OTHER"]),
+				Check.isin(["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]),
 			],
 			nullable=False,
 			unique=False,
