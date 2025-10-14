@@ -19,4 +19,4 @@ jobs:
         docker build . --file Dockerfile -t seqsender
         docker images
         docker image inspect seqsender
-        docker run --rm seqsender echo test
+        docker run --rm seqsender seqsender test_network_connection
