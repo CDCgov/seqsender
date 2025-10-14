@@ -354,6 +354,19 @@ def test_internet_connection(databases: List[str]) -> None:
 				print(f"{NCBI_FTP_HOST} open on port 21.", file=sys.stdout)
 			except Exception as e:
 				error_list.append(f"Port 21 not open for {NCBI_FTP_HOST}. Check possible firewall/server issues. \nException:{e}")
+		try:
+			print("Checking Table2asn functionality...", file=sys.stdout)
+			table2asn_dir = "/tmp/table2asn"
+			download_table2asn(table2asn_dir)
+			command = [table2asn_dir, "-version-full-xml"]
+			print("Running Table2asn.", file=sys.stdout)
+			proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
+			if proc.returncode != 0:
+				error_list.append("Table2asn-Error")
+				error_list.append(proc.stdout)
+				error_list.append(proc.stderr)
+		except Exception as e:
+			error_list.append(f"Unable to download latest version of Table2asn. \nException:{e}")
 	if error_list:
 		for error_string in error_list:
 			print(error_string, file=sys.stderr)
