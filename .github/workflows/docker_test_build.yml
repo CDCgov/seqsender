@@ -18,3 +18,4 @@ jobs:
       run: |
         docker build . --file Dockerfile
         docker images
+        docker run -v $HOME:/data -t -d seqsender:latest --name seqsender
