@@ -15,12 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      with:
-        context:  .
-        load: true
-        cache-from: type=gha
-        cache-to: type=gha, mode=max
       run: |
-        docker build . --file Dockerfile -t seqsender:latest
+        docker build . --file Dockerfile -t seqsender
         docker images
         docker exec -it seqsender bash seqsender-kickoff --help
