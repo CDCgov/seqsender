@@ -2,7 +2,7 @@ name: Build test Docker image
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "dockerfile-fix"]
   pull_request:
     branches: [ "master" ]
 
