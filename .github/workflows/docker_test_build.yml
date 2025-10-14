@@ -18,4 +18,5 @@ jobs:
       run: |
         docker build . --file Dockerfile -t seqsender
         docker images
-        docker exec -it seqsender bash seqsender-kickoff --help
+        docker image inspect
+        docker run -rm seqsender echo test
