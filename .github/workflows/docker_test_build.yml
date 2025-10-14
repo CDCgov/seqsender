@@ -17,6 +17,5 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file Dockerfile -t seqsender
-        docker images
-        docker image inspect seqsender
-        docker run --rm seqsender seqsender test_network_connection
+        docker-compose up -d
+        docker exec -it seqsender bash seqsender-kickoff --help
