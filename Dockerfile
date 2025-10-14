@@ -37,6 +37,7 @@ RUN apt-get update --allow-releaseinfo-change --fix-missing \
   && apt-get install --no-install-recommends -y \
   dos2unix \
   ca-certificates \
+  libsqlite3-0 \
   && apt clean autoclean \
   && apt autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/
