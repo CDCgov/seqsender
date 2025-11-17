@@ -2,9 +2,9 @@ name: Build test Docker image
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["table2asn-testing-script"]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "table2asn-testing-script"]
 
 jobs:
 
@@ -15,4 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile 
+      run: |
+        docker build . --file Dockerfile -t seqsender:latest
+        docker run -t -d seqsender:latest --name seqsender
+        docker exec -it seqsender bash seqsender-kickoff --help
