@@ -2,9 +2,9 @@ name: Build test Docker image
 
 on:
   push:
-    branches: [ "master" , "dockerfile-fix"]
+    branches: ["table2asn-testing-script"]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "table2asn-testing-script"]
 
 jobs:
 
