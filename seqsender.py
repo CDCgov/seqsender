@@ -22,7 +22,7 @@ import gisaid_handler
 import upload_log
 import tools
 
-from settings import VERSION
+from settings import VERSION, GENBANK_FTP_ORGANISMS
 
 import sys
 
@@ -115,11 +115,12 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 				ncbi_other_databases = True
 			else:
 				ncbi_other_databases = False
-			if table2asn:
+			if table2asn or (organism not in GENBANK_FTP_ORGANISMS):
 				database_name = "GENBANK-TBL2ASN"
+				table2asn = True
 			else:
 				database_name = "GENBANK-FTP"
-			if (sub_pos is None or sub_pos == 1) and (not ncbi_other_databases or not link_ncbi):
+			if ((sub_pos is None) or (sub_pos == 1) or (sub_pos == 2 and "GISAID" not in database)) and (not ncbi_other_databases or not link_ncbi):
 				if table2asn:
 					submission_status = ncbi_handler.email_table2asn(submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
 				else:

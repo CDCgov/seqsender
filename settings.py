@@ -12,7 +12,7 @@ from typing import List, Dict
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # SeqSender version
-VERSION: str = "1.3.5 (Beta)"
+VERSION: str = "1.3.6 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
@@ -45,6 +45,9 @@ NCBI_API_URL: str = "https://submit.ncbi.nlm.nih.gov/api/2.0/files/FILE_ID/?form
 # Table2asn email to submit samples to
 TABLE2ASN_EMAIL:str  = "gb-admin@ncbi.nlm.nih.gov"
 
+# GenBank FTP options based on organism
+GENBANK_FTP_ORGANISMS: List[str] = ["FLU", "COV"]
+
 # BioSample metadata regex
 BIOSAMPLE_REGEX = "^bs-|^bioproject$|^organism$|^collection_date$"
 
@@ -66,4 +69,3 @@ GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Bi
 ##### GISAID settings #####
 # GISAID metadata regex
 GISAID_REGEX = "^gs-|^collection_date$|^authors$"
-
