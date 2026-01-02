@@ -63,7 +63,7 @@ def create_gisaid_files(organism: str, database: str, submission_name: str, subm
 	# Create submission files
 	file_handler.save_csv(df=gisaid_df, file_path=submission_dir, file_name="metadata.csv")
 	shutil.copy(os.path.join(submission_dir, "metadata.csv"), os.path.join(submission_dir, "orig_metadata.csv"))
-	file_handler.create_fasta(database="GISAID", metadata=metadata, submission_dir=submission_dir)
+	file_handler.create_fasta(database="GISAID", metadata=metadata, submission_dir=submission_dir, config_dict = config_dict)
 	shutil.copy(os.path.join(submission_dir, "sequence.fsa"), os.path.join(submission_dir, "orig_sequence.fsa"))
 
 # Flu collection dates require partial dates to use different columns

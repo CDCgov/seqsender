@@ -363,8 +363,8 @@ def test_internet_connection(databases: List[str]) -> None:
 			proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
 			if proc.returncode != 0:
 				error_list.append("Table2asn-Error")
-				error_list.append(proc.stdout)
-				error_list.append(proc.stderr)
+				error_list.append(str(proc.stdout))
+				error_list.append(str(proc.stderr))
 		except Exception as e:
 			error_list.append(f"Unable to download latest version of Table2asn. \nException:{e}")
 	if error_list:

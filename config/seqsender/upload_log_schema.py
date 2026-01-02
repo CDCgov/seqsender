@@ -65,7 +65,7 @@ schema = DataFrameSchema(
 		"Submission_Status": Column(
 			dtype="object",
 			checks=[
-				Check.isin(["SUBMITTED", "CREATED", "QUEUED", "PROCESSING", "FAILED", "PROCESSED", "ERROR", "WAITING", "DELETED", "RETRIED", "EMAILED"]),
+				Check.isin(["SUBMITTED", "CREATED", "QUEUED", "PROCESSING", "FAILED", "PROCESSED", "ERROR", "WAITING", "DELETED", "RETRIED", "EMAILED", "VALIDATED"]),
 			],
 			nullable=False,
 			unique=False,

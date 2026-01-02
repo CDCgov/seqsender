@@ -19,7 +19,7 @@ from settings import BIOSAMPLE_REGEX, SRA_REGEX
 # Check raw reads files listed in metadata file
 def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> Set[str]:
 	# Pop off the end directories of submission_dir 'submission_files/SRA'
-	raw_reads_path_default = os.path.join(os.path.split(os.path.split(submission_dir)[0])[0], "raw_reads")
+	raw_reads_path_default = os.path.join(submission_dir, "raw_reads")
 	# Separate samples stored in local and cloud
 	local_df = metadata[metadata["sra-file_location"] == "local"]
 	file_columns = [col for col in local_df.columns if re.match(r"sra-file_[1-9]\d*", col)]
@@ -226,15 +226,15 @@ def create_raw_reads_list(submission_dir: str, raw_files_list: Set[str]) -> None
 			file.write(line + "\n")
 
 # Main create function for BioSample/SRA
-def create_biosample_sra_submission(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame):
+def create_biosample_sra_submission(organism: str, database: str, submission_name: str, submission_dir: str, database_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame):
 	if database == "SRA":
 		# Validate and write raw reads location
 		raw_files_list = check_raw_read_files(submission_name=submission_name, submission_dir=submission_dir, metadata=metadata)
-		create_raw_reads_list(submission_dir=submission_dir, raw_files_list=raw_files_list)
+		create_raw_reads_list(submission_dir=database_dir, raw_files_list=raw_files_list)
 	manual_df = metadata.copy()
-	create_manual_submission_files(database=database, submission_dir=submission_dir, metadata=manual_df, config_dict=config_dict)
+	create_manual_submission_files(database=database, submission_dir=database_dir, metadata=manual_df, config_dict=config_dict)
 	xml_str = create_submission_xml(organism=organism, database=database, submission_name=submission_name, metadata=metadata, config_dict=config_dict)
-	file_handler.save_xml(xml_str, submission_dir)
+	file_handler.save_xml(xml_str, database_dir)
 
 # Read xml report and get status of the submission
 def process_biosample_sra_report(report_file: str, database: str, submission_dir: str) -> Tuple[str, str]:

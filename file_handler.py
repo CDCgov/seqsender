@@ -136,14 +136,18 @@ def save_csv(df: pd.DataFrame, file_path: str, file_name: Optional[str] = None, 
 		sys.exit(1)
 
 # Create fasta file based on database
-def create_fasta(database: str, metadata: pd.DataFrame, submission_dir: str) -> None:
+def create_fasta(database: str, metadata: pd.DataFrame, submission_dir: str, config_dict: Dict[str, Any]) -> None:
 	records = []
 	for index, row in metadata.iterrows():
 		column_name = SAMPLE_NAME_DATABASE_PREFIX[database] + "sample_name"
-		if "GENBANK" in database and "gb-fasta_definition_line_modifiers" in metadata and pd.notnull(row["gb-fasta_definition_line_modifiers"]) and row["gb-fasta_definition_line_modifiers"].strip() != "":
-			records.append(SeqRecord(row["fasta_sequence_orig"], id =(row[column_name].strip() + " " + row["gb-fasta_definition_line_modifiers"].strip()), description = ""))
+		if "Add_Definition_Line_Accessions" in config_dict and config_dict["Add_Definition_Line_Accessions"] == True and "bioproject" in metadata and pd.notnull(row["bioproject"]) and row["bioproject"].strip() != "":
+			bioproject_accession = f" [BioProject={row['bioproject']}]"
 		else:
-			records.append(SeqRecord(row["fasta_sequence_orig"], id = row[column_name], description = ""))
+			bioproject_accession = ""
+		if "GENBANK" in database and "gb-fasta_definition_line_modifiers" in metadata and pd.notnull(row["gb-fasta_definition_line_modifiers"]) and row["gb-fasta_definition_line_modifiers"].strip() != "":
+			records.append(SeqRecord(row["fasta_sequence_orig"], id =(row[column_name].strip() + bioproject_accession + " " + row["gb-fasta_definition_line_modifiers"].strip()), description = ""))
+		else:
+			records.append(SeqRecord(row["fasta_sequence_orig"], id = row[column_name].strip() + bioproject_accession, description = ""))
 	try:
 		with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
 			SeqIO.write(records, f, "fasta")
