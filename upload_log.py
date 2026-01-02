@@ -218,7 +218,9 @@ def process_genbank(genbank_type: str, submission_name: str, submission_log_dir:
 		return True, curr_status
 	elif curr_status == "WAITING" and submission_ready(submission_requirements=linking_databases, config_dict=config_dict, database="GENBANK"):
 		if config_dict["Link_Sample_Between_NCBI_Databases"]:
-			genbank_handler.update_genbank_files(linking_databases=linking_databases, organism=organism, submission_dir=submission_dir)
+			genbank_handler.update_genbank_files(linking_databases=linking_databases, organism=organism, submission_dir=submission_dir, config_dict=config_dict)
+		print('you did it')
+		sys.exit()
 		new_submission_status = upload_log_submit_genbank(genbank_type=genbank_type, submission_name=submission_name, organism=organism, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
 		return False, new_submission_status
 	elif curr_status == "WAITING":

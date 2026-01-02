@@ -60,6 +60,11 @@
                         'type': 'boolean',
                         'nullable': True
                     },
+                    'Add_Definition_Line_Accessions': {
+                        'required': False,
+                        'type': 'boolean',
+                        'nullable': True
+                    },
                     'Description': {
                         'required': True,
                         'type': 'dict',

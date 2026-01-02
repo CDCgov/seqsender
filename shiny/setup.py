@@ -182,6 +182,18 @@ setup_body = [
                         ),
                         shiny_tools.create_help_tooltip("ncbi_link_sample", description = ("If you're submitting your samples to multiple NCBI databases, do you want your sample's data linked between each database?"), position = "none"),
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
+                        # Add NCBI accessions to FASTA def lines
+                        config_indent(2, "Add_Definition_Line_Accessions:"),
+                        div(ui.input_radio_buttons(
+                                "ncbi_config_fasta_def_lines",
+                                label=None,
+                                choices=["True", "False"],
+                                inline=True,
+                            ),
+                            style="display:inline-block;height:5px;font-size:medium;",
+                        ),
+                        shiny_tools.create_help_tooltip("ncbi_fasta_def_lines", description = ("Accessions from BioSample and SRA are added to the GenBank (", ui.code("source.src"), ") file during the submission process to link between databases. Enable this to additionally add them to the fasta definition lines for each sequence."), position = "none"),
+                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         # Description category
                         config_indent(2, "Description:", custom_style = ""),
                         # Organization category

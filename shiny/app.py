@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.3.6. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.3.7. This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -355,6 +355,7 @@ output_body = [
                     ((ui.code("WAITING")), ("Submission is waiting on other submissions to complete processing, to correctly link information.")),
                     ((ui.code("DELETED")), ("NCBI has deleted your submission. This could be because your submission remained errored for too long without resolution or you requested to have the submission removed.")),
                     ((ui.code("RETRIED")), ("NCBI has attempted retrying processing of your submission.")),
+                    ((ui.code("VALIDATED")), ("SeqSender has used table2asn to validate that your sqn file is correct.")),
                     ((ui.code("EMAILED")), ("SeqSender has successfully emailed your table2asn submission to upload it to GenBank."))]
             ),
             shiny_tools.file_output_column_info(column_name="Submission_ID",
@@ -836,6 +837,7 @@ def server(input, output, session):
                 **({"Submission_Position": input.ncbi_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
                 "Specified_Release_Date": input.ncbi_config_release_date() or "",
                 "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
+                "Add_Definition_Line_Accessions": input.ncbi_config_fasta_def_lines() or "",
                 "Description": {
                     "Organization": {
                         "Role": input.ncbi_config_role() or "",
@@ -897,4 +899,3 @@ def server(input, output, session):
 
 
 app = App(app_ui, server)
-

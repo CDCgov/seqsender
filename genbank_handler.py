@@ -10,12 +10,14 @@ import pandas as pd
 import os
 import subprocess
 import sys
+import re
 from lxml import etree
 from datetime import datetime
 import time
 from zipfile import ZipFile
 import requests
 from pathlib import Path
+from Bio import SeqIO
 from nameparser import HumanName
 from typing import List, Set, Dict, Tuple, Optional, Any, overload
 from settings import NCBI_API_URL, GENBANK_REGEX_SRC, GENBANK_REGEX_CMT
@@ -226,7 +228,7 @@ def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFr
 	metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
 	# Create authorset file
 	create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=publication_status)
-	file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir)
+	file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir, config_dict=config_dict)
 	# Retrieve the source df"
 	source_df = metadata.filter(regex=GENBANK_REGEX_SRC).copy()
 	source_df.columns = source_df.columns.str.replace("src-","").str.strip()
@@ -342,7 +344,7 @@ def process_genbank_report(report_file: str, submission_dir: str) -> Tuple[str, 
 	return submission_status, submission_id
 
 # Check if it has BioSample and BioProject accession number (update status report)
-def update_genbank_files(linking_databases: Dict[str, bool], organism: str, submission_dir: str) -> None:
+def update_genbank_files(linking_databases: Dict[str, bool], organism: str, submission_dir: str, config_dict: Dict[str, Any]) -> None:
 	# Read in the submission status report
 	submission_status_file = os.path.join(os.path.split(submission_dir)[0], "submission_status_report.csv")
 	submission_status_df = file_handler.load_csv(submission_status_file)
@@ -367,7 +369,7 @@ def update_genbank_files(linking_databases: Dict[str, bool], organism: str, subm
 		cmt_accessions["gisaid_accession_epi_isl_id"] = "EPI_ISOLATE_ID"
 	if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_id"].isna().all() == False):
 		cmt_accessions["gisaid_accession_epi_id"] = "EPI_SEQUENCE_ID"
-	# Update source_df
+	# Update NCBI accessions for source df and fasta file
 	if len(src_accessions) > 0:
 		# If accession columns exist drop to overwrite
 		source_df = source_df.drop(columns=src_accessions.values(), errors="ignore")
@@ -377,6 +379,45 @@ def update_genbank_files(linking_databases: Dict[str, bool], organism: str, subm
 		src_accessions_df = src_accessions_df.rename(columns=src_accessions)
 		source_df = pd.merge(source_df, src_accessions_df, how="left", on="Sequence_ID")
 		file_handler.save_csv(df=source_df, file_path=submission_dir, file_name="source.src", sep="\t")
+		if os.path.isfile(os.path.join(submission_dir, "sequence.fsa")) and "Add_Definition_Line_Accessions" in config_dict and config_dict["Add_Definition_Line_Accessions"] == True:
+			records = []
+			for seq in SeqIO.parse(os.path.join(submission_dir, "sequence.fsa"), "fasta"):
+				seq_name = seq.id
+				print(source_df.head())
+				print(seq_name)
+				if "BioSample" in source_df:
+					biosample_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "BioSample"].iloc[0]
+					if biosample_accession.strip():
+						biosample_accession = "[BioSample=" + biosample_accession + "]"
+					else:
+						biosample_accession = ""
+				else:
+					biosample_accession = ""
+				if "SRA" in source_df:
+					sra_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "SRA"].iloc[0]
+					if sra_accession.strip():
+						sra_accession = "[SRA=" + sra_accession + "]"
+					else:
+						sra_accession = ""
+				else:
+					sra_accession = ""
+				# Remove potential duplicate fasta def lines
+				cleaned_description = re.sub(r"\[(BioSample|SRA)[^\]]*\]", "", seq.description)
+				complete_description = f"{cleaned_description} {biosample_accession} {sra_accession}"
+				# Remove duplicate spaces from fasta def line
+				seq.description = " ".join(complete_description.split())
+				records.append(seq)
+			try:
+				with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+					SeqIO.write(records, f, "fasta")
+			except PermissionError as e:
+				print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+				print(e, file=sys.stderr)
+				sys.exit(1)
+			except Exception as e:
+				print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+				print(e, file=sys.stderr)
+				sys.exit(1)
 	# Update CMT file
 	if len(cmt_accessions) > 0:
 		if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):

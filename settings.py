@@ -12,7 +12,7 @@ from typing import List, Dict
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # SeqSender version
-VERSION: str = "1.3.6 (Beta)"
+VERSION: str = "1.3.7 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
