@@ -141,7 +141,17 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("  cit {\n")
 		f.write("    authors {\n")
 		f.write("      names std {\n")
-		authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(";") if x.strip() != ""]
+		# If semi-colon in authors string, that is default delim
+		if ";" in metadata["authors"].unique()[0]:
+			author_delim = ";"
+		# If no semi-colon in authors string, attempt comma
+		elif "," in metadata["authors"].unique()[0]:
+			author_delim = ","
+			print("Warning: Metadata 'authors' field is not using a semi-colon ';' to separate individual names. Comma was detected instead and is being used to separate individual names. If this causes issues, separate each name with a semi-colon instead.", file = sys.stderr)
+		# Default delim is semi-colon
+		else:
+			author_delim = ";"
+		authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
 		total_names = len(authors)
 		for index, name in enumerate(authors, start = 1):
 			f.write("        {\n")
@@ -179,7 +189,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("      cit \"" + publication_status_string + "\",\n")
 		f.write("      authors {\n")
 		f.write("        names std {\n")
-		authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(";") if x.strip() != ""]
+		authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
 		for index, name in enumerate(authors, start = 1):
 			f.write("          {\n")
 			f.write("            name name {\n")
