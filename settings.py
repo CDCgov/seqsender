@@ -12,7 +12,7 @@ from typing import List, Dict
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 
 # SeqSender version
-VERSION: str = "1.3.8 (Beta)"
+VERSION: str = "1.3.9 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
@@ -69,3 +69,4 @@ GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Bi
 ##### GISAID settings #####
 # GISAID metadata regex
 GISAID_REGEX = "^gs-|^collection_date$|^authors$"
+
