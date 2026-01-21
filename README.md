@@ -9,7 +9,7 @@
 
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
 
-**Beta Version**: 1.3.8. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.3.9. This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
