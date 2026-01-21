@@ -106,7 +106,7 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 		database_dir = os.path.join(submission_dir, submission_name, "submission_files", database_name)
 		file_handler.validate_directory(name="submission directory", path=database_dir)
 		if database_name in ["BIOSAMPLE", "SRA"]:
-			# ncbi_handler.submit_ncbi(submission_name=submission_name, submission_dir=database_dir, database=database_name, config_dict=config_dict["NCBI"], submission_type=submission_type)
+			ncbi_handler.submit_ncbi(submission_name=submission_name, submission_dir=database_dir, database=database_name, config_dict=config_dict["NCBI"], submission_type=submission_type)
 			submission_status = "SUBMITTED"
 		elif "GENBANK" in database_name:
 			sub_pos = tools.get_submission_position(config_dict=config_dict, database="GENBANK")
