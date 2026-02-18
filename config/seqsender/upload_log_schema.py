@@ -77,7 +77,7 @@ schema = DataFrameSchema(
 		"Submission_ID": Column(
 			dtype="object",
 			checks=[
-				Check.str_matches(r'^(PENDING|SUBMITTED|\W*SUB\d+\W*)$'),
+				Check.str_matches(r'^(PENDING|SUBMITTED|VALIDATED|\W*SUB\d+\W*)$'),
 			],
 			nullable=False,
 			unique=False,
