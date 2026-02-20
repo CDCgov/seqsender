@@ -65,7 +65,7 @@ schema = DataFrameSchema(
 		"Submission_Status": Column(
 			dtype="object",
 			checks=[
-				Check.isin(["SUBMITTED", "CREATED", "QUEUED", "PROCESSING", "FAILED", "PROCESSED", "ERROR", "WAITING", "DELETED", "RETRIED", "EMAILED", "VALIDATED"]),
+				Check.isin(["SUBMITTED", "CREATED", "QUEUED", "PROCESSING", "FAILED", "PROCESSED", "ERROR", "WAITING", "DELETED", "RETRIED", "EMAILED", "VALIDATED", "PENDING"]),
 			],
 			nullable=False,
 			unique=False,
@@ -77,7 +77,7 @@ schema = DataFrameSchema(
 		"Submission_ID": Column(
 			dtype="object",
 			checks=[
-				Check.str_matches(r'^(PENDING|SUBMITTED|VALIDATED|\W*SUB\d+\W*)$'),
+				Check.str_matches(r'^(PENDING|SUBMITTED|VALIDATED|ERROR|\W*SUB\d+\W*)$'),
 			],
 			nullable=False,
 			unique=False,

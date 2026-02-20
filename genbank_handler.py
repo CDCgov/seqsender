@@ -313,7 +313,7 @@ def check_table2asn_submission(validation_file: str) -> str:
 		for line in file:
 			if "error:" in line.lower():
 				print("Submission has errors after running Table2asn.", file=sys.stderr)
-				print("Resolve issues labeled \"Error:\" in table2asn validation file or use send_table2asn function to submit with errors.", file=sys.stderr)
+				print("Resolve issues labeled \"Error:\" in table2asn validation file.", file=sys.stderr)
 				print(F"Validation file: {validation_file}", file=sys.stderr)
 				return "ERROR"
 			else:
