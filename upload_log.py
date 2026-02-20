@@ -223,6 +223,14 @@ def process_genbank(genbank_type: str, submission_name: str, submission_log_dir:
 		return False, new_submission_status
 	elif curr_status == "WAITING":
 		return False, curr_status
+	elif curr_status == "PENDING" and genbank_type == "GENBANK-TBL2ASN":
+		submission_id = genbank_handler.create_table2asn(submission_name=submission_name, submission_dir=submission_dir)
+		if submission_id == "VALIDATED":
+			new_submission_status = ncbi_handler.email_table2asn(submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, submission_type=submission_type)
+		else:
+			new_submission_status = "PENDING"
+		update_submission_log(database=genbank_type, organism=organism, submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, submission_status=new_submission_status, submission_id=submission_id, submission_type=submission_type)
+		return False, new_submission_status
 	else:
 		report_file = ncbi_handler.get_ncbi_report("GENBANK", submission_name, submission_dir, config_dict, submission_type)
 		if report_file:
