@@ -5,19 +5,18 @@
 ################################################################################
 
 import pandas as pd
-from typing import Set, Dict, Any, Tuple, List
+from typing import Any
 import os
 from lxml import etree
 import sys
 import re
-import ncbi_handler
-import file_handler
-import upload_log
-
-from settings import BIOSAMPLE_REGEX, SRA_REGEX
+import src.ncbi_handler as ncbi_handler
+import src.file_handler as file_handler
+import src.upload_log as upload_log
+from src.settings import BIOSAMPLE_REGEX, SRA_REGEX
 
 # Check raw reads files listed in metadata file
-def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> Set[str]:
+def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd.DataFrame) -> set[str]:
 	# Pop off the end directories of submission_dir 'submission_files/SRA'
 	raw_reads_path_default = os.path.join(submission_dir, "raw_reads")
 	# Separate samples stored in local and cloud
@@ -50,7 +49,7 @@ def check_raw_read_files(submission_name: str, submission_dir: str, metadata: pd
 	return validated_files
 
 # Create files for optional manual submission to repositories biosample and sra
-def create_manual_submission_files(database: str, submission_dir: str, metadata: pd.DataFrame, config_dict: Dict[str, Any]) -> None:
+def create_manual_submission_files(database: str, submission_dir: str, metadata: pd.DataFrame, config_dict: dict[str, Any]) -> None:
 	if "SRA" in database:
 		metadata_regex = "^sra-|^organism$|^collection_date$"
 		rename_columns = {"sra-library_name":"sra-library_ID"}
@@ -91,7 +90,7 @@ def create_manual_submission_files(database: str, submission_dir: str, metadata:
 	file_handler.save_csv(df=database_df, file_path=submission_dir, file_name="metadata.tsv", sep="\t")
 
 # Create submission XML
-def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> bytes:
+def create_submission_xml(organism: str, database: str, submission_name: str, config_dict: dict[str, Any], metadata: pd.DataFrame) -> bytes:
 	# Submission XML header
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
@@ -141,12 +140,12 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 			sampleid = etree.SubElement(biosample, "SampleId")
 			spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
 			spuid.text = row["bs-sample_name"]
-			if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+			if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip() != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip() != ""):
 				descriptor = etree.SubElement(biosample, "Descriptor")
-				if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+				if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip() != "":
 					sample_title = etree.SubElement(descriptor, "Title")
 					sample_title.text = row["bs-sample_title"]
-				if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+				if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip() != "":
 					sample_description = etree.SubElement(descriptor, "Description")
 					sample_description.text = row["bs-sample_description"]
 			organismxml = etree.SubElement(biosample, "Organism")
@@ -220,13 +219,13 @@ def create_submission_xml(organism: str, database: str, submission_name: str, co
 	return xml_str
 
 # Create list of raw read paths inside sra submission folder
-def create_raw_reads_list(submission_dir: str, raw_files_list: Set[str]) -> None:
+def create_raw_reads_list(submission_dir: str, raw_files_list: set[str]) -> None:
 	with open(os.path.join(submission_dir, "raw_reads_location.txt"), "w+") as file:
 		for line in raw_files_list:
 			file.write(line + "\n")
 
 # Main create function for BioSample/SRA
-def create_biosample_sra_submission(organism: str, database: str, submission_name: str, submission_dir: str, database_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame):
+def create_biosample_sra_submission(organism: str, database: str, submission_name: str, submission_dir: str, database_dir: str, config_dict: dict[str, Any], metadata: pd.DataFrame):
 	if database == "SRA":
 		# Validate and write raw reads location
 		raw_files_list = check_raw_read_files(submission_name=submission_name, submission_dir=submission_dir, metadata=metadata)
@@ -237,7 +236,7 @@ def create_biosample_sra_submission(organism: str, database: str, submission_nam
 	file_handler.save_xml(xml_str, database_dir)
 
 # Read xml report and get status of the submission
-def process_biosample_sra_report(report_file: str, database: str, submission_dir: str) -> Tuple[str, str]:
+def process_biosample_sra_report(report_file: str, database: str, submission_dir: str) -> tuple[str, str]:
 	report_dict, submission_status, submission_id = ncbi_handler.process_report_header(report_file=report_file)
 	sample_name_prefix = {"BIOSAMPLE":"bs-", "SRA":"sra-"}
 	sample_info = []

@@ -5,7 +5,6 @@
 ################################################################################
 
 import os
-from typing import List, Dict
 
 ##### SeqSender settings #####
 # Script directory
@@ -15,22 +14,22 @@ PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
 VERSION: str = "1.3.93 (Beta)"
 
 # Organism options with unique submission options
-ORGANISM_CHOICES: List[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
+ORGANISM_CHOICES: list[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
 
 # Database submisison options
-DATABASE_CHOICES: List[str] = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]
+DATABASE_CHOICES: list[str] = ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"]
 
 # metadata prefix for each database
-SAMPLE_NAME_DATABASE_PREFIX: Dict[str, str] = {"BIOSAMPLE":"bs-", "SRA":"sra-", "GENBANK":"gb-", "GISAID":"gs-"}
+SAMPLE_NAME_DATABASE_PREFIX: dict[str, str] = {"BIOSAMPLE":"bs-", "SRA":"sra-", "GENBANK":"gb-", "GISAID":"gs-"}
 
 # Submission status report columns
-BIOSAMPLE_SUBMISSION_STATUS_COLUMNS: List[str] = ["biosample_status", "biosample_accession", "biosample_message"]
-SRA_SUBMISSION_STATUS_COLUMNS: List[str] = ["sra_status", "sra_accession", "sra_message"]
-GENBANK_SUBMISSION_STATUS_COLUMNS: List[str] = ["genbank_status", "genbank_accession", "genbank_message"]
-GISAID_SUBMISSION_STATUS_COLUMNS: List[str] = ["gisaid_accession_epi_isl_id", "gisaid_accession_epi_id", "gisaid_message"]
+BIOSAMPLE_SUBMISSION_STATUS_COLUMNS: list[str] = ["biosample_status", "biosample_accession", "biosample_message"]
+SRA_SUBMISSION_STATUS_COLUMNS: list[str] = ["sra_status", "sra_accession", "sra_message"]
+GENBANK_SUBMISSION_STATUS_COLUMNS: list[str] = ["genbank_status", "genbank_accession", "genbank_message"]
+GISAID_SUBMISSION_STATUS_COLUMNS: list[str] = ["gisaid_accession_epi_isl_id", "gisaid_accession_epi_id", "gisaid_message"]
 
 # Upload log columns
-SUBMISSION_LOG_COLUMNS: List[str] = ["Submission_Name", "Organism", "Database", "Submission_Type", "Submission_Date", "Submission_ID", "Submission_Status", "Submission_Directory", "Config_File", "Update_Date"]
+SUBMISSION_LOG_COLUMNS: list[str] = ["Submission_Name", "Organism", "Database", "Submission_Type", "Submission_Date", "Submission_ID", "Submission_Status", "Submission_Directory", "Config_File", "Update_Date"]
 
 # Shiny schema options, exclusion list
 SCHEMA_EXCLUSIONS = ["config.seqsender.upload_log_schema","config_file.ncbi_schema","config_file.ncbi_gisaid_schema", "config_file.gisaid_schema"]
@@ -46,7 +45,7 @@ NCBI_API_URL: str = "https://submit.ncbi.nlm.nih.gov/api/2.0/files/FILE_ID/?form
 TABLE2ASN_EMAIL:str  = "gb-admin@ncbi.nlm.nih.gov"
 
 # GenBank FTP options based on organism
-GENBANK_FTP_ORGANISMS: List[str] = ["FLU", "COV"]
+GENBANK_FTP_ORGANISMS: list[str] = ["FLU", "COV"]
 
 # BioSample metadata regex
 BIOSAMPLE_REGEX = "^bs-|^bioproject$|^organism$|^collection_date$"
@@ -64,9 +63,8 @@ GENBANK_REGEX_SRC = "^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_
 GENBANK_REGEX_CMT = "^gb-sample_name$|^cmt-"
 
 # Deprecated GenBank columns not allowed to be used
-GENBANK_DEPRECATED_COLUMNS: List[str] = ["src-Authority", "src-Biotype", "src-Biovar", "src-Chemovar", "src-Forma", "src-Forma_specialis", "src-Identified_by", "src-Pathovar", "src-Pop_variant", "src-Serogroup", "src-Subclone", "src-Subtype", "src-Substrain", "src-Type"]
+GENBANK_DEPRECATED_COLUMNS: list[str] = ["src-Authority", "src-Biotype", "src-Biovar", "src-Chemovar", "src-Forma", "src-Forma_specialis", "src-Identified_by", "src-Pathovar", "src-Pop_variant", "src-Serogroup", "src-Subclone", "src-Subtype", "src-Substrain", "src-Type"]
 
 ##### GISAID settings #####
 # GISAID metadata regex
 GISAID_REGEX = "^gs-|^collection_date$|^authors$"
-

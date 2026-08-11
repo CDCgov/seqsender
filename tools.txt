@@ -1,0 +1,572 @@
+# tools.x_get_config__mutmut_49: survived
+--- src/tools.py
++++ src/tools.py
+@@ -16,7 +16,7 @@
+     config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+     # Check if yaml forms dictionary
+     if type(config_dict) is dict:
+-        schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
++        schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), ).read())
+         database_specific_config_schema_updates(schema, databases)
+         validator = Validator(schema)
+         # Validate based on schema
+# tools.x_get_submission_schema_config_name__mutmut_6: survived
+--- src/tools.py
++++ src/tools.py
+@@ -1,7 +1,7 @@
+ def get_submission_schema_config_name(submission_portals: set[str]) -> str:
+     submission_schema_file_name = ""
+     if "ncbi" in submission_portals:
+-        submission_schema_file_name += "ncbi_"
++        submission_schema_file_name = "ncbi_"
+     if "gisaid" in submission_portals:
+         submission_schema_file_name += "gisaid_"
+     submission_schema_file_name += "schema.py"
+# tools.x_database_specific_config_schema_updates__mutmut_43: timeout
+--- src/tools.py
++++ src/tools.py
+@@ -4,7 +4,7 @@
+         schema["Submission"]["schema"]["NCBI"]["schema"]["BioSample_Package"]["required"] = True
+         schema["Submission"]["schema"]["NCBI"]["schema"]["BioSample_Package"]["nullable"] = False
+     if "GENBANK" in database:
+-        schema["Submission"]["schema"]["NCBI"]["schema"]["Publication_Title"]["required"] = True
++        schema["Submission"]["XXschemaXX"]["NCBI"]["schema"]["Publication_Title"]["required"] = True
+         schema["Submission"]["schema"]["NCBI"]["schema"]["Publication_Title"]["nullable"] = False
+         schema["Submission"]["schema"]["NCBI"]["schema"]["Publication_Status"]["required"] = True
+         schema["Submission"]["schema"]["NCBI"]["schema"]["Publication_Status"]["nullable"] = False
+# tools.x_parse_hold_date__mutmut_56: survived
+--- src/tools.py
++++ src/tools.py
+@@ -5,7 +5,7 @@
+         try:
+             if re.search(r"\d+\s*(days|weeks|months)", release_date_string):
+                 today = pd.Timestamp.now().date()
+-                numeric_value = int(release_date_string.strip().split(" ")[0])
++                numeric_value = int(release_date_string.strip().split(None)[0])
+                 if "days" in release_date_string:
+                     time_delta = pd.DateOffset(days = numeric_value)
+                 elif "weeks" in release_date_string:
+# tools.x_parse_hold_date__mutmut_74: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(None, file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_75: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=None)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_76: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_77: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", )
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_78: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['XXSubmissionXX']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_79: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_80: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['SUBMISSION']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_81: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['XXNCBIXX']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_82: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['ncbi']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_83: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['XXSpecified_Release_DateXX']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_84: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['specified_release_date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_85: survived
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+                 elif "months" in release_date_string:
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+-                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
++                    print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['SPECIFIED_RELEASE_DATE']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+                     sys.exit(1)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+# tools.x_parse_hold_date__mutmut_86: survived
+--- src/tools.py
++++ src/tools.py
+@@ -14,7 +14,7 @@
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+                     print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+-                    sys.exit(1)
++                    sys.exit(None)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+                 return config_dict
+# tools.x_parse_hold_date__mutmut_87: survived
+--- src/tools.py
++++ src/tools.py
+@@ -14,7 +14,7 @@
+                     time_delta = pd.DateOffset(months = numeric_value)
+                 else:
+                     print(f"Error: Config file field 'Specified_Release_Date', with value '{config_dict['Submission']['NCBI']['Specified_Release_Date']}' is not a valid time delta. To be a valid timedelta format, it must be formatted as '<num> days', '<num> weeks', or '<num> months'. The prefix <num> is a numeric value which will be used to create a specified release date based on when the SeqSender 'submit' command is ran with the time delta specified added.", file=sys.stderr)
+-                    sys.exit(1)
++                    sys.exit(2)
+                 calculated_date = today + time_delta
+                 config_dict["Submission"]["NCBI"]["Specified_Release_Date"] = calculated_date.strftime("%Y-%m-%d")
+                 return config_dict
+# tools.x_get_metadata__mutmut_1: survived
+--- src/tools.py
++++ src/tools.py
+@@ -1,5 +1,5 @@
+ # Read in metadata file
+-def get_metadata(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
++def get_metadata(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = True) -> pd.DataFrame:
+     # Read in metadata file
+     metadata = file_handler.load_csv(metadata_file)
+     warn_deprecated_columns(database = database, metadata = metadata)
+# tools.x_get_metadata__mutmut_28: survived
+--- src/tools.py
++++ src/tools.py
+@@ -6,7 +6,7 @@
+     # Update seqsender base schema to include needed checks
+     if "BIOSAMPLE" in database or "SRA" in database:
+         seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
+-    biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
++    biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = ""
+     # Import schemas
+     schemas_dict = dict()
+     if "BIOSAMPLE" in database:
+# tools.x_get_metadata__mutmut_34: survived
+--- src/tools.py
++++ src/tools.py
+@@ -10,7 +10,7 @@
+     # Import schemas
+     schemas_dict = dict()
+     if "BIOSAMPLE" in database:
+-        schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
++        schemas_dict["XXBioSampleXX"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+# tools.x_get_metadata__mutmut_35: survived
+--- src/tools.py
++++ src/tools.py
+@@ -10,7 +10,7 @@
+     # Import schemas
+     schemas_dict = dict()
+     if "BIOSAMPLE" in database:
+-        schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
++        schemas_dict["biosample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+# tools.x_get_metadata__mutmut_36: survived
+--- src/tools.py
++++ src/tools.py
+@@ -10,7 +10,7 @@
+     # Import schemas
+     schemas_dict = dict()
+     if "BIOSAMPLE" in database:
+-        schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
++        schemas_dict["BIOSAMPLE"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+# tools.x_get_metadata__mutmut_56: survived
+--- src/tools.py
++++ src/tools.py
+@@ -12,7 +12,7 @@
+     if "BIOSAMPLE" in database:
+         schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
+     if "SRA" in database:
+-        schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
++        schemas_dict["XXSRAXX"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+         schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
+         # if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
+# tools.x_get_metadata__mutmut_57: survived
+--- src/tools.py
++++ src/tools.py
+@@ -12,7 +12,7 @@
+     if "BIOSAMPLE" in database:
+         schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
+     if "SRA" in database:
+-        schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
++        schemas_dict["sra"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+         schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
+         # if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
+# tools.x_get_metadata__mutmut_65: survived
+--- src/tools.py
++++ src/tools.py
+@@ -14,7 +14,7 @@
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+-        schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
++        schemas_dict["XXGenBankXX"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
+         # if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+# tools.x_get_metadata__mutmut_66: survived
+--- src/tools.py
++++ src/tools.py
+@@ -14,7 +14,7 @@
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+-        schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
++        schemas_dict["genbank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
+         # if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+# tools.x_get_metadata__mutmut_67: survived
+--- src/tools.py
++++ src/tools.py
+@@ -14,7 +14,7 @@
+     if "SRA" in database:
+         schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
+     if "GENBANK" in database:
+-        schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
++        schemas_dict["GENBANK"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
+         # if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+# tools.x_get_metadata__mutmut_82: survived
+--- src/tools.py
++++ src/tools.py
+@@ -19,7 +19,7 @@
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+             if organism == "FLU":
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
++                schemas_dict["XXGenBank sourceXX"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+# tools.x_get_metadata__mutmut_83: survived
+--- src/tools.py
++++ src/tools.py
+@@ -19,7 +19,7 @@
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+             if organism == "FLU":
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
++                schemas_dict["genbank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+# tools.x_get_metadata__mutmut_84: survived
+--- src/tools.py
++++ src/tools.py
+@@ -19,7 +19,7 @@
+         # 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
+         if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
+             if organism == "FLU":
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
++                schemas_dict["GENBANK SOURCE"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+# tools.x_get_metadata__mutmut_89: survived
+--- src/tools.py
++++ src/tools.py
+@@ -21,7 +21,7 @@
+             if organism == "FLU":
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
++                schemas_dict["XXGenBank sourceXX"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+         schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
+     if skip_validation == False:
+# tools.x_get_metadata__mutmut_90: survived
+--- src/tools.py
++++ src/tools.py
+@@ -21,7 +21,7 @@
+             if organism == "FLU":
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
++                schemas_dict["genbank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+         schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
+     if skip_validation == False:
+# tools.x_get_metadata__mutmut_91: survived
+--- src/tools.py
++++ src/tools.py
+@@ -21,7 +21,7 @@
+             if organism == "FLU":
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
+             else:
+-                schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
++                schemas_dict["GENBANK SOURCE"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+         schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
+     if skip_validation == False:
+# tools.x_get_metadata__mutmut_99: survived
+--- src/tools.py
++++ src/tools.py
+@@ -23,7 +23,7 @@
+             else:
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+-        schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
++        schemas_dict["XXGISAIDXX"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
+     if skip_validation == False:
+         # Validate metadata on schema's
+         error_msg_list: list[pandera.errors.SchemaErrors] = []
+# tools.x_get_metadata__mutmut_100: survived
+--- src/tools.py
++++ src/tools.py
+@@ -23,7 +23,7 @@
+             else:
+                 schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
+     if "GISAID" in database:
+-        schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
++        schemas_dict["gisaid"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
+     if skip_validation == False:
+         # Validate metadata on schema's
+         error_msg_list: list[pandera.errors.SchemaErrors] = []
+# tools.x_get_metadata__mutmut_117: survived
+--- src/tools.py
++++ src/tools.py
+@@ -29,7 +29,7 @@
+         error_msg_list: list[pandera.errors.SchemaErrors] = []
+         # Validate required columns for seqsender
+         try:
+-            seqsender_schema.validate(metadata, lazy = True)
++            seqsender_schema.validate(metadata, )
+         except pandera.errors.SchemaErrors as schema_error:
+             error_msg_list.append(schema_error)
+         # Validate required columns for databases
+# tools.x_get_metadata__mutmut_126: survived
+--- src/tools.py
++++ src/tools.py
+@@ -37,7 +37,7 @@
+             try:
+                 regex, schema = tuple
+                 database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
+-                schema.validate(database_specific_metadata, lazy = True)
++                schema.validate(database_specific_metadata, )
+             except pandera.errors.SchemaErrors as schema_error:
+                 error_msg_list.append(schema_error)
+         if error_msg_list:
+# tools.x_check_credentials__mutmut_65: timeout
+--- src/tools.py
++++ src/tools.py
+@@ -12,7 +12,7 @@
+     # Check password
+     if "Password" not in config_dict.keys():
+         print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
+-        sys.exit(1)
++        sys.exit(2)
+     elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
+         pass
+     else:
+# tools.x_check_credentials__mutmut_66: timeout
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+     if "Password" not in config_dict.keys():
+         print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
+         sys.exit(1)
+-    elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
++    elif ("Password" in config_dict.keys()) or ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
+         pass
+     else:
+         print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
+# tools.x_check_credentials__mutmut_67: timeout
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+     if "Password" not in config_dict.keys():
+         print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
+         sys.exit(1)
+-    elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
++    elif ("XXPasswordXX" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
+         pass
+     else:
+         print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
+# tools.x_check_credentials__mutmut_68: timeout
+--- src/tools.py
++++ src/tools.py
+@@ -13,7 +13,7 @@
+     if "Password" not in config_dict.keys():
+         print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
+         sys.exit(1)
+-    elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
++    elif ("password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
+         pass
+     else:
+         print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
+# tools.x_get_all_schema_files__mutmut_18: survived
+--- src/tools.py
++++ src/tools.py
+@@ -6,7 +6,7 @@
+     schemas = []
+     for root, dir_list, file_list in files:
+         # Get seqsender subdirectory structure
+-        subdirectory = root.split("/seqsender/config")[-1].replace("/", ".")
++        subdirectory = root.split("/seqsender/config")[+1].replace("/", ".")
+         root_end = "config."
+         if subdirectory and subdirectory != ".":
+             root_end = "config" + subdirectory + "."
+# tools.x_get_all_schema_files__mutmut_25: survived
+--- src/tools.py
++++ src/tools.py
+@@ -8,7 +8,7 @@
+         # Get seqsender subdirectory structure
+         subdirectory = root.split("/seqsender/config")[-1].replace("/", ".")
+         root_end = "config."
+-        if subdirectory and subdirectory != ".":
++        if subdirectory or subdirectory != ".":
+             root_end = "config" + subdirectory + "."
+         # Collect schemas
+         schemas += [(root_end + file.replace(".py", "")) for file in file_list if file.endswith(".py")]
+# tools.x_get_all_schema_files__mutmut_27: survived
+--- src/tools.py
++++ src/tools.py
+@@ -8,7 +8,7 @@
+         # Get seqsender subdirectory structure
+         subdirectory = root.split("/seqsender/config")[-1].replace("/", ".")
+         root_end = "config."
+-        if subdirectory and subdirectory != ".":
++        if subdirectory and subdirectory != "XX.XX":
+             root_end = "config" + subdirectory + "."
+         # Collect schemas
+         schemas += [(root_end + file.replace(".py", "")) for file in file_list if file.endswith(".py")]
+# tools.x_process_schema__mutmut_27: survived
+--- src/tools.py
++++ src/tools.py
+@@ -11,7 +11,7 @@
+             required_field = "Optional"
+         # Update required field if required group of columns
+         if description_field and "At least one required: Group" in description_field:
+-            required_field = "At least one field required. Group: " + description_field.split("Group: \"")[-1].split("\".")[0]
++            required_field = "At least one field required. Group: " + description_field.split("Group: \"")[+1].split("\".")[0]
+         # Update SRA wildcard field for raw files
+         if column_name == r"sra-file_[2-9]\d*":
+             column_name = "sra-file_#"
+# tools.x_update_all_schema_templates__mutmut_21: survived
+--- src/tools.py
++++ src/tools.py
+@@ -11,7 +11,7 @@
+             print("Warning: Unable to load schema \"" + schema_name + "\".", file=sys.stderr)
+             print(e, file=sys.stderr)
+             continue
+-        template = dict()
++        template = None
+         try:
+             metadata_template = process_schema(schema)
+         except Exception as e:
+# tools.x_update_all_schema_templates__mutmut_35: survived
+--- src/tools.py
++++ src/tools.py
+@@ -17,5 +17,5 @@
+         except Exception as e:
+             print("Warning: Unable to process schema into metadata template.", file=sys.stderr)
+             print(e, file=sys.stderr)
+-            continue
++            break
+         metadata_template.to_csv(os.path.join(PROG_DIR, "shiny", "templates", schema_name.replace("_", ".") + "_template.csv"), header = True, index = False)

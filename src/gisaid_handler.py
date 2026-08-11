@@ -6,10 +6,9 @@
 
 import shutil
 import subprocess
-from typing import Dict, Any, List, Optional, Match, Any
+from typing import Any, Optional, Match, Any
 import os
 import pandas as pd
-import file_handler
 import sys
 import time
 from Bio import SeqIO
@@ -19,12 +18,13 @@ import warnings
 warnings.filterwarnings("ignore", 'This pattern has match groups')
 import re
 
-import upload_log
-import tools
-from settings import GISAID_REGEX
+import src.upload_log as upload_log
+import src.tools as tools
+import src.file_handler as file_handler
+from src.settings import GISAID_REGEX
 
 # Create directory and files for GISAID submission
-def create_gisaid_files(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> None:
+def create_gisaid_files(organism: str, database: str, submission_name: str, submission_dir: str, config_dict: dict[str, Any], metadata: pd.DataFrame) -> None:
 	# Get column names for gisaid submission only
 	gisaid_df = metadata.filter(regex=GISAID_REGEX).copy()
 	gisaid_df.columns = gisaid_df.columns.str.replace("gs-","").str.strip()
@@ -101,7 +101,7 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 			if re.search(r"(?i)(\W|^)(\"msg\":\s*\"\S+.*;\s*(EPI_ISL|EPI_ID)_\d*\"|(epi_id|epi_isl_id):\s*\S.*;\s*(EPI_ISL_|EPI)\d+)(\W|$)", line):
 				gisaid_string_search = re.findall(r'(?:[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)+|EPI_\w*)', line)
 				gisaid_string = ' '.join(gisaid_string_search)
-				gisaid_string_list: List[str] = gisaid_string.split(' ')
+				gisaid_string_list: list[str] = gisaid_string.split(' ')
 				sample_name = gisaid_string_list[0].strip()
 				accession_string = gisaid_string_list[1].strip()
 				if re.match(r"EPI_ISL_\d+", accession_string):
@@ -150,7 +150,7 @@ def process_gisaid_log(log_file: str, submission_dir: str) -> pd.DataFrame:
 	return gisaid_isolate_df[["gs-sample_name"]]
 
 # Submit to GISAID
-def submit_gisaid(organism: str, submission_dir: str, submission_name: str, config_dict: Dict[str, Any], submission_type: str) -> str:
+def submit_gisaid(organism: str, submission_dir: str, submission_name: str, config_dict: dict[str, Any], submission_type: str) -> str:
 	# Gather all required files
 	metadata = os.path.join(submission_dir, "metadata.csv")
 	orig_metadata = os.path.join(submission_dir, "orig_metadata.csv")
@@ -160,14 +160,14 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 	# Extract user credentials (e.g. username, password, client-id)
 	tools.check_credentials(config_dict=config_dict, database="GISAID")
 	gisaid_cli = file_handler.validate_gisaid_installer(submission_dir=submission_dir, organism=organism, config_dict=config_dict)
-	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
+	print(f"Uploading sample files to GISAID-{organism}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.")
 	time.sleep(5)
 	# Set number of attempt to 3 if erroring out occurs
 	attempts = 0
 	# Submit to GISAID
 	while attempts <= 3:
 		attempts += 1
-		print("\n"+"Submission attempt: " + str(attempts), file=sys.stdout)
+		print("\n"+"Submission attempt: " + str(attempts))
 		# Create a log submission for each attempt
 		log_file = os.path.join(submission_dir, "gisaid_upload_log_" + str(attempts) + ".txt")
 		# If log file exists, removes it
@@ -212,8 +212,8 @@ def submit_gisaid(organism: str, submission_dir: str, submission_name: str, conf
 		metadata_df = pd.read_csv(orig_metadata, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False)
 		metadata_df = metadata_df.merge(gisaid_status_df, how="inner", left_on=metadata_column_name, right_on="gs-sample_name")
 		if metadata_df.empty:
-			print("Uploading successfully", file=sys.stdout)
-			print("Log file is stored at: " + submission_dir + "/gisaid_upload_log_attempt_" + str(attempts) +  ".txt", file=sys.stdout)
+			print("Uploading successfully")
+			print("Log file is stored at: " + submission_dir + "/gisaid_upload_log_attempt_" + str(attempts) +  ".txt")
 			return "PROCESSED"
 		# Update metadata file
 		fasta_names = gisaid_status_df[fasta_column_name].tolist()

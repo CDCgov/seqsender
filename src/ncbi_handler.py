@@ -15,15 +15,15 @@ import xmltodict
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from typing import List, Set, Dict, Any, Union, Tuple, Optional
-from settings import NCBI_FTP_HOST, TABLE2ASN_EMAIL
+from typing import Any, Union, Optional
 
 # Local imports
-import tools
-import setup
+import src.tools as tools
+import src.setup as setup
+from src.settings import NCBI_FTP_HOST, TABLE2ASN_EMAIL
 
 # Process NCBI Report file
-def get_ncbi_report(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> Optional[str]:
+def get_ncbi_report(database: str, submission_name: str, submission_dir: str, config_dict: dict[str, Any], submission_type: str) -> Optional[str]:
 	# Check user credentials
 	tools.check_credentials(config_dict=config_dict, database="NCBI")
 	# Create submission name
@@ -34,13 +34,13 @@ def get_ncbi_report(database: str, submission_name: str, submission_dir: str, co
 		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type)
 		# Check if report.xml exists
 		if "report.xml" in ftp.nlst():
-			print("Downloading report.xml", file=sys.stdout)
+			print("Downloading report.xml")
 			report_file = os.path.join(submission_dir, "report.xml")
 			with open(report_file, 'wb') as f:
 				ftp.retrbinary('RETR report.xml', f.write, 262144)
 			return report_file
 		else:
-			print("The report.xml has not yet been generated.", file=sys.stdout)
+			print("The report.xml has not yet been generated.")
 			return None
 	except ftplib.all_errors as e:
 		print("\n" + "Error: " + str(e), file=sys.stderr)
@@ -57,18 +57,18 @@ def create_submit_ready_file(ftp, submission_dir: str):
 			sys.exit(1)
 	except Exception as err:
 		if str(err).startswith('Error:550 submit.ready: Permission denied'):
-			print("The submission has already been made and is currently processing.", file=sys.stdout)
+			print("The submission has already been made and is currently processing.")
 		else:
 			print(f"Error: Unable to upload submit.ready file. {err}", file=sys.stderr)
 			sys.exit(1)
 	return ftp
 
-def ncbi_login(config_dict: Dict[str, Any]):
+def ncbi_login(config_dict: dict[str, Any]):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
-		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException{err}", file=sys.stderr)
+		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -129,21 +129,21 @@ def upload_raw_reads(ftp, submission_dir: str, submission_name: str):
 	return ftp
 
 # Submit to NCBI
-def submit_ncbi(database: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> None:
+def submit_ncbi(database: str, submission_name: str, submission_dir: str, config_dict: dict[str, Any], submission_type: str) -> None:
 	# Create submission name
 	ncbi_submission_name = submission_name + "_" + database
 	# Check user credentials
 	tools.check_credentials(config_dict=config_dict, database="NCBI")
 	# Submit sequences to NCBI via FTP Server
-	print(f"Uploading sample files to NCBI-{database}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
+	print(f"Uploading sample files to NCBI-{database}, as a '{submission_type}' submission. If this is not intended, interrupt immediately.")
 	time.sleep(5)
 	try:
 		# Login into NCBI FTP Server
 		ftp = ncbi_login(config_dict)
-		print(f"Connecting to NCBI FTP Server", file=sys.stdout)
-		print(f"Submission name: {ncbi_submission_name}", file=sys.stdout)
+		print(f"Connecting to NCBI FTP Server")
+		print(f"Submission name: {ncbi_submission_name}")
 		ftp = ftp_navigate_to_folder(ftp=ftp, folder_name=ncbi_submission_name, submission_type=submission_type, make_folder=True)
-		print(f"Submitting '{submission_name}'", file=sys.stdout)
+		print(f"Submitting '{submission_name}'")
 		# Upload submission xml
 		ftp = ftp_upload_file(ftp=ftp, upload_file=os.path.join(submission_dir, "submission.xml"))
 		# Upload raw reads
@@ -154,11 +154,11 @@ def submit_ncbi(database: str, submission_name: str, submission_dir: str, config
 			ftp = ftp_upload_file(ftp=ftp, upload_file=os.path.join(submission_dir, f"{submission_name}.zip"))
 		ftp = create_submit_ready_file(ftp=ftp, submission_dir=submission_dir)
 	except ftplib.all_errors as e:
-		print("\n" + 'Error:' + str(e), file=sys.stderr)
+		print("\n" + 'Error: ' + str(e), file=sys.stderr)
 		sys.exit(1)
 
 # Send table2asn file through email
-def email_table2asn(submission_name: str, submission_dir: str, config_dict: Dict[str, Any], submission_type: str) -> str:
+def email_table2asn(submission_name: str, submission_dir: str, config_dict: dict[str, Any], submission_type: str) -> str:
 	sqn_file = os.path.join(submission_dir, submission_name + ".sqn")
 	try:
 		msg = MIMEMultipart('multipart')
@@ -168,11 +168,11 @@ def email_table2asn(submission_name: str, submission_dir: str, config_dict: Dict
 		cc_email = []
 		if submission_type == "TEST":
 			to_email.append(config_dict["Description"]["Organization"]["Submitter"]["Email"])
-			print(f"Emailing table2asn sqn file to submitter '{config_dict['Description']['Organization']['Submitter']['Email']}' as a 'TEST' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
+			print(f"Emailing table2asn sqn file to submitter '{config_dict['Description']['Organization']['Submitter']['Email']}' as a 'TEST' submission. If this is not intended, interrupt immediately.")
 		elif submission_type == "PRODUCTION":
 			to_email.append(TABLE2ASN_EMAIL)
 			cc_email.append(config_dict["Description"]["Organization"]["Submitter"]["Email"])
-			print(f"Emailing table2asn sqn file to NCBI-GENBANK '{TABLE2ASN_EMAIL}', as a 'PRODUCTION' submission. If this is not intended, interrupt immediately.", file=sys.stdout)
+			print(f"Emailing table2asn sqn file to NCBI-GENBANK '{TABLE2ASN_EMAIL}', as a 'PRODUCTION' submission. If this is not intended, interrupt immediately.")
 		else:
 			print(f"Error: Submission type '{submission_type}' is not a valid option.", file=sys.stderr)
 			sys.exit(1)
@@ -222,7 +222,7 @@ def standardize_submission_status(submission_status: str) -> str:
 	else:
 		return "ERROR"
 
-def process_report_header(report_file: str) -> Tuple[Dict[str, Any], str, str]:
+def process_report_header(report_file: str) -> tuple[dict[str, Any], str, str]:
 	# Read in report.xml
 	tree = ET.parse(report_file)
 	root = tree.getroot()

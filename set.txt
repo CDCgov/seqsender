@@ -1,0 +1,1181 @@
+# setup.x_create_test_data__mutmut_188: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"XXGENBANKXX": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_189: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"genbank": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_190: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "XXgb-XX", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_191: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "GB-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_194: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "XXgs-XX", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_195: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "GS-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_196: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "XXSRAXX": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_197: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "sra": "sra-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_198: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "XXsra-XX", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_199: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "SRA-", "BIOSAMPLE": "bs-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_202: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "XXbs-XX"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_203: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+     # Print generating message
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+-    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
++    database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "BS-"}
+     repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+# setup.x_create_test_data__mutmut_207: survived
+--- src/setup.py
++++ src/setup.py
+@@ -28,7 +28,7 @@
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+     database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+-    repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
++    repeat_columns = ["sample_name", "XXsequence_nameXX", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+         if i == 0:
+# setup.x_create_test_data__mutmut_208: survived
+--- src/setup.py
++++ src/setup.py
+@@ -28,7 +28,7 @@
+     print("\n"+"Generating submission test_data")
+     # Get combined metadata for all given databases
+     database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+-    repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
++    repeat_columns = ["sample_name", "SEQUENCE_NAME", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+     for i in range(len(database)):
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+         if i == 0:
+# setup.x_create_test_data__mutmut_263: survived
+--- src/setup.py
++++ src/setup.py
+@@ -33,7 +33,7 @@
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+         if i == 0:
+             combined_metadata = df
+-            left_match = database_prefix[database[i]] + "sample_name"
++            left_match = None
+         else:
+             df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+             combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+# setup.x_create_test_data__mutmut_265: survived
+--- src/setup.py
++++ src/setup.py
+@@ -33,7 +33,7 @@
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+         if i == 0:
+             combined_metadata = df
+-            left_match = database_prefix[database[i]] + "sample_name"
++            left_match = database_prefix[database[i]] + "XXsample_nameXX"
+         else:
+             df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+             combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+# setup.x_create_test_data__mutmut_266: survived
+--- src/setup.py
++++ src/setup.py
+@@ -33,7 +33,7 @@
+         df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+         if i == 0:
+             combined_metadata = df
+-            left_match = database_prefix[database[i]] + "sample_name"
++            left_match = database_prefix[database[i]] + "SAMPLE_NAME"
+         else:
+             df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+             combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+# setup.x_create_test_data__mutmut_269: survived
+--- src/setup.py
++++ src/setup.py
+@@ -35,7 +35,7 @@
+             combined_metadata = df
+             left_match = database_prefix[database[i]] + "sample_name"
+         else:
+-            df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
++            df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns or col in df.columns])
+             combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+     # Write metadata to output directory
+     combined_metadata.to_csv(out_metadata_file, index = False)
+# setup.x_download_xml__mutmut_18: survived
+--- src/setup.py
++++ src/setup.py
+@@ -3,4 +3,4 @@
+     r = requests.get(xml_url)
+     r.encoding = "UTF-8"
+     with open(output_file, "w+") as file:
+-        file.write(r.text.replace("\xa0", " "))
++        file.write(r.text.replace("\xA0", " "))
+# setup.x_download_biosample_xml_list__mutmut_36: survived
+--- src/setup.py
++++ src/setup.py
+@@ -4,7 +4,7 @@
+     download_xml(xml_url = (BIOSAMPLE_HTML_PREFIX + BIOSAMPLE_HTML_SUFFIX), output_file = os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml"))
+     with open(os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml")) as file:
+         line = file.readline()
+-        i = 0
++        i = None
+         while line:
+             if "<Name>" in line:
+                 name = line.replace("<Name>","").replace("</Name>","").strip()
+# setup.x_download_biosample_xml_list__mutmut_37: survived
+--- src/setup.py
++++ src/setup.py
+@@ -4,7 +4,7 @@
+     download_xml(xml_url = (BIOSAMPLE_HTML_PREFIX + BIOSAMPLE_HTML_SUFFIX), output_file = os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml"))
+     with open(os.path.join(PROG_DIR, "config", "biosample", "biosample_package_list.xml")) as file:
+         line = file.readline()
+-        i = 0
++        i = 1
+         while line:
+             if "<Name>" in line:
+                 name = line.replace("<Name>","").replace("</Name>","").strip()
+# setup.x_biosample_package_to_pandera_schema__mutmut_18: survived
+--- src/setup.py
++++ src/setup.py
+@@ -5,7 +5,7 @@
+     xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
+     # Convert xml to dictionary
+     report_dict = xmltodict.parse(xmlstr)
+-    indentation = "\n\t\t"
++    indentation = "XX\n\t\tXX"
+     mandatory_group: dict[str, Any] = dict()
+     with open(os.path.join(PROG_DIR, "config", "biosample", (name.replace(".", "_") + ".py")), "w+") as file:
+         file.writelines(SCHEMA_HEADER)
+# setup.x_biosample_package_to_pandera_schema__mutmut_65: survived
+--- src/setup.py
++++ src/setup.py
+@@ -12,7 +12,7 @@
+         for attribute in report_dict["BioSamplePackages"]["Package"]["Attribute"]:
+             # If attribute in reserved words skip
+             if attribute["HarmonizedName"] in ["collection_date", "gender_restroom"]:
+-                continue
++                break
+             # NCBI canonical field name for submission
+             file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
+             # Pandas datatypes
+# setup.x_biosample_package_to_pandera_schema__mutmut_78: survived
+--- src/setup.py
++++ src/setup.py
+@@ -16,7 +16,7 @@
+             # NCBI canonical field name for submission
+             file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
+             # Pandas datatypes
+-            indentation += "\t"
++            indentation = "\t"
+             file.write(indentation + "dtype=\"object\",")
+             # Validation requirements
+             if "Format" in attribute:
+# setup.x_biosample_package_to_pandera_schema__mutmut_80: survived
+--- src/setup.py
++++ src/setup.py
+@@ -16,7 +16,7 @@
+             # NCBI canonical field name for submission
+             file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
+             # Pandas datatypes
+-            indentation += "\t"
++            indentation += "XX\tXX"
+             file.write(indentation + "dtype=\"object\",")
+             # Validation requirements
+             if "Format" in attribute:
+# setup.x_biosample_package_to_pandera_schema__mutmut_83: survived
+--- src/setup.py
++++ src/setup.py
+@@ -17,7 +17,7 @@
+             file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
+             # Pandas datatypes
+             indentation += "\t"
+-            file.write(indentation + "dtype=\"object\",")
++            file.write(indentation + "XXdtype=\"object\",XX")
+             # Validation requirements
+             if "Format" in attribute:
+                 if "@type" in attribute["Format"] and attribute["Format"]["@type"] == "select":
+# setup.x_biosample_package_to_pandera_schema__mutmut_84: survived
+--- src/setup.py
++++ src/setup.py
+@@ -17,7 +17,7 @@
+             file.write(indentation + "\"bs-" + attribute["HarmonizedName"] + "\": Column(")
+             # Pandas datatypes
+             indentation += "\t"
+-            file.write(indentation + "dtype=\"object\",")
++            file.write(indentation + "DTYPE=\"OBJECT\",")
+             # Validation requirements
+             if "Format" in attribute:
+                 if "@type" in attribute["Format"] and attribute["Format"]["@type"] == "select":
+# setup.x_biosample_package_to_pandera_schema__mutmut_89: survived
+--- src/setup.py
++++ src/setup.py
+@@ -20,7 +20,7 @@
+             file.write(indentation + "dtype=\"object\",")
+             # Validation requirements
+             if "Format" in attribute:
+-                if "@type" in attribute["Format"] and attribute["Format"]["@type"] == "select":
++                if "@type" in attribute["Format"] or attribute["Format"]["@type"] == "select":
+                     # For columns with only certain valid values
+                     valid_values = attribute["Format"]["Description"].strip().split(" | ")
+                     file.write(indentation + r"checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + r")(\W|$)\"),")
+# setup.x_biosample_package_to_pandera_schema__mutmut_125: survived
+--- src/setup.py
++++ src/setup.py
+@@ -25,7 +25,7 @@
+                     valid_values = attribute["Format"]["Description"].strip().split(" | ")
+                     file.write(indentation + r"checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + r")(\W|$)\"),")
+                 else:
+-                    file.write(indentation + "checks=None,")
++                    file.write(indentation + "XXchecks=None,XX")
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+# setup.x_biosample_package_to_pandera_schema__mutmut_126: survived
+--- src/setup.py
++++ src/setup.py
+@@ -25,7 +25,7 @@
+                     valid_values = attribute["Format"]["Description"].strip().split(" | ")
+                     file.write(indentation + r"checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + r")(\W|$)\"),")
+                 else:
+-                    file.write(indentation + "checks=None,")
++                    file.write(indentation + "checks=none,")
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+# setup.x_biosample_package_to_pandera_schema__mutmut_127: survived
+--- src/setup.py
++++ src/setup.py
+@@ -25,7 +25,7 @@
+                     valid_values = attribute["Format"]["Description"].strip().split(" | ")
+                     file.write(indentation + r"checks=Check.str_matches(r\"(?i)(\W|^)(" + ("|".join(valid_values)) + r")(\W|$)\"),")
+                 else:
+-                    file.write(indentation + "checks=None,")
++                    file.write(indentation + "CHECKS=NONE,")
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+# setup.x_biosample_package_to_pandera_schema__mutmut_130: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+                 else:
+                     file.write(indentation + "checks=None,")
+             else:
+-                file.write(indentation + "checks=None,")
++                file.write(indentation + "XXchecks=None,XX")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_131: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+                 else:
+                     file.write(indentation + "checks=None,")
+             else:
+-                file.write(indentation + "checks=None,")
++                file.write(indentation + "checks=none,")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_132: survived
+--- src/setup.py
++++ src/setup.py
+@@ -27,7 +27,7 @@
+                 else:
+                     file.write(indentation + "checks=None,")
+             else:
+-                file.write(indentation + "checks=None,")
++                file.write(indentation + "CHECKS=NONE,")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_135: survived
+--- src/setup.py
++++ src/setup.py
+@@ -29,7 +29,7 @@
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+-            if attribute["@use"] == "mandatory":
++            if attribute["@use"] != "mandatory":
+                 file.write(indentation + "nullable=False,")
+             else:
+                 file.write(indentation + "nullable=True,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_136: survived
+--- src/setup.py
++++ src/setup.py
+@@ -29,7 +29,7 @@
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+-            if attribute["@use"] == "mandatory":
++            if attribute["@use"] == "XXmandatoryXX":
+                 file.write(indentation + "nullable=False,")
+             else:
+                 file.write(indentation + "nullable=True,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_137: survived
+--- src/setup.py
++++ src/setup.py
+@@ -29,7 +29,7 @@
+             else:
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+-            if attribute["@use"] == "mandatory":
++            if attribute["@use"] == "MANDATORY":
+                 file.write(indentation + "nullable=False,")
+             else:
+                 file.write(indentation + "nullable=True,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_140: survived
+--- src/setup.py
++++ src/setup.py
+@@ -30,7 +30,7 @@
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "nullable=False,")
++                file.write(indentation + "XXnullable=False,XX")
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+# setup.x_biosample_package_to_pandera_schema__mutmut_141: survived
+--- src/setup.py
++++ src/setup.py
+@@ -30,7 +30,7 @@
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "nullable=False,")
++                file.write(indentation + "nullable=false,")
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+# setup.x_biosample_package_to_pandera_schema__mutmut_142: survived
+--- src/setup.py
++++ src/setup.py
+@@ -30,7 +30,7 @@
+                 file.write(indentation + "checks=None,")
+             # Null fields allowed
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "nullable=False,")
++                file.write(indentation + "NULLABLE=FALSE,")
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+# setup.x_biosample_package_to_pandera_schema__mutmut_145: survived
+--- src/setup.py
++++ src/setup.py
+@@ -32,7 +32,7 @@
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+             else:
+-                file.write(indentation + "nullable=True,")
++                file.write(indentation + "XXnullable=True,XX")
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+# setup.x_biosample_package_to_pandera_schema__mutmut_146: survived
+--- src/setup.py
++++ src/setup.py
+@@ -32,7 +32,7 @@
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+             else:
+-                file.write(indentation + "nullable=True,")
++                file.write(indentation + "nullable=true,")
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+# setup.x_biosample_package_to_pandera_schema__mutmut_147: survived
+--- src/setup.py
++++ src/setup.py
+@@ -32,7 +32,7 @@
+             if attribute["@use"] == "mandatory":
+                 file.write(indentation + "nullable=False,")
+             else:
+-                file.write(indentation + "nullable=True,")
++                file.write(indentation + "NULLABLE=TRUE,")
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+# setup.x_biosample_package_to_pandera_schema__mutmut_150: survived
+--- src/setup.py
++++ src/setup.py
+@@ -34,7 +34,7 @@
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+-            file.write(indentation + "unique=False,")
++            file.write(indentation + "XXunique=False,XX")
+             # Coerce column into specified dtype
+             file.write(indentation + "coerce=False,")
+             # Column is required for submission
+# setup.x_biosample_package_to_pandera_schema__mutmut_151: survived
+--- src/setup.py
++++ src/setup.py
+@@ -34,7 +34,7 @@
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+-            file.write(indentation + "unique=False,")
++            file.write(indentation + "unique=false,")
+             # Coerce column into specified dtype
+             file.write(indentation + "coerce=False,")
+             # Column is required for submission
+# setup.x_biosample_package_to_pandera_schema__mutmut_152: survived
+--- src/setup.py
++++ src/setup.py
+@@ -34,7 +34,7 @@
+             else:
+                 file.write(indentation + "nullable=True,")
+             # Every field must be unique
+-            file.write(indentation + "unique=False,")
++            file.write(indentation + "UNIQUE=FALSE,")
+             # Coerce column into specified dtype
+             file.write(indentation + "coerce=False,")
+             # Column is required for submission
+# setup.x_biosample_package_to_pandera_schema__mutmut_155: survived
+--- src/setup.py
++++ src/setup.py
+@@ -36,7 +36,7 @@
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+-            file.write(indentation + "coerce=False,")
++            file.write(indentation + "XXcoerce=False,XX")
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+# setup.x_biosample_package_to_pandera_schema__mutmut_156: survived
+--- src/setup.py
++++ src/setup.py
+@@ -36,7 +36,7 @@
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+-            file.write(indentation + "coerce=False,")
++            file.write(indentation + "coerce=false,")
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+# setup.x_biosample_package_to_pandera_schema__mutmut_157: survived
+--- src/setup.py
++++ src/setup.py
+@@ -36,7 +36,7 @@
+             # Every field must be unique
+             file.write(indentation + "unique=False,")
+             # Coerce column into specified dtype
+-            file.write(indentation + "coerce=False,")
++            file.write(indentation + "COERCE=FALSE,")
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+# setup.x_biosample_package_to_pandera_schema__mutmut_163: survived
+--- src/setup.py
++++ src/setup.py
+@@ -39,7 +39,7 @@
+             file.write(indentation + "coerce=False,")
+             # Column is required for submission
+             group_message = ""
+-            if attribute["@use"] == "mandatory":
++            if attribute["@use"] == "XXmandatoryXX":
+                 file.write(indentation + "required=True,")
+             elif attribute["@use"] == "either_one_mandatory":
+                 # Collect columns that are required but have different column options
+# setup.x_biosample_package_to_pandera_schema__mutmut_164: survived
+--- src/setup.py
++++ src/setup.py
+@@ -39,7 +39,7 @@
+             file.write(indentation + "coerce=False,")
+             # Column is required for submission
+             group_message = ""
+-            if attribute["@use"] == "mandatory":
++            if attribute["@use"] == "MANDATORY":
+                 file.write(indentation + "required=True,")
+             elif attribute["@use"] == "either_one_mandatory":
+                 # Collect columns that are required but have different column options
+# setup.x_biosample_package_to_pandera_schema__mutmut_167: survived
+--- src/setup.py
++++ src/setup.py
+@@ -40,7 +40,7 @@
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "XXrequired=True,XX")
+             elif attribute["@use"] == "either_one_mandatory":
+                 # Collect columns that are required but have different column options
+                 if attribute["@group_name"] in mandatory_group:
+# setup.x_biosample_package_to_pandera_schema__mutmut_168: survived
+--- src/setup.py
++++ src/setup.py
+@@ -40,7 +40,7 @@
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "required=true,")
+             elif attribute["@use"] == "either_one_mandatory":
+                 # Collect columns that are required but have different column options
+                 if attribute["@group_name"] in mandatory_group:
+# setup.x_biosample_package_to_pandera_schema__mutmut_169: survived
+--- src/setup.py
++++ src/setup.py
+@@ -40,7 +40,7 @@
+             # Column is required for submission
+             group_message = ""
+             if attribute["@use"] == "mandatory":
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "REQUIRED=TRUE,")
+             elif attribute["@use"] == "either_one_mandatory":
+                 # Collect columns that are required but have different column options
+                 if attribute["@group_name"] in mandatory_group:
+# setup.x_biosample_package_to_pandera_schema__mutmut_216: survived
+--- src/setup.py
++++ src/setup.py
+@@ -48,7 +48,7 @@
+                 else:
+                     mandatory_group[attribute["@group_name"]] = "df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "XXrequired=True,XX")
+             else:
+                 file.write(indentation + "required=False,")
+             # NCBI column description
+# setup.x_biosample_package_to_pandera_schema__mutmut_217: survived
+--- src/setup.py
++++ src/setup.py
+@@ -48,7 +48,7 @@
+                 else:
+                     mandatory_group[attribute["@group_name"]] = "df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "required=true,")
+             else:
+                 file.write(indentation + "required=False,")
+             # NCBI column description
+# setup.x_biosample_package_to_pandera_schema__mutmut_218: survived
+--- src/setup.py
++++ src/setup.py
+@@ -48,7 +48,7 @@
+                 else:
+                     mandatory_group[attribute["@group_name"]] = "df[\"bs-" + attribute["HarmonizedName"] + "\"].isnull()"
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+-                file.write(indentation + "required=True,")
++                file.write(indentation + "REQUIRED=TRUE,")
+             else:
+                 file.write(indentation + "required=False,")
+             # NCBI column description
+# setup.x_biosample_package_to_pandera_schema__mutmut_221: survived
+--- src/setup.py
++++ src/setup.py
+@@ -50,7 +50,7 @@
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+                 file.write(indentation + "required=True,")
+             else:
+-                file.write(indentation + "required=False,")
++                file.write(indentation + "XXrequired=False,XX")
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+# setup.x_biosample_package_to_pandera_schema__mutmut_222: survived
+--- src/setup.py
++++ src/setup.py
+@@ -50,7 +50,7 @@
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+                 file.write(indentation + "required=True,")
+             else:
+-                file.write(indentation + "required=False,")
++                file.write(indentation + "required=false,")
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+# setup.x_biosample_package_to_pandera_schema__mutmut_223: survived
+--- src/setup.py
++++ src/setup.py
+@@ -50,7 +50,7 @@
+                 group_message = "At least one required: Group \\\"" + attribute["@group_name"] + "\\\". "
+                 file.write(indentation + "required=True,")
+             else:
+-                file.write(indentation + "required=False,")
++                file.write(indentation + "REQUIRED=FALSE,")
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+# setup.x_biosample_package_to_pandera_schema__mutmut_226: timeout
+--- src/setup.py
++++ src/setup.py
+@@ -52,7 +52,7 @@
+             else:
+                 file.write(indentation + "required=False,")
+             # NCBI column description
+-            if attribute["Description"]:
++            if attribute["DESCRIPTION"]:
+                 # Sanitize description
+                 attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ")
+                 if "gender or physical sex" in attribute_description.lower():
+# setup.x_biosample_package_to_pandera_schema__mutmut_228: timeout
+--- src/setup.py
++++ src/setup.py
+@@ -54,7 +54,7 @@
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+-                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ")
++                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace(None," ")
+                 if "gender or physical sex" in attribute_description.lower():
+                     attribute_description = attribute_description.replace("Gender or physical sex", "Biological sex")
+                 file.write(indentation + "description=\"" + group_message + attribute_description + "\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_241: survived
+--- src/setup.py
++++ src/setup.py
+@@ -54,7 +54,7 @@
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+-                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ")
++                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("XX\nXX"," ")
+                 if "gender or physical sex" in attribute_description.lower():
+                     attribute_description = attribute_description.replace("Gender or physical sex", "Biological sex")
+                 file.write(indentation + "description=\"" + group_message + attribute_description + "\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_242: survived
+--- src/setup.py
++++ src/setup.py
+@@ -54,7 +54,7 @@
+             # NCBI column description
+             if attribute["Description"]:
+                 # Sanitize description
+-                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n"," ")
++                attribute_description = attribute["Description"].strip().replace("\"", "\\\"").replace("\n","XX XX")
+                 if "gender or physical sex" in attribute_description.lower():
+                     attribute_description = attribute_description.replace("Gender or physical sex", "Biological sex")
+                 file.write(indentation + "description=\"" + group_message + attribute_description + "\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_277: survived
+--- src/setup.py
++++ src/setup.py
+@@ -61,7 +61,7 @@
+             # Human readable field name for submission
+             file.write(indentation + "title=\"" + attribute["Name"] + "\",")
+             # Close attribute
+-            indentation = indentation[:-1]
++            indentation = indentation[:+1]
+             file.write(indentation + "),")
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+# setup.x_biosample_package_to_pandera_schema__mutmut_278: survived
+--- src/setup.py
++++ src/setup.py
+@@ -61,7 +61,7 @@
+             # Human readable field name for submission
+             file.write(indentation + "title=\"" + attribute["Name"] + "\",")
+             # Close attribute
+-            indentation = indentation[:-1]
++            indentation = indentation[:-2]
+             file.write(indentation + "),")
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+# setup.x_biosample_package_to_pandera_schema__mutmut_281: survived
+--- src/setup.py
++++ src/setup.py
+@@ -62,7 +62,7 @@
+             file.write(indentation + "title=\"" + attribute["Name"] + "\",")
+             # Close attribute
+             indentation = indentation[:-1]
+-            file.write(indentation + "),")
++            file.write(indentation + "XX),XX")
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+         indentation = indentation[:-1]
+# setup.x_biosample_package_to_pandera_schema__mutmut_284: survived
+--- src/setup.py
++++ src/setup.py
+@@ -65,7 +65,7 @@
+             file.write(indentation + "),")
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+-        indentation = indentation[:-1]
++        indentation = indentation[:+1]
+         file.write(indentation + "},")
+         # Create dataframe wide checks
+         if bool(mandatory_group):
+# setup.x_biosample_package_to_pandera_schema__mutmut_285: survived
+--- src/setup.py
++++ src/setup.py
+@@ -65,7 +65,7 @@
+             file.write(indentation + "),")
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+-        indentation = indentation[:-1]
++        indentation = indentation[:-2]
+         file.write(indentation + "},")
+         # Create dataframe wide checks
+         if bool(mandatory_group):
+# setup.x_biosample_package_to_pandera_schema__mutmut_288: survived
+--- src/setup.py
++++ src/setup.py
+@@ -66,7 +66,7 @@
+         # Close columns
+         file.write(SCHEMA_COLUMNS_FOOTER)
+         indentation = indentation[:-1]
+-        file.write(indentation + "},")
++        file.write(indentation + "XX},XX")
+         # Create dataframe wide checks
+         if bool(mandatory_group):
+             file.write(indentation + "checks=[")
+# setup.x_biosample_package_to_pandera_schema__mutmut_292: survived
+--- src/setup.py
++++ src/setup.py
+@@ -69,7 +69,7 @@
+         file.write(indentation + "},")
+         # Create dataframe wide checks
+         if bool(mandatory_group):
+-            file.write(indentation + "checks=[")
++            file.write(indentation + "XXchecks=[XX")
+             # Validate columns that are required but have multiple options
+             indentation += "\t"
+             for key in mandatory_group:
+# setup.x_biosample_package_to_pandera_schema__mutmut_293: survived
+--- src/setup.py
++++ src/setup.py
+@@ -69,7 +69,7 @@
+         file.write(indentation + "},")
+         # Create dataframe wide checks
+         if bool(mandatory_group):
+-            file.write(indentation + "checks=[")
++            file.write(indentation + "CHECKS=[")
+             # Validate columns that are required but have multiple options
+             indentation += "\t"
+             for key in mandatory_group:
+# setup.x_biosample_package_to_pandera_schema__mutmut_294: survived
+--- src/setup.py
++++ src/setup.py
+@@ -71,7 +71,7 @@
+         if bool(mandatory_group):
+             file.write(indentation + "checks=[")
+             # Validate columns that are required but have multiple options
+-            indentation += "\t"
++            indentation = "\t"
+             for key in mandatory_group:
+                 file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
+             # Close checks
+# setup.x_biosample_package_to_pandera_schema__mutmut_296: survived
+--- src/setup.py
++++ src/setup.py
+@@ -71,7 +71,7 @@
+         if bool(mandatory_group):
+             file.write(indentation + "checks=[")
+             # Validate columns that are required but have multiple options
+-            indentation += "\t"
++            indentation += "XX\tXX"
+             for key in mandatory_group:
+                 file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
+             # Close checks
+# setup.x_biosample_package_to_pandera_schema__mutmut_308: survived
+--- src/setup.py
++++ src/setup.py
+@@ -75,7 +75,7 @@
+             for key in mandatory_group:
+                 file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
+             # Close checks
+-            indentation = indentation[:-1]
++            indentation = indentation[:+1]
+             file.write(indentation + "],")
+         else:
+             file.write(indentation + "checks=None,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_309: survived
+--- src/setup.py
++++ src/setup.py
+@@ -75,7 +75,7 @@
+             for key in mandatory_group:
+                 file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
+             # Close checks
+-            indentation = indentation[:-1]
++            indentation = indentation[:-2]
+             file.write(indentation + "],")
+         else:
+             file.write(indentation + "checks=None,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_312: survived
+--- src/setup.py
++++ src/setup.py
+@@ -76,7 +76,7 @@
+                 file.write(indentation + "Check(lambda df: ~(" + mandatory_group[key] + "), ignore_na = False),")
+             # Close checks
+             indentation = indentation[:-1]
+-            file.write(indentation + "],")
++            file.write(indentation + "XX],XX")
+         else:
+             file.write(indentation + "checks=None,")
+         file.write(indentation + "index=None,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_315: survived
+--- src/setup.py
++++ src/setup.py
+@@ -78,7 +78,7 @@
+             indentation = indentation[:-1]
+             file.write(indentation + "],")
+         else:
+-            file.write(indentation + "checks=None,")
++            file.write(indentation + "XXchecks=None,XX")
+         file.write(indentation + "index=None,")
+         file.write(indentation + "coerce=False,")
+         file.write(indentation + "strict=\"filter\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_316: survived
+--- src/setup.py
++++ src/setup.py
+@@ -78,7 +78,7 @@
+             indentation = indentation[:-1]
+             file.write(indentation + "],")
+         else:
+-            file.write(indentation + "checks=None,")
++            file.write(indentation + "checks=none,")
+         file.write(indentation + "index=None,")
+         file.write(indentation + "coerce=False,")
+         file.write(indentation + "strict=\"filter\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_317: survived
+--- src/setup.py
++++ src/setup.py
+@@ -78,7 +78,7 @@
+             indentation = indentation[:-1]
+             file.write(indentation + "],")
+         else:
+-            file.write(indentation + "checks=None,")
++            file.write(indentation + "CHECKS=NONE,")
+         file.write(indentation + "index=None,")
+         file.write(indentation + "coerce=False,")
+         file.write(indentation + "strict=\"filter\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_320: survived
+--- src/setup.py
++++ src/setup.py
+@@ -79,7 +79,7 @@
+             file.write(indentation + "],")
+         else:
+             file.write(indentation + "checks=None,")
+-        file.write(indentation + "index=None,")
++        file.write(indentation + "XXindex=None,XX")
+         file.write(indentation + "coerce=False,")
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_325: survived
+--- src/setup.py
++++ src/setup.py
+@@ -80,7 +80,7 @@
+         else:
+             file.write(indentation + "checks=None,")
+         file.write(indentation + "index=None,")
+-        file.write(indentation + "coerce=False,")
++        file.write(indentation + "XXcoerce=False,XX")
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_326: survived
+--- src/setup.py
++++ src/setup.py
+@@ -80,7 +80,7 @@
+         else:
+             file.write(indentation + "checks=None,")
+         file.write(indentation + "index=None,")
+-        file.write(indentation + "coerce=False,")
++        file.write(indentation + "coerce=false,")
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_327: survived
+--- src/setup.py
++++ src/setup.py
+@@ -80,7 +80,7 @@
+         else:
+             file.write(indentation + "checks=None,")
+         file.write(indentation + "index=None,")
+-        file.write(indentation + "coerce=False,")
++        file.write(indentation + "COERCE=FALSE,")
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_330: survived
+--- src/setup.py
++++ src/setup.py
+@@ -81,7 +81,7 @@
+             file.write(indentation + "checks=None,")
+         file.write(indentation + "index=None,")
+         file.write(indentation + "coerce=False,")
+-        file.write(indentation + "strict=\"filter\",")
++        file.write(indentation + "XXstrict=\"filter\",XX")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+         file.write(indentation + "unique=None,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_342: survived
+--- src/setup.py
++++ src/setup.py
+@@ -83,7 +83,7 @@
+         file.write(indentation + "coerce=False,")
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+-        file.write(indentation + "ordered=False,")
++        file.write(indentation + "XXordered=False,XX")
+         file.write(indentation + "unique=None,")
+         file.write(indentation + "report_duplicates=\"all\",")
+         file.write(indentation + "unique_column_names=True,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_347: survived
+--- src/setup.py
++++ src/setup.py
+@@ -84,7 +84,7 @@
+         file.write(indentation + "strict=\"filter\",")
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+-        file.write(indentation + "unique=None,")
++        file.write(indentation + "XXunique=None,XX")
+         file.write(indentation + "report_duplicates=\"all\",")
+         file.write(indentation + "unique_column_names=True,")
+         file.write(indentation + "add_missing_columns=False,")
+# setup.x_biosample_package_to_pandera_schema__mutmut_352: survived
+--- src/setup.py
++++ src/setup.py
+@@ -85,7 +85,7 @@
+         file.write(indentation + "name=\"biosample_package_" + name + "_schema\",")
+         file.write(indentation + "ordered=False,")
+         file.write(indentation + "unique=None,")
+-        file.write(indentation + "report_duplicates=\"all\",")
++        file.write(indentation + "XXreport_duplicates=\"all\",XX")
+         file.write(indentation + "unique_column_names=True,")
+         file.write(indentation + "add_missing_columns=False,")
+         file.write(indentation + "title=\"BioSample package " + name + " schema\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_356: survived
+--- src/setup.py
++++ src/setup.py
+@@ -86,7 +86,7 @@
+         file.write(indentation + "ordered=False,")
+         file.write(indentation + "unique=None,")
+         file.write(indentation + "report_duplicates=\"all\",")
+-        file.write(indentation + "unique_column_names=True,")
++        file.write(indentation + "XXunique_column_names=True,XX")
+         file.write(indentation + "add_missing_columns=False,")
+         file.write(indentation + "title=\"BioSample package " + name + " schema\",")
+         file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
+# setup.x_biosample_package_to_pandera_schema__mutmut_361: survived
+--- src/setup.py
++++ src/setup.py
+@@ -87,7 +87,7 @@
+         file.write(indentation + "unique=None,")
+         file.write(indentation + "report_duplicates=\"all\",")
+         file.write(indentation + "unique_column_names=True,")
+-        file.write(indentation + "add_missing_columns=False,")
++        file.write(indentation + "XXadd_missing_columns=False,XX")
+         file.write(indentation + "title=\"BioSample package " + name + " schema\",")
+         file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
+         # Close schema
+# setup.x_biosample_package_to_pandera_schema__mutmut_383: survived
+--- src/setup.py
++++ src/setup.py
+@@ -91,6 +91,6 @@
+         file.write(indentation + "title=\"BioSample package " + name + " schema\",")
+         file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
+         # Close schema
+-        indentation = indentation[:-1]
++        indentation = indentation[:+1]
+         file.write(indentation + ")")
+     os.remove(xml_file)
+# setup.x_biosample_package_to_pandera_schema__mutmut_384: survived
+--- src/setup.py
++++ src/setup.py
+@@ -91,6 +91,6 @@
+         file.write(indentation + "title=\"BioSample package " + name + " schema\",")
+         file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
+         # Close schema
+-        indentation = indentation[:-1]
++        indentation = indentation[:-2]
+         file.write(indentation + ")")
+     os.remove(xml_file)
+# setup.x_biosample_package_to_pandera_schema__mutmut_387: survived
+--- src/setup.py
++++ src/setup.py
+@@ -92,5 +92,5 @@
+         file.write(indentation + "description=\"Schema validation for BioSample database using " + name + " package.\",")
+         # Close schema
+         indentation = indentation[:-1]
+-        file.write(indentation + ")")
++        file.write(indentation + "XX)XX")
+     os.remove(xml_file)
+# setup.x_test_internet_connection__mutmut_22: survived
+--- src/setup.py
++++ src/setup.py
+@@ -8,7 +8,7 @@
+                 query = requests.get(info['website'])
+                 response = query.status_code
+             except Exception as e:
+-                error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
++                error_list.append(f"{test} connectivity test failed for '{info['XXwebsiteXX']}'. Check possible firewall issues. \nException:{e}")
+             if response in (200, 204, 301, 302):
+                 print(f"{test} '{info['website']}' connectivity test ok.")
+             else:
+# setup.x_test_internet_connection__mutmut_23: survived
+--- src/setup.py
++++ src/setup.py
+@@ -8,7 +8,7 @@
+                 query = requests.get(info['website'])
+                 response = query.status_code
+             except Exception as e:
+-                error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
++                error_list.append(f"{test} connectivity test failed for '{info['WEBSITE']}'. Check possible firewall issues. \nException:{e}")
+             if response in (200, 204, 301, 302):
+                 print(f"{test} '{info['website']}' connectivity test ok.")
+             else:
+# setup.x_test_internet_connection__mutmut_26: survived
+--- src/setup.py
++++ src/setup.py
+@@ -9,7 +9,7 @@
+                 response = query.status_code
+             except Exception as e:
+                 error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
+-            if response in (200, 204, 301, 302):
++            if response in (200, 205, 301, 302):
+                 print(f"{test} '{info['website']}' connectivity test ok.")
+             else:
+                 error_list.append(f"{info['error_msg']} Error code received:'{response}'")
+# setup.x_test_internet_connection__mutmut_27: survived
+--- src/setup.py
++++ src/setup.py
+@@ -9,7 +9,7 @@
+                 response = query.status_code
+             except Exception as e:
+                 error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
+-            if response in (200, 204, 301, 302):
++            if response in (200, 204, 302, 302):
+                 print(f"{test} '{info['website']}' connectivity test ok.")
+             else:
+                 error_list.append(f"{info['error_msg']} Error code received:'{response}'")
+# setup.x_test_internet_connection__mutmut_28: survived
+--- src/setup.py
++++ src/setup.py
+@@ -9,7 +9,7 @@
+                 response = query.status_code
+             except Exception as e:
+                 error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
+-            if response in (200, 204, 301, 302):
++            if response in (200, 204, 301, 303):
+                 print(f"{test} '{info['website']}' connectivity test ok.")
+             else:
+                 error_list.append(f"{info['error_msg']} Error code received:'{response}'")
+# setup.x_test_internet_connection__mutmut_93: survived
+--- src/setup.py
++++ src/setup.py
+@@ -39,7 +39,7 @@
+             print("Running Table2asn.")
+             proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
+             if proc.returncode != 0:
+-                error_list.append("Table2asn-Error")
++                error_list.append("XXTable2asn-ErrorXX")
+                 error_list.append(str(proc.stdout))
+                 error_list.append(str(proc.stderr))
+         except Exception as e:

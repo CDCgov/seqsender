@@ -11,12 +11,12 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from typing import List, Optional, Dict
+from typing import Optional
 import shutil
 import yaml
 import time
 
-from settings import SAMPLE_NAME_DATABASE_PREFIX, PROG_DIR
+from src.settings import SAMPLE_NAME_DATABASE_PREFIX, PROG_DIR
 
 def copy_file(source: str, destination: str):
 	shutil.copy(source, destination)
@@ -33,7 +33,7 @@ def validate_directory(name: str, path: str):
 		sys.exit(1)
 
 # Validate gisaid cli exists or error out
-def validate_gisaid_installer(submission_dir: str, organism: str, config_dict: Dict[str, Any]) -> str:
+def validate_gisaid_installer(submission_dir: str, organism: str, config_dict: dict[str, Any]) -> str:
 	# /<submission_dir>/gisaid_cli/<organism>_CLI
 	gisaid_cli_path_option_one = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI")
 	# /seqsender/gisaid_cli/<organism>_CLI
@@ -136,7 +136,7 @@ def save_csv(df: pd.DataFrame, file_path: str, file_name: Optional[str] = None, 
 		sys.exit(1)
 
 # Create fasta file based on database
-def create_fasta(database: str, metadata: pd.DataFrame, submission_dir: str, config_dict: Dict[str, Any]) -> None:
+def create_fasta(database: str, metadata: pd.DataFrame, submission_dir: str, config_dict: dict[str, Any]) -> None:
 	records = []
 	for index, row in metadata.iterrows():
 		column_name = SAMPLE_NAME_DATABASE_PREFIX[database] + "sample_name"

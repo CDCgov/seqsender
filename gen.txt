@@ -1,0 +1,1432 @@
+# genbank_handler.x_create_submission_xml__mutmut_35: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     root = etree.Element("Submission")
+     description = etree.SubElement(root, "Description")
+     title = etree.SubElement(description, "Title")
+-    if "gb-title" in metadata and pd.notnull(metadata["gb-title"].iloc[0]) and metadata["gb-title"].iloc[0].strip() != "":
++    if "gb-title" in metadata and pd.notnull(metadata["gb-title"].iloc[0]) and metadata["gb-title"].iloc[0].strip() != "XXXX":
+         title.text = metadata["gb-title"].iloc[0]
+     else:
+         title.text = submission_name + "-GB"
+# genbank_handler.x_create_submission_xml__mutmut_65: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -9,7 +9,7 @@
+     else:
+         title.text = submission_name + "-GB"
+     comment = etree.SubElement(description, "Comment")
+-    if "gb-comment" in metadata and pd.notnull(metadata["gb-comment"].iloc[0]) and metadata["gb-comment"].iloc[0].strip() != "":
++    if "gb-comment" in metadata and pd.notnull(metadata["gb-comment"].iloc[0]) and metadata["gb-comment"].iloc[0].strip() != "XXXX":
+         comment.text = metadata["gb-comment"].iloc[0]
+     else:
+         comment.text = "GenBank Submission"
+# genbank_handler.x_create_submission_xml__mutmut_154: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -20,7 +20,7 @@
+     if config_dict["Specified_Release_Date"]:
+         release_date = etree.SubElement(description, "Hold", release_date=config_dict["Specified_Release_Date"])
+     action = etree.SubElement(root, "Action")
+-    addfiles = etree.SubElement(action, "AddFiles", target_db="GenBank")
++    addfiles = etree.SubElement(action, "addfiles", target_db="GenBank")
+     file = etree.SubElement(addfiles, "File", file_path=submission_name + ".zip")
+     datatype = etree.SubElement(file, "DataType")
+     datatype.text = "genbank-submission-package"
+# genbank_handler.x_create_authorset__mutmut_33: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -2,7 +2,7 @@
+ def create_authorset(config_dict: dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, publication_title: Optional[str], publication_status: Optional[str]) -> None:
+     submitter_first = config_dict["Description"]["Organization"]["Submitter"]["Name"]["First"]
+     submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+-    submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
++    submitter_email = None
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+         alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
+     else:
+# genbank_handler.x_create_authorset__mutmut_65: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+     submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+-        alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
++        alt_submitter_email = config_dict["Description"]["Organization"]["XXSubmitterXX"]["Alt_Email"]
+     else:
+         alt_submitter_email = None
+     affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
+# genbank_handler.x_create_authorset__mutmut_66: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+     submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+-        alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
++        alt_submitter_email = config_dict["Description"]["Organization"]["submitter"]["Alt_Email"]
+     else:
+         alt_submitter_email = None
+     affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
+# genbank_handler.x_create_authorset__mutmut_67: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+     submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+-        alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
++        alt_submitter_email = config_dict["Description"]["Organization"]["SUBMITTER"]["Alt_Email"]
+     else:
+         alt_submitter_email = None
+     affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
+# genbank_handler.x_create_authorset__mutmut_68: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+     submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+-        alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
++        alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["XXAlt_EmailXX"]
+     else:
+         alt_submitter_email = None
+     affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
+# genbank_handler.x_create_authorset__mutmut_71: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -6,7 +6,7 @@
+     if config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]:
+         alt_submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Alt_Email"]
+     else:
+-        alt_submitter_email = None
++        alt_submitter_email = ""
+     affil = config_dict["Description"]["Organization"]["Address"]["Affil"]
+     div = config_dict["Description"]["Organization"]["Address"]["Div"]
+     if publication_title:
+# genbank_handler.x_create_authorset__mutmut_198: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -25,7 +25,7 @@
+     if config_dict["Description"]["Organization"]["Address"]["Phone"]:
+         phone = config_dict["Description"]["Organization"]["Address"]["Phone"]
+     else:
+-        phone = None
++        phone = ""
+     zip_code = str(config_dict["Description"]["Organization"]["Address"]["Postal_Code"])
+     # Create authorset file
+     with open(os.path.join(submission_dir, "authorset.sbt"), "w+") as f:
+# genbank_handler.x_create_authorset__mutmut_300: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -44,7 +44,7 @@
+         f.write("        country \"" + country + "\",\n")
+         f.write("        street \"" + street + "\",\n")
+         f.write("        email \"" + email + "\",\n")
+-        if phone is not None and phone.strip() != "":
++        if phone is not None and phone.strip() != "XXXX":
+             f.write("        phone \"" + phone + "\",\n")
+         f.write("        postal-code \"" + zip_code + "\"\n")
+         f.write("      }\n")
+# genbank_handler.x_create_authorset__mutmut_340: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -58,7 +58,7 @@
+             author_delim = ";"
+         # If no semi-colon in authors string, attempt comma
+         elif "," in metadata["authors"].unique()[0]:
+-            author_delim = ","
++            author_delim = None
+             print("Warning: Metadata 'authors' field is not using a semi-colon ';' to separate individual names. Comma was detected instead and is being used to separate individual names. If this causes issues, separate each name with a semi-colon instead.", file = sys.stderr)
+         # Default delim is semi-colon
+         else:
+# genbank_handler.x_create_authorset__mutmut_341: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -58,7 +58,7 @@
+             author_delim = ";"
+         # If no semi-colon in authors string, attempt comma
+         elif "," in metadata["authors"].unique()[0]:
+-            author_delim = ","
++            author_delim = "XX,XX"
+             print("Warning: Metadata 'authors' field is not using a semi-colon ';' to separate individual names. Comma was detected instead and is being used to separate individual names. If this causes issues, separate each name with a semi-colon instead.", file = sys.stderr)
+         # Default delim is semi-colon
+         else:
+# genbank_handler.x_create_authorset__mutmut_349: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -62,7 +62,7 @@
+             print("Warning: Metadata 'authors' field is not using a semi-colon ';' to separate individual names. Comma was detected instead and is being used to separate individual names. If this causes issues, separate each name with a semi-colon instead.", file = sys.stderr)
+         # Default delim is semi-colon
+         else:
+-            author_delim = ";"
++            author_delim = None
+         authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
+         total_names = len(authors)
+         for index, name in enumerate(authors, start = 1):
+# genbank_handler.x_create_authorset__mutmut_350: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -62,7 +62,7 @@
+             print("Warning: Metadata 'authors' field is not using a semi-colon ';' to separate individual names. Comma was detected instead and is being used to separate individual names. If this causes issues, separate each name with a semi-colon instead.", file = sys.stderr)
+         # Default delim is semi-colon
+         else:
+-            author_delim = ";"
++            author_delim = "XX;XX"
+         authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
+         total_names = len(authors)
+         for index, name in enumerate(authors, start = 1):
+# genbank_handler.x_create_authorset__mutmut_358: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -63,7 +63,7 @@
+         # Default delim is semi-colon
+         else:
+             author_delim = ";"
+-        authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
++        authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != "XXXX"]
+         total_names = len(authors)
+         for index, name in enumerate(authors, start = 1):
+             f.write("        {\n")
+# genbank_handler.x_create_authorset__mutmut_385: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+             f.write("            last \"" + name.last + "\",\n")
+             f.write("            first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n            middle \"" + name.middle + "\"")
++                f.write(",\n            middle \"" + name.middle - "\"")
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_386: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+             f.write("            last \"" + name.last + "\",\n")
+             f.write("            first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n            middle \"" + name.middle + "\"")
++                f.write(",\n            middle \"" - name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_387: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+             f.write("            last \"" + name.last + "\",\n")
+             f.write("            first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n            middle \"" + name.middle + "\"")
++                f.write("XX,\n            middle \"XX" + name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_388: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+             f.write("            last \"" + name.last + "\",\n")
+             f.write("            first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n            middle \"" + name.middle + "\"")
++                f.write(",\n            MIDDLE \"" + name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_389: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+             f.write("            last \"" + name.last + "\",\n")
+             f.write("            first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n            middle \"" + name.middle + "\"")
++                f.write(",\n            middle \"" + name.middle + "XX\"XX")
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_393: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -73,7 +73,7 @@
+             if name.middle != "":
+                 f.write(",\n            middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n            suffix \"" + name.suffix + "\"")
++                f.write(",\n            suffix \"" + name.suffix - "\"")
+             if name.title != "":
+                 f.write(",\n            title \"" + name.title + "\"")
+             f.write("\n          }\n")
+# genbank_handler.x_create_authorset__mutmut_394: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -73,7 +73,7 @@
+             if name.middle != "":
+                 f.write(",\n            middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n            suffix \"" + name.suffix + "\"")
++                f.write(",\n            suffix \"" - name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n            title \"" + name.title + "\"")
+             f.write("\n          }\n")
+# genbank_handler.x_create_authorset__mutmut_395: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -73,7 +73,7 @@
+             if name.middle != "":
+                 f.write(",\n            middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n            suffix \"" + name.suffix + "\"")
++                f.write("XX,\n            suffix \"XX" + name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n            title \"" + name.title + "\"")
+             f.write("\n          }\n")
+# genbank_handler.x_create_authorset__mutmut_396: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -73,7 +73,7 @@
+             if name.middle != "":
+                 f.write(",\n            middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n            suffix \"" + name.suffix + "\"")
++                f.write(",\n            SUFFIX \"" + name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n            title \"" + name.title + "\"")
+             f.write("\n          }\n")
+# genbank_handler.x_create_authorset__mutmut_397: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -73,7 +73,7 @@
+             if name.middle != "":
+                 f.write(",\n            middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n            suffix \"" + name.suffix + "\"")
++                f.write(",\n            suffix \"" + name.suffix + "XX\"XX")
+             if name.title != "":
+                 f.write(",\n            title \"" + name.title + "\"")
+             f.write("\n          }\n")
+# genbank_handler.x_create_authorset__mutmut_401: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -75,7 +75,7 @@
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n            title \"" + name.title + "\"")
++                f.write(",\n            title \"" + name.title - "\"")
+             f.write("\n          }\n")
+             if index == total_names:
+                 f.write("        }\n")
+# genbank_handler.x_create_authorset__mutmut_402: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -75,7 +75,7 @@
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n            title \"" + name.title + "\"")
++                f.write(",\n            title \"" - name.title + "\"")
+             f.write("\n          }\n")
+             if index == total_names:
+                 f.write("        }\n")
+# genbank_handler.x_create_authorset__mutmut_403: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -75,7 +75,7 @@
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n            title \"" + name.title + "\"")
++                f.write("XX,\n            title \"XX" + name.title + "\"")
+             f.write("\n          }\n")
+             if index == total_names:
+                 f.write("        }\n")
+# genbank_handler.x_create_authorset__mutmut_404: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -75,7 +75,7 @@
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n            title \"" + name.title + "\"")
++                f.write(",\n            TITLE \"" + name.title + "\"")
+             f.write("\n          }\n")
+             if index == total_names:
+                 f.write("        }\n")
+# genbank_handler.x_create_authorset__mutmut_405: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -75,7 +75,7 @@
+             if name.suffix != "":
+                 f.write(",\n            suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n            title \"" + name.title + "\"")
++                f.write(",\n            title \"" + name.title + "XX\"XX")
+             f.write("\n          }\n")
+             if index == total_names:
+                 f.write("        }\n")
+# genbank_handler.x_create_authorset__mutmut_500: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -101,7 +101,7 @@
+         f.write("      cit \"" + publication_status_string + "\",\n")
+         f.write("      authors {\n")
+         f.write("        names std {\n")
+-        authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != ""]
++        authors = [HumanName(x.strip()) for x in metadata["authors"].unique()[0].split(author_delim) if x.strip() != "XXXX"]
+         for index, name in enumerate(authors, start = 1):
+             f.write("          {\n")
+             f.write("            name name {\n")
+# genbank_handler.x_create_authorset__mutmut_526: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -108,7 +108,7 @@
+             f.write("              last \"" + name.last + "\",\n")
+             f.write("              first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n              middle \"" + name.middle + "\"")
++                f.write(",\n              middle \"" + name.middle - "\"")
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_527: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -108,7 +108,7 @@
+             f.write("              last \"" + name.last + "\",\n")
+             f.write("              first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n              middle \"" + name.middle + "\"")
++                f.write(",\n              middle \"" - name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_528: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -108,7 +108,7 @@
+             f.write("              last \"" + name.last + "\",\n")
+             f.write("              first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n              middle \"" + name.middle + "\"")
++                f.write("XX,\n              middle \"XX" + name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_529: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -108,7 +108,7 @@
+             f.write("              last \"" + name.last + "\",\n")
+             f.write("              first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n              middle \"" + name.middle + "\"")
++                f.write(",\n              MIDDLE \"" + name.middle + "\"")
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_530: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -108,7 +108,7 @@
+             f.write("              last \"" + name.last + "\",\n")
+             f.write("              first \"" + name.first + "\"")
+             if name.middle != "":
+-                f.write(",\n              middle \"" + name.middle + "\"")
++                f.write(",\n              middle \"" + name.middle + "XX\"XX")
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+# genbank_handler.x_create_authorset__mutmut_534: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -110,7 +110,7 @@
+             if name.middle != "":
+                 f.write(",\n              middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n              suffix \"" + name.suffix + "\"")
++                f.write(",\n              suffix \"" + name.suffix - "\"")
+             if name.title != "":
+                 f.write(",\n              title \"" + name.title + "\"")
+             f.write("\n            }\n")
+# genbank_handler.x_create_authorset__mutmut_535: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -110,7 +110,7 @@
+             if name.middle != "":
+                 f.write(",\n              middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n              suffix \"" + name.suffix + "\"")
++                f.write(",\n              suffix \"" - name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n              title \"" + name.title + "\"")
+             f.write("\n            }\n")
+# genbank_handler.x_create_authorset__mutmut_536: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -110,7 +110,7 @@
+             if name.middle != "":
+                 f.write(",\n              middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n              suffix \"" + name.suffix + "\"")
++                f.write("XX,\n              suffix \"XX" + name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n              title \"" + name.title + "\"")
+             f.write("\n            }\n")
+# genbank_handler.x_create_authorset__mutmut_537: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -110,7 +110,7 @@
+             if name.middle != "":
+                 f.write(",\n              middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n              suffix \"" + name.suffix + "\"")
++                f.write(",\n              SUFFIX \"" + name.suffix + "\"")
+             if name.title != "":
+                 f.write(",\n              title \"" + name.title + "\"")
+             f.write("\n            }\n")
+# genbank_handler.x_create_authorset__mutmut_538: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -110,7 +110,7 @@
+             if name.middle != "":
+                 f.write(",\n              middle \"" + name.middle + "\"")
+             if name.suffix != "":
+-                f.write(",\n              suffix \"" + name.suffix + "\"")
++                f.write(",\n              suffix \"" + name.suffix + "XX\"XX")
+             if name.title != "":
+                 f.write(",\n              title \"" + name.title + "\"")
+             f.write("\n            }\n")
+# genbank_handler.x_create_authorset__mutmut_542: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -112,7 +112,7 @@
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n              title \"" + name.title + "\"")
++                f.write(",\n              title \"" + name.title - "\"")
+             f.write("\n            }\n")
+             if index == total_names:
+                 f.write("          }\n")
+# genbank_handler.x_create_authorset__mutmut_543: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -112,7 +112,7 @@
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n              title \"" + name.title + "\"")
++                f.write(",\n              title \"" - name.title + "\"")
+             f.write("\n            }\n")
+             if index == total_names:
+                 f.write("          }\n")
+# genbank_handler.x_create_authorset__mutmut_544: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -112,7 +112,7 @@
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n              title \"" + name.title + "\"")
++                f.write("XX,\n              title \"XX" + name.title + "\"")
+             f.write("\n            }\n")
+             if index == total_names:
+                 f.write("          }\n")
+# genbank_handler.x_create_authorset__mutmut_545: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -112,7 +112,7 @@
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n              title \"" + name.title + "\"")
++                f.write(",\n              TITLE \"" + name.title + "\"")
+             f.write("\n            }\n")
+             if index == total_names:
+                 f.write("          }\n")
+# genbank_handler.x_create_authorset__mutmut_546: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -112,7 +112,7 @@
+             if name.suffix != "":
+                 f.write(",\n              suffix \"" + name.suffix + "\"")
+             if name.title != "":
+-                f.write(",\n              title \"" + name.title + "\"")
++                f.write(",\n              title \"" + name.title + "XX\"XX")
+             f.write("\n            }\n")
+             if index == total_names:
+                 f.write("          }\n")
+# genbank_handler.x_create_authorset__mutmut_573: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -124,7 +124,7 @@
+         f.write("    }\n")
+         f.write("  }\n")
+         f.write("}\n")
+-        if alt_submitter_email is not None and alt_submitter_email.strip() != "":
++        if alt_submitter_email is not None and alt_submitter_email.strip() != "XXXX":
+             f.write("Seqdesc ::= user {\n")
+             f.write("  type str \"Submission\",\n")
+             f.write("  data {\n")
+# genbank_handler.x_create_files__mutmut_5: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -1,7 +1,7 @@
+ # Create a zip file for genbank submission
+ def create_files(organism: str, config_dict: dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str]) -> None:
+     # Drop submission xml columns
+-    metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
++    metadata = metadata.drop(columns=["gb-title", "gb-comment"], )
+     # Create authorset file
+     create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=publication_status)
+     file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir, config_dict=config_dict)
+# genbank_handler.x_create_files__mutmut_16: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -3,7 +3,7 @@
+     # Drop submission xml columns
+     metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
+     # Create authorset file
+-    create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=publication_status)
++    create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=None, publication_status=publication_status)
+     file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir, config_dict=config_dict)
+     # Retrieve the source df"
+     source_df = metadata.filter(regex=GENBANK_REGEX_SRC).copy()
+# genbank_handler.x_create_files__mutmut_17: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -3,7 +3,7 @@
+     # Drop submission xml columns
+     metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
+     # Create authorset file
+-    create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=publication_status)
++    create_authorset(config_dict=config_dict, metadata=metadata, submission_name=submission_name, submission_dir=submission_dir, publication_title=publication_title, publication_status=None)
+     file_handler.create_fasta(database="GENBANK", metadata=metadata, submission_dir=submission_dir, config_dict=config_dict)
+     # Retrieve the source df"
+     source_df = metadata.filter(regex=GENBANK_REGEX_SRC).copy()
+# genbank_handler.x_create_files__mutmut_133: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -23,7 +23,7 @@
+         comment_df.columns = comment_df.columns.str.replace("cmt-", "").str.strip()
+         comment_df = comment_df.rename(columns = {"gb-sample_name": "SeqID"})
+         columns_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix"])==True, comment_df.columns))
+-        ordered_columns = ["SeqID", "StructuredCommentPrefix"] + columns_no_prefix_suffix + ["StructuredCommentSuffix"]
++        ordered_columns = None
+         comment_df = comment_df.reindex(columns=ordered_columns)
+         file_handler.save_csv(df=comment_df, file_path=submission_dir, file_name="comment.cmt", sep="\t")
+     if gff_file:
+# genbank_handler.x_create_files__mutmut_146: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -24,7 +24,7 @@
+         comment_df = comment_df.rename(columns = {"gb-sample_name": "SeqID"})
+         columns_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix"])==True, comment_df.columns))
+         ordered_columns = ["SeqID", "StructuredCommentPrefix"] + columns_no_prefix_suffix + ["StructuredCommentSuffix"]
+-        comment_df = comment_df.reindex(columns=ordered_columns)
++        comment_df = comment_df.reindex(columns=None)
+         file_handler.save_csv(df=comment_df, file_path=submission_dir, file_name="comment.cmt", sep="\t")
+     if gff_file:
+         file_handler.copy_file(source = gff_file, destination = os.path.join(submission_dir, f"{submission_name}.gff"))
+# genbank_handler.x_create_zip__mutmut_7: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -1,6 +1,6 @@
+ # Create a zip file for genbank submission
+ def create_zip(submission_name: str, submission_dir: str) -> None:
+-    with ZipFile(os.path.join(submission_dir, submission_name + ".zip"), 'w') as zip:
++    with ZipFile(os.path.join(submission_name + ".zip"), 'w') as zip:
+         zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
+         zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
+         zip.write(os.path.join(submission_dir, "source.src"), "source.src")
+# genbank_handler.x_create_zip__mutmut_10: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -1,6 +1,6 @@
+ # Create a zip file for genbank submission
+ def create_zip(submission_name: str, submission_dir: str) -> None:
+-    with ZipFile(os.path.join(submission_dir, submission_name + ".zip"), 'w') as zip:
++    with ZipFile(os.path.join(submission_dir, submission_name + "XX.zipXX"), 'w') as zip:
+         zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
+         zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
+         zip.write(os.path.join(submission_dir, "source.src"), "source.src")
+# genbank_handler.x_create_zip__mutmut_11: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -1,6 +1,6 @@
+ # Create a zip file for genbank submission
+ def create_zip(submission_name: str, submission_dir: str) -> None:
+-    with ZipFile(os.path.join(submission_dir, submission_name + ".zip"), 'w') as zip:
++    with ZipFile(os.path.join(submission_dir, submission_name + ".ZIP"), 'w') as zip:
+         zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
+         zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
+         zip.write(os.path.join(submission_dir, "source.src"), "source.src")
+# genbank_handler.x_create_zip__mutmut_49: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -3,7 +3,7 @@
+     with ZipFile(os.path.join(submission_dir, submission_name + ".zip"), 'w') as zip:
+         zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
+         zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
+-        zip.write(os.path.join(submission_dir, "source.src"), "source.src")
++        zip.write(os.path.join(submission_dir, "source.src"), "SOURCE.SRC")
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+# genbank_handler.x_create_zip__mutmut_54: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+         zip.write(os.path.join(submission_dir, "authorset.sbt"), "authorset.sbt")
+         zip.write(os.path.join(submission_dir, "sequence.fsa"), "sequence.fsa")
+         zip.write(os.path.join(submission_dir, "source.src"), "source.src")
+-        if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
++        if os.path.isfile(os.path.join(submission_dir, )):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+     while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
+# genbank_handler.x_create_zip__mutmut_69: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -7,5 +7,5 @@
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+-    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
++    while os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
+         time.sleep(10)
+# genbank_handler.x_create_zip__mutmut_73: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -7,5 +7,5 @@
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+-    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
++    while not os.path.isfile(os.path.join(submission_name + ".zip")):
+         time.sleep(10)
+# genbank_handler.x_create_zip__mutmut_74: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -7,5 +7,5 @@
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+-    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
++    while not os.path.isfile(os.path.join(submission_dir, )):
+         time.sleep(10)
+# genbank_handler.x_create_zip__mutmut_76: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -7,5 +7,5 @@
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+-    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
++    while not os.path.isfile(os.path.join(submission_dir, submission_name + "XX.zipXX")):
+         time.sleep(10)
+# genbank_handler.x_create_zip__mutmut_77: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -7,5 +7,5 @@
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+-    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
++    while not os.path.isfile(os.path.join(submission_dir, submission_name + ".ZIP")):
+         time.sleep(10)
+# genbank_handler.x_create_zip__mutmut_79: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -8,4 +8,4 @@
+             zip.write(os.path.join(submission_dir, "comment.cmt"), "comment.cmt")
+     # Waiting for the zip file to write
+     while not os.path.isfile(os.path.join(submission_dir, submission_name + ".zip")):
+-        time.sleep(10)
++        time.sleep(11)
+# genbank_handler.x_create_table2asn__mutmut_74: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -11,7 +11,7 @@
+     if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+         command.append("-w")
+         command.append( os.path.join(submission_dir, "comment.cmt"))
+-    if os.path.isfile(os.path.join(submission_dir, f"{submission_name}.gff")):
++    if os.path.isfile(os.path.join(f"{submission_name}.gff")):
+         command.append("-f")
+         command.append(os.path.join(submission_dir, f"{submission_name}.gff"))
+     print("Running Table2asn.")
+# genbank_handler.x_create_table2asn__mutmut_123: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -22,6 +22,6 @@
+         print(proc.stderr, file=sys.stderr)
+         sys.exit(1)
+     print("Validating Table2asn submission.")
+-    validation_file = os.path.join(submission_dir, submission_name + ".val")
++    validation_file = os.path.join(submission_name + ".val")
+     submission_id = check_table2asn_submission(validation_file=validation_file)
+     return submission_id
+# genbank_handler.x_create_table2asn__mutmut_124: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -22,6 +22,6 @@
+         print(proc.stderr, file=sys.stderr)
+         sys.exit(1)
+     print("Validating Table2asn submission.")
+-    validation_file = os.path.join(submission_dir, submission_name + ".val")
++    validation_file = os.path.join(submission_dir, )
+     submission_id = check_table2asn_submission(validation_file=validation_file)
+     return submission_id
+# genbank_handler.x_create_table2asn__mutmut_126: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -22,6 +22,6 @@
+         print(proc.stderr, file=sys.stderr)
+         sys.exit(1)
+     print("Validating Table2asn submission.")
+-    validation_file = os.path.join(submission_dir, submission_name + ".val")
++    validation_file = os.path.join(submission_dir, submission_name + "XX.valXX")
+     submission_id = check_table2asn_submission(validation_file=validation_file)
+     return submission_id
+# genbank_handler.x_create_table2asn__mutmut_127: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -22,6 +22,6 @@
+         print(proc.stderr, file=sys.stderr)
+         sys.exit(1)
+     print("Validating Table2asn submission.")
+-    validation_file = os.path.join(submission_dir, submission_name + ".val")
++    validation_file = os.path.join(submission_dir, submission_name + ".VAL")
+     submission_id = check_table2asn_submission(validation_file=validation_file)
+     return submission_id
+# genbank_handler.x_check_table2asn_submission__mutmut_9: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -4,7 +4,7 @@
+     if os.path.isfile(validation_file) == False:
+         return "ERROR"
+     # If submission has errors reject
+-    with open(validation_file, "r") as file:
++    with open(validation_file, ) as file:
+         for line in file:
+             if "error:" in line.lower():
+                 print("Submission has errors after running Table2asn.", file=sys.stderr)
+# genbank_handler.x_process_genbank_report__mutmut_57: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -11,7 +11,7 @@
+                     file_name = file["@file_path"]
+                     file_path = file["@file_id"]
+                     r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+-                    open(os.path.join(submission_dir, file_name), 'wb').write(r.content)
++                    open(os.path.join(file_name), 'wb').write(r.content)
+                     # Waiting for the file to write
+                     while not os.path.exists(os.path.join(submission_dir, file_name)):
+                         time.sleep(10)
+# genbank_handler.x_process_genbank_report__mutmut_61: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -13,7 +13,7 @@
+                     r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+                     open(os.path.join(submission_dir, file_name), 'wb').write(r.content)
+                     # Waiting for the file to write
+-                    while not os.path.exists(os.path.join(submission_dir, file_name)):
++                    while os.path.exists(os.path.join(submission_dir, file_name)):
+                         time.sleep(10)
+                     if file_name == "AccessionReport.tsv":
+                         accession_report_df = file_handler.load_csv(file_path=os.path.join(submission_dir, file_name), sep="\t")
+# genbank_handler.x_process_genbank_report__mutmut_65: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -13,7 +13,7 @@
+                     r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+                     open(os.path.join(submission_dir, file_name), 'wb').write(r.content)
+                     # Waiting for the file to write
+-                    while not os.path.exists(os.path.join(submission_dir, file_name)):
++                    while not os.path.exists(os.path.join(file_name)):
+                         time.sleep(10)
+                     if file_name == "AccessionReport.tsv":
+                         accession_report_df = file_handler.load_csv(file_path=os.path.join(submission_dir, file_name), sep="\t")
+# genbank_handler.x_process_genbank_report__mutmut_66: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -13,7 +13,7 @@
+                     r = requests.get(NCBI_API_URL.replace("FILE_ID", file_path), allow_redirects=True)
+                     open(os.path.join(submission_dir, file_name), 'wb').write(r.content)
+                     # Waiting for the file to write
+-                    while not os.path.exists(os.path.join(submission_dir, file_name)):
++                    while not os.path.exists(os.path.join(submission_dir, )):
+                         time.sleep(10)
+                     if file_name == "AccessionReport.tsv":
+                         accession_report_df = file_handler.load_csv(file_path=os.path.join(submission_dir, file_name), sep="\t")
+# genbank_handler.x_process_genbank_report__mutmut_68: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -14,7 +14,7 @@
+                     open(os.path.join(submission_dir, file_name), 'wb').write(r.content)
+                     # Waiting for the file to write
+                     while not os.path.exists(os.path.join(submission_dir, file_name)):
+-                        time.sleep(10)
++                        time.sleep(11)
+                     if file_name == "AccessionReport.tsv":
+                         accession_report_df = file_handler.load_csv(file_path=os.path.join(submission_dir, file_name), sep="\t")
+                         accession_report_to_status_report(submission_dir=submission_dir, accession_report_df=accession_report_df)
+# genbank_handler.x_process_genbank_report__mutmut_80: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -16,7 +16,7 @@
+                     while not os.path.exists(os.path.join(submission_dir, file_name)):
+                         time.sleep(10)
+                     if file_name == "AccessionReport.tsv":
+-                        accession_report_df = file_handler.load_csv(file_path=os.path.join(submission_dir, file_name), sep="\t")
++                        accession_report_df = file_handler.load_csv(file_path=os.path.join(file_name), sep="\t")
+                         accession_report_to_status_report(submission_dir=submission_dir, accession_report_df=accession_report_df)
+             except:
+                 pass
+# genbank_handler.x_update_genbank_files__mutmut_45: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -8,7 +8,7 @@
+         source_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "source.src"), sep="\t")
+     else:
+         print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+-        sys.exit(1)
++        sys.exit(None)
+     # Read in genbank comment file
+     if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+         cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+# genbank_handler.x_update_genbank_files__mutmut_50: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -10,7 +10,7 @@
+         print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+         sys.exit(1)
+     # Read in genbank comment file
+-    if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
++    if os.path.isfile(os.path.join("comment.cmt")):
+         cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+     # Retrieve accession info
+     src_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_51: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -10,7 +10,7 @@
+         print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+         sys.exit(1)
+     # Read in genbank comment file
+-    if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
++    if os.path.isfile(os.path.join(submission_dir, )):
+         cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+     # Retrieve accession info
+     src_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_52: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -10,7 +10,7 @@
+         print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+         sys.exit(1)
+     # Read in genbank comment file
+-    if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
++    if os.path.isfile(os.path.join(submission_dir, "XXcomment.cmtXX")):
+         cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+     # Retrieve accession info
+     src_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_53: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -10,7 +10,7 @@
+         print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
+         sys.exit(1)
+     # Read in genbank comment file
+-    if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
++    if os.path.isfile(os.path.join(submission_dir, "COMMENT.CMT")):
+         cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+     # Retrieve accession info
+     src_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_54: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -11,7 +11,7 @@
+         sys.exit(1)
+     # Read in genbank comment file
+     if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+-        cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
++        cmt_df = None
+     # Retrieve accession info
+     src_accessions = dict()
+     cmt_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_58: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -11,7 +11,7 @@
+         sys.exit(1)
+     # Read in genbank comment file
+     if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+-        cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
++        cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), )
+     # Retrieve accession info
+     src_accessions = dict()
+     cmt_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_65: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -11,7 +11,7 @@
+         sys.exit(1)
+     # Read in genbank comment file
+     if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+-        cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
++        cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="XX\tXX")
+     # Retrieve accession info
+     src_accessions = dict()
+     cmt_accessions = dict()
+# genbank_handler.x_update_genbank_files__mutmut_69: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -16,7 +16,7 @@
+     src_accessions = dict()
+     cmt_accessions = dict()
+     # Pull accessions only if field has valid info
+-    if (linking_databases["BIOSAMPLE"] == True) and ("biosample_accession" in submission_status_df) and (submission_status_df["biosample_accession"].isna().all() == False):
++    if (linking_databases["BIOSAMPLE"] == True) or ("biosample_accession" in submission_status_df) and (submission_status_df["biosample_accession"].isna().all() == False):
+         src_accessions["biosample_accession"] = "BioSample"
+     if (linking_databases["SRA"] == True) and ("sra_accession" in submission_status_df) and (submission_status_df["sra_accession"].isna().all() == False):
+         src_accessions["sra_accession"] = "SRA"
+# genbank_handler.x_update_genbank_files__mutmut_88: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -18,7 +18,7 @@
+     # Pull accessions only if field has valid info
+     if (linking_databases["BIOSAMPLE"] == True) and ("biosample_accession" in submission_status_df) and (submission_status_df["biosample_accession"].isna().all() == False):
+         src_accessions["biosample_accession"] = "BioSample"
+-    if (linking_databases["SRA"] == True) and ("sra_accession" in submission_status_df) and (submission_status_df["sra_accession"].isna().all() == False):
++    if (linking_databases["SRA"] == True) or ("sra_accession" in submission_status_df) and (submission_status_df["sra_accession"].isna().all() == False):
+         src_accessions["sra_accession"] = "SRA"
+     if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_isl_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_isl_id"].isna().all() == False):
+         cmt_accessions["gisaid_accession_epi_isl_id"] = "EPI_ISOLATE_ID"
+# genbank_handler.x_update_genbank_files__mutmut_106: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -20,7 +20,7 @@
+         src_accessions["biosample_accession"] = "BioSample"
+     if (linking_databases["SRA"] == True) and ("sra_accession" in submission_status_df) and (submission_status_df["sra_accession"].isna().all() == False):
+         src_accessions["sra_accession"] = "SRA"
+-    if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_isl_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_isl_id"].isna().all() == False):
++    if (linking_databases["GISAID"] == True) or ("gisaid_accession_epi_isl_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_isl_id"].isna().all() == False):
+         cmt_accessions["gisaid_accession_epi_isl_id"] = "EPI_ISOLATE_ID"
+     if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_id"].isna().all() == False):
+         cmt_accessions["gisaid_accession_epi_id"] = "EPI_SEQUENCE_ID"
+# genbank_handler.x_update_genbank_files__mutmut_124: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -22,7 +22,7 @@
+         src_accessions["sra_accession"] = "SRA"
+     if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_isl_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_isl_id"].isna().all() == False):
+         cmt_accessions["gisaid_accession_epi_isl_id"] = "EPI_ISOLATE_ID"
+-    if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_id"].isna().all() == False):
++    if (linking_databases["GISAID"] == True) or ("gisaid_accession_epi_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_id"].isna().all() == False):
+         cmt_accessions["gisaid_accession_epi_id"] = "EPI_SEQUENCE_ID"
+     # Update NCBI accessions for source df and fasta file
+     if len(src_accessions) > 0:
+# genbank_handler.x_update_genbank_files__mutmut_189: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -34,7 +34,7 @@
+         src_accessions_df = src_accessions_df.rename(columns=src_accessions)
+         source_df = pd.merge(source_df, src_accessions_df, how="left", on="Sequence_ID")
+         file_handler.save_csv(df=source_df, file_path=submission_dir, file_name="source.src", sep="\t")
+-        if os.path.isfile(os.path.join(submission_dir, "sequence.fsa")) and "Add_Definition_Line_Accessions" in config_dict and config_dict["Add_Definition_Line_Accessions"] == True:
++        if os.path.isfile(os.path.join("sequence.fsa")) and "Add_Definition_Line_Accessions" in config_dict and config_dict["Add_Definition_Line_Accessions"] == True:
+             records = []
+             for seq in SeqIO.parse(os.path.join(submission_dir, "sequence.fsa"), "fasta"):
+                 seq_name = seq.id
+# genbank_handler.x_update_genbank_files__mutmut_196: timeout
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -34,7 +34,7 @@
+         src_accessions_df = src_accessions_df.rename(columns=src_accessions)
+         source_df = pd.merge(source_df, src_accessions_df, how="left", on="Sequence_ID")
+         file_handler.save_csv(df=source_df, file_path=submission_dir, file_name="source.src", sep="\t")
+-        if os.path.isfile(os.path.join(submission_dir, "sequence.fsa")) and "Add_Definition_Line_Accessions" in config_dict and config_dict["Add_Definition_Line_Accessions"] == True:
++        if os.path.isfile(os.path.join(submission_dir, "sequence.fsa")) and "Add_Definition_Line_Accessions" not in config_dict and config_dict["Add_Definition_Line_Accessions"] == True:
+             records = []
+             for seq in SeqIO.parse(os.path.join(submission_dir, "sequence.fsa"), "fasta"):
+                 seq_name = seq.id
+# genbank_handler.x_update_genbank_files__mutmut_216: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -38,7 +38,7 @@
+             records = []
+             for seq in SeqIO.parse(os.path.join(submission_dir, "sequence.fsa"), "fasta"):
+                 seq_name = seq.id
+-                print(source_df.head())
++                print(None)
+                 print(seq_name)
+                 if "BioSample" in source_df:
+                     biosample_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "BioSample"].iloc[0]
+# genbank_handler.x_update_genbank_files__mutmut_217: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -39,7 +39,7 @@
+             for seq in SeqIO.parse(os.path.join(submission_dir, "sequence.fsa"), "fasta"):
+                 seq_name = seq.id
+                 print(source_df.head())
+-                print(seq_name)
++                print(None)
+                 if "BioSample" in source_df:
+                     biosample_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "BioSample"].iloc[0]
+                     if biosample_accession.strip():
+# genbank_handler.x_update_genbank_files__mutmut_238: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -45,7 +45,7 @@
+                     if biosample_accession.strip():
+                         biosample_accession = "[BioSample=" + biosample_accession + "]"
+                     else:
+-                        biosample_accession = ""
++                        biosample_accession = None
+                 else:
+                     biosample_accession = ""
+                 if "SRA" in source_df:
+# genbank_handler.x_update_genbank_files__mutmut_239: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -45,7 +45,7 @@
+                     if biosample_accession.strip():
+                         biosample_accession = "[BioSample=" + biosample_accession + "]"
+                     else:
+-                        biosample_accession = ""
++                        biosample_accession = "XXXX"
+                 else:
+                     biosample_accession = ""
+                 if "SRA" in source_df:
+# genbank_handler.x_update_genbank_files__mutmut_240: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -47,7 +47,7 @@
+                     else:
+                         biosample_accession = ""
+                 else:
+-                    biosample_accession = ""
++                    biosample_accession = None
+                 if "SRA" in source_df:
+                     sra_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "SRA"].iloc[0]
+                     if sra_accession.strip():
+# genbank_handler.x_update_genbank_files__mutmut_241: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -47,7 +47,7 @@
+                     else:
+                         biosample_accession = ""
+                 else:
+-                    biosample_accession = ""
++                    biosample_accession = "XXXX"
+                 if "SRA" in source_df:
+                     sra_accession = source_df.loc[source_df["Sequence_ID"] == seq_name, "SRA"].iloc[0]
+                     if sra_accession.strip():
+# genbank_handler.x_update_genbank_files__mutmut_259: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -53,7 +53,7 @@
+                     if sra_accession.strip():
+                         sra_accession = "[SRA=" + sra_accession + "]"
+                     else:
+-                        sra_accession = ""
++                        sra_accession = None
+                 else:
+                     sra_accession = ""
+                 # Remove potential duplicate fasta def lines
+# genbank_handler.x_update_genbank_files__mutmut_260: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -53,7 +53,7 @@
+                     if sra_accession.strip():
+                         sra_accession = "[SRA=" + sra_accession + "]"
+                     else:
+-                        sra_accession = ""
++                        sra_accession = "XXXX"
+                 else:
+                     sra_accession = ""
+                 # Remove potential duplicate fasta def lines
+# genbank_handler.x_update_genbank_files__mutmut_261: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -55,7 +55,7 @@
+                     else:
+                         sra_accession = ""
+                 else:
+-                    sra_accession = ""
++                    sra_accession = None
+                 # Remove potential duplicate fasta def lines
+                 cleaned_description = re.sub(r"\[(BioSample|SRA)[^\]]*\]", "", seq.description)
+                 complete_description = f"{cleaned_description} {biosample_accession} {sra_accession}"
+# genbank_handler.x_update_genbank_files__mutmut_262: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -55,7 +55,7 @@
+                     else:
+                         sra_accession = ""
+                 else:
+-                    sra_accession = ""
++                    sra_accession = "XXXX"
+                 # Remove potential duplicate fasta def lines
+                 cleaned_description = re.sub(r"\[(BioSample|SRA)[^\]]*\]", "", seq.description)
+                 complete_description = f"{cleaned_description} {biosample_accession} {sra_accession}"
+# genbank_handler.x_update_genbank_files__mutmut_299: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -66,7 +66,7 @@
+                 with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+-                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(None, file=sys.stderr)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+# genbank_handler.x_update_genbank_files__mutmut_300: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -66,7 +66,7 @@
+                 with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+-                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=None)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+# genbank_handler.x_update_genbank_files__mutmut_301: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -66,7 +66,7 @@
+                 with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+-                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(file=sys.stderr)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+# genbank_handler.x_update_genbank_files__mutmut_302: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -66,7 +66,7 @@
+                 with open(os.path.join(submission_dir, "sequence.fsa"), "w+") as f:
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+-                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", )
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+# genbank_handler.x_update_genbank_files__mutmut_303: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -67,7 +67,7 @@
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(None, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_304: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -67,7 +67,7 @@
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(e, file=None)
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_305: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -67,7 +67,7 @@
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_306: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -67,7 +67,7 @@
+                     SeqIO.write(records, f, "fasta")
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(e, )
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_307: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -68,7 +68,7 @@
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+-                sys.exit(1)
++                sys.exit(None)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_308: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -68,7 +68,7 @@
+             except PermissionError as e:
+                 print(f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+-                sys.exit(1)
++                sys.exit(2)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+# genbank_handler.x_update_genbank_files__mutmut_309: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -70,7 +70,7 @@
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+-                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(None, file=sys.stderr)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+# genbank_handler.x_update_genbank_files__mutmut_310: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -70,7 +70,7 @@
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+-                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=None)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+# genbank_handler.x_update_genbank_files__mutmut_311: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -70,7 +70,7 @@
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+-                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(file=sys.stderr)
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+# genbank_handler.x_update_genbank_files__mutmut_312: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -70,7 +70,7 @@
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+             except Exception as e:
+-                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
++                print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", )
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+# genbank_handler.x_update_genbank_files__mutmut_313: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(None, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+# genbank_handler.x_update_genbank_files__mutmut_314: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(e, file=None)
+                 sys.exit(1)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+# genbank_handler.x_update_genbank_files__mutmut_315: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+# genbank_handler.x_update_genbank_files__mutmut_316: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -71,7 +71,7 @@
+                 sys.exit(1)
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+-                print(e, file=sys.stderr)
++                print(e, )
+                 sys.exit(1)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+# genbank_handler.x_update_genbank_files__mutmut_317: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -72,7 +72,7 @@
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+-                sys.exit(1)
++                sys.exit(None)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+# genbank_handler.x_update_genbank_files__mutmut_318: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -72,7 +72,7 @@
+             except Exception as e:
+                 print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
+                 print(e, file=sys.stderr)
+-                sys.exit(1)
++                sys.exit(2)
+     # Update CMT file
+     if len(cmt_accessions) > 0:
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+# genbank_handler.x_update_genbank_files__mutmut_320: survived
+--- src/genbank_handler.py
++++ src/genbank_handler.py
+@@ -74,7 +74,7 @@
+                 print(e, file=sys.stderr)
+                 sys.exit(1)
+     # Update CMT file
+-    if len(cmt_accessions) > 0:
++    if len(cmt_accessions) > 1:
+         if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
+             cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
+             # If accession columns exist drop to overwrite

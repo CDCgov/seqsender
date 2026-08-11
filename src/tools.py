@@ -1,13 +1,10 @@
-
 # Python Libraries
 import os
 import sys
 import importlib
 import pathlib
 import pandas as pd
-from settings import PROG_DIR
-from typing import List, Dict, Any, Optional, Union, Set
-import file_handler
+from typing import Any, Optional, Union
 import json
 import pandera
 from pandera import Check
@@ -15,11 +12,12 @@ from datetime import datetime, timedelta
 from cerberus import Validator
 import re
 
+import src.file_handler as file_handler
 from config.seqsender.seqsender_schema import schema as seqsender_schema
-from settings import SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
+from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 
 # Check the config file
-def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
+def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -53,7 +51,7 @@ def get_config(config_file: str, databases: List[str]) -> Dict[str, Any]:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
-def get_submission_schema_config_name(submission_portals: Set[str]) -> str:
+def get_submission_schema_config_name(submission_portals: set[str]) -> str:
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
@@ -62,7 +60,7 @@ def get_submission_schema_config_name(submission_portals: Set[str]) -> str:
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
-def validate_submission_position(config_dict: Dict[str, Any]):
+def validate_submission_position(config_dict: dict[str, Any]):
 	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
 	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
 	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
@@ -75,7 +73,7 @@ def get_submission_type(test: bool) -> str:
 	else:
 		return "PRODUCTION"
 
-def get_submission_position(config_dict: Dict[str, Any], database: str) -> Optional[int]:
+def get_submission_position(config_dict: dict[str, Any], database: str) -> Optional[int]:
 	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
 		parent_database = "NCBI"
 	elif database == "GISAID":
@@ -92,7 +90,7 @@ def get_submission_position(config_dict: Dict[str, Any], database: str) -> Optio
 	else:
 		return None
 
-def database_specific_config_schema_updates(schema: Dict[str, Any], database: List[str]) -> Dict[str, Any]:
+def database_specific_config_schema_updates(schema: dict[str, Any], database: list[str]) -> dict[str, Any]:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["BioSample_Package"]["required"] = True
@@ -105,11 +103,11 @@ def database_specific_config_schema_updates(schema: Dict[str, Any], database: Li
 	return schema
 
 # Parse Config file specified release date for NCBI field
-def parse_hold_date(config_dict: Dict[str, Any]):
+def parse_hold_date(config_dict: dict[str, Any]):
 	if "NCBI" in config_dict["Submission"] and "Specified_Release_Date" in config_dict["Submission"]["NCBI"] and config_dict["Submission"]["NCBI"]["Specified_Release_Date"] and config_dict["Submission"]["NCBI"]["Specified_Release_Date"].strip() != "":
 		release_date_string = config_dict["Submission"]["NCBI"]["Specified_Release_Date"].strip().lower()
 		try:
-			if re.search(r"\d+\s*(days|weeks|years)", release_date_string):
+			if re.search(r"\d+\s*(days|weeks|months)", release_date_string):
 				today = pd.Timestamp.now().date()
 				numeric_value = int(release_date_string.strip().split(" ")[0])
 				if "days" in release_date_string:
@@ -139,7 +137,7 @@ def parse_hold_date(config_dict: Dict[str, Any]):
 	return config_dict
 
 # Error out if deprecated submission column names detected
-def warn_deprecated_columns(database: List[str], metadata: pd.DataFrame) -> None:
+def warn_deprecated_columns(database: list[str], metadata: pd.DataFrame) -> None:
 	if "GENBANK" in database:
 		deprecated_columns = [col for col in GENBANK_DEPRECATED_COLUMNS if col in metadata.columns]
 		if deprecated_columns:
@@ -147,7 +145,7 @@ def warn_deprecated_columns(database: List[str], metadata: pd.DataFrame) -> None
 			sys.exit(1)
 
 # Read in metadata file
-def get_metadata(database: List[str], organism: str, metadata_file: str, config_dict: Dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def get_metadata(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
@@ -174,7 +172,7 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
-		error_msg_list: List[pandera.errors.SchemaErrors] = []
+		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
 			seqsender_schema.validate(metadata, lazy = True)
@@ -193,7 +191,7 @@ def get_metadata(database: List[str], organism: str, metadata_file: str, config_
 			sys.exit(1)
 	return metadata
 
-def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.SchemaErrors]):
+def pretty_print_pandera_errors(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -202,27 +200,28 @@ def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.Schem
 			if error.check == "column_in_dataframe":
 				print(f"Error: Missing required column '{error.failure_case}', ensure the file has not been modified and retry.", file=sys.stderr)
 			# Column requires specific values capitalization matters
-			elif re.search("isin\(\['.*'(, '.*')+\]\)", error.check):
+			elif re.search(r"isin\(\['.*'(, '.*')+\]\)", error.check):
 				print(f"Error: Column '{error.column}' has an incorrect value at index '{(error.index + 1)}'. This field can only contain the values '{(error.check.replace('isin(', '')[:-1])}', you provided '{error.failure_case}'.", file=sys.stderr)
 			# Column cannot have null values or empty strings
 			elif error.check == "str_matches('^(?!\\s*$).+')":
 				print(f"Error: Column '{error.column}' has an empty field at index '{(error.index + 1)}' that is required. This field cannot be left blank.", file=sys.stderr)
 			# Column requires specific values capitalization does not matter
-			elif re.search("str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
-				accepted_values = error.check.replace("str_matches('(?i)(\\W|^)(", "").replace(")(\W|$)')", "").split("|")
+			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
+				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
+				accepted_values = match.group(1).split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search("\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search("str_length\(.*\)", error.check):
+			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == "str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace("\W", "").replace(")$')", "").replace("\d*", "<numeric_values>").split("|")
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -234,7 +233,7 @@ def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.Schem
 			elif error.check == "column_ordered":
 				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
 			# Check sra file names
-			elif error.check == "no_regex_column_match('sra-file_[2-9]\d*')":
+			elif error.check == r"no_regex_column_match('sra-file_[2-9]\d*')":
 				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
 			# Collect all duplicate values and print them at the end to group index positions together
 			elif error.check == "field_uniqueness":
@@ -261,7 +260,7 @@ def pretty_print_pandera_errors(file: str, error_msgs: List[pandera.errors.Schem
 				print("", file=sys.stderr)
 
 # Check user credentials information
-def check_credentials(config_dict: Dict[str, Any], database: str) -> None:
+def check_credentials(config_dict: dict[str, Any], database: str) -> None:
 	# Check username
 	if "Username" not in config_dict.keys():
 		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
@@ -351,7 +350,7 @@ def process_schema(schema):
 		if description_field and "At least one required: Group" in description_field:
 			required_field = "At least one field required. Group: " + description_field.split("Group: \"")[-1].split("\".")[0]
 		# Update SRA wildcard field for raw files
-		if column_name == "sra-file_[2-9]\d*":
+		if column_name == r"sra-file_[2-9]\d*":
 			column_name = "sra-file_#"
 		schema_contents.append({"column_name": column_name, "required_column": required_field, "description": description_field})
 	return pd.DataFrame(schema_contents)
@@ -372,7 +371,7 @@ def update_all_schema_templates():
 		template = dict()
 		try:
 			metadata_template = process_schema(schema)
-		except:
+		except Exception as e:
 			print("Warning: Unable to process schema into metadata template.", file=sys.stderr)
 			print(e, file=sys.stderr)
 			continue

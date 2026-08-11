@@ -5,8 +5,7 @@
 ################################################################################
 
 import argparse
-from typing import List
-from settings import ORGANISM_CHOICES
+from src.settings import ORGANISM_CHOICES
 
 def args_parser():
 	"""
@@ -51,7 +50,6 @@ def args_parser():
 		required=True)
 	validate_parser.add_argument("--skip_validation",
 		help="Skip initial validation for metadata file. Validation will still occur for the 'config_file' and for any subsequent submissions made via 'submission_status'. Warning, this can cause unexpected errors using SeqSender if required columns are missing.",
-		required=False,
 		action="store_const",
 		default=False,
 		const=True)
@@ -59,8 +57,7 @@ def args_parser():
 		help="Unique name for the submission of your data. Reusing the same name can cause issues during the submission process. A folder will be created at: 'submission_dir/submission_name'.",
 		required=True)
 	upload_log_submission_name_parser.add_argument("--submission_name",
-		help="Unique name for the submission of your data. This is an optional field if you want Seqsender to only update the specified submission in the 'submission_log.csv'.",
-		required=False)
+		help="Unique name for the submission of your data. This is an optional field if you want Seqsender to only update the specified submission in the 'submission_log.csv'.")
 	submission_dir_parser.add_argument("--submission_dir",
 		help="Output directory where all files for your submission will be stored. A folder will be created at '<submission_dir>/<submission_name>'; this is the location where: all of the submission files will be created, SeqSender will stage each step of the submission process automatically, and where SeqSender will generate all the output from your submission.",
 		required=True)
@@ -75,7 +72,6 @@ def args_parser():
 		default = None)
 	file_parser.add_argument("--table2asn",
 		help="Perform a table2asn submission instead of GenBank FTP submission for organism choices 'FLU' or 'COV'.",
-		required=False,
 		action="store_const",
 		default=False,
 		const=True)
@@ -89,11 +85,9 @@ def args_parser():
 		const=True)
 	publication_parser.add_argument("--publication_title",
 		help="Publication Title associated with sample submission. For GenBank only, overwrites value given via config file.",
-		required=False,
 		default=None)
 	publication_parser.add_argument("--publication_status",
 		help="Status of publication associated with sample submission. For GenBank only, overwrites value given via config file.",
-		required=False,
 		default=None,
 		choices=["Unpublished", "In-press", "Published"])
 

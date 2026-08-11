@@ -20,12 +20,12 @@ import time
 import xmltodict
 import xml.etree.ElementTree as ET
 from io import BytesIO
-from typing import List, Dict, Any
+from typing import Any
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import tools
-from settings import NCBI_FTP_HOST
+import src.tools as tools
+from src.settings import NCBI_FTP_HOST
 
 # Get program directory
 PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
@@ -107,9 +107,9 @@ TEST_CONNECTIONS = {"HTTP": {"website":"http://www.google.com", "database": "GEN
 }
 
 # Create example data for testing
-def create_test_data(organism: str, database: List[str], submission_dir: str) -> None:
+def create_test_data(organism: str, database: list[str], submission_dir: str) -> None:
 	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ", file=sys.stdout)
+		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
 		sys.exit(0)
 	# Create output directory
 	submission_dir = os.path.abspath(submission_dir)
@@ -133,7 +133,7 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
 	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
 	# Print generating message
-	print("\n"+"Generating submission test_data", file=sys.stdout)
+	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
 	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
@@ -159,7 +159,7 @@ def create_test_data(organism: str, database: List[str], submission_dir: str) ->
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir), file=sys.stdout)
+	print("Files are stored at: "+os.path.join(out_dir))
 
 def download_table2asn(table2asn_dir: str) -> None:
 	# Determine which platform to download table2asn
@@ -232,7 +232,7 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 	# Convert xml to dictionary
 	report_dict = xmltodict.parse(xmlstr)
 	indentation = "\n\t\t"
-	mandatory_group: Dict[str, Any] = dict()
+	mandatory_group: dict[str, Any] = dict()
 	with open(os.path.join(PROG_DIR, "config", "biosample", (name.replace(".", "_") + ".py")), "w+") as file:
 		file.writelines(SCHEMA_HEADER)
 		for attribute in report_dict["BioSamplePackages"]["Package"]["Attribute"]:
@@ -321,23 +321,24 @@ def biosample_package_to_pandera_schema(xml_file: str, name: str) -> None:
 		file.write(indentation + ")")
 	os.remove(xml_file)
 
-def test_internet_connection(databases: List[str]) -> None:
+def test_internet_connection(databases: list[str]) -> None:
 	error_list = []
-	print("Checking network settings...", file=sys.stdout)
+	print("Checking network settings...")
 	for test, info in TEST_CONNECTIONS.items():
 		if info["database"] == "GENERAL" or info["database"] in databases:
-			print(f"Checking {test} connection...", file=sys.stdout)
+			print(f"Checking {test} connection...")
 			try:
 				query = requests.get(info['website'])
 				response = query.status_code
 			except Exception as e:
 				error_list.append(f"{test} connectivity test failed for '{info['website']}'. Check possible firewall issues. \nException:{e}")
+				continue
 			if response in (200, 204, 301, 302):
-				print(f"{test} '{info['website']}' connectivity test ok.", file=sys.stdout)
+				print(f"{test} '{info['website']}' connectivity test ok.")
 			else:
 				error_list.append(f"{info['error_msg']} Error code received:'{response}'")
 	if "NCBI" in databases:
-		print("Checking DNS resolution for FTP site...", file=sys.stdout)
+		print("Checking DNS resolution for FTP site...")
 		try:
 			ip_address = socket.gethostbyname(NCBI_FTP_HOST)
 		except Exception as e:
@@ -345,21 +346,21 @@ def test_internet_connection(databases: List[str]) -> None:
 		if not ip_address:
 			error_list.append(f"Unable to resolve address for '{NCBI_FTP_HOST}'; check DNS server settings for possible issues.")
 		else:
-			print(f"DNS resolution test ok. Able to reach ('{NCBI_FTP_HOST} -> {ip_address})", file=sys.stdout)
-			print("Checking port status...", file=sys.stdout)
+			print(f"DNS resolution test ok. Able to reach ('{NCBI_FTP_HOST} -> {ip_address})")
+			print("Checking port status...")
 			try:
 				ftp = ftplib.FTP()
 				ftp.connect(NCBI_FTP_HOST, 21, timeout=10)
 				ftp.quit()
-				print(f"{NCBI_FTP_HOST} open on port 21.", file=sys.stdout)
+				print(f"{NCBI_FTP_HOST} open on port 21.")
 			except Exception as e:
 				error_list.append(f"Port 21 not open for {NCBI_FTP_HOST}. Check possible firewall/server issues. \nException:{e}")
 		try:
-			print("Checking Table2asn functionality...", file=sys.stdout)
+			print("Checking Table2asn functionality...")
 			table2asn_dir = "/tmp/table2asn"
 			download_table2asn(table2asn_dir)
 			command = [table2asn_dir, "-version-full-xml"]
-			print("Running Table2asn.", file=sys.stdout)
+			print("Running Table2asn.")
 			proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
 			if proc.returncode != 0:
 				error_list.append("Table2asn-Error")
@@ -371,4 +372,4 @@ def test_internet_connection(databases: List[str]) -> None:
 		for error_string in error_list:
 			print(error_string, file=sys.stderr)
 	else:
-		print("No network connection issues detected.", file=sys.stdout)
+		print("No network connection issues detected.")

@@ -19,16 +19,16 @@ import requests
 from pathlib import Path
 from Bio import SeqIO
 from nameparser import HumanName
-from typing import List, Set, Dict, Tuple, Optional, Any, overload
-from settings import NCBI_API_URL, GENBANK_REGEX_SRC, GENBANK_REGEX_CMT
+from typing import Optional, Any, overload
+from src.settings import NCBI_API_URL, GENBANK_REGEX_SRC, GENBANK_REGEX_CMT
 # Local imports
-import setup
-import file_handler
-import ncbi_handler
-import upload_log
+import src.setup as setup
+import src.file_handler as file_handler
+import src.ncbi_handler as ncbi_handler
+import src.upload_log as upload_log
 
 # Main create function for BioSample/SRA
-def create_genbank_submission(organism: str, submission_name: str, submission_dir: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str], table2asn: bool, publication_title: Optional[str], publication_status: Optional[str]):
+def create_genbank_submission(organism: str, submission_name: str, submission_dir: str, config_dict: dict[str, Any], metadata: pd.DataFrame, gff_file: Optional[str], table2asn: bool, publication_title: Optional[str], publication_status: Optional[str]):
 	create_files(organism=organism, submission_name=submission_name, submission_dir=submission_dir, config_dict=config_dict, metadata=metadata, gff_file=gff_file, publication_title=publication_title, publication_status=publication_status)
 	# If using Table2asn do not generate extra genbank files
 	if organism not in ["FLU", "COV"] or table2asn:
@@ -42,7 +42,7 @@ def create_genbank_submission(organism: str, submission_name: str, submission_di
 	file_handler.save_xml(submission_xml=xml_str, submission_dir=submission_dir)
 
 # Create GenBank XML
-def create_submission_xml(organism: str, submission_name: str, config_dict: Dict[str, Any], metadata: pd.DataFrame) -> bytes:
+def create_submission_xml(organism: str, submission_name: str, config_dict: dict[str, Any], metadata: pd.DataFrame) -> bytes:
 	# Submission XML header
 	root = etree.Element("Submission")
 	description = etree.SubElement(root, "Description")
@@ -87,7 +87,7 @@ def create_submission_xml(organism: str, submission_name: str, config_dict: Dict
 	return xml_str
 
 # Create a authorset file
-def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, publication_title: Optional[str], publication_status: Optional[str]) -> None:
+def create_authorset(config_dict: dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, publication_title: Optional[str], publication_status: Optional[str]) -> None:
 	submitter_first = config_dict["Description"]["Organization"]["Submitter"]["Name"]["First"]
 	submitter_last = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
 	submitter_email = config_dict["Description"]["Organization"]["Submitter"]["Email"]
@@ -233,7 +233,7 @@ def create_authorset(config_dict: Dict[str, Any], metadata: pd.DataFrame, submis
 		f.write("}\n")
 
 # Create a zip file for genbank submission
-def create_files(organism: str, config_dict: Dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str]) -> None:
+def create_files(organism: str, config_dict: dict[str, Any], metadata: pd.DataFrame, submission_name: str, submission_dir: str, gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str]) -> None:
 	# Drop submission xml columns
 	metadata = metadata.drop(columns=["gb-title", "gb-comment"], errors="ignore")
 	# Create authorset file
@@ -281,7 +281,7 @@ def create_table2asn(submission_name: str, submission_dir: str) -> str:
 	table2asn_dir = "/tmp/table2asn"
 	# Download the table2asn
 	if os.path.isfile(table2asn_dir) is False:
-		print("Downloading Table2asn.", file=sys.stdout)
+		print("Downloading Table2asn.")
 		setup.download_table2asn(table2asn_dir=table2asn_dir)
 	# Command to generate table2asn submission file
 	command = [table2asn_dir, "-V","vb","-a","s","-t", os.path.join(submission_dir, "authorset.sbt"), "-i", os.path.join(submission_dir, "sequence.fsa"), "-src-file", os.path.join(submission_dir, "source.src"), "-o", os.path.join(submission_dir, submission_name + ".sqn")]
@@ -291,14 +291,14 @@ def create_table2asn(submission_name: str, submission_dir: str) -> str:
 	if os.path.isfile(os.path.join(submission_dir, f"{submission_name}.gff")):
 		command.append("-f")
 		command.append(os.path.join(submission_dir, f"{submission_name}.gff"))
-	print("Running Table2asn.", file=sys.stdout)
+	print("Running Table2asn.")
 	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.join(os.path.dirname(os.path.abspath(__file__))))
 	if proc.returncode != 0:
 		print("Table2asn-Error", file=sys.stderr)
-		print(proc.stdout, file=sys.stdout)
+		print(proc.stdout)
 		print(proc.stderr, file=sys.stderr)
 		sys.exit(1)
-	print("Validating Table2asn submission.", file=sys.stdout)
+	print("Validating Table2asn submission.")
 	validation_file = os.path.join(submission_dir, submission_name + ".val")
 	submission_id = check_table2asn_submission(validation_file=validation_file)
 	return submission_id
@@ -327,7 +327,7 @@ def accession_report_to_status_report(submission_dir: str, accession_report_df: 
 	accession_report_df = accession_report_df[["gb-sample_name", "genbank_status", "genbank_accession", "genbank_message"]]
 	upload_log.update_submission_status_csv(submission_dir=submission_dir, update_database="GENBANK", update_df=accession_report_df)
 
-def process_genbank_report(report_file: str, submission_dir: str) -> Tuple[str, str]:
+def process_genbank_report(report_file: str, submission_dir: str) -> tuple[str, str]:
 	report_dict, submission_status, submission_id = ncbi_handler.process_report_header(report_file=report_file)
 	try:
 		if report_dict["SubmissionStatus"]["Action"]["@status"] == "processed-ok":
@@ -354,7 +354,7 @@ def process_genbank_report(report_file: str, submission_dir: str) -> Tuple[str, 
 	return submission_status, submission_id
 
 # Check if it has BioSample and BioProject accession number (update status report)
-def update_genbank_files(linking_databases: Dict[str, bool], organism: str, submission_dir: str, config_dict: Dict[str, Any]) -> None:
+def update_genbank_files(linking_databases: dict[str, bool], organism: str, submission_dir: str, config_dict: dict[str, Any]) -> None:
 	# Read in the submission status report
 	submission_status_file = os.path.join(os.path.split(submission_dir)[0], "submission_status_report.csv")
 	submission_status_df = file_handler.load_csv(submission_status_file)

@@ -1,0 +1,624 @@
+# biosample_sra_handler.x_check_raw_read_files__mutmut_32: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -13,7 +13,7 @@
+             file = row[column_name]
+             # At least one file required for SRA but extra file columns can have empty slots
+             if (file is None or file.strip() == "") and column_name != "sra-file_1":
+-                continue
++                break
+             file = file.strip()
+             # If full path don't use rawreads folderfil
+             if os.path.isabs(file):
+# biosample_sra_handler.x_create_manual_submission_files__mutmut_58: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -17,7 +17,7 @@
+                 rename_columns[col] = col.replace("sra-file_", "sra-filename")
+     elif "BIOSAMPLE" in database:
+         metadata_regex = "^bs-|^organism$|^collection_date$"
+-        rename_columns = {"bioproject":"bioproject_accession"}
++        rename_columns = {"XXbioprojectXX":"bioproject_accession"}
+         drop_columns = ["bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"]
+         column_ordered = ["sample_name"]
+         prefix = "bs-"
+# biosample_sra_handler.x_create_manual_submission_files__mutmut_59: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -17,7 +17,7 @@
+                 rename_columns[col] = col.replace("sra-file_", "sra-filename")
+     elif "BIOSAMPLE" in database:
+         metadata_regex = "^bs-|^organism$|^collection_date$"
+-        rename_columns = {"bioproject":"bioproject_accession"}
++        rename_columns = {"BIOPROJECT":"bioproject_accession"}
+         drop_columns = ["bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"]
+         column_ordered = ["sample_name"]
+         prefix = "bs-"
+# biosample_sra_handler.x_create_manual_submission_files__mutmut_60: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -17,7 +17,7 @@
+                 rename_columns[col] = col.replace("sra-file_", "sra-filename")
+     elif "BIOSAMPLE" in database:
+         metadata_regex = "^bs-|^organism$|^collection_date$"
+-        rename_columns = {"bioproject":"bioproject_accession"}
++        rename_columns = {"bioproject":"XXbioproject_accessionXX"}
+         drop_columns = ["bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"]
+         column_ordered = ["sample_name"]
+         prefix = "bs-"
+# biosample_sra_handler.x_create_manual_submission_files__mutmut_61: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -17,7 +17,7 @@
+                 rename_columns[col] = col.replace("sra-file_", "sra-filename")
+     elif "BIOSAMPLE" in database:
+         metadata_regex = "^bs-|^organism$|^collection_date$"
+-        rename_columns = {"bioproject":"bioproject_accession"}
++        rename_columns = {"bioproject":"BIOPROJECT_ACCESSION"}
+         drop_columns = ["bs-title", "bs-comment", "bs-sample_title", "bs-sample_description"]
+         column_ordered = ["sample_name"]
+         prefix = "bs-"
+# biosample_sra_handler.x_create_submission_xml__mutmut_23: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -4,7 +4,7 @@
+     root = etree.Element("Submission")
+     description = etree.SubElement(root, "Description")
+     title = etree.SubElement(description, "Title")
+-    if "BIOSAMPLE" in database:
++    if "biosample" in database:
+         if "bs-title" in metadata and pd.notnull(metadata["bs-title"].iloc[0]) and metadata["bs-title"].iloc[0].strip() != 0:
+             title.text = metadata["bs-title"].iloc[0]
+         else:
+# biosample_sra_handler.x_create_submission_xml__mutmut_38: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -5,7 +5,7 @@
+     description = etree.SubElement(root, "Description")
+     title = etree.SubElement(description, "Title")
+     if "BIOSAMPLE" in database:
+-        if "bs-title" in metadata and pd.notnull(metadata["bs-title"].iloc[0]) and metadata["bs-title"].iloc[0].strip() != 0:
++        if "bs-title" in metadata and pd.notnull(metadata["bs-title"].iloc[0]) and metadata["bs-title"].iloc[0].strip() != 1:
+             title.text = metadata["bs-title"].iloc[0]
+         else:
+             title.text = submission_name + "-BS"
+# biosample_sra_handler.x_create_submission_xml__mutmut_60: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -10,7 +10,7 @@
+         else:
+             title.text = submission_name + "-BS"
+         comment = etree.SubElement(description, "Comment")
+-        if "bs-comment" in metadata and pd.notnull(metadata["bs-comment"].iloc[0]) and metadata["bs-comment"].iloc[0].strip() != 0:
++        if "bs-comment" in metadata and pd.notnull(None) and metadata["bs-comment"].iloc[0].strip() != 0:
+             comment.text = metadata["bs-comment"].iloc[0]
+         else:
+             comment.text = "BioSample Submission"
+# biosample_sra_handler.x_create_submission_xml__mutmut_68: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -10,7 +10,7 @@
+         else:
+             title.text = submission_name + "-BS"
+         comment = etree.SubElement(description, "Comment")
+-        if "bs-comment" in metadata and pd.notnull(metadata["bs-comment"].iloc[0]) and metadata["bs-comment"].iloc[0].strip() != 0:
++        if "bs-comment" in metadata and pd.notnull(metadata["bs-comment"].iloc[0]) and metadata["bs-comment"].iloc[0].strip() != 1:
+             comment.text = metadata["bs-comment"].iloc[0]
+         else:
+             comment.text = "BioSample Submission"
+# biosample_sra_handler.x_create_submission_xml__mutmut_93: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -15,7 +15,7 @@
+         else:
+             comment.text = "BioSample Submission"
+     elif "SRA" in database:
+-        if "sra-title" in metadata and pd.notnull(metadata["sra-title"].iloc[0]) and metadata["sra-title"].iloc[0].strip() != 0:
++        if "sra-title" in metadata and pd.notnull(metadata["sra-title"].iloc[0]) and metadata["sra-title"].iloc[0].strip() != 1:
+             title.text = metadata["sra-title"].iloc[0]
+         else:
+             title.text = submission_name + "-SRA"
+# biosample_sra_handler.x_create_submission_xml__mutmut_123: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -20,7 +20,7 @@
+         else:
+             title.text = submission_name + "-SRA"
+         comment = etree.SubElement(description, "Comment")
+-        if "sra-comment" in metadata and pd.notnull(metadata["sra-comment"].iloc[0]) and metadata["sra-comment"].iloc[0].strip() != 0:
++        if "sra-comment" in metadata and pd.notnull(metadata["sra-comment"].iloc[0]) and metadata["sra-comment"].iloc[0].strip() != 1:
+             comment.text = metadata["sra-comment"].iloc[0]
+         else:
+             comment.text = "SRA Submission"
+# biosample_sra_handler.x_create_submission_xml__mutmut_142: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -25,7 +25,7 @@
+         else:
+             comment.text = "SRA Submission"
+     # Description info including organization and contact info
+-    organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["Type"], role=config_dict["Description"]["Organization"]["Role"])
++    organization = etree.SubElement(description, "organization", type=config_dict["Description"]["Organization"]["Type"], role=config_dict["Description"]["Organization"]["Role"])
+     org_name = etree.SubElement(organization, "Name")
+     org_name.text = config_dict["Description"]["Organization"]["Name"]
+     contact = etree.SubElement(organization, "Contact", email=config_dict["Description"]["Organization"]["Submitter"]["Email"])
+# biosample_sra_handler.x_create_submission_xml__mutmut_198: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -28,7 +28,7 @@
+     organization = etree.SubElement(description, "Organization", type=config_dict["Description"]["Organization"]["Type"], role=config_dict["Description"]["Organization"]["Role"])
+     org_name = etree.SubElement(organization, "Name")
+     org_name.text = config_dict["Description"]["Organization"]["Name"]
+-    contact = etree.SubElement(organization, "Contact", email=config_dict["Description"]["Organization"]["Submitter"]["Email"])
++    contact = etree.SubElement(organization, "Contact", email=config_dict["Description"]["Organization"]["SUBMITTER"]["Email"])
+     name = etree.SubElement(contact, "Name")
+     first_name = etree.SubElement(name, "First")
+     first_name.text = config_dict["Description"]["Organization"]["Submitter"]["Name"]["First"]
+# biosample_sra_handler.x_create_submission_xml__mutmut_269: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -35,7 +35,7 @@
+     last_name = etree.SubElement(name, "Last")
+     last_name.text = config_dict["Description"]["Organization"]["Submitter"]["Name"]["Last"]
+     if config_dict["Specified_Release_Date"]:
+-        release_date = etree.SubElement(description, "Hold", release_date=config_dict["Specified_Release_Date"])
++        release_date = etree.SubElement(description, "hold", release_date=config_dict["Specified_Release_Date"])
+     # XML actions
+     if "BIOSAMPLE" in database:
+         database_df = metadata.filter(regex=BIOSAMPLE_REGEX).copy()
+# biosample_sra_handler.x_create_submission_xml__mutmut_355: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") and ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_356: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) or row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_357: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata or pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_358: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("XXbs-sample_titleXX" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_359: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("BS-SAMPLE_TITLE" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_360: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" not in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_361: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(None) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_366: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip == "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_367: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "XXXX") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_368: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) or row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_369: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata or pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_370: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("XXbs-sample_descriptionXX" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_371: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("BS-SAMPLE_DESCRIPTION" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_372: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" not in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_373: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(None) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_374: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["XXbs-sample_descriptionXX"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_375: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["BS-SAMPLE_DESCRIPTION"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_376: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["XXbs-sample_descriptionXX"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_377: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["BS-SAMPLE_DESCRIPTION"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_378: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip == ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_379: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -49,7 +49,7 @@
+             sampleid = etree.SubElement(biosample, "SampleId")
+             spuid = etree.SubElement(sampleid, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
+             spuid.text = row["bs-sample_name"]
+-            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
++            if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "XXXX"):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+# biosample_sra_handler.x_create_submission_xml__mutmut_388: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -51,7 +51,7 @@
+             spuid.text = row["bs-sample_name"]
+             if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+-                if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
++                if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) or row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+                 if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+# biosample_sra_handler.x_create_submission_xml__mutmut_389: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -51,7 +51,7 @@
+             spuid.text = row["bs-sample_name"]
+             if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+-                if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
++                if "bs-sample_title" in metadata or pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+                 if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+# biosample_sra_handler.x_create_submission_xml__mutmut_399: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -51,7 +51,7 @@
+             spuid.text = row["bs-sample_name"]
+             if ("bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "") or ("bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != ""):
+                 descriptor = etree.SubElement(biosample, "Descriptor")
+-                if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
++                if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "XXXX":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+                 if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+# biosample_sra_handler.x_create_submission_xml__mutmut_411: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -54,7 +54,7 @@
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+-                if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
++                if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) or row["bs-sample_description"].strip != "":
+                     sample_description = etree.SubElement(descriptor, "Description")
+                     sample_description.text = row["bs-sample_description"]
+             organismxml = etree.SubElement(biosample, "Organism")
+# biosample_sra_handler.x_create_submission_xml__mutmut_412: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -54,7 +54,7 @@
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+-                if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
++                if "bs-sample_description" in metadata or pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
+                     sample_description = etree.SubElement(descriptor, "Description")
+                     sample_description.text = row["bs-sample_description"]
+             organismxml = etree.SubElement(biosample, "Organism")
+# biosample_sra_handler.x_create_submission_xml__mutmut_422: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -54,7 +54,7 @@
+                 if "bs-sample_title" in metadata and pd.notnull(row["bs-sample_title"]) and row["bs-sample_title"].strip != "":
+                     sample_title = etree.SubElement(descriptor, "Title")
+                     sample_title.text = row["bs-sample_title"]
+-                if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "":
++                if "bs-sample_description" in metadata and pd.notnull(row["bs-sample_description"]) and row["bs-sample_description"].strip != "XXXX":
+                     sample_description = etree.SubElement(descriptor, "Description")
+                     sample_description.text = row["bs-sample_description"]
+             organismxml = etree.SubElement(biosample, "Organism")
+# biosample_sra_handler.x_create_submission_xml__mutmut_583: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -79,7 +79,7 @@
+             attribute = etree.SubElement(attributes, "Attribute", attribute_name="collection_date")
+             attribute.text = row["collection_date"]
+             identifier = etree.SubElement(add_data, "Identifier")
+-            spuid = etree.SubElement(identifier, "SPUID", spuid_namespace=config_dict["Spuid_Namespace"])
++            spuid = etree.SubElement(identifier, "SPUID", spuid_namespace=config_dict["spuid_namespace"])
+             spuid.text = row["bs-sample_name"]
+     if "SRA" in database:
+         database_df = metadata.filter(regex=(SRA_REGEX)).copy()
+# biosample_sra_handler.x_create_submission_xml__mutmut_639: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -93,7 +93,7 @@
+                 if column_name == "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
+                     print(f"Error: metadata must contain a file for {row['sra-sample_name']} in column sra-file_1", file=sys.stderr)
+                     sys.exit(1)
+-                elif column_name != "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
++                elif column_name != "XXsra-file_1XX" and (row[column_name] is None or row[column_name].strip() == ""):
+                     continue
+                 if row["sra-file_location"].strip().lower() == "cloud":
+                     file = etree.SubElement(addfiles, "File", cloud_url = row[column_name].strip())
+# biosample_sra_handler.x_create_submission_xml__mutmut_640: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -93,7 +93,7 @@
+                 if column_name == "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
+                     print(f"Error: metadata must contain a file for {row['sra-sample_name']} in column sra-file_1", file=sys.stderr)
+                     sys.exit(1)
+-                elif column_name != "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
++                elif column_name != "SRA-FILE_1" and (row[column_name] is None or row[column_name].strip() == ""):
+                     continue
+                 if row["sra-file_location"].strip().lower() == "cloud":
+                     file = etree.SubElement(addfiles, "File", cloud_url = row[column_name].strip())
+# biosample_sra_handler.x_create_submission_xml__mutmut_645: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -94,7 +94,7 @@
+                     print(f"Error: metadata must contain a file for {row['sra-sample_name']} in column sra-file_1", file=sys.stderr)
+                     sys.exit(1)
+                 elif column_name != "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
+-                    continue
++                    break
+                 if row["sra-file_location"].strip().lower() == "cloud":
+                     file = etree.SubElement(addfiles, "File", cloud_url = row[column_name].strip())
+                 elif row["sra-file_location"].strip().lower() == "local":
+# biosample_sra_handler.x_create_submission_xml__mutmut_660: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -96,7 +96,7 @@
+                 elif column_name != "sra-file_1" and (row[column_name] is None or row[column_name].strip() == ""):
+                     continue
+                 if row["sra-file_location"].strip().lower() == "cloud":
+-                    file = etree.SubElement(addfiles, "File", cloud_url = row[column_name].strip())
++                    file = etree.SubElement(addfiles, "file", cloud_url = row[column_name].strip())
+                 elif row["sra-file_location"].strip().lower() == "local":
+                     file = etree.SubElement(addfiles, "File", file_path = os.path.basename(row[column_name].strip()))
+                 else:
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_51: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -19,7 +19,7 @@
+             if "@target_db" not in action_dict or action_dict["@target_db"].lower() != database.lower():
+                 continue
+             # Skip if missing sample info
+-            elif "Response" not in action_dict:
++            elif "Response" in action_dict:
+                 continue
+             elif isinstance(action_dict["Response"], list) and any("Object" in response_dict for response_dict in action_dict["Response"]) and "@status" in action_dict:
+                 # print(action_dict["Response"])
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_53: timeout
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -21,7 +21,7 @@
+             # Skip if missing sample info
+             elif "Response" not in action_dict:
+                 continue
+-            elif isinstance(action_dict["Response"], list) and any("Object" in response_dict for response_dict in action_dict["Response"]) and "@status" in action_dict:
++            elif isinstance(action_dict["Response"], list) and any("Object" in response_dict for response_dict in action_dict["Response"]) or "@status" in action_dict:
+                 # print(action_dict["Response"])
+                 for index in range(len(action_dict["Response"])):
+                     response_dict = action_dict["Response"][index]
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_59: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -21,7 +21,7 @@
+             # Skip if missing sample info
+             elif "Response" not in action_dict:
+                 continue
+-            elif isinstance(action_dict["Response"], list) and any("Object" in response_dict for response_dict in action_dict["Response"]) and "@status" in action_dict:
++            elif isinstance(action_dict["Response"], list) and any("Object" not in response_dict for response_dict in action_dict["Response"]) and "@status" in action_dict:
+                 # print(action_dict["Response"])
+                 for index in range(len(action_dict["Response"])):
+                     response_dict = action_dict["Response"][index]
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_105: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -32,7 +32,7 @@
+                         column_prefix = database.lower()
+                         sample_info.append({sample_name_col:sample_name, f"{column_prefix}_status":response_dict["@status"], f"{column_prefix}_accession":accession, f"{column_prefix}_message":""})
+                         break
+-            elif isinstance(action_dict["Response"], dict) and "Object" in action_dict["Response"] and "@status" in action_dict:
++            elif isinstance(action_dict["Response"], dict) and "Object" in action_dict["Response"] or "@status" in action_dict:
+                 if "@accession" in action_dict["Response"]["Object"] and "@spuid" in action_dict["Response"]["Object"]:
+                     sample_name = action_dict["Response"]["Object"]["@spuid"]
+                     accession = action_dict["Response"]["Object"]["@accession"]
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_106: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -32,7 +32,7 @@
+                         column_prefix = database.lower()
+                         sample_info.append({sample_name_col:sample_name, f"{column_prefix}_status":response_dict["@status"], f"{column_prefix}_accession":accession, f"{column_prefix}_message":""})
+                         break
+-            elif isinstance(action_dict["Response"], dict) and "Object" in action_dict["Response"] and "@status" in action_dict:
++            elif isinstance(action_dict["Response"], dict) or "Object" in action_dict["Response"] and "@status" in action_dict:
+                 if "@accession" in action_dict["Response"]["Object"] and "@spuid" in action_dict["Response"]["Object"]:
+                     sample_name = action_dict["Response"]["Object"]["@spuid"]
+                     accession = action_dict["Response"]["Object"]["@accession"]
+# biosample_sra_handler.x_process_biosample_sra_report__mutmut_117: survived
+--- src/biosample_sra_handler.py
++++ src/biosample_sra_handler.py
+@@ -33,7 +33,7 @@
+                         sample_info.append({sample_name_col:sample_name, f"{column_prefix}_status":response_dict["@status"], f"{column_prefix}_accession":accession, f"{column_prefix}_message":""})
+                         break
+             elif isinstance(action_dict["Response"], dict) and "Object" in action_dict["Response"] and "@status" in action_dict:
+-                if "@accession" in action_dict["Response"]["Object"] and "@spuid" in action_dict["Response"]["Object"]:
++                if "@accession" in action_dict["Response"]["Object"] or "@spuid" in action_dict["Response"]["Object"]:
+                     sample_name = action_dict["Response"]["Object"]["@spuid"]
+                     accession = action_dict["Response"]["Object"]["@accession"]
+                     sample_name_col = f"{sample_name_prefix[database]}sample_name"
