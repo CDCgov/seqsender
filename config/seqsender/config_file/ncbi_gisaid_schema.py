@@ -40,7 +40,7 @@
                     'Publication_Status': {
                         'required': False,
                         'type': 'string',
-                        'regex': '(?i)(\W|^)(unpublished|in-press|published)(\W|$)',
+                        'regex': r'(?i:(\W|^)(unpublished|in-press|published)(\W|$))',
                         'nullable': True
                     },
                     'Submission_Position': {
@@ -52,7 +52,7 @@
                     'Specified_Release_Date': {
                         'required': True,
                         'type': 'string',
-                        'regex': '((?i)(\W|^)(\d+\s*(days|weeks|months)|\d{4}-\d{2}-\d{2})(\W|$))|(^\s*$)',
+                        'regex': r'(?i:(\W|^)(\d+\s*(days|weeks|months)|\d{4}-\d{2}-\d{2})(\W|$))|(^\s*$)',
                         'nullable': True
                     },
                     'Link_Sample_Between_NCBI_Databases': {

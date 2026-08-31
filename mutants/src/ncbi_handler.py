@@ -2808,17 +2808,19 @@ x_create_submit_ready_file__mutmut_mutants : ClassVar[MutantDict] = { # type: ig
 }
 x_create_submit_ready_file__mutmut_orig.__name__ = 'x_create_submit_ready_file'
 
-def ncbi_login(config_dict: dict[str, Any]):
-	args = [config_dict]# type: ignore
+def ncbi_login(config_dict: dict[str, Any], crash_on_error: bool = False):
+	args = [config_dict, crash_on_error]# type: ignore
 	kwargs = {}# type: ignore
 	return _mutmut_trampoline(x_ncbi_login__mutmut_orig, x_ncbi_login__mutmut_mutants, args, kwargs, None)
 
-def x_ncbi_login__mutmut_orig(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_orig(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2826,12 +2828,29 @@ def x_ncbi_login__mutmut_orig(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_1(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_1(config_dict: dict[str, Any], crash_on_error: bool = True):
+	try:
+		ftp = ftplib.FTP(NCBI_FTP_HOST)
+		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	except ftplib.error_perm as err:
+		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
+	except Exception as err:
+		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
+		setup.test_internet_connection(databases=["NCBI"])
+		print(f"Exception: {err}", file=sys.stderr)
+		sys.exit(1)
+	return ftp
+
+def x_ncbi_login__mutmut_2(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = None
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2839,12 +2858,14 @@ def x_ncbi_login__mutmut_1(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_2(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_3(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(None)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2852,12 +2873,14 @@ def x_ncbi_login__mutmut_2(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_3(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_4(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=None, passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2865,12 +2888,14 @@ def x_ncbi_login__mutmut_3(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_4(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_5(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=None)
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2878,12 +2903,14 @@ def x_ncbi_login__mutmut_4(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_5(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_6(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2891,12 +2918,14 @@ def x_ncbi_login__mutmut_5(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_6(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_7(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], )
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2904,12 +2933,14 @@ def x_ncbi_login__mutmut_6(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_7(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_8(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["XXUsernameXX"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2917,12 +2948,14 @@ def x_ncbi_login__mutmut_7(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_8(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_9(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2930,12 +2963,14 @@ def x_ncbi_login__mutmut_8(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_9(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_10(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["USERNAME"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2943,12 +2978,14 @@ def x_ncbi_login__mutmut_9(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_10(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_11(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["XXPasswordXX"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2956,12 +2993,14 @@ def x_ncbi_login__mutmut_10(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_11(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_12(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2969,12 +3008,14 @@ def x_ncbi_login__mutmut_11(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_12(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_13(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["PASSWORD"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2982,12 +3023,14 @@ def x_ncbi_login__mutmut_12(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_13(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_14(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(None, file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -2995,12 +3038,14 @@ def x_ncbi_login__mutmut_13(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_14(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_15(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=None)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3008,12 +3053,14 @@ def x_ncbi_login__mutmut_14(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_15(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_16(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3021,12 +3068,14 @@ def x_ncbi_login__mutmut_15(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_16(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_17(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", )
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3034,12 +3083,44 @@ def x_ncbi_login__mutmut_16(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_17(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_18(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(None)
+	except Exception as err:
+		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
+		setup.test_internet_connection(databases=["NCBI"])
+		print(f"Exception: {err}", file=sys.stderr)
+		sys.exit(1)
+	return ftp
+
+def x_ncbi_login__mutmut_19(config_dict: dict[str, Any], crash_on_error: bool = False):
+	try:
+		ftp = ftplib.FTP(NCBI_FTP_HOST)
+		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	except ftplib.error_perm as err:
+		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(2)
+	except Exception as err:
+		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
+		setup.test_internet_connection(databases=["NCBI"])
+		print(f"Exception: {err}", file=sys.stderr)
+		sys.exit(1)
+	return ftp
+
+def x_ncbi_login__mutmut_20(config_dict: dict[str, Any], crash_on_error: bool = False):
+	try:
+		ftp = ftplib.FTP(NCBI_FTP_HOST)
+		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
+	except ftplib.error_perm as err:
+		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print(None, file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3047,12 +3128,14 @@ def x_ncbi_login__mutmut_17(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_18(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_21(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=None)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3060,12 +3143,14 @@ def x_ncbi_login__mutmut_18(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_19(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_22(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print(file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3073,12 +3158,14 @@ def x_ncbi_login__mutmut_19(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_20(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_23(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", )
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3086,12 +3173,14 @@ def x_ncbi_login__mutmut_20(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_21(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_24(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("XXError unable to connect to FTP site. Running network test...XX", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3099,12 +3188,14 @@ def x_ncbi_login__mutmut_21(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_22(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_25(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("error unable to connect to ftp site. running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3112,12 +3203,14 @@ def x_ncbi_login__mutmut_22(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_23(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_26(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("ERROR UNABLE TO CONNECT TO FTP SITE. RUNNING NETWORK TEST...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3125,12 +3218,14 @@ def x_ncbi_login__mutmut_23(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_24(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_27(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=None)
@@ -3138,12 +3233,14 @@ def x_ncbi_login__mutmut_24(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_25(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_28(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["XXNCBIXX"])
@@ -3151,12 +3248,14 @@ def x_ncbi_login__mutmut_25(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_26(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_29(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["ncbi"])
@@ -3164,12 +3263,14 @@ def x_ncbi_login__mutmut_26(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_27(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_30(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3177,12 +3278,14 @@ def x_ncbi_login__mutmut_27(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_28(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_31(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3190,12 +3293,14 @@ def x_ncbi_login__mutmut_28(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_29(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_32(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3203,12 +3308,14 @@ def x_ncbi_login__mutmut_29(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_30(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_33(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3216,12 +3323,14 @@ def x_ncbi_login__mutmut_30(config_dict: dict[str, Any]):
 		sys.exit(1)
 	return ftp
 
-def x_ncbi_login__mutmut_31(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_34(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3229,12 +3338,14 @@ def x_ncbi_login__mutmut_31(config_dict: dict[str, Any]):
 		sys.exit(None)
 	return ftp
 
-def x_ncbi_login__mutmut_32(config_dict: dict[str, Any]):
+def x_ncbi_login__mutmut_35(config_dict: dict[str, Any], crash_on_error: bool = False):
 	try:
 		ftp = ftplib.FTP(NCBI_FTP_HOST)
 		ftp.login(user=config_dict["Username"], passwd=config_dict["Password"])
 	except ftplib.error_perm as err:
 		print(f"Error: login error. Possible incorrect credentials for NCBI FTP site in config file. \nException {err}", file=sys.stderr)
+		if crash_on_error:
+			sys.exit(1)
 	except Exception as err:
 		print("Error unable to connect to FTP site. Running network test...", file=sys.stderr)
 		setup.test_internet_connection(databases=["NCBI"])
@@ -3274,7 +3385,10 @@ x_ncbi_login__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_ncbi_login__mutmut_29': x_ncbi_login__mutmut_29, 
     'x_ncbi_login__mutmut_30': x_ncbi_login__mutmut_30, 
     'x_ncbi_login__mutmut_31': x_ncbi_login__mutmut_31, 
-    'x_ncbi_login__mutmut_32': x_ncbi_login__mutmut_32
+    'x_ncbi_login__mutmut_32': x_ncbi_login__mutmut_32, 
+    'x_ncbi_login__mutmut_33': x_ncbi_login__mutmut_33, 
+    'x_ncbi_login__mutmut_34': x_ncbi_login__mutmut_34, 
+    'x_ncbi_login__mutmut_35': x_ncbi_login__mutmut_35
 }
 x_ncbi_login__mutmut_orig.__name__ = 'x_ncbi_login'
 

@@ -10,6 +10,8 @@ from pandera import pandera, DataFrameSchema, Column, Check, Index, MultiIndex
 import os
 import sys
 from datetime import datetime
+from cryptography.fernet import InvalidToken
+
 import src.genbank_handler as genbank_handler
 import src.gisaid_handler as gisaid_handler
 import src.biosample_sra_handler as biosample_sra_handler
@@ -22860,13 +22862,13 @@ x_create_submission_requirements_dict__mutmut_mutants : ClassVar[MutantDict] = {
 x_create_submission_requirements_dict__mutmut_orig.__name__ = 'x_create_submission_requirements_dict'
 
 # Update all databases listed under one submission_name
-def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
-	args = [group_df, submission_log_dir]# type: ignore
+def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
+	args = [group_df, submission_log_dir, decrypt_key]# type: ignore
 	kwargs = {}# type: ignore
 	return _mutmut_trampoline(x_update_grouped_submission__mutmut_orig, x_update_grouped_submission__mutmut_mutants, args, kwargs, None)
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_orig(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_orig(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -22876,7 +22878,7 @@ def x_update_grouped_submission__mutmut_orig(group_df: pd.DataFrame, submission_
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -22914,7 +22916,7 @@ def x_update_grouped_submission__mutmut_orig(group_df: pd.DataFrame, submission_
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_1(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_1(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=None)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -22924,7 +22926,7 @@ def x_update_grouped_submission__mutmut_1(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -22962,7 +22964,7 @@ def x_update_grouped_submission__mutmut_1(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_2(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_2(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = None
 	# Reset index
@@ -22972,7 +22974,7 @@ def x_update_grouped_submission__mutmut_2(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23010,7 +23012,7 @@ def x_update_grouped_submission__mutmut_2(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_3(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_3(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=None)
 	# Reset index
@@ -23020,7 +23022,7 @@ def x_update_grouped_submission__mutmut_3(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23058,7 +23060,7 @@ def x_update_grouped_submission__mutmut_3(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_4(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_4(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23068,7 +23070,7 @@ def x_update_grouped_submission__mutmut_4(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23106,7 +23108,7 @@ def x_update_grouped_submission__mutmut_4(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_5(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_5(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23116,7 +23118,7 @@ def x_update_grouped_submission__mutmut_5(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23154,7 +23156,7 @@ def x_update_grouped_submission__mutmut_5(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_6(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_6(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23164,7 +23166,7 @@ def x_update_grouped_submission__mutmut_6(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23202,7 +23204,7 @@ def x_update_grouped_submission__mutmut_6(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_7(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_7(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23212,7 +23214,7 @@ def x_update_grouped_submission__mutmut_7(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23250,7 +23252,7 @@ def x_update_grouped_submission__mutmut_7(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_8(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_8(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23260,7 +23262,7 @@ def x_update_grouped_submission__mutmut_8(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23298,7 +23300,7 @@ def x_update_grouped_submission__mutmut_8(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_9(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_9(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23308,7 +23310,7 @@ def x_update_grouped_submission__mutmut_9(group_df: pd.DataFrame, submission_log
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23346,7 +23348,7 @@ def x_update_grouped_submission__mutmut_9(group_df: pd.DataFrame, submission_log
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_10(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_10(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23356,7 +23358,7 @@ def x_update_grouped_submission__mutmut_10(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23394,7 +23396,7 @@ def x_update_grouped_submission__mutmut_10(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_11(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_11(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23404,7 +23406,7 @@ def x_update_grouped_submission__mutmut_11(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23442,7 +23444,7 @@ def x_update_grouped_submission__mutmut_11(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_12(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_12(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23452,7 +23454,7 @@ def x_update_grouped_submission__mutmut_12(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23490,7 +23492,7 @@ def x_update_grouped_submission__mutmut_12(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_13(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_13(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23500,7 +23502,7 @@ def x_update_grouped_submission__mutmut_13(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23538,7 +23540,7 @@ def x_update_grouped_submission__mutmut_13(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_14(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_14(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23548,7 +23550,7 @@ def x_update_grouped_submission__mutmut_14(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23586,7 +23588,7 @@ def x_update_grouped_submission__mutmut_14(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_15(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_15(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23596,7 +23598,7 @@ def x_update_grouped_submission__mutmut_15(group_df: pd.DataFrame, submission_lo
 	submission_organism = None
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23634,7 +23636,7 @@ def x_update_grouped_submission__mutmut_15(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_16(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_16(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23644,7 +23646,7 @@ def x_update_grouped_submission__mutmut_16(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[1, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23682,7 +23684,7 @@ def x_update_grouped_submission__mutmut_16(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_17(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_17(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23692,7 +23694,7 @@ def x_update_grouped_submission__mutmut_17(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "XXOrganismXX"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23730,7 +23732,7 @@ def x_update_grouped_submission__mutmut_17(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_18(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_18(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23740,7 +23742,7 @@ def x_update_grouped_submission__mutmut_18(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23778,7 +23780,7 @@ def x_update_grouped_submission__mutmut_18(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_19(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_19(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23788,7 +23790,7 @@ def x_update_grouped_submission__mutmut_19(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "ORGANISM"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23826,7 +23828,7 @@ def x_update_grouped_submission__mutmut_19(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_20(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_20(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23836,7 +23838,7 @@ def x_update_grouped_submission__mutmut_20(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = None
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23874,7 +23876,7 @@ def x_update_grouped_submission__mutmut_20(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_21(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_21(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23884,7 +23886,7 @@ def x_update_grouped_submission__mutmut_21(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[1, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23922,7 +23924,7 @@ def x_update_grouped_submission__mutmut_21(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_22(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_22(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23932,7 +23934,7 @@ def x_update_grouped_submission__mutmut_22(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "XXSubmission_DirectoryXX"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -23970,7 +23972,7 @@ def x_update_grouped_submission__mutmut_22(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_23(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_23(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -23980,7 +23982,7 @@ def x_update_grouped_submission__mutmut_23(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "submission_directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24018,7 +24020,7 @@ def x_update_grouped_submission__mutmut_23(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_24(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_24(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24028,7 +24030,7 @@ def x_update_grouped_submission__mutmut_24(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "SUBMISSION_DIRECTORY"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24066,7 +24068,7 @@ def x_update_grouped_submission__mutmut_24(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_25(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_25(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24076,7 +24078,7 @@ def x_update_grouped_submission__mutmut_25(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = None
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24114,7 +24116,7 @@ def x_update_grouped_submission__mutmut_25(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_26(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_26(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24124,7 +24126,7 @@ def x_update_grouped_submission__mutmut_26(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["XXDatabaseXX"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24162,7 +24164,7 @@ def x_update_grouped_submission__mutmut_26(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_27(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_27(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24172,7 +24174,7 @@ def x_update_grouped_submission__mutmut_27(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24210,7 +24212,7 @@ def x_update_grouped_submission__mutmut_27(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_28(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_28(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24220,7 +24222,7 @@ def x_update_grouped_submission__mutmut_28(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["DATABASE"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24258,7 +24260,7 @@ def x_update_grouped_submission__mutmut_28(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_29(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_29(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24306,7 +24308,7 @@ def x_update_grouped_submission__mutmut_29(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_30(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_30(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24316,7 +24318,7 @@ def x_update_grouped_submission__mutmut_30(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=None, databases=databases)
+	config_dict = tools.get_config(config_file=None, databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24354,7 +24356,7 @@ def x_update_grouped_submission__mutmut_30(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_31(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_31(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24364,7 +24366,7 @@ def x_update_grouped_submission__mutmut_31(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=None)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=None, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24402,7 +24404,7 @@ def x_update_grouped_submission__mutmut_31(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_32(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_32(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24412,7 +24414,7 @@ def x_update_grouped_submission__mutmut_32(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=None)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24450,7 +24452,7 @@ def x_update_grouped_submission__mutmut_32(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_33(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_33(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24460,7 +24462,7 @@ def x_update_grouped_submission__mutmut_33(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], )
+	config_dict = tools.get_config(databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24498,7 +24500,7 @@ def x_update_grouped_submission__mutmut_33(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_34(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_34(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24508,7 +24510,7 @@ def x_update_grouped_submission__mutmut_34(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[1, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24546,7 +24548,7 @@ def x_update_grouped_submission__mutmut_34(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_35(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_35(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24556,7 +24558,7 @@ def x_update_grouped_submission__mutmut_35(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "XXConfig_FileXX"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, )
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24594,7 +24596,7 @@ def x_update_grouped_submission__mutmut_35(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_36(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_36(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24604,7 +24606,7 @@ def x_update_grouped_submission__mutmut_36(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "config_file"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[1, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24642,7 +24644,7 @@ def x_update_grouped_submission__mutmut_36(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_37(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_37(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24652,7 +24654,7 @@ def x_update_grouped_submission__mutmut_37(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "CONFIG_FILE"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "XXConfig_FileXX"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24690,7 +24692,7 @@ def x_update_grouped_submission__mutmut_37(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_38(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_38(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24700,7 +24702,103 @@ def x_update_grouped_submission__mutmut_38(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "config_file"], databases=databases, decrypt_key=decrypt_key)
+	if "BIOSAMPLE" in databases:
+		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
+		submission_requirements["BIOSAMPLE"], biosample_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="BIOSAMPLE", curr_status=biosample_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
+		print(f"\tBioSample: {biosample_status}")
+	if "SRA" in databases:
+		sra_status = group_df.loc[group_df["Database"] == "SRA", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "SRA", "Submission_Directory"].iloc[0]
+		submission_requirements["SRA"], sra_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="SRA", curr_status=sra_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
+		print(f"\tSRA: {sra_status}")
+	# If GISAID submitted to first, check it now
+	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") == 1:
+		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
+		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
+		print(f"\tGISAID: {gisaid_status}")
+	# Same requirements for GENBANK-FTP and GENBANK-TBL2ASN
+	if any("GENBANK" in database for database in databases):
+		if "GENBANK-FTP" in databases:
+			genbank_type = "GENBANK-FTP"
+		elif "GENBANK-TBL2ASN" in databases:
+			genbank_type = "GENBANK-TBL2ASN"
+		else:
+			print(f"Error: Incorrect database option for GenBank in 'submission_log.csv' databases '{databases}' for '{submission_name}'.")
+			sys.exit(1)
+		genbank_status = group_df.loc[group_df["Database"] == genbank_type, "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == genbank_type, "Submission_Directory"].iloc[0]
+		submission_requirements["GENBANK"], genbank_status = process_genbank(genbank_type=genbank_type, submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, curr_status=genbank_status, organism=submission_organism, config_dict=config_dict["NCBI"], submission_type=submission_type, linking_databases=submission_requirements)
+		print(f"\tGenBank: {genbank_status}")
+	# If GISAID was not previously submitted to, try again
+	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") != 1:
+		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
+		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
+		print(f"\tGISAID: {gisaid_status}")
+
+# Update all databases listed under one submission_name
+def x_update_grouped_submission__mutmut_39(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
+	validate_fields_exist(df=group_df)
+	submission_requirements = create_submission_requirements_dict(group_df=group_df)
+	# Reset index
+	group_df = group_df.reset_index()
+	submission_name = group_df.at[0, "Submission_Name"]
+	submission_type = group_df.at[0, "Submission_Type"]
+	submission_organism = group_df.at[0, "Organism"]
+	submission_dir = group_df.at[0, "Submission_Directory"]
+	databases = group_df["Database"].tolist()
+	config_dict = tools.get_config(config_file=group_df.at[0, "CONFIG_FILE"], databases=databases, decrypt_key=decrypt_key)
+	if "BIOSAMPLE" in databases:
+		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
+		submission_requirements["BIOSAMPLE"], biosample_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="BIOSAMPLE", curr_status=biosample_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
+		print(f"\tBioSample: {biosample_status}")
+	if "SRA" in databases:
+		sra_status = group_df.loc[group_df["Database"] == "SRA", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "SRA", "Submission_Directory"].iloc[0]
+		submission_requirements["SRA"], sra_status = process_biosample_sra(submission_name=submission_name, organism=submission_organism, database="SRA", curr_status=sra_status, submission_log_dir=submission_log_dir, submission_dir=submission_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
+		print(f"\tSRA: {sra_status}")
+	# If GISAID submitted to first, check it now
+	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") == 1:
+		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
+		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
+		print(f"\tGISAID: {gisaid_status}")
+	# Same requirements for GENBANK-FTP and GENBANK-TBL2ASN
+	if any("GENBANK" in database for database in databases):
+		if "GENBANK-FTP" in databases:
+			genbank_type = "GENBANK-FTP"
+		elif "GENBANK-TBL2ASN" in databases:
+			genbank_type = "GENBANK-TBL2ASN"
+		else:
+			print(f"Error: Incorrect database option for GenBank in 'submission_log.csv' databases '{databases}' for '{submission_name}'.")
+			sys.exit(1)
+		genbank_status = group_df.loc[group_df["Database"] == genbank_type, "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == genbank_type, "Submission_Directory"].iloc[0]
+		submission_requirements["GENBANK"], genbank_status = process_genbank(genbank_type=genbank_type, submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, curr_status=genbank_status, organism=submission_organism, config_dict=config_dict["NCBI"], submission_type=submission_type, linking_databases=submission_requirements)
+		print(f"\tGenBank: {genbank_status}")
+	# If GISAID was not previously submitted to, try again
+	if "GISAID" in databases and tools.get_submission_position(config_dict=config_dict, database="GISAID") != 1:
+		gisaid_status = group_df.loc[group_df["Database"] == "GISAID", "Submission_Status"].iloc[0]
+		submission_dir = group_df.loc[group_df["Database"] == "GISAID", "Submission_Directory"].iloc[0]
+		submission_requirements["GISAID"], gisaid_status = process_gisaid(submission_name=submission_name, submission_log_dir=submission_log_dir, submission_dir=submission_dir, organism=submission_organism, curr_status=gisaid_status, config_dict=config_dict["GISAID"], submission_type=submission_type, submission_requirements=submission_requirements)
+		print(f"\tGISAID: {gisaid_status}")
+
+# Update all databases listed under one submission_name
+def x_update_grouped_submission__mutmut_40(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
+	validate_fields_exist(df=group_df)
+	submission_requirements = create_submission_requirements_dict(group_df=group_df)
+	# Reset index
+	group_df = group_df.reset_index()
+	submission_name = group_df.at[0, "Submission_Name"]
+	submission_type = group_df.at[0, "Submission_Type"]
+	submission_organism = group_df.at[0, "Organism"]
+	submission_dir = group_df.at[0, "Submission_Directory"]
+	databases = group_df["Database"].tolist()
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "XXBIOSAMPLEXX" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24738,7 +24836,7 @@ def x_update_grouped_submission__mutmut_38(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_39(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_41(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24748,7 +24846,7 @@ def x_update_grouped_submission__mutmut_39(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "biosample" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24786,7 +24884,7 @@ def x_update_grouped_submission__mutmut_39(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_40(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_42(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24796,7 +24894,7 @@ def x_update_grouped_submission__mutmut_40(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" not in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24834,7 +24932,7 @@ def x_update_grouped_submission__mutmut_40(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_41(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_43(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24844,7 +24942,7 @@ def x_update_grouped_submission__mutmut_41(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = None
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24882,7 +24980,7 @@ def x_update_grouped_submission__mutmut_41(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_42(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_44(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24892,7 +24990,7 @@ def x_update_grouped_submission__mutmut_42(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["XXDatabaseXX"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24930,7 +25028,7 @@ def x_update_grouped_submission__mutmut_42(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_43(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_45(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24940,7 +25038,7 @@ def x_update_grouped_submission__mutmut_43(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -24978,7 +25076,7 @@ def x_update_grouped_submission__mutmut_43(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_44(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_46(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -24988,7 +25086,7 @@ def x_update_grouped_submission__mutmut_44(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["DATABASE"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25026,7 +25124,7 @@ def x_update_grouped_submission__mutmut_44(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_45(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_47(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25036,7 +25134,7 @@ def x_update_grouped_submission__mutmut_45(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] != "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25074,7 +25172,7 @@ def x_update_grouped_submission__mutmut_45(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_46(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_48(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25084,7 +25182,7 @@ def x_update_grouped_submission__mutmut_46(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "XXBIOSAMPLEXX", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25122,7 +25220,7 @@ def x_update_grouped_submission__mutmut_46(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_47(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_49(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25132,7 +25230,7 @@ def x_update_grouped_submission__mutmut_47(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "biosample", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25170,7 +25268,7 @@ def x_update_grouped_submission__mutmut_47(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_48(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_50(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25180,7 +25278,7 @@ def x_update_grouped_submission__mutmut_48(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "XXSubmission_StatusXX"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25218,7 +25316,7 @@ def x_update_grouped_submission__mutmut_48(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_49(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_51(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25228,7 +25326,7 @@ def x_update_grouped_submission__mutmut_49(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "submission_status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25266,7 +25364,7 @@ def x_update_grouped_submission__mutmut_49(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_50(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_52(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25276,7 +25374,7 @@ def x_update_grouped_submission__mutmut_50(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "SUBMISSION_STATUS"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25314,7 +25412,7 @@ def x_update_grouped_submission__mutmut_50(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_51(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_53(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25324,7 +25422,7 @@ def x_update_grouped_submission__mutmut_51(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[1]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25362,7 +25460,7 @@ def x_update_grouped_submission__mutmut_51(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_52(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_54(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25372,7 +25470,7 @@ def x_update_grouped_submission__mutmut_52(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = None
@@ -25410,7 +25508,7 @@ def x_update_grouped_submission__mutmut_52(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_53(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_55(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25420,7 +25518,7 @@ def x_update_grouped_submission__mutmut_53(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["XXDatabaseXX"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25458,7 +25556,7 @@ def x_update_grouped_submission__mutmut_53(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_54(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_56(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25468,7 +25566,7 @@ def x_update_grouped_submission__mutmut_54(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25506,7 +25604,7 @@ def x_update_grouped_submission__mutmut_54(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_55(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_57(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25516,7 +25614,7 @@ def x_update_grouped_submission__mutmut_55(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["DATABASE"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25554,7 +25652,7 @@ def x_update_grouped_submission__mutmut_55(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_56(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_58(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25564,7 +25662,7 @@ def x_update_grouped_submission__mutmut_56(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] != "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25602,7 +25700,7 @@ def x_update_grouped_submission__mutmut_56(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_57(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_59(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25612,7 +25710,7 @@ def x_update_grouped_submission__mutmut_57(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "XXBIOSAMPLEXX", "Submission_Directory"].iloc[0]
@@ -25650,7 +25748,7 @@ def x_update_grouped_submission__mutmut_57(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_58(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_60(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25660,7 +25758,7 @@ def x_update_grouped_submission__mutmut_58(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "biosample", "Submission_Directory"].iloc[0]
@@ -25698,7 +25796,7 @@ def x_update_grouped_submission__mutmut_58(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_59(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_61(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25708,7 +25806,7 @@ def x_update_grouped_submission__mutmut_59(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "XXSubmission_DirectoryXX"].iloc[0]
@@ -25746,7 +25844,7 @@ def x_update_grouped_submission__mutmut_59(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_60(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_62(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25756,7 +25854,7 @@ def x_update_grouped_submission__mutmut_60(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "submission_directory"].iloc[0]
@@ -25794,7 +25892,7 @@ def x_update_grouped_submission__mutmut_60(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_61(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_63(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25804,7 +25902,7 @@ def x_update_grouped_submission__mutmut_61(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "SUBMISSION_DIRECTORY"].iloc[0]
@@ -25842,7 +25940,7 @@ def x_update_grouped_submission__mutmut_61(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_62(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_64(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25852,7 +25950,7 @@ def x_update_grouped_submission__mutmut_62(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[1]
@@ -25890,7 +25988,7 @@ def x_update_grouped_submission__mutmut_62(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_63(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_65(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25900,7 +25998,7 @@ def x_update_grouped_submission__mutmut_63(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25938,7 +26036,7 @@ def x_update_grouped_submission__mutmut_63(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_64(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_66(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25948,7 +26046,7 @@ def x_update_grouped_submission__mutmut_64(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -25986,7 +26084,7 @@ def x_update_grouped_submission__mutmut_64(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_65(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_67(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -25996,7 +26094,7 @@ def x_update_grouped_submission__mutmut_65(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26034,7 +26132,7 @@ def x_update_grouped_submission__mutmut_65(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_66(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_68(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26044,7 +26142,7 @@ def x_update_grouped_submission__mutmut_66(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26082,7 +26180,7 @@ def x_update_grouped_submission__mutmut_66(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_67(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_69(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26092,7 +26190,7 @@ def x_update_grouped_submission__mutmut_67(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26130,7 +26228,7 @@ def x_update_grouped_submission__mutmut_67(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_68(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_70(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26140,7 +26238,7 @@ def x_update_grouped_submission__mutmut_68(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26178,7 +26276,7 @@ def x_update_grouped_submission__mutmut_68(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_69(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_71(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26188,7 +26286,7 @@ def x_update_grouped_submission__mutmut_69(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26226,7 +26324,7 @@ def x_update_grouped_submission__mutmut_69(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_70(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_72(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26236,7 +26334,7 @@ def x_update_grouped_submission__mutmut_70(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26274,7 +26372,7 @@ def x_update_grouped_submission__mutmut_70(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_71(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_73(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26284,7 +26382,7 @@ def x_update_grouped_submission__mutmut_71(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26322,7 +26420,7 @@ def x_update_grouped_submission__mutmut_71(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_72(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_74(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26332,7 +26430,7 @@ def x_update_grouped_submission__mutmut_72(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26370,7 +26468,7 @@ def x_update_grouped_submission__mutmut_72(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_73(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_75(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26380,7 +26478,7 @@ def x_update_grouped_submission__mutmut_73(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26418,7 +26516,7 @@ def x_update_grouped_submission__mutmut_73(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_74(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_76(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26428,7 +26526,7 @@ def x_update_grouped_submission__mutmut_74(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26466,7 +26564,7 @@ def x_update_grouped_submission__mutmut_74(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_75(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_77(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26476,7 +26574,7 @@ def x_update_grouped_submission__mutmut_75(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26514,7 +26612,7 @@ def x_update_grouped_submission__mutmut_75(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_76(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_78(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26524,7 +26622,7 @@ def x_update_grouped_submission__mutmut_76(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26562,7 +26660,7 @@ def x_update_grouped_submission__mutmut_76(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_77(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_79(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26572,7 +26670,7 @@ def x_update_grouped_submission__mutmut_77(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26610,7 +26708,7 @@ def x_update_grouped_submission__mutmut_77(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_78(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_80(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26620,7 +26718,7 @@ def x_update_grouped_submission__mutmut_78(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26658,7 +26756,7 @@ def x_update_grouped_submission__mutmut_78(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_79(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_81(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26668,7 +26766,7 @@ def x_update_grouped_submission__mutmut_79(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26706,7 +26804,7 @@ def x_update_grouped_submission__mutmut_79(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_80(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_82(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26716,7 +26814,7 @@ def x_update_grouped_submission__mutmut_80(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26754,7 +26852,7 @@ def x_update_grouped_submission__mutmut_80(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_81(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_83(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26764,7 +26862,7 @@ def x_update_grouped_submission__mutmut_81(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26802,7 +26900,7 @@ def x_update_grouped_submission__mutmut_81(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_82(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_84(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26812,7 +26910,7 @@ def x_update_grouped_submission__mutmut_82(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26850,7 +26948,7 @@ def x_update_grouped_submission__mutmut_82(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_83(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_85(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26860,7 +26958,7 @@ def x_update_grouped_submission__mutmut_83(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26898,7 +26996,7 @@ def x_update_grouped_submission__mutmut_83(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_84(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_86(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26908,7 +27006,7 @@ def x_update_grouped_submission__mutmut_84(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26946,7 +27044,7 @@ def x_update_grouped_submission__mutmut_84(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_85(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_87(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -26956,7 +27054,7 @@ def x_update_grouped_submission__mutmut_85(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -26994,7 +27092,7 @@ def x_update_grouped_submission__mutmut_85(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_86(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_88(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27004,7 +27102,7 @@ def x_update_grouped_submission__mutmut_86(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27042,7 +27140,7 @@ def x_update_grouped_submission__mutmut_86(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_87(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_89(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27052,7 +27150,7 @@ def x_update_grouped_submission__mutmut_87(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27090,7 +27188,7 @@ def x_update_grouped_submission__mutmut_87(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_88(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_90(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27100,7 +27198,7 @@ def x_update_grouped_submission__mutmut_88(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27138,7 +27236,7 @@ def x_update_grouped_submission__mutmut_88(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_89(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_91(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27148,7 +27246,7 @@ def x_update_grouped_submission__mutmut_89(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27186,7 +27284,7 @@ def x_update_grouped_submission__mutmut_89(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_90(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_92(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27196,7 +27294,7 @@ def x_update_grouped_submission__mutmut_90(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27234,7 +27332,7 @@ def x_update_grouped_submission__mutmut_90(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_91(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_93(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27244,7 +27342,7 @@ def x_update_grouped_submission__mutmut_91(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27282,7 +27380,7 @@ def x_update_grouped_submission__mutmut_91(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_92(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_94(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27292,7 +27390,7 @@ def x_update_grouped_submission__mutmut_92(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27330,7 +27428,7 @@ def x_update_grouped_submission__mutmut_92(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_93(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_95(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27340,7 +27438,7 @@ def x_update_grouped_submission__mutmut_93(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27378,7 +27476,7 @@ def x_update_grouped_submission__mutmut_93(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_94(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_96(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27388,7 +27486,7 @@ def x_update_grouped_submission__mutmut_94(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27426,7 +27524,7 @@ def x_update_grouped_submission__mutmut_94(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_95(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_97(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27436,7 +27534,7 @@ def x_update_grouped_submission__mutmut_95(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27474,7 +27572,7 @@ def x_update_grouped_submission__mutmut_95(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_96(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_98(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27484,7 +27582,7 @@ def x_update_grouped_submission__mutmut_96(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27522,7 +27620,7 @@ def x_update_grouped_submission__mutmut_96(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_97(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_99(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27532,7 +27630,7 @@ def x_update_grouped_submission__mutmut_97(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27570,7 +27668,7 @@ def x_update_grouped_submission__mutmut_97(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_98(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_100(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27580,7 +27678,7 @@ def x_update_grouped_submission__mutmut_98(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27618,7 +27716,7 @@ def x_update_grouped_submission__mutmut_98(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_99(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_101(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27628,7 +27726,7 @@ def x_update_grouped_submission__mutmut_99(group_df: pd.DataFrame, submission_lo
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27666,7 +27764,7 @@ def x_update_grouped_submission__mutmut_99(group_df: pd.DataFrame, submission_lo
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_100(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_102(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27676,7 +27774,7 @@ def x_update_grouped_submission__mutmut_100(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27714,7 +27812,7 @@ def x_update_grouped_submission__mutmut_100(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_101(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_103(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27724,7 +27822,7 @@ def x_update_grouped_submission__mutmut_101(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27762,7 +27860,7 @@ def x_update_grouped_submission__mutmut_101(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_102(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_104(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27772,7 +27870,7 @@ def x_update_grouped_submission__mutmut_102(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27810,7 +27908,7 @@ def x_update_grouped_submission__mutmut_102(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_103(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_105(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27820,7 +27918,7 @@ def x_update_grouped_submission__mutmut_103(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27858,7 +27956,7 @@ def x_update_grouped_submission__mutmut_103(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_104(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_106(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27868,7 +27966,7 @@ def x_update_grouped_submission__mutmut_104(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27906,7 +28004,7 @@ def x_update_grouped_submission__mutmut_104(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_105(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_107(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27916,7 +28014,7 @@ def x_update_grouped_submission__mutmut_105(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -27954,7 +28052,7 @@ def x_update_grouped_submission__mutmut_105(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_106(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_108(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -27964,7 +28062,7 @@ def x_update_grouped_submission__mutmut_106(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28002,7 +28100,7 @@ def x_update_grouped_submission__mutmut_106(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_107(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_109(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28012,7 +28110,7 @@ def x_update_grouped_submission__mutmut_107(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28050,7 +28148,7 @@ def x_update_grouped_submission__mutmut_107(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_108(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_110(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28060,7 +28158,7 @@ def x_update_grouped_submission__mutmut_108(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28098,7 +28196,7 @@ def x_update_grouped_submission__mutmut_108(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_109(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_111(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28108,7 +28206,7 @@ def x_update_grouped_submission__mutmut_109(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28146,7 +28244,7 @@ def x_update_grouped_submission__mutmut_109(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_110(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_112(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28156,7 +28254,7 @@ def x_update_grouped_submission__mutmut_110(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28194,7 +28292,7 @@ def x_update_grouped_submission__mutmut_110(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_111(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_113(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28204,7 +28302,7 @@ def x_update_grouped_submission__mutmut_111(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28242,7 +28340,7 @@ def x_update_grouped_submission__mutmut_111(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_112(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_114(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28252,7 +28350,7 @@ def x_update_grouped_submission__mutmut_112(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28290,7 +28388,7 @@ def x_update_grouped_submission__mutmut_112(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_113(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_115(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28300,7 +28398,7 @@ def x_update_grouped_submission__mutmut_113(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28338,7 +28436,7 @@ def x_update_grouped_submission__mutmut_113(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_114(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_116(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28348,7 +28446,7 @@ def x_update_grouped_submission__mutmut_114(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28386,7 +28484,7 @@ def x_update_grouped_submission__mutmut_114(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_115(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_117(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28396,7 +28494,7 @@ def x_update_grouped_submission__mutmut_115(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28434,7 +28532,7 @@ def x_update_grouped_submission__mutmut_115(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_116(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_118(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28444,7 +28542,7 @@ def x_update_grouped_submission__mutmut_116(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28482,7 +28580,7 @@ def x_update_grouped_submission__mutmut_116(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_117(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_119(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28492,7 +28590,7 @@ def x_update_grouped_submission__mutmut_117(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28530,7 +28628,7 @@ def x_update_grouped_submission__mutmut_117(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_118(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_120(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28540,7 +28638,7 @@ def x_update_grouped_submission__mutmut_118(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28578,7 +28676,7 @@ def x_update_grouped_submission__mutmut_118(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_119(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_121(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28588,7 +28686,7 @@ def x_update_grouped_submission__mutmut_119(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28626,7 +28724,7 @@ def x_update_grouped_submission__mutmut_119(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_120(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_122(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28636,7 +28734,7 @@ def x_update_grouped_submission__mutmut_120(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28674,7 +28772,7 @@ def x_update_grouped_submission__mutmut_120(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_121(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_123(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28684,7 +28782,7 @@ def x_update_grouped_submission__mutmut_121(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28722,7 +28820,7 @@ def x_update_grouped_submission__mutmut_121(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_122(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_124(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28732,7 +28830,7 @@ def x_update_grouped_submission__mutmut_122(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28770,7 +28868,7 @@ def x_update_grouped_submission__mutmut_122(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_123(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_125(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28780,7 +28878,7 @@ def x_update_grouped_submission__mutmut_123(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28818,7 +28916,7 @@ def x_update_grouped_submission__mutmut_123(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_124(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_126(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28828,7 +28926,7 @@ def x_update_grouped_submission__mutmut_124(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28866,7 +28964,7 @@ def x_update_grouped_submission__mutmut_124(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_125(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_127(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28876,7 +28974,7 @@ def x_update_grouped_submission__mutmut_125(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28914,7 +29012,7 @@ def x_update_grouped_submission__mutmut_125(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_126(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_128(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28924,7 +29022,7 @@ def x_update_grouped_submission__mutmut_126(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -28962,7 +29060,7 @@ def x_update_grouped_submission__mutmut_126(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_127(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_129(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -28972,7 +29070,7 @@ def x_update_grouped_submission__mutmut_127(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29010,7 +29108,7 @@ def x_update_grouped_submission__mutmut_127(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_128(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_130(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29020,7 +29118,7 @@ def x_update_grouped_submission__mutmut_128(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29058,7 +29156,7 @@ def x_update_grouped_submission__mutmut_128(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_129(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_131(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29068,7 +29166,7 @@ def x_update_grouped_submission__mutmut_129(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29106,7 +29204,7 @@ def x_update_grouped_submission__mutmut_129(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_130(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_132(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29116,7 +29214,7 @@ def x_update_grouped_submission__mutmut_130(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29154,7 +29252,7 @@ def x_update_grouped_submission__mutmut_130(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_131(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_133(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29164,7 +29262,7 @@ def x_update_grouped_submission__mutmut_131(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29202,7 +29300,7 @@ def x_update_grouped_submission__mutmut_131(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_132(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_134(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29212,7 +29310,7 @@ def x_update_grouped_submission__mutmut_132(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29250,7 +29348,7 @@ def x_update_grouped_submission__mutmut_132(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_133(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_135(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29260,7 +29358,7 @@ def x_update_grouped_submission__mutmut_133(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29298,7 +29396,7 @@ def x_update_grouped_submission__mutmut_133(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_134(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_136(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29308,7 +29406,7 @@ def x_update_grouped_submission__mutmut_134(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29346,7 +29444,7 @@ def x_update_grouped_submission__mutmut_134(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_135(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_137(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29356,7 +29454,7 @@ def x_update_grouped_submission__mutmut_135(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29394,7 +29492,7 @@ def x_update_grouped_submission__mutmut_135(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_136(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_138(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29404,7 +29502,7 @@ def x_update_grouped_submission__mutmut_136(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29442,7 +29540,7 @@ def x_update_grouped_submission__mutmut_136(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_137(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_139(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29452,7 +29550,7 @@ def x_update_grouped_submission__mutmut_137(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29490,7 +29588,7 @@ def x_update_grouped_submission__mutmut_137(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_138(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_140(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29500,7 +29598,7 @@ def x_update_grouped_submission__mutmut_138(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29538,7 +29636,7 @@ def x_update_grouped_submission__mutmut_138(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_139(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_141(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29548,7 +29646,7 @@ def x_update_grouped_submission__mutmut_139(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29586,7 +29684,7 @@ def x_update_grouped_submission__mutmut_139(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_140(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_142(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29596,7 +29694,7 @@ def x_update_grouped_submission__mutmut_140(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29634,7 +29732,7 @@ def x_update_grouped_submission__mutmut_140(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_141(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_143(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29644,7 +29742,7 @@ def x_update_grouped_submission__mutmut_141(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29682,7 +29780,7 @@ def x_update_grouped_submission__mutmut_141(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_142(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_144(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29692,7 +29790,7 @@ def x_update_grouped_submission__mutmut_142(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29730,7 +29828,7 @@ def x_update_grouped_submission__mutmut_142(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_143(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_145(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29740,7 +29838,7 @@ def x_update_grouped_submission__mutmut_143(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29778,7 +29876,7 @@ def x_update_grouped_submission__mutmut_143(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_144(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_146(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29788,7 +29886,7 @@ def x_update_grouped_submission__mutmut_144(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29826,7 +29924,7 @@ def x_update_grouped_submission__mutmut_144(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_145(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_147(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29836,7 +29934,7 @@ def x_update_grouped_submission__mutmut_145(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29874,7 +29972,7 @@ def x_update_grouped_submission__mutmut_145(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_146(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_148(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29884,7 +29982,7 @@ def x_update_grouped_submission__mutmut_146(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29922,7 +30020,7 @@ def x_update_grouped_submission__mutmut_146(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_147(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_149(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29932,7 +30030,7 @@ def x_update_grouped_submission__mutmut_147(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -29970,7 +30068,7 @@ def x_update_grouped_submission__mutmut_147(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_148(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_150(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -29980,7 +30078,7 @@ def x_update_grouped_submission__mutmut_148(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30018,7 +30116,7 @@ def x_update_grouped_submission__mutmut_148(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_149(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_151(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30028,7 +30126,7 @@ def x_update_grouped_submission__mutmut_149(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30066,7 +30164,7 @@ def x_update_grouped_submission__mutmut_149(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_150(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_152(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30076,7 +30174,7 @@ def x_update_grouped_submission__mutmut_150(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30114,7 +30212,7 @@ def x_update_grouped_submission__mutmut_150(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_151(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_153(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30124,7 +30222,7 @@ def x_update_grouped_submission__mutmut_151(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30162,7 +30260,7 @@ def x_update_grouped_submission__mutmut_151(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_152(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_154(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30172,7 +30270,7 @@ def x_update_grouped_submission__mutmut_152(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30210,7 +30308,7 @@ def x_update_grouped_submission__mutmut_152(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_153(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_155(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30220,7 +30318,7 @@ def x_update_grouped_submission__mutmut_153(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30258,7 +30356,7 @@ def x_update_grouped_submission__mutmut_153(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_154(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_156(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30268,7 +30366,7 @@ def x_update_grouped_submission__mutmut_154(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30306,7 +30404,7 @@ def x_update_grouped_submission__mutmut_154(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_155(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_157(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30316,7 +30414,7 @@ def x_update_grouped_submission__mutmut_155(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30354,7 +30452,7 @@ def x_update_grouped_submission__mutmut_155(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_156(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_158(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30364,7 +30462,7 @@ def x_update_grouped_submission__mutmut_156(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30402,7 +30500,7 @@ def x_update_grouped_submission__mutmut_156(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_157(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_159(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30412,7 +30510,7 @@ def x_update_grouped_submission__mutmut_157(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30450,7 +30548,7 @@ def x_update_grouped_submission__mutmut_157(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_158(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_160(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30460,7 +30558,7 @@ def x_update_grouped_submission__mutmut_158(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30498,7 +30596,7 @@ def x_update_grouped_submission__mutmut_158(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_159(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_161(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30508,7 +30606,7 @@ def x_update_grouped_submission__mutmut_159(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30546,7 +30644,7 @@ def x_update_grouped_submission__mutmut_159(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_160(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_162(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30556,7 +30654,7 @@ def x_update_grouped_submission__mutmut_160(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30594,7 +30692,7 @@ def x_update_grouped_submission__mutmut_160(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_161(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_163(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30604,7 +30702,7 @@ def x_update_grouped_submission__mutmut_161(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30642,7 +30740,7 @@ def x_update_grouped_submission__mutmut_161(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_162(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_164(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30652,7 +30750,7 @@ def x_update_grouped_submission__mutmut_162(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30690,7 +30788,7 @@ def x_update_grouped_submission__mutmut_162(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_163(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_165(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30700,7 +30798,7 @@ def x_update_grouped_submission__mutmut_163(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30738,7 +30836,7 @@ def x_update_grouped_submission__mutmut_163(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_164(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_166(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30748,7 +30846,7 @@ def x_update_grouped_submission__mutmut_164(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30786,7 +30884,7 @@ def x_update_grouped_submission__mutmut_164(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_165(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_167(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30796,7 +30894,7 @@ def x_update_grouped_submission__mutmut_165(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30834,7 +30932,7 @@ def x_update_grouped_submission__mutmut_165(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_166(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_168(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30844,7 +30942,7 @@ def x_update_grouped_submission__mutmut_166(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30882,7 +30980,7 @@ def x_update_grouped_submission__mutmut_166(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_167(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_169(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30892,7 +30990,7 @@ def x_update_grouped_submission__mutmut_167(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30930,7 +31028,7 @@ def x_update_grouped_submission__mutmut_167(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_168(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_170(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30940,7 +31038,7 @@ def x_update_grouped_submission__mutmut_168(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -30978,7 +31076,7 @@ def x_update_grouped_submission__mutmut_168(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_169(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_171(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -30988,7 +31086,7 @@ def x_update_grouped_submission__mutmut_169(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31026,7 +31124,7 @@ def x_update_grouped_submission__mutmut_169(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_170(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_172(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31036,7 +31134,7 @@ def x_update_grouped_submission__mutmut_170(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31074,7 +31172,7 @@ def x_update_grouped_submission__mutmut_170(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_171(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_173(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31084,7 +31182,7 @@ def x_update_grouped_submission__mutmut_171(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31122,7 +31220,7 @@ def x_update_grouped_submission__mutmut_171(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_172(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_174(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31132,7 +31230,7 @@ def x_update_grouped_submission__mutmut_172(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31170,7 +31268,7 @@ def x_update_grouped_submission__mutmut_172(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_173(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_175(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31180,7 +31278,7 @@ def x_update_grouped_submission__mutmut_173(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31218,7 +31316,7 @@ def x_update_grouped_submission__mutmut_173(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_174(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_176(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31228,7 +31326,7 @@ def x_update_grouped_submission__mutmut_174(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31266,7 +31364,7 @@ def x_update_grouped_submission__mutmut_174(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_175(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_177(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31276,7 +31374,7 @@ def x_update_grouped_submission__mutmut_175(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31314,7 +31412,7 @@ def x_update_grouped_submission__mutmut_175(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_176(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_178(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31324,7 +31422,7 @@ def x_update_grouped_submission__mutmut_176(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31362,7 +31460,7 @@ def x_update_grouped_submission__mutmut_176(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_177(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_179(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31372,7 +31470,7 @@ def x_update_grouped_submission__mutmut_177(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31410,7 +31508,7 @@ def x_update_grouped_submission__mutmut_177(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_178(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_180(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31420,7 +31518,7 @@ def x_update_grouped_submission__mutmut_178(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31458,7 +31556,7 @@ def x_update_grouped_submission__mutmut_178(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_179(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_181(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31468,7 +31566,7 @@ def x_update_grouped_submission__mutmut_179(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31506,7 +31604,7 @@ def x_update_grouped_submission__mutmut_179(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_180(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_182(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31516,7 +31614,7 @@ def x_update_grouped_submission__mutmut_180(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31554,7 +31652,7 @@ def x_update_grouped_submission__mutmut_180(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_181(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_183(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31564,7 +31662,7 @@ def x_update_grouped_submission__mutmut_181(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31602,7 +31700,7 @@ def x_update_grouped_submission__mutmut_181(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_182(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_184(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31612,7 +31710,7 @@ def x_update_grouped_submission__mutmut_182(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31650,7 +31748,7 @@ def x_update_grouped_submission__mutmut_182(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_183(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_185(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31660,7 +31758,7 @@ def x_update_grouped_submission__mutmut_183(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31698,7 +31796,7 @@ def x_update_grouped_submission__mutmut_183(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_184(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_186(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31708,7 +31806,7 @@ def x_update_grouped_submission__mutmut_184(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31746,7 +31844,7 @@ def x_update_grouped_submission__mutmut_184(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_185(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_187(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31756,7 +31854,7 @@ def x_update_grouped_submission__mutmut_185(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31794,7 +31892,7 @@ def x_update_grouped_submission__mutmut_185(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_186(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_188(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31804,7 +31902,7 @@ def x_update_grouped_submission__mutmut_186(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31842,7 +31940,7 @@ def x_update_grouped_submission__mutmut_186(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_187(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_189(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31852,7 +31950,7 @@ def x_update_grouped_submission__mutmut_187(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31890,7 +31988,7 @@ def x_update_grouped_submission__mutmut_187(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_188(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_190(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31900,7 +31998,7 @@ def x_update_grouped_submission__mutmut_188(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31938,7 +32036,7 @@ def x_update_grouped_submission__mutmut_188(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_189(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_191(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31948,7 +32046,7 @@ def x_update_grouped_submission__mutmut_189(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -31986,7 +32084,7 @@ def x_update_grouped_submission__mutmut_189(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_190(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_192(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -31996,7 +32094,7 @@ def x_update_grouped_submission__mutmut_190(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32034,7 +32132,7 @@ def x_update_grouped_submission__mutmut_190(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_191(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_193(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32044,7 +32142,7 @@ def x_update_grouped_submission__mutmut_191(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32082,7 +32180,7 @@ def x_update_grouped_submission__mutmut_191(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_192(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_194(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32092,7 +32190,7 @@ def x_update_grouped_submission__mutmut_192(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32130,7 +32228,7 @@ def x_update_grouped_submission__mutmut_192(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_193(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_195(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32140,7 +32238,7 @@ def x_update_grouped_submission__mutmut_193(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32178,7 +32276,7 @@ def x_update_grouped_submission__mutmut_193(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_194(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_196(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32188,7 +32286,7 @@ def x_update_grouped_submission__mutmut_194(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32226,7 +32324,7 @@ def x_update_grouped_submission__mutmut_194(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_195(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_197(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32236,7 +32334,7 @@ def x_update_grouped_submission__mutmut_195(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32274,7 +32372,7 @@ def x_update_grouped_submission__mutmut_195(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_196(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_198(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32284,7 +32382,7 @@ def x_update_grouped_submission__mutmut_196(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32322,7 +32420,7 @@ def x_update_grouped_submission__mutmut_196(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_197(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_199(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32332,7 +32430,7 @@ def x_update_grouped_submission__mutmut_197(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32370,7 +32468,7 @@ def x_update_grouped_submission__mutmut_197(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_198(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_200(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32380,7 +32478,7 @@ def x_update_grouped_submission__mutmut_198(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32418,7 +32516,7 @@ def x_update_grouped_submission__mutmut_198(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_199(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_201(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32428,7 +32526,7 @@ def x_update_grouped_submission__mutmut_199(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32466,7 +32564,7 @@ def x_update_grouped_submission__mutmut_199(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_200(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_202(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32476,7 +32574,7 @@ def x_update_grouped_submission__mutmut_200(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32514,7 +32612,7 @@ def x_update_grouped_submission__mutmut_200(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_201(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_203(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32524,7 +32622,7 @@ def x_update_grouped_submission__mutmut_201(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32562,7 +32660,7 @@ def x_update_grouped_submission__mutmut_201(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_202(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_204(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32572,7 +32670,7 @@ def x_update_grouped_submission__mutmut_202(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32610,7 +32708,7 @@ def x_update_grouped_submission__mutmut_202(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_203(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_205(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32620,7 +32718,7 @@ def x_update_grouped_submission__mutmut_203(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32658,7 +32756,7 @@ def x_update_grouped_submission__mutmut_203(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_204(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_206(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32668,7 +32766,7 @@ def x_update_grouped_submission__mutmut_204(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32706,7 +32804,7 @@ def x_update_grouped_submission__mutmut_204(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_205(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_207(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32716,7 +32814,7 @@ def x_update_grouped_submission__mutmut_205(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32754,7 +32852,7 @@ def x_update_grouped_submission__mutmut_205(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_206(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_208(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32764,7 +32862,7 @@ def x_update_grouped_submission__mutmut_206(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32802,7 +32900,7 @@ def x_update_grouped_submission__mutmut_206(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_207(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_209(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32812,7 +32910,7 @@ def x_update_grouped_submission__mutmut_207(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32850,7 +32948,7 @@ def x_update_grouped_submission__mutmut_207(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_208(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_210(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32860,7 +32958,7 @@ def x_update_grouped_submission__mutmut_208(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32898,7 +32996,7 @@ def x_update_grouped_submission__mutmut_208(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_209(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_211(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32908,7 +33006,7 @@ def x_update_grouped_submission__mutmut_209(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32946,7 +33044,7 @@ def x_update_grouped_submission__mutmut_209(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_210(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_212(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -32956,7 +33054,7 @@ def x_update_grouped_submission__mutmut_210(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -32994,7 +33092,7 @@ def x_update_grouped_submission__mutmut_210(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_211(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_213(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33004,7 +33102,7 @@ def x_update_grouped_submission__mutmut_211(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33042,7 +33140,7 @@ def x_update_grouped_submission__mutmut_211(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_212(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_214(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33052,7 +33150,7 @@ def x_update_grouped_submission__mutmut_212(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33090,7 +33188,7 @@ def x_update_grouped_submission__mutmut_212(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_213(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_215(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33100,7 +33198,7 @@ def x_update_grouped_submission__mutmut_213(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33138,7 +33236,7 @@ def x_update_grouped_submission__mutmut_213(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_214(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_216(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33148,7 +33246,7 @@ def x_update_grouped_submission__mutmut_214(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33186,7 +33284,7 @@ def x_update_grouped_submission__mutmut_214(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_215(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_217(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33196,7 +33294,7 @@ def x_update_grouped_submission__mutmut_215(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33234,7 +33332,7 @@ def x_update_grouped_submission__mutmut_215(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_216(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_218(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33244,7 +33342,7 @@ def x_update_grouped_submission__mutmut_216(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33282,7 +33380,7 @@ def x_update_grouped_submission__mutmut_216(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_217(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_219(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33292,7 +33390,7 @@ def x_update_grouped_submission__mutmut_217(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33330,7 +33428,7 @@ def x_update_grouped_submission__mutmut_217(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_218(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_220(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33340,7 +33438,7 @@ def x_update_grouped_submission__mutmut_218(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33378,7 +33476,7 @@ def x_update_grouped_submission__mutmut_218(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_219(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_221(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33388,7 +33486,7 @@ def x_update_grouped_submission__mutmut_219(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33426,7 +33524,7 @@ def x_update_grouped_submission__mutmut_219(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_220(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_222(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33436,7 +33534,7 @@ def x_update_grouped_submission__mutmut_220(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33474,7 +33572,7 @@ def x_update_grouped_submission__mutmut_220(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_221(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_223(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33484,7 +33582,7 @@ def x_update_grouped_submission__mutmut_221(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33522,7 +33620,7 @@ def x_update_grouped_submission__mutmut_221(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_222(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_224(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33532,7 +33630,7 @@ def x_update_grouped_submission__mutmut_222(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33570,7 +33668,7 @@ def x_update_grouped_submission__mutmut_222(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_223(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_225(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33580,7 +33678,7 @@ def x_update_grouped_submission__mutmut_223(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33618,7 +33716,7 @@ def x_update_grouped_submission__mutmut_223(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_224(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_226(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33628,7 +33726,7 @@ def x_update_grouped_submission__mutmut_224(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33666,7 +33764,7 @@ def x_update_grouped_submission__mutmut_224(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_225(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_227(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33676,7 +33774,7 @@ def x_update_grouped_submission__mutmut_225(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33714,7 +33812,7 @@ def x_update_grouped_submission__mutmut_225(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_226(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_228(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33724,7 +33822,7 @@ def x_update_grouped_submission__mutmut_226(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33762,7 +33860,7 @@ def x_update_grouped_submission__mutmut_226(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_227(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_229(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33772,7 +33870,7 @@ def x_update_grouped_submission__mutmut_227(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33810,7 +33908,7 @@ def x_update_grouped_submission__mutmut_227(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_228(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_230(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33820,7 +33918,7 @@ def x_update_grouped_submission__mutmut_228(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33858,7 +33956,7 @@ def x_update_grouped_submission__mutmut_228(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_229(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_231(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33868,7 +33966,7 @@ def x_update_grouped_submission__mutmut_229(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33906,7 +34004,7 @@ def x_update_grouped_submission__mutmut_229(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_230(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_232(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33916,7 +34014,7 @@ def x_update_grouped_submission__mutmut_230(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -33954,7 +34052,7 @@ def x_update_grouped_submission__mutmut_230(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_231(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_233(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -33964,7 +34062,7 @@ def x_update_grouped_submission__mutmut_231(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34002,7 +34100,7 @@ def x_update_grouped_submission__mutmut_231(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_232(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_234(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34012,7 +34110,7 @@ def x_update_grouped_submission__mutmut_232(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34050,7 +34148,7 @@ def x_update_grouped_submission__mutmut_232(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_233(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_235(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34060,7 +34158,7 @@ def x_update_grouped_submission__mutmut_233(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34098,7 +34196,7 @@ def x_update_grouped_submission__mutmut_233(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_234(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_236(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34108,7 +34206,7 @@ def x_update_grouped_submission__mutmut_234(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34146,7 +34244,7 @@ def x_update_grouped_submission__mutmut_234(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_235(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_237(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34156,7 +34254,7 @@ def x_update_grouped_submission__mutmut_235(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34194,7 +34292,7 @@ def x_update_grouped_submission__mutmut_235(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_236(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_238(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34204,7 +34302,7 @@ def x_update_grouped_submission__mutmut_236(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34242,7 +34340,7 @@ def x_update_grouped_submission__mutmut_236(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_237(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_239(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34252,7 +34350,7 @@ def x_update_grouped_submission__mutmut_237(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34290,7 +34388,7 @@ def x_update_grouped_submission__mutmut_237(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_238(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_240(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34300,7 +34398,7 @@ def x_update_grouped_submission__mutmut_238(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34338,7 +34436,7 @@ def x_update_grouped_submission__mutmut_238(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_239(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_241(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34348,7 +34446,7 @@ def x_update_grouped_submission__mutmut_239(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34386,7 +34484,7 @@ def x_update_grouped_submission__mutmut_239(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_240(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_242(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34396,7 +34494,7 @@ def x_update_grouped_submission__mutmut_240(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34434,7 +34532,7 @@ def x_update_grouped_submission__mutmut_240(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_241(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_243(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34444,7 +34542,7 @@ def x_update_grouped_submission__mutmut_241(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34482,7 +34580,7 @@ def x_update_grouped_submission__mutmut_241(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_242(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_244(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34492,7 +34590,7 @@ def x_update_grouped_submission__mutmut_242(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34530,7 +34628,7 @@ def x_update_grouped_submission__mutmut_242(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_243(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_245(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34540,7 +34638,7 @@ def x_update_grouped_submission__mutmut_243(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34578,7 +34676,7 @@ def x_update_grouped_submission__mutmut_243(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_244(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_246(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34588,7 +34686,7 @@ def x_update_grouped_submission__mutmut_244(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34626,7 +34724,7 @@ def x_update_grouped_submission__mutmut_244(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_245(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_247(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34636,7 +34734,7 @@ def x_update_grouped_submission__mutmut_245(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34674,7 +34772,7 @@ def x_update_grouped_submission__mutmut_245(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_246(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_248(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34684,7 +34782,7 @@ def x_update_grouped_submission__mutmut_246(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34722,7 +34820,7 @@ def x_update_grouped_submission__mutmut_246(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_247(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_249(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34732,7 +34830,7 @@ def x_update_grouped_submission__mutmut_247(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34770,7 +34868,7 @@ def x_update_grouped_submission__mutmut_247(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_248(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_250(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34780,7 +34878,7 @@ def x_update_grouped_submission__mutmut_248(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34818,7 +34916,7 @@ def x_update_grouped_submission__mutmut_248(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_249(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_251(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34828,7 +34926,7 @@ def x_update_grouped_submission__mutmut_249(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34866,7 +34964,7 @@ def x_update_grouped_submission__mutmut_249(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_250(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_252(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34876,7 +34974,7 @@ def x_update_grouped_submission__mutmut_250(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34914,7 +35012,7 @@ def x_update_grouped_submission__mutmut_250(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_251(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_253(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34924,7 +35022,7 @@ def x_update_grouped_submission__mutmut_251(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -34962,7 +35060,7 @@ def x_update_grouped_submission__mutmut_251(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_252(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_254(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -34972,7 +35070,7 @@ def x_update_grouped_submission__mutmut_252(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35010,7 +35108,7 @@ def x_update_grouped_submission__mutmut_252(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_253(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_255(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35020,7 +35118,7 @@ def x_update_grouped_submission__mutmut_253(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35058,7 +35156,7 @@ def x_update_grouped_submission__mutmut_253(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_254(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_256(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35068,7 +35166,7 @@ def x_update_grouped_submission__mutmut_254(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35106,7 +35204,7 @@ def x_update_grouped_submission__mutmut_254(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_255(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_257(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35116,7 +35214,7 @@ def x_update_grouped_submission__mutmut_255(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35154,7 +35252,7 @@ def x_update_grouped_submission__mutmut_255(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_256(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_258(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35164,7 +35262,7 @@ def x_update_grouped_submission__mutmut_256(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35202,7 +35300,7 @@ def x_update_grouped_submission__mutmut_256(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_257(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_259(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35212,7 +35310,7 @@ def x_update_grouped_submission__mutmut_257(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35250,7 +35348,7 @@ def x_update_grouped_submission__mutmut_257(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_258(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_260(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35260,7 +35358,7 @@ def x_update_grouped_submission__mutmut_258(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35298,7 +35396,7 @@ def x_update_grouped_submission__mutmut_258(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_259(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_261(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35308,7 +35406,7 @@ def x_update_grouped_submission__mutmut_259(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35346,7 +35444,7 @@ def x_update_grouped_submission__mutmut_259(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_260(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_262(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35356,7 +35454,7 @@ def x_update_grouped_submission__mutmut_260(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35394,7 +35492,7 @@ def x_update_grouped_submission__mutmut_260(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_261(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_263(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35404,7 +35502,7 @@ def x_update_grouped_submission__mutmut_261(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35442,7 +35540,7 @@ def x_update_grouped_submission__mutmut_261(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_262(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_264(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35452,7 +35550,7 @@ def x_update_grouped_submission__mutmut_262(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35490,7 +35588,7 @@ def x_update_grouped_submission__mutmut_262(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_263(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_265(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35500,7 +35598,7 @@ def x_update_grouped_submission__mutmut_263(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35538,7 +35636,7 @@ def x_update_grouped_submission__mutmut_263(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_264(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_266(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35548,7 +35646,7 @@ def x_update_grouped_submission__mutmut_264(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35586,7 +35684,7 @@ def x_update_grouped_submission__mutmut_264(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_265(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_267(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35596,7 +35694,7 @@ def x_update_grouped_submission__mutmut_265(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35634,7 +35732,7 @@ def x_update_grouped_submission__mutmut_265(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_266(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_268(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35644,7 +35742,7 @@ def x_update_grouped_submission__mutmut_266(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35682,7 +35780,7 @@ def x_update_grouped_submission__mutmut_266(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_267(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_269(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35692,7 +35790,7 @@ def x_update_grouped_submission__mutmut_267(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35730,7 +35828,7 @@ def x_update_grouped_submission__mutmut_267(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_268(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_270(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35740,7 +35838,7 @@ def x_update_grouped_submission__mutmut_268(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35778,7 +35876,7 @@ def x_update_grouped_submission__mutmut_268(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_269(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_271(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35788,7 +35886,7 @@ def x_update_grouped_submission__mutmut_269(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35826,7 +35924,7 @@ def x_update_grouped_submission__mutmut_269(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_270(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_272(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35836,7 +35934,7 @@ def x_update_grouped_submission__mutmut_270(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35874,7 +35972,7 @@ def x_update_grouped_submission__mutmut_270(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_271(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_273(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35884,7 +35982,7 @@ def x_update_grouped_submission__mutmut_271(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35922,7 +36020,7 @@ def x_update_grouped_submission__mutmut_271(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_272(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_274(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35932,7 +36030,7 @@ def x_update_grouped_submission__mutmut_272(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -35970,7 +36068,7 @@ def x_update_grouped_submission__mutmut_272(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_273(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_275(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -35980,7 +36078,7 @@ def x_update_grouped_submission__mutmut_273(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36018,7 +36116,7 @@ def x_update_grouped_submission__mutmut_273(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_274(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_276(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36028,7 +36126,7 @@ def x_update_grouped_submission__mutmut_274(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36066,7 +36164,7 @@ def x_update_grouped_submission__mutmut_274(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_275(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_277(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36076,7 +36174,7 @@ def x_update_grouped_submission__mutmut_275(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36114,7 +36212,7 @@ def x_update_grouped_submission__mutmut_275(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_276(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_278(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36124,7 +36222,7 @@ def x_update_grouped_submission__mutmut_276(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36162,7 +36260,7 @@ def x_update_grouped_submission__mutmut_276(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_277(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_279(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36172,7 +36270,7 @@ def x_update_grouped_submission__mutmut_277(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36210,7 +36308,7 @@ def x_update_grouped_submission__mutmut_277(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_278(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_280(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36220,7 +36318,7 @@ def x_update_grouped_submission__mutmut_278(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36258,7 +36356,7 @@ def x_update_grouped_submission__mutmut_278(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_279(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_281(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36268,7 +36366,7 @@ def x_update_grouped_submission__mutmut_279(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36306,7 +36404,7 @@ def x_update_grouped_submission__mutmut_279(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_280(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_282(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36316,7 +36414,7 @@ def x_update_grouped_submission__mutmut_280(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36354,7 +36452,7 @@ def x_update_grouped_submission__mutmut_280(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_281(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_283(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36364,7 +36462,7 @@ def x_update_grouped_submission__mutmut_281(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36402,7 +36500,7 @@ def x_update_grouped_submission__mutmut_281(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_282(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_284(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36412,7 +36510,7 @@ def x_update_grouped_submission__mutmut_282(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36450,7 +36548,7 @@ def x_update_grouped_submission__mutmut_282(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_283(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_285(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36460,7 +36558,7 @@ def x_update_grouped_submission__mutmut_283(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36498,7 +36596,7 @@ def x_update_grouped_submission__mutmut_283(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_284(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_286(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36508,7 +36606,7 @@ def x_update_grouped_submission__mutmut_284(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36546,7 +36644,7 @@ def x_update_grouped_submission__mutmut_284(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_285(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_287(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36556,7 +36654,7 @@ def x_update_grouped_submission__mutmut_285(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36594,7 +36692,7 @@ def x_update_grouped_submission__mutmut_285(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_286(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_288(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36604,7 +36702,7 @@ def x_update_grouped_submission__mutmut_286(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36642,7 +36740,7 @@ def x_update_grouped_submission__mutmut_286(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_287(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_289(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36652,7 +36750,7 @@ def x_update_grouped_submission__mutmut_287(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36690,7 +36788,7 @@ def x_update_grouped_submission__mutmut_287(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_288(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_290(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36700,7 +36798,7 @@ def x_update_grouped_submission__mutmut_288(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36738,7 +36836,7 @@ def x_update_grouped_submission__mutmut_288(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_289(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_291(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36748,7 +36846,7 @@ def x_update_grouped_submission__mutmut_289(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36786,7 +36884,7 @@ def x_update_grouped_submission__mutmut_289(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_290(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_292(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36796,7 +36894,7 @@ def x_update_grouped_submission__mutmut_290(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36834,7 +36932,7 @@ def x_update_grouped_submission__mutmut_290(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_291(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_293(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36844,7 +36942,7 @@ def x_update_grouped_submission__mutmut_291(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36882,7 +36980,7 @@ def x_update_grouped_submission__mutmut_291(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_292(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_294(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36892,7 +36990,7 @@ def x_update_grouped_submission__mutmut_292(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36930,7 +37028,7 @@ def x_update_grouped_submission__mutmut_292(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_293(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_295(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36940,7 +37038,7 @@ def x_update_grouped_submission__mutmut_293(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -36978,7 +37076,7 @@ def x_update_grouped_submission__mutmut_293(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_294(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_296(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -36988,7 +37086,7 @@ def x_update_grouped_submission__mutmut_294(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37026,7 +37124,7 @@ def x_update_grouped_submission__mutmut_294(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_295(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_297(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37036,7 +37134,7 @@ def x_update_grouped_submission__mutmut_295(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37074,7 +37172,7 @@ def x_update_grouped_submission__mutmut_295(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_296(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_298(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37084,7 +37182,7 @@ def x_update_grouped_submission__mutmut_296(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37122,7 +37220,7 @@ def x_update_grouped_submission__mutmut_296(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_297(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_299(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37132,7 +37230,7 @@ def x_update_grouped_submission__mutmut_297(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37170,7 +37268,7 @@ def x_update_grouped_submission__mutmut_297(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_298(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_300(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37180,7 +37278,7 @@ def x_update_grouped_submission__mutmut_298(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37218,7 +37316,7 @@ def x_update_grouped_submission__mutmut_298(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_299(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_301(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37228,7 +37326,7 @@ def x_update_grouped_submission__mutmut_299(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37266,7 +37364,7 @@ def x_update_grouped_submission__mutmut_299(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_300(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_302(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37276,7 +37374,7 @@ def x_update_grouped_submission__mutmut_300(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37314,7 +37412,7 @@ def x_update_grouped_submission__mutmut_300(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_301(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_303(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37324,7 +37422,7 @@ def x_update_grouped_submission__mutmut_301(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37362,7 +37460,7 @@ def x_update_grouped_submission__mutmut_301(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_302(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_304(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37372,7 +37470,7 @@ def x_update_grouped_submission__mutmut_302(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37410,7 +37508,7 @@ def x_update_grouped_submission__mutmut_302(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_303(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_305(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37420,7 +37518,7 @@ def x_update_grouped_submission__mutmut_303(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37458,7 +37556,7 @@ def x_update_grouped_submission__mutmut_303(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_304(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_306(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37468,7 +37566,7 @@ def x_update_grouped_submission__mutmut_304(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37506,7 +37604,7 @@ def x_update_grouped_submission__mutmut_304(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_305(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_307(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37516,7 +37614,7 @@ def x_update_grouped_submission__mutmut_305(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37554,7 +37652,7 @@ def x_update_grouped_submission__mutmut_305(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_306(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_308(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37564,7 +37662,7 @@ def x_update_grouped_submission__mutmut_306(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37602,7 +37700,7 @@ def x_update_grouped_submission__mutmut_306(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_307(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_309(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37612,7 +37710,7 @@ def x_update_grouped_submission__mutmut_307(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -37650,7 +37748,7 @@ def x_update_grouped_submission__mutmut_307(group_df: pd.DataFrame, submission_l
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update all databases listed under one submission_name
-def x_update_grouped_submission__mutmut_308(group_df: pd.DataFrame, submission_log_dir: str):
+def x_update_grouped_submission__mutmut_310(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -37660,7 +37758,7 @@ def x_update_grouped_submission__mutmut_308(group_df: pd.DataFrame, submission_l
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -38005,734 +38103,1024 @@ x_update_grouped_submission__mutmut_mutants : ClassVar[MutantDict] = { # type: i
     'x_update_grouped_submission__mutmut_305': x_update_grouped_submission__mutmut_305, 
     'x_update_grouped_submission__mutmut_306': x_update_grouped_submission__mutmut_306, 
     'x_update_grouped_submission__mutmut_307': x_update_grouped_submission__mutmut_307, 
-    'x_update_grouped_submission__mutmut_308': x_update_grouped_submission__mutmut_308
+    'x_update_grouped_submission__mutmut_308': x_update_grouped_submission__mutmut_308, 
+    'x_update_grouped_submission__mutmut_309': x_update_grouped_submission__mutmut_309, 
+    'x_update_grouped_submission__mutmut_310': x_update_grouped_submission__mutmut_310
 }
 x_update_grouped_submission__mutmut_orig.__name__ = 'x_update_grouped_submission'
 
 # Update submission log, if given submission_name only update that specific submission
-def update_submission_status(submission_dir: str, submission_name: Optional[str]) -> None:
-	args = [submission_dir, submission_name]# type: ignore
+def update_submission_status(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	args = [submission_dir, submission_name, decrypt_key]# type: ignore
 	kwargs = {}# type: ignore
 	return _mutmut_trampoline(x_update_submission_status__mutmut_orig, x_update_submission_status__mutmut_mutants, args, kwargs, None)
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_orig(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_orig(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_1(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_1(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = None
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_2(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_2(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(None)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_3(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_3(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = None
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_4(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_4(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(None)
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_5(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_5(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["XXSubmission_NameXX", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_6(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_6(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["submission_name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_7(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_7(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["SUBMISSION_NAME", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_8(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_8(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "XXOrganismXX", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_9(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_9(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_10(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_10(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "ORGANISM", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_11(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_11(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "XXSubmission_TypeXX", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_12(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_12(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "submission_type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_13(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_13(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "SUBMISSION_TYPE", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_14(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_14(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "XXConfig_FileXX"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_15(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_15(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "config_file"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_16(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_16(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "CONFIG_FILE"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_17(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_17(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print(None)
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_18(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_18(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("XXChecking Submissions:XX")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_19(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_19(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("checking submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_20(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_20(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("CHECKING SUBMISSIONS:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_21(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_21(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None and name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_22(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_22(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() or submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_23(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_23(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_24(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_24(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(None).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_25(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_25(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["XXSubmission_StatusXX"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_26(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_26(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["submission_status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_27(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_27(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["SUBMISSION_STATUS"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_28(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_28(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["XXPROCESSEDXX", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_29(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_29(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["processed", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_30(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_30(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "XXEMAILEDXX"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_31(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_31(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "emailed"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_32(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_32(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is not None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_33(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_33(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[1] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_34(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_34(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] != submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_35(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_35(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(None)
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_36(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_36(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[1]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_37(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_37(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=None, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=None, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_38(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_38(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=None)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=None, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_39(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_39(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=None)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_40(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_40(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, )
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_41(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_41(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_42(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, )
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_43(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(None, file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_44(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=None)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_45(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_46(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", )
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_47(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(None, file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_48(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=None)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_49(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_50(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", )
+					break # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_51(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					return # If error is not related to decrypt_key then skip to next submission
+	print("\nUpdating submissions complete.")
+
+# Update submission log, if given submission_name only update that specific submission
+def x_update_submission_status__mutmut_52(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
+	df = load_submission_log(submission_dir)
+	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
+	print("Checking Submissions:")
+	for name, group in grouped_submissions:
+		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
+			print(f"Submission: {name[0]}")
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print(None)
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_42(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_53(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("XX\nUpdating submissions complete.XX")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_43(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_54(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nupdating submissions complete.")
 
 # Update submission log, if given submission_name only update that specific submission
-def x_update_submission_status__mutmut_44(submission_dir: str, submission_name: Optional[str]) -> None:
+def x_update_submission_status__mutmut_55(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUPDATING SUBMISSIONS COMPLETE.")
 
 x_update_submission_status__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
@@ -38779,6 +39167,17 @@ x_update_submission_status__mutmut_mutants : ClassVar[MutantDict] = { # type: ig
     'x_update_submission_status__mutmut_41': x_update_submission_status__mutmut_41, 
     'x_update_submission_status__mutmut_42': x_update_submission_status__mutmut_42, 
     'x_update_submission_status__mutmut_43': x_update_submission_status__mutmut_43, 
-    'x_update_submission_status__mutmut_44': x_update_submission_status__mutmut_44
+    'x_update_submission_status__mutmut_44': x_update_submission_status__mutmut_44, 
+    'x_update_submission_status__mutmut_45': x_update_submission_status__mutmut_45, 
+    'x_update_submission_status__mutmut_46': x_update_submission_status__mutmut_46, 
+    'x_update_submission_status__mutmut_47': x_update_submission_status__mutmut_47, 
+    'x_update_submission_status__mutmut_48': x_update_submission_status__mutmut_48, 
+    'x_update_submission_status__mutmut_49': x_update_submission_status__mutmut_49, 
+    'x_update_submission_status__mutmut_50': x_update_submission_status__mutmut_50, 
+    'x_update_submission_status__mutmut_51': x_update_submission_status__mutmut_51, 
+    'x_update_submission_status__mutmut_52': x_update_submission_status__mutmut_52, 
+    'x_update_submission_status__mutmut_53': x_update_submission_status__mutmut_53, 
+    'x_update_submission_status__mutmut_54': x_update_submission_status__mutmut_54, 
+    'x_update_submission_status__mutmut_55': x_update_submission_status__mutmut_55
 }
 x_update_submission_status__mutmut_orig.__name__ = 'x_update_submission_status'

@@ -580,6 +580,10 @@ commands_body = [
         shiny_tools.command_accordion_panel("submission_status",
             description=" command is used to update the progress of files submitted via the submit command. If database selection choices require submission in a sequential order then this command will also submit files when ready."
         ),
+        # Load credentials command
+        shiny_tools.command_accordion_panel("load_credentials",
+            description=" command is used to load and encrypt your submission credentials into your submission config file. Provides a secret key to securely access your credentials for submission."
+        ),
         # Test data command
         shiny_tools.command_accordion_panel("test_data", description=" command is used generate test data for seqsender, to be used for testing the prep and submit commands."),
         # Update biosample command
@@ -828,7 +832,7 @@ def server(input, output, session):
         config_file = {"Submission": {
             **({"NCBI":{
                 "Username": input.ncbi_config_username() or "",
-                "Password": input.ncbi_config_password() or "",
+                "Password": "",
                 "Spuid_Namespace": input.ncbi_config_spuid_namespace() or "",
                 **({"BioSample_Package": input.BioSample_packages() or ""} if input.BioSample_checkbox() else {}),
                 **({"GenBank_Auto_Remove_Failed_Samples": input.ncbi_config_auto_remove_genbank() or ""} if input.GenBank_checkbox() else {}),
@@ -866,9 +870,9 @@ def server(input, output, session):
                     }
                 }} if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox() else {}),
             **({"GISAID": {
-                "Client-Id": input.gisaid_config_client() or "",
+                "Client-Id": "",
                 "Username": input.gisaid_config_username() or "",
-                "Password": input.gisaid_config_password() or "",
+                "Password": "",
                 **({"Submission_Position": input.gisaid_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
                 }} if input.GISAID_checkbox() else {})
             }
@@ -899,4 +903,3 @@ def server(input, output, session):
 
 
 app = App(app_ui, server)
-

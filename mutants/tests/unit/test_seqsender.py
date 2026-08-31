@@ -252,6 +252,7 @@ def test_prep__biosample_and_sra_creates_expected_submissions(seqsender_module, 
         table2asn=False,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
 
     assert result[0] == str(tmp_path / "config.yaml")
@@ -272,6 +273,7 @@ def test_prep__sra_without_biosample_warns(seqsender_module, tmp_path, capsys):
         table2asn=False,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     assert "SRA requires a BioSample submission" in capsys.readouterr().out
 
@@ -290,6 +292,7 @@ def test_prep_requires_fasta_for_genbank_or_gisaid(seqsender_module, tmp_path, d
             table2asn=False,
             publication_title=None,
             publication_status=None,
+            decrypt_key="test-key",
         )
 
 def test_prep__genbank_and_gisaid_processes_fasta_and_routes_handlers(seqsender_module, tmp_path):
@@ -305,6 +308,7 @@ def test_prep__genbank_and_gisaid_processes_fasta_and_routes_handlers(seqsender_
         table2asn=True,
         publication_title="Title",
         publication_status="Published",
+        decrypt_key="test-key",
     )
 
     assert len(called(seqsender_module, "genbank_handler.create_genbank_submission")) == 1
@@ -327,6 +331,7 @@ def test_prep__relative_file_names_are_resolved_under_submission_folder(seqsende
         table2asn=False,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     validate_file_calls = called(seqsender_module, "file_handler.validate_file")
     assert {Path(call["file_path"]).name for call in validate_file_calls} == {"config.yaml", "metadata.csv"}
@@ -346,6 +351,7 @@ def test_prep__invalid_database_exits(seqsender_module, tmp_path):
             table2asn=False,
             publication_title=None,
             publication_status=None,
+            decrypt_key="test-key",
         )
 
 #*******************************************************************************
@@ -372,6 +378,7 @@ def test_submit__biosample_and_sra_submit_to_ncbi_and_log(seqsender_module, tmp_
         publication_title=None,
         publication_status=None,
         test=True,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "ncbi_handler.submit_ncbi")) == 2
     assert len(called(seqsender_module, "upload_log.create_submission_log")) == 2
@@ -397,6 +404,7 @@ def test_submit__genbank_ftp(seqsender_module, tmp_path, monkeypatch):
         gff_file=None,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     ncbi_calls = called(seqsender_module, "ncbi_handler.submit_ncbi")
     assert ncbi_calls[0]["database"] == "GENBANK"
@@ -424,6 +432,7 @@ def test_submit__genbank_table2asn_forced_by_flag(seqsender_module, tmp_path, mo
         publication_title=None,
         publication_status=None,
         table2asn=True,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "ncbi_handler.email_table2asn")) == 1
     log = called(seqsender_module, "upload_log.create_submission_log")[0]
@@ -449,6 +458,7 @@ def test_submit__genbank_table2asn_for_non_ftp_organism(seqsender_module, tmp_pa
         gff_file=None,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "ncbi_handler.email_table2asn")) == 1
     assert called(seqsender_module, "upload_log.create_submission_log")[0]["database"] == "GENBANK-TBL2ASN"
@@ -473,6 +483,7 @@ def test_submit__genbank_waits_when_linked_to_ncbi_first(seqsender_module, tmp_p
         gff_file=None,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "ncbi_handler.submit_ncbi")) == 1  # only BioSample now
     genbank_log = called(seqsender_module, "upload_log.create_submission_log")[1]
@@ -499,6 +510,7 @@ def test_submit__gisaid_validates_cli_and_submits(seqsender_module, tmp_path, mo
         gff_file=None,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "file_handler.validate_gisaid_installer")) == 1
     assert len(called(seqsender_module, "gisaid_handler.submit_gisaid")) == 1
@@ -529,6 +541,7 @@ def test_submit__gisaid_waits_if_genbank_first(seqsender_module, tmp_path, monke
         gff_file=None,
         publication_title=None,
         publication_status=None,
+        decrypt_key="test-key",
     )
     assert len(called(seqsender_module, "gisaid_handler.submit_gisaid")) == 0
     gisaid_log = called(seqsender_module, "upload_log.create_submission_log")[1]
@@ -556,6 +569,7 @@ def test_submit__invalid_database_exits(seqsender_module, tmp_path, monkeypatch)
             gff_file=None,
             publication_title=None,
             publication_status=None,
+            decrypt_key="test-key",
         )
 
 #*******************************************************************************
@@ -637,6 +651,7 @@ def test_main__dispatches_submit(seqsender_module, tmp_path, monkeypatch):
         skip_validation=True,
         publication_title=None,
         publication_status=None,
+        key="test-key",
     )
     run_main_with_args(seqsender_module, monkeypatch, args)
     seqsender_module.main()
@@ -669,7 +684,7 @@ def test_main__missing_database_prints_help_and_exits(seqsender_module, tmp_path
     assert parser.help_printed is True
 
 def test_main__submission_status_dispatch(seqsender_module, tmp_path, monkeypatch):
-    args = argparse.Namespace(command="submission_status", submission_dir=str(tmp_path), submission_name="sub1")
+    args = argparse.Namespace(command="submission_status", submission_dir=str(tmp_path), submission_name="sub1", key="test-key")
     run_main_with_args(seqsender_module, monkeypatch, args)
     seqsender_module.main()
     call = called(seqsender_module, "upload_log.update_submission_status")[0]

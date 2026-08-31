@@ -9,6 +9,7 @@ import subprocess
 import argparse
 import pandas as pd
 from typing import List, Dict, Set, Optional, Tuple, Any, TypedDict
+from cryptography.fernet import InvalidToken
 
 # Local imports
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -34,7 +35,7 @@ def get_execution_time() -> None:
 	print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
 
 # Setup needed requirements for running
-def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, publication_title: Optional[str], publication_status: Optional[str], skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
+def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, decrypt_key: str, publication_title: Optional[str], publication_status: Optional[str], passwords_validation: bool = False, skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
 	# Create the appropriate files
 	File_Dict = TypedDict("File_Dict", {"config_file": str, "metadata_file": str, "fasta_file": Optional[str], "gff_file": Optional[str]})
 	file_dict: File_Dict = {
@@ -63,7 +64,11 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 			file_handler.validate_file(file_type=file_type, file_path=updated_path)
 			file_dict[file_type] = updated_path # type: ignore
 	# load config file
-	config_dict = tools.get_config(config_file=file_dict["config_file"], databases=database)
+	try:
+		config_dict = tools.get_config(config_file=file_dict["config_file"], databases=database, passwords_validation=passwords_validation, decrypt_key=decrypt_key)
+	except InvalidToken:
+		print("Key provided is invalid for config_file provided.", file=sys.stderr)
+		sys.exit(1)
 	# Warn user if submitting biosample & sra together with 'Link_Sample_Between_NCBI_Databases' set to False
 	if not config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"] and "SRA" in database and "BIOSAMPLE" in database:
 		print("Warning: You are submitting to BioSample and SRA together, and your config has the field 'Link_Sample_Between_NCBI_Databases', turned off. Your BioSample and SRA submission will still be linked together as this is required for submitting to SRA.")
@@ -93,8 +98,8 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	return (file_dict["config_file"], config_dict, metadata)
 
 # Setup needed requirements for running
-def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str], table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
-	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, skip_validation=skip_validation, publication_title=publication_title, publication_status=publication_status)
+def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str], decrypt_key: str, table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
+	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, decrypt_key=decrypt_key, skip_validation=skip_validation, publication_title=publication_title, publication_status=publication_status, passwords_validation=True)
 	# if database is GISAID, check if CLI is in the correct directory
 	if "GISAID" in database:
 		file_handler.validate_gisaid_installer(submission_dir, organism, config_dict["GISAID"])
@@ -145,7 +150,7 @@ def main():
 	command = args.command
 
 	# Determine databases selected
-	if command in ["prep", "submit", "test_data"]:
+	if command in ["prep", "submit", "test_data", "load_credentials"]:
 		database = []
 		if args.biosample:
 			database += [args.biosample]
@@ -167,11 +172,14 @@ def main():
 	if command == "prep":
 		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submit":
-		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, test=args.test, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
+		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, decrypt_key=args.key, test=args.test, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submission_status":
-		upload_log.update_submission_status(submission_dir=submission_dir, submission_name=args.submission_name)
+		set_of_keys = set(args.key)
+		upload_log.update_submission_status(submission_dir=submission_dir, submission_name=args.submission_name, decrypt_key=set_of_keys)
 	elif command == "test_data":
 		setup.create_test_data(organism=args.organism, database=database, submission_dir=submission_dir)
+	elif command == "load_credentials":
+		tools.encrypt_passwords(config_file=args.config_file, databases=database, encryption_key=args.key)
 	elif command == "version":
 		print(f"Version: {VERSION}")
 	elif command == "update_biosample":

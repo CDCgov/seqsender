@@ -10,6 +10,8 @@ from pandera import pandera, DataFrameSchema, Column, Check, Index, MultiIndex
 import os
 import sys
 from datetime import datetime
+from cryptography.fernet import InvalidToken
+
 import src.genbank_handler as genbank_handler
 import src.gisaid_handler as gisaid_handler
 import src.biosample_sra_handler as biosample_sra_handler
@@ -297,7 +299,7 @@ def create_submission_requirements_dict(group_df: pd.DataFrame) -> dict[str, boo
 	return submission_requirements
 
 # Update all databases listed under one submission_name
-def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
+def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str, decrypt_key: str):
 	validate_fields_exist(df=group_df)
 	submission_requirements = create_submission_requirements_dict(group_df=group_df)
 	# Reset index
@@ -307,7 +309,7 @@ def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
 	submission_organism = group_df.at[0, "Organism"]
 	submission_dir = group_df.at[0, "Submission_Directory"]
 	databases = group_df["Database"].tolist()
-	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases)
+	config_dict = tools.get_config(config_file=group_df.at[0, "Config_File"], databases=databases, decrypt_key=decrypt_key)
 	if "BIOSAMPLE" in databases:
 		biosample_status = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Status"].iloc[0]
 		submission_dir = group_df.loc[group_df["Database"] == "BIOSAMPLE", "Submission_Directory"].iloc[0]
@@ -345,17 +347,19 @@ def update_grouped_submission(group_df: pd.DataFrame, submission_log_dir: str):
 		print(f"\tGISAID: {gisaid_status}")
 
 # Update submission log, if given submission_name only update that specific submission
-def update_submission_status(submission_dir: str, submission_name: Optional[str]) -> None:
+def update_submission_status(submission_dir: str, submission_name: Optional[str], decrypt_key: set[str]) -> None:
 	df = load_submission_log(submission_dir)
 	grouped_submissions = df.groupby(["Submission_Name", "Organism", "Submission_Type", "Config_File"])
 	print("Checking Submissions:")
 	for name, group in grouped_submissions:
 		if not group["Submission_Status"].isin(["PROCESSED", "EMAILED"]).all() and submission_name is None or name[0] == submission_name:
 			print(f"Submission: {name[0]}")
-			update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# try:
-			# 	print(f"Submission: {name[0]}")
-			# 	update_grouped_submission(group_df=group, submission_log_dir=submission_dir)
-			# except Exception as e:
-			# 	print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+			for key in decrypt_key:
+				try:
+					update_grouped_submission(group_df=group, submission_log_dir=submission_dir, decrypt_key=key)
+				except InvalidToken:
+					print(f"Unable to access config file with key for {name}. Continuing to next key/submission.", file=sys.stderr)
+				except Exception as e:
+					print(f"Error: Unable to process {name} because:\n{e}", file=sys.stderr)
+					break # If error is not related to decrypt_key then skip to next submission
 	print("\nUpdating submissions complete.")

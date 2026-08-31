@@ -8,7 +8,7 @@ import os
 
 ##### SeqSender settings #####
 # Script directory
-PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SeqSender version
 VERSION: str = "1.3.93 (Beta)"

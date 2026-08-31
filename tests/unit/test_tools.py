@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
-from unittest.mock import Mock
+from unittest.mock import Mock, call
 
 def _source_root() -> Path:
     here = Path(__file__).resolve()
@@ -117,6 +117,10 @@ def _install_import_stubs() -> None:
     sys.modules["settings"] = settings_stub
     sys.modules["src.settings"] = settings_stub
 
+    ncbi_handler_stub: Any = types.ModuleType("src.ncbi_handler")
+    sys.modules["src.ncbi_handler"] = ncbi_handler_stub
+    sys.modules["ncbi_handler"] = ncbi_handler_stub
+
     file_handler_stub: Any = types.ModuleType("file_handler")
     file_handler_stub.load_yaml_calls = []
 
@@ -135,9 +139,13 @@ def _install_import_stubs() -> None:
     def load_fasta_file(fasta_file):
         return pd.DataFrame()
 
+    def save_yaml(config_dict, yaml_path):
+        return None
+
     file_handler_stub.load_yaml = load_yaml
     file_handler_stub.load_csv = load_csv
     file_handler_stub.load_fasta_file = load_fasta_file
+    file_handler_stub.save_yaml = save_yaml
     sys.modules["file_handler"] = file_handler_stub
     sys.modules["src.file_handler"] = file_handler_stub
 
@@ -266,6 +274,128 @@ class FakeSchemaColumn:
 
 
 #*******************************************************************************
+#                        determine_parent_database
+#*******************************************************************************
+
+
+@pytest.mark.parametrize(
+    ("databases", "expected"),
+    [
+        (["BIOSAMPLE"], {"ncbi"}),
+        (["SRA"], {"ncbi"}),
+        (["GENBANK"], {"ncbi"}),
+        (["GISAID"], {"gisaid"}),
+        (["BIOSAMPLE", "SRA", "GENBANK"], {"ncbi"}),
+        (["GENBANK", "GISAID"], {"ncbi", "gisaid"}),
+    ],
+)
+def test_determine_parent_database__maps_databases_to_parent_portals(databases: list[str], expected: set[str]) -> None:
+    assert tools.determine_parent_database(databases) == expected
+
+def test_determine_parent_database__empty_or_unknown_database_exits(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exc:
+        tools.determine_parent_database([])
+    assert exc.value.code == 1
+    assert capsys.readouterr().err == "Error: Submission portals list cannot be empty.\n"
+
+def test_determine_parent_database__unknown_database_exits(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exc:
+        tools.determine_parent_database(["BADDB"])
+    assert exc.value.code == 1
+    assert capsys.readouterr().err == "Error: Submission portals list cannot be empty.\n"
+
+#*******************************************************************************
+#                          decrypt_passwords
+#*******************************************************************************
+
+def test_decrypt_passwords__decrypts_ncbi_password() -> None:
+    key = tools.Fernet.generate_key()
+    encrypted_password = tools.Fernet(key).encrypt(b"secret")
+    config = {"Submission": {"NCBI": {"Password": encrypted_password}}}
+    result = tools.decrypt_passwords(config_dict=config, submission_portals={"ncbi"}, key=key.decode())
+    assert result["Submission"]["NCBI"]["Password"] == b"secret"
+
+def test_decrypt_passwords__decrypts_gisaid_password_and_client_id() -> None:
+    key = tools.Fernet.generate_key()
+    encrypter = tools.Fernet(key)
+    config = {
+        "Submission": { "GISAID": {
+            "Password": encrypter.encrypt(b"secret"),
+            "Client-Id": encrypter.encrypt(b"client-id"),
+    }}}
+    result = tools.decrypt_passwords(config_dict=config, submission_portals={"gisaid"}, key=key.decode())
+    assert result["Submission"]["GISAID"]["Password"] == b"secret"
+    assert result["Submission"]["GISAID"]["Client-Id"] == b"client-id"
+
+def test_decrypt_passwords__invalid_unencrypted_password_prints_helpful_error(capsys: pytest.CaptureFixture[str]) -> None:
+    key = tools.Fernet.generate_key()
+    config = {"Submission": {"NCBI": {"Password": "plain-text-password"}}}
+    with pytest.raises(tools.InvalidToken):
+        tools.decrypt_passwords(config_dict=config, submission_portals={"NCBI"}, key=key.decode())
+    assert capsys.readouterr().err == (
+        "Passwords field does not appear to be encrypted. "
+        "Use SeqSender command 'load_credentials' to encrypt your credentials before submission.\n"
+    )
+
+def test_decrypt_passwords__invalid_encrypted_looking_password_does_not_print_plaintext_warning(capsys: pytest.CaptureFixture[str]) -> None:
+    key = tools.Fernet.generate_key()
+    config = {"Submission": {"NCBI": {"Password": "not-a-valid-token="}}}
+    with pytest.raises(tools.InvalidToken):
+        tools.decrypt_passwords(config_dict=config, submission_portals={"NCBI"}, key=key.decode())
+    assert capsys.readouterr().err == ""
+
+#*******************************************************************************
+#                             encrypt_passwords
+#*******************************************************************************
+
+def test_encrypt_passwords__uses_supplied_key_and_saves_encrypted_gisaid_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
+    key = tools.Fernet.generate_key()
+    config = {"GISAID": {"Username": "user", "Password": None, "Client-Id": None}}
+    get_config_mock = Mock(side_effect=[config, config])
+    save_yaml_mock = Mock()
+
+    monkeypatch.setattr(tools, "get_config", get_config_mock)
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password123", "client123"]))
+    monkeypatch.setattr(tools.file_handler, "save_yaml", save_yaml_mock)
+    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=key.decode())
+    encrypted_password = config["GISAID"]["Password"]
+    encrypted_client_id = config["GISAID"]["Client-Id"]
+
+    assert tools.Fernet(key).decrypt(encrypted_password) == b"password123"
+    assert tools.Fernet(key).decrypt(encrypted_client_id) == b"client123"
+    save_yaml_mock.assert_called_once_with(config_dict=config, yaml_path="config.yaml")
+    assert get_config_mock.call_args_list == [
+        call(config_file="config.yaml", databases=["GISAID"], passwords_validation=False),
+        call(config_file="config.yaml", databases=["GISAID"], decrypt_key=key.decode())
+    ]
+
+def test_encrypt_passwords__generated_key_is_printed(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    config = {"GISAID": {"Password": None, "Client-Id": None}}
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
+    monkeypatch.setattr(tools, "get_config", Mock(side_effect=[config, config]))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password", "client-id"]))
+    monkeypatch.setattr(tools.file_handler, "save_yaml", Mock())
+    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=None)
+    captured = capsys.readouterr()
+    assert ("Save this key somewhere secure. It will be required for performing submission." in captured.out)
+    assert "key: " in captured.out
+    assert ("Credentials successfully loaded/encrypted into config file." in captured.out)
+
+def test_encrypt_passwords__supplied_key_is_not_printed(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    key = tools.Fernet.generate_key()
+    config = {"GISAID": {"Password": None, "Client-Id": None}}
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
+    monkeypatch.setattr(tools, "get_config", Mock(side_effect=[config, config]))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password", "client-id"]))
+    monkeypatch.setattr(tools.file_handler, "save_yaml", Mock())
+    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=key.decode())
+    captured = capsys.readouterr()
+    assert "Save this key somewhere secure." not in captured.out
+    assert f"key: {key.decode()}" not in captured.out
+    assert ("Credentials successfully loaded/encrypted into config file." in captured.out)
+
+#*******************************************************************************
 #                      get_submission_schema_config_name
 #*******************************************************************************
 
@@ -293,11 +423,8 @@ def test_get_submission_schema_config_name__maps_portals_to_schema(submission_po
         ("GISAID", 2),
     ],
 )
-def test_get_submission_position__reads_nested_submission_config(
-    base_config: dict[str, Any], database: str, expected: int
-) -> None:
+def test_get_submission_position__reads_nested_submission_config(base_config: dict[str, Any], database: str, expected: int) -> None:
     assert tools.get_submission_position(base_config, database) == expected
-
 
 def test_get_submission_position__accepts_already_nested_parent_config() -> None:
     assert tools.get_submission_position({"NCBI": {"Submission_Position": 2}}, "GENBANK") == 2
@@ -981,6 +1108,8 @@ def patched_get_config_boundaries(monkeypatch: pytest.MonkeyPatch, base_config: 
 
     monkeypatch.setattr(tools, "parse_hold_date", Mock(side_effect=fake_parse_hold_date))
     monkeypatch.setattr(tools, "validate_submission_position", Mock())
+    monkeypatch.setattr(tools, "password_encryption_config_schema_updates", Mock(side_effect=lambda schema, submission_portals: schema))
+    monkeypatch.setattr(tools, "decrypt_passwords", Mock(side_effect=lambda config_dict, submission_portals, key: config_dict))
 
     open_calls: list[dict[str, Any]] = []
 
@@ -1010,6 +1139,8 @@ def patched_get_config_boundaries(monkeypatch: pytest.MonkeyPatch, base_config: 
         "load_yaml": tools.file_handler.load_yaml,
         "parse_hold_date": tools.parse_hold_date,
         "validate_submission_position": tools.validate_submission_position,
+        "password_encryption_config_schema_updates": tools.password_encryption_config_schema_updates,
+        "decrypt_passwords": tools.decrypt_passwords,
         "open_calls": open_calls,
     }
 
@@ -1073,6 +1204,25 @@ def test_get_config__opens_schema_file_with_explicit_read_mode(patched_get_confi
             "kwargs": {},
         }
     ]
+
+def test_get_config__password_validation_false_updates_schema_for_encryption(patched_get_config_boundaries: dict[str, Any]) -> None:
+    tools.get_config("config.yaml", ["GISAID"], passwords_validation=False)
+    patched_get_config_boundaries["password_encryption_config_schema_updates"].assert_called_once()
+    call_args = patched_get_config_boundaries["password_encryption_config_schema_updates"].call_args
+    assert call_args.args[1] == {"gisaid"}
+
+def test_get_config__password_validation_true_does_not_update_encryption_schema(patched_get_config_boundaries: dict[str, Any]) -> None:
+    tools.get_config("config.yaml", ["GISAID"], passwords_validation=True)
+    patched_get_config_boundaries["password_encryption_config_schema_updates"].assert_not_called()
+
+def test_get_config__decrypt_key_decrypts_credentials(patched_get_config_boundaries: dict[str, Any], base_config: dict[str, Any]) -> None:
+    result = tools.get_config("config.yaml", ["GISAID"], decrypt_key="secret-key")
+    patched_get_config_boundaries["decrypt_passwords"].assert_called_once_with(config_dict=base_config, submission_portals={"gisaid"}, key="secret-key")
+    assert result is base_config["Submission"]
+
+def test_get_config__without_decrypt_key_does_not_decrypt_credentials(patched_get_config_boundaries: dict[str, Any]) -> None:
+    tools.get_config("config.yaml", ["GISAID"])
+    patched_get_config_boundaries["decrypt_passwords"].assert_not_called()
 
 def test_get_config__non_dict_yaml_exits(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     monkeypatch.setattr(tools.file_handler, "load_yaml", Mock(return_value=["not", "dict"]))

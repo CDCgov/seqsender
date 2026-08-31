@@ -72,7 +72,7 @@ def _subparsers(parser: argparse.ArgumentParser) -> argparse._SubParsersAction:
 
 def test_prep_requires_config_file(capsys: pytest.CaptureFixture[str]):
     with pytest.raises(SystemExit) as exc:
-        parse(["prep", "--biosample", "--organism", "FLU", "--submission_name", "sub1", "--submission_dir", "/tmp/out", "--metadata_file", "metadata.csv"])
+        parse(["prep", "--biosample", "--organism", "FLU", "--submission_name", "sub1", "--submission_dir", "/tmp/out", "--metadata_file", "metadata.csv", "--key", "test-key"])
     assert exc.value.code == 2
     captured = capsys.readouterr()
     assert captured.out == ""
@@ -229,8 +229,6 @@ def test_args_parser__submission_status_submission_name_is_optional_with_exact_h
     assert action.default is None
     assert action.help == "Unique name for the submission of your data. This is an optional field if you want Seqsender to only update the specified submission in the 'submission_log.csv'."
 
-# Test main commands
-@pytest.mark.parametrize("command", ["prep", "submit"])
 # Test organism flags
 @pytest.mark.parametrize("organism", ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"])
 # Test all databases flags
@@ -238,13 +236,12 @@ def test_args_parser__submission_status_submission_name_is_optional_with_exact_h
 @pytest.mark.parametrize(("sra_flag", "sra_value"), [("", ""), ("--sra", "SRA"), ("-s", "SRA")])
 @pytest.mark.parametrize(("gb_flag", "gb_value"), [("", ""), ("--genbank", "GENBANK"), ("-n", "GENBANK")])
 @pytest.mark.parametrize(("gs_flag", "gs_value"), [("", ""), ("--gisaid", "GISAID"), ("-g", "GISAID")])
-def test_prep_and_submit_database_flags(command, organism,
-    bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value, gs_flag, gs_value):
+def test_prep_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value, gs_flag, gs_value):
     args = parse(
         [
             arg
             for arg in [
-                command,
+                "prep",
                 bs_flag,
                 sra_flag,
                 gb_flag,
@@ -271,9 +268,53 @@ def test_prep_and_submit_database_flags(command, organism,
         assert args.genbank == "GENBANK"
     if gs_value:
         assert args.gisaid == "GISAID"
-    assert args.command == command
+    assert args.command == "prep"
     assert args.organism == organism
 
+# Test organism flags
+@pytest.mark.parametrize("organism", ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"])
+# Test all databases flags
+@pytest.mark.parametrize(("bs_flag", "bs_value"), [("", ""), ("--biosample", "BIOSAMPLE"), ("-b", "BIOSAMPLE")])
+@pytest.mark.parametrize(("sra_flag", "sra_value"), [("", ""), ("--sra", "SRA"), ("-s", "SRA")])
+@pytest.mark.parametrize(("gb_flag", "gb_value"), [("", ""), ("--genbank", "GENBANK"), ("-n", "GENBANK")])
+@pytest.mark.parametrize(("gs_flag", "gs_value"), [("", ""), ("--gisaid", "GISAID"), ("-g", "GISAID")])
+def test_submit_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value, gs_flag, gs_value):
+    args = parse(
+        [
+            arg
+            for arg in [
+                "submit",
+                bs_flag,
+                sra_flag,
+                gb_flag,
+                gs_flag,
+                "--organism",
+                organism,
+                "--submission_name",
+                "sub1",
+                "--submission_dir",
+                "/tmp/out",
+                "--config_file",
+                "config.yaml",
+                "--metadata_file",
+                "metadata.csv",
+                "--key",
+                "test-key",
+            ]
+            if arg
+        ],
+    )
+    if bs_value:
+        assert args.biosample == "BIOSAMPLE"
+    if sra_value:
+        assert args.sra == "SRA"
+    if gb_value:
+        assert args.genbank == "GENBANK"
+    if gs_value:
+        assert args.gisaid == "GISAID"
+    assert args.command == "submit"
+    assert args.organism == organism
+    assert args.key == "test-key"
 
 def test_prep_defaults():
     args = parse(
@@ -351,17 +392,18 @@ def test_submit_accepts_test_flag():
             "--metadata_file",
             "metadata.csv",
             "--test",
+            "--key",
+            "test-key",
         ],
     )
     assert args.command == "submit"
     assert args.test is True
 
 def test_submission_status_command_has_optional_submission_name():
-    args = parse(["submission_status", "--submission_dir", "/tmp/out"])
+    args = parse(["submission_status", "--submission_dir", "/tmp/out", "--key", "test-key"])
     assert args.command == "submission_status"
     assert args.submission_name is None
-
-    args = parse(["submission_status", "--submission_dir", "/tmp/out", "--submission_name", "sub1"])
+    args = parse(["submission_status", "--submission_dir", "/tmp/out", "--submission_name", "sub1", "--key", "test-key"])
     assert args.submission_name == "sub1"
 
 def test_generate_test_data_command():

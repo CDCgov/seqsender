@@ -11,8 +11,11 @@ from pandera import Check
 from datetime import datetime, timedelta
 from cerberus import Validator
 import re
+from getpass import getpass
+from cryptography.fernet import Fernet, InvalidToken
 
 import src.file_handler as file_handler
+import src.ncbi_handler as ncbi_handler
 from config.seqsender.seqsender_schema import schema as seqsender_schema
 from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 from typing import Annotated
@@ -47,14 +50,12 @@ def _mutmut_trampoline(orig, mutants, call_args, call_kwargs, self_arg = None): 
 		result = mutants[mutant_name](*call_args, **call_kwargs) # type: ignore
 	return result # type: ignore
 
-# Check the config file
-def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
-	args = [config_file, databases]# type: ignore
+def determine_parent_database(databases: list[str]) -> set[str]:
+	args = [databases]# type: ignore
 	kwargs = {}# type: ignore
-	return _mutmut_trampoline(x_get_config__mutmut_orig, x_get_config__mutmut_mutants, args, kwargs, None)
+	return _mutmut_trampoline(x_determine_parent_database__mutmut_orig, x_determine_parent_database__mutmut_mutants, args, kwargs, None)
 
-# Check the config file
-def x_get_config__mutmut_orig(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_orig(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -66,30 +67,9 @@ def x_get_config__mutmut_orig(config_file: str, databases: list[str]) -> dict[st
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_1(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_1(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = None
 	for database in databases:
@@ -101,30 +81,9 @@ def x_get_config__mutmut_1(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_2(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_2(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -136,30 +95,9 @@ def x_get_config__mutmut_2(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_3(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_3(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -171,30 +109,9 @@ def x_get_config__mutmut_3(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_4(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_4(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -206,30 +123,9 @@ def x_get_config__mutmut_4(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_5(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_5(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -241,30 +137,9 @@ def x_get_config__mutmut_5(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_6(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_6(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -276,30 +151,9 @@ def x_get_config__mutmut_6(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_7(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_7(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -311,30 +165,9 @@ def x_get_config__mutmut_7(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_8(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_8(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -346,30 +179,9 @@ def x_get_config__mutmut_8(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_9(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_9(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -381,30 +193,9 @@ def x_get_config__mutmut_9(config_file: str, databases: list[str]) -> dict[str, 
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_10(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_10(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -416,30 +207,9 @@ def x_get_config__mutmut_10(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_11(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_11(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -451,30 +221,9 @@ def x_get_config__mutmut_11(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_12(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_12(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -486,30 +235,9 @@ def x_get_config__mutmut_12(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_13(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_13(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -521,30 +249,9 @@ def x_get_config__mutmut_13(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_14(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_14(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -556,30 +263,9 @@ def x_get_config__mutmut_14(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_15(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_15(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -591,30 +277,9 @@ def x_get_config__mutmut_15(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_16(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_16(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -626,30 +291,9 @@ def x_get_config__mutmut_16(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_17(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_17(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -661,30 +305,9 @@ def x_get_config__mutmut_17(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_18(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_18(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -696,30 +319,9 @@ def x_get_config__mutmut_18(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_19(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_19(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -731,30 +333,9 @@ def x_get_config__mutmut_19(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_20(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_20(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -766,30 +347,9 @@ def x_get_config__mutmut_20(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_21(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_21(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -801,30 +361,9 @@ def x_get_config__mutmut_21(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_22(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_22(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -836,30 +375,9 @@ def x_get_config__mutmut_22(config_file: str, databases: list[str]) -> dict[str,
 	if submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_23(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_23(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -871,30 +389,9 @@ def x_get_config__mutmut_23(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print(None, file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_24(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_24(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -906,30 +403,9 @@ def x_get_config__mutmut_24(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=None)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_25(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_25(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -941,30 +417,9 @@ def x_get_config__mutmut_25(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print(file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_26(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_26(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -976,30 +431,9 @@ def x_get_config__mutmut_26(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", )
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_27(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_27(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -1011,30 +445,9 @@ def x_get_config__mutmut_27(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("XXError: Submission portals list cannot be empty.XX", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_28(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_28(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -1046,30 +459,9 @@ def x_get_config__mutmut_28(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("error: submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_29(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_29(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -1081,30 +473,9 @@ def x_get_config__mutmut_29(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("ERROR: SUBMISSION PORTALS LIST CANNOT BE EMPTY.", file=sys.stderr)
 		sys.exit(1)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_30(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_30(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -1116,30 +487,9 @@ def x_get_config__mutmut_30(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(None)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+	return submission_portals
 
-# Check the config file
-def x_get_config__mutmut_31(config_file: str, databases: list[str]) -> dict[str, Any]:
+def x_determine_parent_database__mutmut_31(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -1151,6 +501,3260 @@ def x_get_config__mutmut_31(config_file: str, databases: list[str]) -> dict[str,
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(2)
+	return submission_portals
+
+x_determine_parent_database__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
+'x_determine_parent_database__mutmut_1': x_determine_parent_database__mutmut_1, 
+    'x_determine_parent_database__mutmut_2': x_determine_parent_database__mutmut_2, 
+    'x_determine_parent_database__mutmut_3': x_determine_parent_database__mutmut_3, 
+    'x_determine_parent_database__mutmut_4': x_determine_parent_database__mutmut_4, 
+    'x_determine_parent_database__mutmut_5': x_determine_parent_database__mutmut_5, 
+    'x_determine_parent_database__mutmut_6': x_determine_parent_database__mutmut_6, 
+    'x_determine_parent_database__mutmut_7': x_determine_parent_database__mutmut_7, 
+    'x_determine_parent_database__mutmut_8': x_determine_parent_database__mutmut_8, 
+    'x_determine_parent_database__mutmut_9': x_determine_parent_database__mutmut_9, 
+    'x_determine_parent_database__mutmut_10': x_determine_parent_database__mutmut_10, 
+    'x_determine_parent_database__mutmut_11': x_determine_parent_database__mutmut_11, 
+    'x_determine_parent_database__mutmut_12': x_determine_parent_database__mutmut_12, 
+    'x_determine_parent_database__mutmut_13': x_determine_parent_database__mutmut_13, 
+    'x_determine_parent_database__mutmut_14': x_determine_parent_database__mutmut_14, 
+    'x_determine_parent_database__mutmut_15': x_determine_parent_database__mutmut_15, 
+    'x_determine_parent_database__mutmut_16': x_determine_parent_database__mutmut_16, 
+    'x_determine_parent_database__mutmut_17': x_determine_parent_database__mutmut_17, 
+    'x_determine_parent_database__mutmut_18': x_determine_parent_database__mutmut_18, 
+    'x_determine_parent_database__mutmut_19': x_determine_parent_database__mutmut_19, 
+    'x_determine_parent_database__mutmut_20': x_determine_parent_database__mutmut_20, 
+    'x_determine_parent_database__mutmut_21': x_determine_parent_database__mutmut_21, 
+    'x_determine_parent_database__mutmut_22': x_determine_parent_database__mutmut_22, 
+    'x_determine_parent_database__mutmut_23': x_determine_parent_database__mutmut_23, 
+    'x_determine_parent_database__mutmut_24': x_determine_parent_database__mutmut_24, 
+    'x_determine_parent_database__mutmut_25': x_determine_parent_database__mutmut_25, 
+    'x_determine_parent_database__mutmut_26': x_determine_parent_database__mutmut_26, 
+    'x_determine_parent_database__mutmut_27': x_determine_parent_database__mutmut_27, 
+    'x_determine_parent_database__mutmut_28': x_determine_parent_database__mutmut_28, 
+    'x_determine_parent_database__mutmut_29': x_determine_parent_database__mutmut_29, 
+    'x_determine_parent_database__mutmut_30': x_determine_parent_database__mutmut_30, 
+    'x_determine_parent_database__mutmut_31': x_determine_parent_database__mutmut_31
+}
+x_determine_parent_database__mutmut_orig.__name__ = 'x_determine_parent_database'
+
+def decrypt_passwords(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	args = [config_dict, submission_portals, key]# type: ignore
+	kwargs = {}# type: ignore
+	return _mutmut_trampoline(x_decrypt_passwords__mutmut_orig, x_decrypt_passwords__mutmut_mutants, args, kwargs, None)
+
+def x_decrypt_passwords__mutmut_orig(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_1(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(None, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_2(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, None):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_3(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_4(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, ):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_5(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = None
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_6(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["XXSubmissionXX"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_7(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_8(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["SUBMISSION"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_9(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["XXPasswordXX"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_10(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_11(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["PASSWORD"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_12(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = None
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_13(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(None)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_14(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(None).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_15(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = None
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_16(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["XXSubmissionXX"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_17(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_18(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["SUBMISSION"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_19(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["XXPasswordXX"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_20(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_21(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["PASSWORD"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_22(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_23(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith(None):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_24(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("XX=XX"):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_25(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print(None, file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_26(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=None)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_27(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print(file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_28(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", )
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_29(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("XXPasswords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.XX", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_30(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("passwords field does not appear to be encrypted. use seqsender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_31(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("PASSWORDS FIELD DOES NOT APPEAR TO BE ENCRYPTED. USE SEQSENDER COMMAND 'LOAD_CREDENTIALS' TO ENCRYPT YOUR CREDENTIALS BEFORE SUBMISSION.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_32(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db != "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_33(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "XXGISAIDXX":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_34(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "gisaid":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_35(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = None
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_36(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["XXSubmissionXX"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_37(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_38(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["SUBMISSION"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_39(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["XXGISAIDXX"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_40(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["gisaid"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_41(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["XXClient-IdXX"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_42(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["client-id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_43(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["CLIENT-ID"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_44(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = None
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_45(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(None)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_46(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(None).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_47(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = None
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_48(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["XXSubmissionXX"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_49(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_50(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["SUBMISSION"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_51(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["XXGISAIDXX"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_52(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["gisaid"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_53(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["XXClient-IdXX"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_54(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["client-id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def x_decrypt_passwords__mutmut_55(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["CLIENT-ID"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+x_decrypt_passwords__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
+'x_decrypt_passwords__mutmut_1': x_decrypt_passwords__mutmut_1, 
+    'x_decrypt_passwords__mutmut_2': x_decrypt_passwords__mutmut_2, 
+    'x_decrypt_passwords__mutmut_3': x_decrypt_passwords__mutmut_3, 
+    'x_decrypt_passwords__mutmut_4': x_decrypt_passwords__mutmut_4, 
+    'x_decrypt_passwords__mutmut_5': x_decrypt_passwords__mutmut_5, 
+    'x_decrypt_passwords__mutmut_6': x_decrypt_passwords__mutmut_6, 
+    'x_decrypt_passwords__mutmut_7': x_decrypt_passwords__mutmut_7, 
+    'x_decrypt_passwords__mutmut_8': x_decrypt_passwords__mutmut_8, 
+    'x_decrypt_passwords__mutmut_9': x_decrypt_passwords__mutmut_9, 
+    'x_decrypt_passwords__mutmut_10': x_decrypt_passwords__mutmut_10, 
+    'x_decrypt_passwords__mutmut_11': x_decrypt_passwords__mutmut_11, 
+    'x_decrypt_passwords__mutmut_12': x_decrypt_passwords__mutmut_12, 
+    'x_decrypt_passwords__mutmut_13': x_decrypt_passwords__mutmut_13, 
+    'x_decrypt_passwords__mutmut_14': x_decrypt_passwords__mutmut_14, 
+    'x_decrypt_passwords__mutmut_15': x_decrypt_passwords__mutmut_15, 
+    'x_decrypt_passwords__mutmut_16': x_decrypt_passwords__mutmut_16, 
+    'x_decrypt_passwords__mutmut_17': x_decrypt_passwords__mutmut_17, 
+    'x_decrypt_passwords__mutmut_18': x_decrypt_passwords__mutmut_18, 
+    'x_decrypt_passwords__mutmut_19': x_decrypt_passwords__mutmut_19, 
+    'x_decrypt_passwords__mutmut_20': x_decrypt_passwords__mutmut_20, 
+    'x_decrypt_passwords__mutmut_21': x_decrypt_passwords__mutmut_21, 
+    'x_decrypt_passwords__mutmut_22': x_decrypt_passwords__mutmut_22, 
+    'x_decrypt_passwords__mutmut_23': x_decrypt_passwords__mutmut_23, 
+    'x_decrypt_passwords__mutmut_24': x_decrypt_passwords__mutmut_24, 
+    'x_decrypt_passwords__mutmut_25': x_decrypt_passwords__mutmut_25, 
+    'x_decrypt_passwords__mutmut_26': x_decrypt_passwords__mutmut_26, 
+    'x_decrypt_passwords__mutmut_27': x_decrypt_passwords__mutmut_27, 
+    'x_decrypt_passwords__mutmut_28': x_decrypt_passwords__mutmut_28, 
+    'x_decrypt_passwords__mutmut_29': x_decrypt_passwords__mutmut_29, 
+    'x_decrypt_passwords__mutmut_30': x_decrypt_passwords__mutmut_30, 
+    'x_decrypt_passwords__mutmut_31': x_decrypt_passwords__mutmut_31, 
+    'x_decrypt_passwords__mutmut_32': x_decrypt_passwords__mutmut_32, 
+    'x_decrypt_passwords__mutmut_33': x_decrypt_passwords__mutmut_33, 
+    'x_decrypt_passwords__mutmut_34': x_decrypt_passwords__mutmut_34, 
+    'x_decrypt_passwords__mutmut_35': x_decrypt_passwords__mutmut_35, 
+    'x_decrypt_passwords__mutmut_36': x_decrypt_passwords__mutmut_36, 
+    'x_decrypt_passwords__mutmut_37': x_decrypt_passwords__mutmut_37, 
+    'x_decrypt_passwords__mutmut_38': x_decrypt_passwords__mutmut_38, 
+    'x_decrypt_passwords__mutmut_39': x_decrypt_passwords__mutmut_39, 
+    'x_decrypt_passwords__mutmut_40': x_decrypt_passwords__mutmut_40, 
+    'x_decrypt_passwords__mutmut_41': x_decrypt_passwords__mutmut_41, 
+    'x_decrypt_passwords__mutmut_42': x_decrypt_passwords__mutmut_42, 
+    'x_decrypt_passwords__mutmut_43': x_decrypt_passwords__mutmut_43, 
+    'x_decrypt_passwords__mutmut_44': x_decrypt_passwords__mutmut_44, 
+    'x_decrypt_passwords__mutmut_45': x_decrypt_passwords__mutmut_45, 
+    'x_decrypt_passwords__mutmut_46': x_decrypt_passwords__mutmut_46, 
+    'x_decrypt_passwords__mutmut_47': x_decrypt_passwords__mutmut_47, 
+    'x_decrypt_passwords__mutmut_48': x_decrypt_passwords__mutmut_48, 
+    'x_decrypt_passwords__mutmut_49': x_decrypt_passwords__mutmut_49, 
+    'x_decrypt_passwords__mutmut_50': x_decrypt_passwords__mutmut_50, 
+    'x_decrypt_passwords__mutmut_51': x_decrypt_passwords__mutmut_51, 
+    'x_decrypt_passwords__mutmut_52': x_decrypt_passwords__mutmut_52, 
+    'x_decrypt_passwords__mutmut_53': x_decrypt_passwords__mutmut_53, 
+    'x_decrypt_passwords__mutmut_54': x_decrypt_passwords__mutmut_54, 
+    'x_decrypt_passwords__mutmut_55': x_decrypt_passwords__mutmut_55
+}
+x_decrypt_passwords__mutmut_orig.__name__ = 'x_decrypt_passwords'
+
+def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	args = [config_file, databases, encryption_key]# type: ignore
+	kwargs = {}# type: ignore
+	return _mutmut_trampoline(x_encrypt_passwords__mutmut_orig, x_encrypt_passwords__mutmut_mutants, args, kwargs, None)
+
+def x_encrypt_passwords__mutmut_orig(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_1(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = None
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_2(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(None)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_3(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = None
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_4(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = None, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_5(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = None, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_6(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = None)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_7(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_8(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_9(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, )
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_10(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = True)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_11(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = None
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_12(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = False
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_13(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = None
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_14(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = None
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_15(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = True
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_16(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = None
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_17(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = None
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_18(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(None)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_19(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(None, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_20(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, None):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_21(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_22(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, ):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_23(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = None
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_24(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(None)
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_25(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db != "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_26(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "XXNCBIXX":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_27(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "ncbi":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_28(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(None, crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_29(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = None)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_30(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_31(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], )
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_32(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["XXNCBIXX"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_33(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["ncbi"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_34(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = False)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_35(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db != "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_36(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "XXGISAIDXX":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_37(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "gisaid":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_38(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = None
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_39(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(None)
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_40(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = None
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_41(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(None)
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_42(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = None
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_43(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["XXGISAIDXX"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_44(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["gisaid"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_45(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["XXClient-IdXX"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_46(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["client-id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_47(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["CLIENT-ID"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_48(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = None
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_49(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(None)
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_50(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = None
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_51(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["XXPasswordXX"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_52(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_53(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["PASSWORD"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_54(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=None, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_55(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = None)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_56(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_57(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, )
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_58(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = None
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_59(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = None, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_60(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = None, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_61(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = None)
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_62(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_63(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_64(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, )
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_65(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print(None)
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_66(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("XXSave this key somewhere secure. It will be required for performing submission.XX")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_67(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("save this key somewhere secure. it will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_68(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("SAVE THIS KEY SOMEWHERE SECURE. IT WILL BE REQUIRED FOR PERFORMING SUBMISSION.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_69(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(None)
+	print("Credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_70(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print(None)
+
+def x_encrypt_passwords__mutmut_71(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("XXCredentials successfully loaded/encrypted into config file.XX")
+
+def x_encrypt_passwords__mutmut_72(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("credentials successfully loaded/encrypted into config file.")
+
+def x_encrypt_passwords__mutmut_73(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("CREDENTIALS SUCCESSFULLY LOADED/ENCRYPTED INTO CONFIG FILE.")
+
+x_encrypt_passwords__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
+'x_encrypt_passwords__mutmut_1': x_encrypt_passwords__mutmut_1, 
+    'x_encrypt_passwords__mutmut_2': x_encrypt_passwords__mutmut_2, 
+    'x_encrypt_passwords__mutmut_3': x_encrypt_passwords__mutmut_3, 
+    'x_encrypt_passwords__mutmut_4': x_encrypt_passwords__mutmut_4, 
+    'x_encrypt_passwords__mutmut_5': x_encrypt_passwords__mutmut_5, 
+    'x_encrypt_passwords__mutmut_6': x_encrypt_passwords__mutmut_6, 
+    'x_encrypt_passwords__mutmut_7': x_encrypt_passwords__mutmut_7, 
+    'x_encrypt_passwords__mutmut_8': x_encrypt_passwords__mutmut_8, 
+    'x_encrypt_passwords__mutmut_9': x_encrypt_passwords__mutmut_9, 
+    'x_encrypt_passwords__mutmut_10': x_encrypt_passwords__mutmut_10, 
+    'x_encrypt_passwords__mutmut_11': x_encrypt_passwords__mutmut_11, 
+    'x_encrypt_passwords__mutmut_12': x_encrypt_passwords__mutmut_12, 
+    'x_encrypt_passwords__mutmut_13': x_encrypt_passwords__mutmut_13, 
+    'x_encrypt_passwords__mutmut_14': x_encrypt_passwords__mutmut_14, 
+    'x_encrypt_passwords__mutmut_15': x_encrypt_passwords__mutmut_15, 
+    'x_encrypt_passwords__mutmut_16': x_encrypt_passwords__mutmut_16, 
+    'x_encrypt_passwords__mutmut_17': x_encrypt_passwords__mutmut_17, 
+    'x_encrypt_passwords__mutmut_18': x_encrypt_passwords__mutmut_18, 
+    'x_encrypt_passwords__mutmut_19': x_encrypt_passwords__mutmut_19, 
+    'x_encrypt_passwords__mutmut_20': x_encrypt_passwords__mutmut_20, 
+    'x_encrypt_passwords__mutmut_21': x_encrypt_passwords__mutmut_21, 
+    'x_encrypt_passwords__mutmut_22': x_encrypt_passwords__mutmut_22, 
+    'x_encrypt_passwords__mutmut_23': x_encrypt_passwords__mutmut_23, 
+    'x_encrypt_passwords__mutmut_24': x_encrypt_passwords__mutmut_24, 
+    'x_encrypt_passwords__mutmut_25': x_encrypt_passwords__mutmut_25, 
+    'x_encrypt_passwords__mutmut_26': x_encrypt_passwords__mutmut_26, 
+    'x_encrypt_passwords__mutmut_27': x_encrypt_passwords__mutmut_27, 
+    'x_encrypt_passwords__mutmut_28': x_encrypt_passwords__mutmut_28, 
+    'x_encrypt_passwords__mutmut_29': x_encrypt_passwords__mutmut_29, 
+    'x_encrypt_passwords__mutmut_30': x_encrypt_passwords__mutmut_30, 
+    'x_encrypt_passwords__mutmut_31': x_encrypt_passwords__mutmut_31, 
+    'x_encrypt_passwords__mutmut_32': x_encrypt_passwords__mutmut_32, 
+    'x_encrypt_passwords__mutmut_33': x_encrypt_passwords__mutmut_33, 
+    'x_encrypt_passwords__mutmut_34': x_encrypt_passwords__mutmut_34, 
+    'x_encrypt_passwords__mutmut_35': x_encrypt_passwords__mutmut_35, 
+    'x_encrypt_passwords__mutmut_36': x_encrypt_passwords__mutmut_36, 
+    'x_encrypt_passwords__mutmut_37': x_encrypt_passwords__mutmut_37, 
+    'x_encrypt_passwords__mutmut_38': x_encrypt_passwords__mutmut_38, 
+    'x_encrypt_passwords__mutmut_39': x_encrypt_passwords__mutmut_39, 
+    'x_encrypt_passwords__mutmut_40': x_encrypt_passwords__mutmut_40, 
+    'x_encrypt_passwords__mutmut_41': x_encrypt_passwords__mutmut_41, 
+    'x_encrypt_passwords__mutmut_42': x_encrypt_passwords__mutmut_42, 
+    'x_encrypt_passwords__mutmut_43': x_encrypt_passwords__mutmut_43, 
+    'x_encrypt_passwords__mutmut_44': x_encrypt_passwords__mutmut_44, 
+    'x_encrypt_passwords__mutmut_45': x_encrypt_passwords__mutmut_45, 
+    'x_encrypt_passwords__mutmut_46': x_encrypt_passwords__mutmut_46, 
+    'x_encrypt_passwords__mutmut_47': x_encrypt_passwords__mutmut_47, 
+    'x_encrypt_passwords__mutmut_48': x_encrypt_passwords__mutmut_48, 
+    'x_encrypt_passwords__mutmut_49': x_encrypt_passwords__mutmut_49, 
+    'x_encrypt_passwords__mutmut_50': x_encrypt_passwords__mutmut_50, 
+    'x_encrypt_passwords__mutmut_51': x_encrypt_passwords__mutmut_51, 
+    'x_encrypt_passwords__mutmut_52': x_encrypt_passwords__mutmut_52, 
+    'x_encrypt_passwords__mutmut_53': x_encrypt_passwords__mutmut_53, 
+    'x_encrypt_passwords__mutmut_54': x_encrypt_passwords__mutmut_54, 
+    'x_encrypt_passwords__mutmut_55': x_encrypt_passwords__mutmut_55, 
+    'x_encrypt_passwords__mutmut_56': x_encrypt_passwords__mutmut_56, 
+    'x_encrypt_passwords__mutmut_57': x_encrypt_passwords__mutmut_57, 
+    'x_encrypt_passwords__mutmut_58': x_encrypt_passwords__mutmut_58, 
+    'x_encrypt_passwords__mutmut_59': x_encrypt_passwords__mutmut_59, 
+    'x_encrypt_passwords__mutmut_60': x_encrypt_passwords__mutmut_60, 
+    'x_encrypt_passwords__mutmut_61': x_encrypt_passwords__mutmut_61, 
+    'x_encrypt_passwords__mutmut_62': x_encrypt_passwords__mutmut_62, 
+    'x_encrypt_passwords__mutmut_63': x_encrypt_passwords__mutmut_63, 
+    'x_encrypt_passwords__mutmut_64': x_encrypt_passwords__mutmut_64, 
+    'x_encrypt_passwords__mutmut_65': x_encrypt_passwords__mutmut_65, 
+    'x_encrypt_passwords__mutmut_66': x_encrypt_passwords__mutmut_66, 
+    'x_encrypt_passwords__mutmut_67': x_encrypt_passwords__mutmut_67, 
+    'x_encrypt_passwords__mutmut_68': x_encrypt_passwords__mutmut_68, 
+    'x_encrypt_passwords__mutmut_69': x_encrypt_passwords__mutmut_69, 
+    'x_encrypt_passwords__mutmut_70': x_encrypt_passwords__mutmut_70, 
+    'x_encrypt_passwords__mutmut_71': x_encrypt_passwords__mutmut_71, 
+    'x_encrypt_passwords__mutmut_72': x_encrypt_passwords__mutmut_72, 
+    'x_encrypt_passwords__mutmut_73': x_encrypt_passwords__mutmut_73
+}
+x_encrypt_passwords__mutmut_orig.__name__ = 'x_encrypt_passwords'
+
+# Check the config file
+def get_config(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	args = [config_file, databases, passwords_validation, decrypt_key]# type: ignore
+	kwargs = {}# type: ignore
+	return _mutmut_trampoline(x_get_config__mutmut_orig, x_get_config__mutmut_mutants, args, kwargs, None)
+
+# Check the config file
+def x_get_config__mutmut_orig(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1158,6 +3762,8 @@ def x_get_config__mutmut_31(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1168,24 +3774,103 @@ def x_get_config__mutmut_31(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_32(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+def x_get_config__mutmut_1(config_file: str, databases: list[str], passwords_validation: bool = False, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_2(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = None
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_3(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(None)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_4(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = None
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1193,6 +3878,8 @@ def x_get_config__mutmut_32(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1203,24 +3890,16 @@ def x_get_config__mutmut_32(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_33(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_5(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=None)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1228,6 +3907,8 @@ def x_get_config__mutmut_33(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1238,24 +3919,16 @@ def x_get_config__mutmut_33(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_34(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_6(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = None
@@ -1263,6 +3936,8 @@ def x_get_config__mutmut_34(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1273,24 +3948,16 @@ def x_get_config__mutmut_34(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_35(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_7(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = None, yaml_path = config_file)
@@ -1298,6 +3965,8 @@ def x_get_config__mutmut_35(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1308,24 +3977,16 @@ def x_get_config__mutmut_35(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_36(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_8(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = None)
@@ -1333,6 +3994,8 @@ def x_get_config__mutmut_36(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1343,24 +4006,16 @@ def x_get_config__mutmut_36(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_37(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_9(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_path = config_file)
@@ -1368,6 +4023,8 @@ def x_get_config__mutmut_37(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1378,24 +4035,16 @@ def x_get_config__mutmut_37(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_38(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_10(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", )
@@ -1403,6 +4052,8 @@ def x_get_config__mutmut_38(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1413,24 +4064,16 @@ def x_get_config__mutmut_38(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_39(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_11(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "XXConfig fileXX", yaml_path = config_file)
@@ -1438,6 +4081,8 @@ def x_get_config__mutmut_39(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1448,24 +4093,16 @@ def x_get_config__mutmut_39(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_40(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_12(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "config file", yaml_path = config_file)
@@ -1473,6 +4110,8 @@ def x_get_config__mutmut_40(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1483,24 +4122,16 @@ def x_get_config__mutmut_40(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_41(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_13(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "CONFIG FILE", yaml_path = config_file)
@@ -1508,6 +4139,8 @@ def x_get_config__mutmut_41(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1518,24 +4151,16 @@ def x_get_config__mutmut_41(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_42(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_14(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1543,6 +4168,8 @@ def x_get_config__mutmut_42(config_file: str, databases: list[str]) -> dict[str,
 	if type(None) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1553,24 +4180,16 @@ def x_get_config__mutmut_42(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_43(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_15(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1578,6 +4197,8 @@ def x_get_config__mutmut_43(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is not dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1588,24 +4209,16 @@ def x_get_config__mutmut_43(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_44(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_16(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1613,6 +4226,8 @@ def x_get_config__mutmut_44(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = None
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1623,24 +4238,16 @@ def x_get_config__mutmut_44(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_45(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_17(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1648,6 +4255,8 @@ def x_get_config__mutmut_45(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(None)
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1658,24 +4267,16 @@ def x_get_config__mutmut_45(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_46(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_18(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1683,6 +4284,8 @@ def x_get_config__mutmut_46(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(None, 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1693,24 +4296,16 @@ def x_get_config__mutmut_46(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_47(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_19(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1718,6 +4313,8 @@ def x_get_config__mutmut_47(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), None).read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1728,24 +4325,16 @@ def x_get_config__mutmut_47(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_48(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_20(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1753,6 +4342,8 @@ def x_get_config__mutmut_48(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open('r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1763,24 +4354,16 @@ def x_get_config__mutmut_48(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_49(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_21(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1788,6 +4371,8 @@ def x_get_config__mutmut_49(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), ).read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1798,24 +4383,16 @@ def x_get_config__mutmut_49(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_50(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_22(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1823,6 +4400,8 @@ def x_get_config__mutmut_50(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(None, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1833,24 +4412,16 @@ def x_get_config__mutmut_50(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_51(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_23(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1858,6 +4429,8 @@ def x_get_config__mutmut_51(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, None, "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1868,24 +4441,16 @@ def x_get_config__mutmut_51(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_52(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_24(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1893,6 +4458,8 @@ def x_get_config__mutmut_52(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", None, "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1903,24 +4470,16 @@ def x_get_config__mutmut_52(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_53(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_25(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1928,6 +4487,8 @@ def x_get_config__mutmut_53(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", None, submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1938,24 +4499,16 @@ def x_get_config__mutmut_53(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_54(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_26(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1963,6 +4516,8 @@ def x_get_config__mutmut_54(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", None), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -1973,24 +4528,16 @@ def x_get_config__mutmut_54(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_55(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_27(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -1998,6 +4545,8 @@ def x_get_config__mutmut_55(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join("config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2008,24 +4557,16 @@ def x_get_config__mutmut_55(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_56(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_28(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2033,6 +4574,8 @@ def x_get_config__mutmut_56(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2043,24 +4586,16 @@ def x_get_config__mutmut_56(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_57(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_29(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2068,6 +4603,8 @@ def x_get_config__mutmut_57(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2078,24 +4615,16 @@ def x_get_config__mutmut_57(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_58(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_30(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2103,6 +4632,8 @@ def x_get_config__mutmut_58(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2113,24 +4644,16 @@ def x_get_config__mutmut_58(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_59(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_31(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2138,6 +4661,8 @@ def x_get_config__mutmut_59(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", ), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2148,24 +4673,16 @@ def x_get_config__mutmut_59(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_60(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_32(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2173,6 +4690,8 @@ def x_get_config__mutmut_60(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "XXconfigXX", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2183,24 +4702,16 @@ def x_get_config__mutmut_60(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_61(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_33(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2208,6 +4719,8 @@ def x_get_config__mutmut_61(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "CONFIG", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2218,24 +4731,16 @@ def x_get_config__mutmut_61(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_62(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_34(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2243,6 +4748,8 @@ def x_get_config__mutmut_62(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "XXseqsenderXX", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2253,24 +4760,16 @@ def x_get_config__mutmut_62(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_63(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_35(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2278,6 +4777,8 @@ def x_get_config__mutmut_63(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "SEQSENDER", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2288,24 +4789,16 @@ def x_get_config__mutmut_63(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_64(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_36(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2313,6 +4806,8 @@ def x_get_config__mutmut_64(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "XXconfig_fileXX", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2323,24 +4818,16 @@ def x_get_config__mutmut_64(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_65(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_37(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2348,6 +4835,8 @@ def x_get_config__mutmut_65(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "CONFIG_FILE", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2358,24 +4847,16 @@ def x_get_config__mutmut_65(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_66(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_38(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2383,6 +4864,8 @@ def x_get_config__mutmut_66(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'XXrXX').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2393,24 +4876,16 @@ def x_get_config__mutmut_66(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_67(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_39(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2418,6 +4893,8 @@ def x_get_config__mutmut_67(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'R').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2428,24 +4905,16 @@ def x_get_config__mutmut_67(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_68(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_40(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2453,6 +4922,8 @@ def x_get_config__mutmut_68(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(None, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2463,24 +4934,16 @@ def x_get_config__mutmut_68(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_69(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_41(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2488,6 +4951,8 @@ def x_get_config__mutmut_69(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, None)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2498,24 +4963,16 @@ def x_get_config__mutmut_69(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_70(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_42(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2523,6 +4980,8 @@ def x_get_config__mutmut_70(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2533,24 +4992,16 @@ def x_get_config__mutmut_70(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_71(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_43(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2558,6 +5009,8 @@ def x_get_config__mutmut_71(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, )
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2568,24 +5021,16 @@ def x_get_config__mutmut_71(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_72(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_44(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2593,6 +5038,182 @@ def x_get_config__mutmut_72(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation != False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_45(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == True:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_46(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(None, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_47(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, None)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_48(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_49(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, )
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_50(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = None
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2603,24 +5224,16 @@ def x_get_config__mutmut_72(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_73(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_51(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2628,6 +5241,8 @@ def x_get_config__mutmut_73(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(None)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2638,24 +5253,16 @@ def x_get_config__mutmut_73(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_74(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_52(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2663,6 +5270,8 @@ def x_get_config__mutmut_74(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(None, schema) is False:
@@ -2673,24 +5282,16 @@ def x_get_config__mutmut_74(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_75(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_53(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2698,6 +5299,8 @@ def x_get_config__mutmut_75(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, None) is False:
@@ -2708,24 +5311,16 @@ def x_get_config__mutmut_75(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_76(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_54(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2733,6 +5328,8 @@ def x_get_config__mutmut_76(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(schema) is False:
@@ -2743,24 +5340,16 @@ def x_get_config__mutmut_76(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_77(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_55(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2768,6 +5357,8 @@ def x_get_config__mutmut_77(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, ) is False:
@@ -2778,24 +5369,16 @@ def x_get_config__mutmut_77(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_78(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_56(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2803,6 +5386,8 @@ def x_get_config__mutmut_78(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is not False:
@@ -2813,24 +5398,16 @@ def x_get_config__mutmut_78(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_79(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_57(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2838,6 +5415,8 @@ def x_get_config__mutmut_79(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is True:
@@ -2848,24 +5427,16 @@ def x_get_config__mutmut_79(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_80(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_58(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2873,6 +5444,8 @@ def x_get_config__mutmut_80(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2883,24 +5456,16 @@ def x_get_config__mutmut_80(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_81(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_59(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2908,6 +5473,8 @@ def x_get_config__mutmut_81(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2918,24 +5485,16 @@ def x_get_config__mutmut_81(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_82(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_60(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2943,6 +5502,8 @@ def x_get_config__mutmut_82(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2953,24 +5514,16 @@ def x_get_config__mutmut_82(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_83(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_61(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -2978,6 +5531,8 @@ def x_get_config__mutmut_83(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -2988,24 +5543,16 @@ def x_get_config__mutmut_83(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_84(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_62(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3013,6 +5560,8 @@ def x_get_config__mutmut_84(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3023,24 +5572,16 @@ def x_get_config__mutmut_84(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_85(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_63(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3048,6 +5589,8 @@ def x_get_config__mutmut_85(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3058,24 +5601,16 @@ def x_get_config__mutmut_85(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_86(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_64(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3083,6 +5618,8 @@ def x_get_config__mutmut_86(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3093,24 +5630,16 @@ def x_get_config__mutmut_86(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_87(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_65(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3118,6 +5647,8 @@ def x_get_config__mutmut_87(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3128,24 +5659,16 @@ def x_get_config__mutmut_87(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_88(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_66(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3153,6 +5676,8 @@ def x_get_config__mutmut_88(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3163,24 +5688,16 @@ def x_get_config__mutmut_88(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_89(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_67(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3188,6 +5705,8 @@ def x_get_config__mutmut_89(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3198,24 +5717,16 @@ def x_get_config__mutmut_89(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_90(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_68(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3223,6 +5734,8 @@ def x_get_config__mutmut_90(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3233,24 +5746,16 @@ def x_get_config__mutmut_90(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_91(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_69(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3258,6 +5763,8 @@ def x_get_config__mutmut_91(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3268,24 +5775,16 @@ def x_get_config__mutmut_91(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_92(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_70(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3293,6 +5792,8 @@ def x_get_config__mutmut_92(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3303,24 +5804,16 @@ def x_get_config__mutmut_92(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_93(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_71(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3328,6 +5821,8 @@ def x_get_config__mutmut_93(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3338,24 +5833,16 @@ def x_get_config__mutmut_93(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_94(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_72(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3363,6 +5850,8 @@ def x_get_config__mutmut_94(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3373,24 +5862,16 @@ def x_get_config__mutmut_94(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_95(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_73(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3398,6 +5879,8 @@ def x_get_config__mutmut_95(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3408,24 +5891,16 @@ def x_get_config__mutmut_95(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_96(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_74(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3433,6 +5908,8 @@ def x_get_config__mutmut_96(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3443,24 +5920,16 @@ def x_get_config__mutmut_96(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_97(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_75(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3468,6 +5937,8 @@ def x_get_config__mutmut_97(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3478,24 +5949,16 @@ def x_get_config__mutmut_97(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_98(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_76(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3503,6 +5966,8 @@ def x_get_config__mutmut_98(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3513,24 +5978,16 @@ def x_get_config__mutmut_98(config_file: str, databases: list[str]) -> dict[str,
 			if "GENBANK" in databases or "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_99(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_77(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3538,6 +5995,8 @@ def x_get_config__mutmut_99(config_file: str, databases: list[str]) -> dict[str,
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3548,24 +6007,16 @@ def x_get_config__mutmut_99(config_file: str, databases: list[str]) -> dict[str,
 			if "XXGENBANKXX" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_100(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_78(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3573,6 +6024,8 @@ def x_get_config__mutmut_100(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3583,24 +6036,16 @@ def x_get_config__mutmut_100(config_file: str, databases: list[str]) -> dict[str
 			if "genbank" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_101(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_79(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3608,6 +6053,8 @@ def x_get_config__mutmut_101(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3618,24 +6065,16 @@ def x_get_config__mutmut_101(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" not in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_102(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_80(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3643,6 +6082,8 @@ def x_get_config__mutmut_102(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3653,24 +6094,16 @@ def x_get_config__mutmut_102(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "XXGISAIDXX" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_103(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_81(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3678,6 +6111,8 @@ def x_get_config__mutmut_103(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3688,24 +6123,16 @@ def x_get_config__mutmut_103(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "gisaid" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_104(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_82(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3713,6 +6140,8 @@ def x_get_config__mutmut_104(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3723,24 +6152,16 @@ def x_get_config__mutmut_104(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" not in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_105(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_83(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3748,6 +6169,8 @@ def x_get_config__mutmut_105(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3758,24 +6181,16 @@ def x_get_config__mutmut_105(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=None)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_106(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_84(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3783,6 +6198,8 @@ def x_get_config__mutmut_106(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3793,24 +6210,16 @@ def x_get_config__mutmut_106(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = None
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_107(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_85(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3818,6 +6227,8 @@ def x_get_config__mutmut_107(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3828,24 +6239,16 @@ def x_get_config__mutmut_107(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=None)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_108(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_86(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3853,6 +6256,8 @@ def x_get_config__mutmut_108(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3863,24 +6268,219 @@ def x_get_config__mutmut_108(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = None
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_87(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = None, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_88(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = None, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_89(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = None)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_90(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_91(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, key = decrypt_key)
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_92(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, )
+			return config_dict["Submission"]
+	else:
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		sys.exit(1)
+
+# Check the config file
+def x_get_config__mutmut_93(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
+	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
+	# Read in user config file
+	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
+	# Check if yaml forms dictionary
+	if type(config_dict) is dict:
+		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
+		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
+		validator = Validator(schema)
+		# Validate based on schema
+		if validator.validate(config_dict, schema) is False:
+			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
+			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
+			sys.exit(1)
+		else:
+			if "GENBANK" in databases and "GISAID" in databases:
+				validate_submission_position(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["XXSubmissionXX"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_109(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_94(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3888,6 +6488,8 @@ def x_get_config__mutmut_109(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3898,24 +6500,16 @@ def x_get_config__mutmut_109(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_110(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_95(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3923,6 +6517,8 @@ def x_get_config__mutmut_110(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3933,24 +6529,16 @@ def x_get_config__mutmut_110(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["SUBMISSION"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_111(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_96(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3958,6 +6546,8 @@ def x_get_config__mutmut_111(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -3968,24 +6558,16 @@ def x_get_config__mutmut_111(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print(None, file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_112(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_97(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -3993,6 +6575,8 @@ def x_get_config__mutmut_112(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4003,24 +6587,16 @@ def x_get_config__mutmut_112(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=None)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_113(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_98(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4028,6 +6604,8 @@ def x_get_config__mutmut_113(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4038,24 +6616,16 @@ def x_get_config__mutmut_113(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print(file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_114(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_99(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4063,6 +6633,8 @@ def x_get_config__mutmut_114(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4073,24 +6645,16 @@ def x_get_config__mutmut_114(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", )
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_115(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_100(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4098,6 +6662,8 @@ def x_get_config__mutmut_115(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4108,24 +6674,16 @@ def x_get_config__mutmut_115(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("XXError: Config file is incorrect. File must be a valid yaml format.XX", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_116(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_101(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4133,6 +6691,8 @@ def x_get_config__mutmut_116(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4143,24 +6703,16 @@ def x_get_config__mutmut_116(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("error: config file is incorrect. file must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_117(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_102(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4168,6 +6720,8 @@ def x_get_config__mutmut_117(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4178,24 +6732,16 @@ def x_get_config__mutmut_117(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("ERROR: CONFIG FILE IS INCORRECT. FILE MUST BE A VALID YAML FORMAT.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
-def x_get_config__mutmut_118(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_103(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4203,6 +6749,8 @@ def x_get_config__mutmut_118(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4213,24 +6761,16 @@ def x_get_config__mutmut_118(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(None)
 
 # Check the config file
-def x_get_config__mutmut_119(config_file: str, databases: list[str]) -> dict[str, Any]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
+def x_get_config__mutmut_104(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -4238,6 +6778,8 @@ def x_get_config__mutmut_119(config_file: str, databases: list[str]) -> dict[str
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -4248,6 +6790,8 @@ def x_get_config__mutmut_119(config_file: str, databases: list[str]) -> dict[str
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -4357,22 +6901,7 @@ x_get_config__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_get_config__mutmut_101': x_get_config__mutmut_101, 
     'x_get_config__mutmut_102': x_get_config__mutmut_102, 
     'x_get_config__mutmut_103': x_get_config__mutmut_103, 
-    'x_get_config__mutmut_104': x_get_config__mutmut_104, 
-    'x_get_config__mutmut_105': x_get_config__mutmut_105, 
-    'x_get_config__mutmut_106': x_get_config__mutmut_106, 
-    'x_get_config__mutmut_107': x_get_config__mutmut_107, 
-    'x_get_config__mutmut_108': x_get_config__mutmut_108, 
-    'x_get_config__mutmut_109': x_get_config__mutmut_109, 
-    'x_get_config__mutmut_110': x_get_config__mutmut_110, 
-    'x_get_config__mutmut_111': x_get_config__mutmut_111, 
-    'x_get_config__mutmut_112': x_get_config__mutmut_112, 
-    'x_get_config__mutmut_113': x_get_config__mutmut_113, 
-    'x_get_config__mutmut_114': x_get_config__mutmut_114, 
-    'x_get_config__mutmut_115': x_get_config__mutmut_115, 
-    'x_get_config__mutmut_116': x_get_config__mutmut_116, 
-    'x_get_config__mutmut_117': x_get_config__mutmut_117, 
-    'x_get_config__mutmut_118': x_get_config__mutmut_118, 
-    'x_get_config__mutmut_119': x_get_config__mutmut_119
+    'x_get_config__mutmut_104': x_get_config__mutmut_104
 }
 x_get_config__mutmut_orig.__name__ = 'x_get_config'
 
@@ -5646,6 +8175,509 @@ x_get_submission_position__mutmut_mutants : ClassVar[MutantDict] = { # type: ign
     'x_get_submission_position__mutmut_40': x_get_submission_position__mutmut_40
 }
 x_get_submission_position__mutmut_orig.__name__ = 'x_get_submission_position'
+
+def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	args = [schema, submission_portals]# type: ignore
+	kwargs = {}# type: ignore
+	return _mutmut_trampoline(x_password_encryption_config_schema_updates__mutmut_orig, x_password_encryption_config_schema_updates__mutmut_mutants, args, kwargs, None)
+
+def x_password_encryption_config_schema_updates__mutmut_orig(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_1(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "XXNCBIXX" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_2(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "ncbi" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_3(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" not in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_4(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = None
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_5(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["XXSubmissionXX"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_6(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_7(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["SUBMISSION"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_8(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["XXschemaXX"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_9(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["SCHEMA"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_10(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["XXNCBIXX"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_11(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["ncbi"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_12(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["XXschemaXX"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_13(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["SCHEMA"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_14(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["XXPasswordXX"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_15(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_16(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["PASSWORD"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_17(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["XXrequiredXX"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_18(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["REQUIRED"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_19(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = True
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_20(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "XXGISAIDXX" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_21(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "gisaid" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_22(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" not in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_23(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = None
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_24(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["XXSubmissionXX"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_25(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_26(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["SUBMISSION"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_27(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["XXschemaXX"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_28(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["SCHEMA"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_29(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["XXGISAIDXX"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_30(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["gisaid"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_31(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["XXschemaXX"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_32(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["SCHEMA"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_33(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["XXPasswordXX"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_34(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_35(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["PASSWORD"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_36(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["XXrequiredXX"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_37(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["REQUIRED"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_38(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = True
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_39(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = None
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_40(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["XXSubmissionXX"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_41(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_42(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["SUBMISSION"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_43(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["XXschemaXX"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_44(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["SCHEMA"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_45(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["XXGISAIDXX"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_46(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["gisaid"]["schema"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_47(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["XXschemaXX"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_48(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["SCHEMA"]["Client-Id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_49(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["XXClient-IdXX"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_50(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["client-id"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_51(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["CLIENT-ID"]["required"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_52(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["XXrequiredXX"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_53(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["REQUIRED"] = False
+	return schema
+
+def x_password_encryption_config_schema_updates__mutmut_54(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = True
+	return schema
+
+x_password_encryption_config_schema_updates__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
+'x_password_encryption_config_schema_updates__mutmut_1': x_password_encryption_config_schema_updates__mutmut_1, 
+    'x_password_encryption_config_schema_updates__mutmut_2': x_password_encryption_config_schema_updates__mutmut_2, 
+    'x_password_encryption_config_schema_updates__mutmut_3': x_password_encryption_config_schema_updates__mutmut_3, 
+    'x_password_encryption_config_schema_updates__mutmut_4': x_password_encryption_config_schema_updates__mutmut_4, 
+    'x_password_encryption_config_schema_updates__mutmut_5': x_password_encryption_config_schema_updates__mutmut_5, 
+    'x_password_encryption_config_schema_updates__mutmut_6': x_password_encryption_config_schema_updates__mutmut_6, 
+    'x_password_encryption_config_schema_updates__mutmut_7': x_password_encryption_config_schema_updates__mutmut_7, 
+    'x_password_encryption_config_schema_updates__mutmut_8': x_password_encryption_config_schema_updates__mutmut_8, 
+    'x_password_encryption_config_schema_updates__mutmut_9': x_password_encryption_config_schema_updates__mutmut_9, 
+    'x_password_encryption_config_schema_updates__mutmut_10': x_password_encryption_config_schema_updates__mutmut_10, 
+    'x_password_encryption_config_schema_updates__mutmut_11': x_password_encryption_config_schema_updates__mutmut_11, 
+    'x_password_encryption_config_schema_updates__mutmut_12': x_password_encryption_config_schema_updates__mutmut_12, 
+    'x_password_encryption_config_schema_updates__mutmut_13': x_password_encryption_config_schema_updates__mutmut_13, 
+    'x_password_encryption_config_schema_updates__mutmut_14': x_password_encryption_config_schema_updates__mutmut_14, 
+    'x_password_encryption_config_schema_updates__mutmut_15': x_password_encryption_config_schema_updates__mutmut_15, 
+    'x_password_encryption_config_schema_updates__mutmut_16': x_password_encryption_config_schema_updates__mutmut_16, 
+    'x_password_encryption_config_schema_updates__mutmut_17': x_password_encryption_config_schema_updates__mutmut_17, 
+    'x_password_encryption_config_schema_updates__mutmut_18': x_password_encryption_config_schema_updates__mutmut_18, 
+    'x_password_encryption_config_schema_updates__mutmut_19': x_password_encryption_config_schema_updates__mutmut_19, 
+    'x_password_encryption_config_schema_updates__mutmut_20': x_password_encryption_config_schema_updates__mutmut_20, 
+    'x_password_encryption_config_schema_updates__mutmut_21': x_password_encryption_config_schema_updates__mutmut_21, 
+    'x_password_encryption_config_schema_updates__mutmut_22': x_password_encryption_config_schema_updates__mutmut_22, 
+    'x_password_encryption_config_schema_updates__mutmut_23': x_password_encryption_config_schema_updates__mutmut_23, 
+    'x_password_encryption_config_schema_updates__mutmut_24': x_password_encryption_config_schema_updates__mutmut_24, 
+    'x_password_encryption_config_schema_updates__mutmut_25': x_password_encryption_config_schema_updates__mutmut_25, 
+    'x_password_encryption_config_schema_updates__mutmut_26': x_password_encryption_config_schema_updates__mutmut_26, 
+    'x_password_encryption_config_schema_updates__mutmut_27': x_password_encryption_config_schema_updates__mutmut_27, 
+    'x_password_encryption_config_schema_updates__mutmut_28': x_password_encryption_config_schema_updates__mutmut_28, 
+    'x_password_encryption_config_schema_updates__mutmut_29': x_password_encryption_config_schema_updates__mutmut_29, 
+    'x_password_encryption_config_schema_updates__mutmut_30': x_password_encryption_config_schema_updates__mutmut_30, 
+    'x_password_encryption_config_schema_updates__mutmut_31': x_password_encryption_config_schema_updates__mutmut_31, 
+    'x_password_encryption_config_schema_updates__mutmut_32': x_password_encryption_config_schema_updates__mutmut_32, 
+    'x_password_encryption_config_schema_updates__mutmut_33': x_password_encryption_config_schema_updates__mutmut_33, 
+    'x_password_encryption_config_schema_updates__mutmut_34': x_password_encryption_config_schema_updates__mutmut_34, 
+    'x_password_encryption_config_schema_updates__mutmut_35': x_password_encryption_config_schema_updates__mutmut_35, 
+    'x_password_encryption_config_schema_updates__mutmut_36': x_password_encryption_config_schema_updates__mutmut_36, 
+    'x_password_encryption_config_schema_updates__mutmut_37': x_password_encryption_config_schema_updates__mutmut_37, 
+    'x_password_encryption_config_schema_updates__mutmut_38': x_password_encryption_config_schema_updates__mutmut_38, 
+    'x_password_encryption_config_schema_updates__mutmut_39': x_password_encryption_config_schema_updates__mutmut_39, 
+    'x_password_encryption_config_schema_updates__mutmut_40': x_password_encryption_config_schema_updates__mutmut_40, 
+    'x_password_encryption_config_schema_updates__mutmut_41': x_password_encryption_config_schema_updates__mutmut_41, 
+    'x_password_encryption_config_schema_updates__mutmut_42': x_password_encryption_config_schema_updates__mutmut_42, 
+    'x_password_encryption_config_schema_updates__mutmut_43': x_password_encryption_config_schema_updates__mutmut_43, 
+    'x_password_encryption_config_schema_updates__mutmut_44': x_password_encryption_config_schema_updates__mutmut_44, 
+    'x_password_encryption_config_schema_updates__mutmut_45': x_password_encryption_config_schema_updates__mutmut_45, 
+    'x_password_encryption_config_schema_updates__mutmut_46': x_password_encryption_config_schema_updates__mutmut_46, 
+    'x_password_encryption_config_schema_updates__mutmut_47': x_password_encryption_config_schema_updates__mutmut_47, 
+    'x_password_encryption_config_schema_updates__mutmut_48': x_password_encryption_config_schema_updates__mutmut_48, 
+    'x_password_encryption_config_schema_updates__mutmut_49': x_password_encryption_config_schema_updates__mutmut_49, 
+    'x_password_encryption_config_schema_updates__mutmut_50': x_password_encryption_config_schema_updates__mutmut_50, 
+    'x_password_encryption_config_schema_updates__mutmut_51': x_password_encryption_config_schema_updates__mutmut_51, 
+    'x_password_encryption_config_schema_updates__mutmut_52': x_password_encryption_config_schema_updates__mutmut_52, 
+    'x_password_encryption_config_schema_updates__mutmut_53': x_password_encryption_config_schema_updates__mutmut_53, 
+    'x_password_encryption_config_schema_updates__mutmut_54': x_password_encryption_config_schema_updates__mutmut_54
+}
+x_password_encryption_config_schema_updates__mutmut_orig.__name__ = 'x_password_encryption_config_schema_updates'
 
 def database_specific_config_schema_updates(schema: dict[str, Any], database: list[str]) -> dict[str, Any]:
 	args = [schema, database]# type: ignore
@@ -19441,7 +22473,10 @@ def x_pretty_print_pandera_errors__mutmut_orig(file: str, error_msgs: list[pande
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19509,7 +22544,10 @@ def x_pretty_print_pandera_errors__mutmut_1(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19577,7 +22615,10 @@ def x_pretty_print_pandera_errors__mutmut_2(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19645,7 +22686,10 @@ def x_pretty_print_pandera_errors__mutmut_3(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19713,7 +22757,10 @@ def x_pretty_print_pandera_errors__mutmut_4(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19781,7 +22828,10 @@ def x_pretty_print_pandera_errors__mutmut_5(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19849,7 +22899,10 @@ def x_pretty_print_pandera_errors__mutmut_6(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19917,7 +22970,10 @@ def x_pretty_print_pandera_errors__mutmut_7(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -19985,7 +23041,10 @@ def x_pretty_print_pandera_errors__mutmut_8(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20053,7 +23112,10 @@ def x_pretty_print_pandera_errors__mutmut_9(file: str, error_msgs: list[pandera.
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20121,7 +23183,10 @@ def x_pretty_print_pandera_errors__mutmut_10(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20189,7 +23254,10 @@ def x_pretty_print_pandera_errors__mutmut_11(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20257,7 +23325,10 @@ def x_pretty_print_pandera_errors__mutmut_12(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20325,7 +23396,10 @@ def x_pretty_print_pandera_errors__mutmut_13(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20393,7 +23467,10 @@ def x_pretty_print_pandera_errors__mutmut_14(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20461,7 +23538,10 @@ def x_pretty_print_pandera_errors__mutmut_15(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20529,7 +23609,10 @@ def x_pretty_print_pandera_errors__mutmut_16(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20597,7 +23680,10 @@ def x_pretty_print_pandera_errors__mutmut_17(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20665,7 +23751,10 @@ def x_pretty_print_pandera_errors__mutmut_18(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20733,7 +23822,10 @@ def x_pretty_print_pandera_errors__mutmut_19(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20801,7 +23893,10 @@ def x_pretty_print_pandera_errors__mutmut_20(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20869,7 +23964,10 @@ def x_pretty_print_pandera_errors__mutmut_21(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -20937,7 +24035,10 @@ def x_pretty_print_pandera_errors__mutmut_22(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21005,7 +24106,10 @@ def x_pretty_print_pandera_errors__mutmut_23(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21073,7 +24177,10 @@ def x_pretty_print_pandera_errors__mutmut_24(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21141,7 +24248,10 @@ def x_pretty_print_pandera_errors__mutmut_25(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21209,7 +24319,10 @@ def x_pretty_print_pandera_errors__mutmut_26(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21277,7 +24390,10 @@ def x_pretty_print_pandera_errors__mutmut_27(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21345,7 +24461,10 @@ def x_pretty_print_pandera_errors__mutmut_28(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21413,7 +24532,10 @@ def x_pretty_print_pandera_errors__mutmut_29(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21481,7 +24603,10 @@ def x_pretty_print_pandera_errors__mutmut_30(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21549,7 +24674,10 @@ def x_pretty_print_pandera_errors__mutmut_31(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21617,7 +24745,10 @@ def x_pretty_print_pandera_errors__mutmut_32(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21685,7 +24816,10 @@ def x_pretty_print_pandera_errors__mutmut_33(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21753,7 +24887,10 @@ def x_pretty_print_pandera_errors__mutmut_34(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21821,7 +24958,10 @@ def x_pretty_print_pandera_errors__mutmut_35(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21889,7 +25029,10 @@ def x_pretty_print_pandera_errors__mutmut_36(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -21957,7 +25100,10 @@ def x_pretty_print_pandera_errors__mutmut_37(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22025,7 +25171,10 @@ def x_pretty_print_pandera_errors__mutmut_38(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22093,7 +25242,10 @@ def x_pretty_print_pandera_errors__mutmut_39(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22161,7 +25313,10 @@ def x_pretty_print_pandera_errors__mutmut_40(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(None, error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22229,7 +25384,10 @@ def x_pretty_print_pandera_errors__mutmut_41(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", None):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22297,7 +25455,10 @@ def x_pretty_print_pandera_errors__mutmut_42(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22365,7 +25526,10 @@ def x_pretty_print_pandera_errors__mutmut_43(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", ):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22433,7 +25597,10 @@ def x_pretty_print_pandera_errors__mutmut_44(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"XXstr_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)XX", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22501,7 +25668,10 @@ def x_pretty_print_pandera_errors__mutmut_45(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"STR_MATCHES\(\'\(\?I\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22569,7 +25739,10 @@ def x_pretty_print_pandera_errors__mutmut_46(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = None
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22637,7 +25810,10 @@ def x_pretty_print_pandera_errors__mutmut_47(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(None, error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22705,7 +25881,10 @@ def x_pretty_print_pandera_errors__mutmut_48(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", None)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22773,7 +25952,10 @@ def x_pretty_print_pandera_errors__mutmut_49(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22841,7 +26023,10 @@ def x_pretty_print_pandera_errors__mutmut_50(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", )
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22909,7 +26094,10 @@ def x_pretty_print_pandera_errors__mutmut_51(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"XX\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)XX", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -22977,7 +26165,10 @@ def x_pretty_print_pandera_errors__mutmut_52(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = None
+				if match:
+					accepted_values = None
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -23045,7 +26236,10 @@ def x_pretty_print_pandera_errors__mutmut_53(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split(None)
+				if match:
+					accepted_values = match.group(1).split(None)
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -23113,7 +26307,10 @@ def x_pretty_print_pandera_errors__mutmut_54(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(None).split("|")
+				if match:
+					accepted_values = match.group(None).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -23181,7 +26378,10 @@ def x_pretty_print_pandera_errors__mutmut_55(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(2).split("|")
+				if match:
+					accepted_values = match.group(2).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -23249,7 +26449,10 @@ def x_pretty_print_pandera_errors__mutmut_56(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("XX|XX")
+				if match:
+					accepted_values = match.group(1).split("XX|XX")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -23317,8 +26520,11 @@ def x_pretty_print_pandera_errors__mutmut_57(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(None, file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = None
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23385,8 +26591,11 @@ def x_pretty_print_pandera_errors__mutmut_58(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=None)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "XXUnknownXX"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23453,8 +26662,11 @@ def x_pretty_print_pandera_errors__mutmut_59(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23521,8 +26733,11 @@ def x_pretty_print_pandera_errors__mutmut_60(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", )
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "UNKNOWN"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23589,8 +26804,11 @@ def x_pretty_print_pandera_errors__mutmut_61(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(None, file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23657,8 +26875,11 @@ def x_pretty_print_pandera_errors__mutmut_62(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=None)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
@@ -23725,10 +26946,13 @@ def x_pretty_print_pandera_errors__mutmut_63(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(None, error.check):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -23793,10 +27017,13 @@ def x_pretty_print_pandera_errors__mutmut_64(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", )
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", None):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -23861,10 +27088,13 @@ def x_pretty_print_pandera_errors__mutmut_65(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(error.check):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -23929,10 +27159,13 @@ def x_pretty_print_pandera_errors__mutmut_66(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", ):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -23997,10 +27230,13 @@ def x_pretty_print_pandera_errors__mutmut_67(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"XX\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)XX", error.check):
+			elif re.search(None, error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -24065,10 +27301,13 @@ def x_pretty_print_pandera_errors__mutmut_68(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = false\)", error.check):
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", None):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -24133,10 +27372,13 @@ def x_pretty_print_pandera_errors__mutmut_69(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(LAMBDA DF: ~\(DF\[\".*\"\].ISNULL\(\)( & DF\[\".*\"\].ISNULL\(\))+\), IGNORE_NA = FALSE\)", error.check):
+			elif re.search(error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
@@ -24201,11 +27443,14 @@ def x_pretty_print_pandera_errors__mutmut_70(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = None
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", ):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24269,11 +27514,14 @@ def x_pretty_print_pandera_errors__mutmut_71(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split(None)
+			elif re.search(r"XX\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)XX", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24337,11 +27585,14 @@ def x_pretty_print_pandera_errors__mutmut_72(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace(None, "").split("+")
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = false\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24405,11 +27656,14 @@ def x_pretty_print_pandera_errors__mutmut_73(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
-			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", None).split("+")
+			elif re.search(r"\(LAMBDA DF: ~\(DF\[\".*\"\].ISNULL\(\)( & DF\[\".*\"\].ISNULL\(\))+\), IGNORE_NA = FALSE\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24473,11 +27727,14 @@ def x_pretty_print_pandera_errors__mutmut_74(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("").split("+")
+				column_group = None
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24541,11 +27798,14 @@ def x_pretty_print_pandera_errors__mutmut_75(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", ).split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split(None)
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24609,11 +27869,14 @@ def x_pretty_print_pandera_errors__mutmut_76(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace(None, "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace(None, "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24677,11 +27940,14 @@ def x_pretty_print_pandera_errors__mutmut_77(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", None).replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", None).split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24745,11 +28011,14 @@ def x_pretty_print_pandera_errors__mutmut_78(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24813,11 +28082,14 @@ def x_pretty_print_pandera_errors__mutmut_79(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", ).replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", ).split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24881,11 +28153,14 @@ def x_pretty_print_pandera_errors__mutmut_80(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace(None, "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace(None, "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -24949,11 +28224,14 @@ def x_pretty_print_pandera_errors__mutmut_81(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", None).replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", None).replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25017,11 +28295,14 @@ def x_pretty_print_pandera_errors__mutmut_82(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25085,11 +28366,14 @@ def x_pretty_print_pandera_errors__mutmut_83(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", ).replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", ).replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25153,11 +28437,14 @@ def x_pretty_print_pandera_errors__mutmut_84(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("XX(lambda df: ~(df[\"XX", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace(None, "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25221,11 +28508,14 @@ def x_pretty_print_pandera_errors__mutmut_85(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(LAMBDA DF: ~(DF[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", None).replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25289,11 +28579,14 @@ def x_pretty_print_pandera_errors__mutmut_86(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "XXXX").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25357,11 +28650,14 @@ def x_pretty_print_pandera_errors__mutmut_87(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("XX\"].isnull() & df[\"XX", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", ).replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25425,11 +28721,14 @@ def x_pretty_print_pandera_errors__mutmut_88(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].ISNULL() & DF[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("XX(lambda df: ~(df[\"XX", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25493,11 +28792,14 @@ def x_pretty_print_pandera_errors__mutmut_89(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "XX+XX").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				column_group = error.check.replace("(LAMBDA DF: ~(DF[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25561,11 +28863,14 @@ def x_pretty_print_pandera_errors__mutmut_90(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("XX\"].isnull()), ignore_na = False)XX", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "XXXX").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25629,11 +28934,14 @@ def x_pretty_print_pandera_errors__mutmut_91(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = false)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("XX\"].isnull() & df[\"XX", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25697,11 +29005,14 @@ def x_pretty_print_pandera_errors__mutmut_92(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].ISNULL()), IGNORE_NA = FALSE)", "").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].ISNULL() & DF[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25765,11 +29076,14 @@ def x_pretty_print_pandera_errors__mutmut_93(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "XXXX").split("+")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "XX+XX").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25833,11 +29147,14 @@ def x_pretty_print_pandera_errors__mutmut_94(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("XX+XX")
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("XX\"].isnull()), ignore_na = False)XX", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
@@ -25901,12 +29218,15 @@ def x_pretty_print_pandera_errors__mutmut_95(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(None, file=sys.stderr)
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = false)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
@@ -25969,12 +29289,15 @@ def x_pretty_print_pandera_errors__mutmut_96(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=None)
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].ISNULL()), IGNORE_NA = FALSE)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
@@ -26037,12 +29360,15 @@ def x_pretty_print_pandera_errors__mutmut_97(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(file=sys.stderr)
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "XXXX").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
@@ -26105,12 +29431,15 @@ def x_pretty_print_pandera_errors__mutmut_98(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
-				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", )
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("XX+XX")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
@@ -26173,14 +29502,17 @@ def x_pretty_print_pandera_errors__mutmut_99(file: str, error_msgs: list[pandera
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+				print(None, file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(None, error.check):
+			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26241,14 +29573,17 @@ def x_pretty_print_pandera_errors__mutmut_100(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=None)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", None):
+			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26309,14 +29644,17 @@ def x_pretty_print_pandera_errors__mutmut_101(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+				print(file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(error.check):
+			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26377,14 +29715,17 @@ def x_pretty_print_pandera_errors__mutmut_102(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
-				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", )
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", ):
+			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26445,14 +29786,17 @@ def x_pretty_print_pandera_errors__mutmut_103(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"XXstr_length\(.*\)XX", error.check):
+			elif re.search(None, error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26513,14 +29857,17 @@ def x_pretty_print_pandera_errors__mutmut_104(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"STR_LENGTH\(.*\)", error.check):
+			elif re.search(r"str_length\(.*\)", None):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
@@ -26581,15 +29928,18 @@ def x_pretty_print_pandera_errors__mutmut_105(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = None
+			elif re.search(error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26649,15 +29999,18 @@ def x_pretty_print_pandera_errors__mutmut_106(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(None)
+			elif re.search(r"str_length\(.*\)", ):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26717,15 +30070,18 @@ def x_pretty_print_pandera_errors__mutmut_107(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(None, "").split(", ")
+			elif re.search(r"XXstr_length\(.*\)XX", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26785,15 +30141,18 @@ def x_pretty_print_pandera_errors__mutmut_108(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
 				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
-			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", None).split(", ")
+			elif re.search(r"STR_LENGTH\(.*\)", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26853,7 +30212,10 @@ def x_pretty_print_pandera_errors__mutmut_109(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -26861,7 +30223,7 @@ def x_pretty_print_pandera_errors__mutmut_109(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace("").split(", ")
+				min_value, max_value = None
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26921,7 +30283,10 @@ def x_pretty_print_pandera_errors__mutmut_110(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -26929,7 +30294,7 @@ def x_pretty_print_pandera_errors__mutmut_110(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", ).split(", ")
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(None)
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -26989,7 +30354,10 @@ def x_pretty_print_pandera_errors__mutmut_111(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -26997,7 +30365,7 @@ def x_pretty_print_pandera_errors__mutmut_111(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace(None, "").replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", "").replace(None, "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27057,7 +30425,10 @@ def x_pretty_print_pandera_errors__mutmut_112(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27065,7 +30436,7 @@ def x_pretty_print_pandera_errors__mutmut_112(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", None).replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", None).split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27125,7 +30496,10 @@ def x_pretty_print_pandera_errors__mutmut_113(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27133,7 +30507,7 @@ def x_pretty_print_pandera_errors__mutmut_113(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("").replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", "").replace("").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27193,7 +30567,10 @@ def x_pretty_print_pandera_errors__mutmut_114(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27201,7 +30578,7 @@ def x_pretty_print_pandera_errors__mutmut_114(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", ).replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", ).split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27261,7 +30638,10 @@ def x_pretty_print_pandera_errors__mutmut_115(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27269,7 +30649,7 @@ def x_pretty_print_pandera_errors__mutmut_115(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("XXstr_length(XX", "").replace(")", "").split(", ")
+				min_value, max_value = error.check.replace(None, "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27329,7 +30709,10 @@ def x_pretty_print_pandera_errors__mutmut_116(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27337,7 +30720,7 @@ def x_pretty_print_pandera_errors__mutmut_116(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("STR_LENGTH(", "").replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", None).replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27397,7 +30780,10 @@ def x_pretty_print_pandera_errors__mutmut_117(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27405,7 +30791,7 @@ def x_pretty_print_pandera_errors__mutmut_117(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "XXXX").replace(")", "").split(", ")
+				min_value, max_value = error.check.replace("").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27465,7 +30851,10 @@ def x_pretty_print_pandera_errors__mutmut_118(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27473,7 +30862,7 @@ def x_pretty_print_pandera_errors__mutmut_118(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace("XX)XX", "").split(", ")
+				min_value, max_value = error.check.replace("str_length(", ).replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27533,7 +30922,10 @@ def x_pretty_print_pandera_errors__mutmut_119(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27541,7 +30933,7 @@ def x_pretty_print_pandera_errors__mutmut_119(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "XXXX").split(", ")
+				min_value, max_value = error.check.replace("XXstr_length(XX", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27601,7 +30993,10 @@ def x_pretty_print_pandera_errors__mutmut_120(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27609,7 +31004,7 @@ def x_pretty_print_pandera_errors__mutmut_120(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split("XX, XX")
+				min_value, max_value = error.check.replace("STR_LENGTH(", "").replace(")", "").split(", ")
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
@@ -27669,7 +31064,10 @@ def x_pretty_print_pandera_errors__mutmut_121(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27677,8 +31075,8 @@ def x_pretty_print_pandera_errors__mutmut_121(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(None, file=sys.stderr)
+				min_value, max_value = error.check.replace("str_length(", "XXXX").replace(")", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -27737,7 +31135,10 @@ def x_pretty_print_pandera_errors__mutmut_122(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27745,8 +31146,8 @@ def x_pretty_print_pandera_errors__mutmut_122(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=None)
+				min_value, max_value = error.check.replace("str_length(", "").replace("XX)XX", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -27805,7 +31206,10 @@ def x_pretty_print_pandera_errors__mutmut_123(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27813,8 +31217,8 @@ def x_pretty_print_pandera_errors__mutmut_123(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(file=sys.stderr)
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "XXXX").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -27873,7 +31277,10 @@ def x_pretty_print_pandera_errors__mutmut_124(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27881,8 +31288,8 @@ def x_pretty_print_pandera_errors__mutmut_124(file: str, error_msgs: list[pander
 				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
-				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", )
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split("XX, XX")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -27941,7 +31348,10 @@ def x_pretty_print_pandera_errors__mutmut_125(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -27950,7 +31360,7 @@ def x_pretty_print_pandera_errors__mutmut_125(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index - 1)}' does not meet these requirements.", file=sys.stderr)
+				print(None, file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -28009,7 +31419,10 @@ def x_pretty_print_pandera_errors__mutmut_126(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28018,7 +31431,7 @@ def x_pretty_print_pandera_errors__mutmut_126(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 2)}' does not meet these requirements.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=None)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
@@ -28077,7 +31490,10 @@ def x_pretty_print_pandera_errors__mutmut_127(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28086,10 +31502,10 @@ def x_pretty_print_pandera_errors__mutmut_127(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+				print(file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check != r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
@@ -28145,7 +31561,10 @@ def x_pretty_print_pandera_errors__mutmut_128(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28154,10 +31573,10 @@ def x_pretty_print_pandera_errors__mutmut_128(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", )
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"XXstr_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')XX":
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
@@ -28213,7 +31632,10 @@ def x_pretty_print_pandera_errors__mutmut_129(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28222,10 +31644,10 @@ def x_pretty_print_pandera_errors__mutmut_129(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index - 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"str_matches('^(pending|submitted|\Wsub\d*\W)$')":
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
@@ -28281,7 +31703,10 @@ def x_pretty_print_pandera_errors__mutmut_130(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28290,10 +31715,10 @@ def x_pretty_print_pandera_errors__mutmut_130(file: str, error_msgs: list[pander
 			# Column has minimum or maximum character length requirements
 			elif re.search(r"str_length\(.*\)", error.check):
 				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
-				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 2)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"STR_MATCHES('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
@@ -28349,7 +31774,10 @@ def x_pretty_print_pandera_errors__mutmut_131(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28361,8 +31789,8 @@ def x_pretty_print_pandera_errors__mutmut_131(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = None
+			elif error.check != r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28417,7 +31845,10 @@ def x_pretty_print_pandera_errors__mutmut_132(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28429,8 +31860,8 @@ def x_pretty_print_pandera_errors__mutmut_132(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split(None)
+			elif error.check == r"XXstr_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')XX":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28485,7 +31916,10 @@ def x_pretty_print_pandera_errors__mutmut_133(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28497,8 +31931,8 @@ def x_pretty_print_pandera_errors__mutmut_133(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(None, "<numeric_values>").split("|")
+			elif error.check == r"str_matches('^(pending|submitted|\Wsub\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28553,7 +31987,10 @@ def x_pretty_print_pandera_errors__mutmut_134(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28565,8 +32002,8 @@ def x_pretty_print_pandera_errors__mutmut_134(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
-			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", None).split("|")
+			elif error.check == r"STR_MATCHES('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28621,7 +32058,10 @@ def x_pretty_print_pandera_errors__mutmut_135(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28634,7 +32074,7 @@ def x_pretty_print_pandera_errors__mutmut_135(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace("<numeric_values>").split("|")
+				accepted_values = None
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28689,7 +32129,10 @@ def x_pretty_print_pandera_errors__mutmut_136(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28702,7 +32145,7 @@ def x_pretty_print_pandera_errors__mutmut_136(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", ).split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split(None)
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28757,7 +32200,10 @@ def x_pretty_print_pandera_errors__mutmut_137(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28770,7 +32216,7 @@ def x_pretty_print_pandera_errors__mutmut_137(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(None, "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(None, "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28825,7 +32271,10 @@ def x_pretty_print_pandera_errors__mutmut_138(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28838,7 +32287,7 @@ def x_pretty_print_pandera_errors__mutmut_138(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", None).replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", None).split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28893,7 +32342,10 @@ def x_pretty_print_pandera_errors__mutmut_139(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28906,7 +32358,7 @@ def x_pretty_print_pandera_errors__mutmut_139(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace("").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace("<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -28961,7 +32413,10 @@ def x_pretty_print_pandera_errors__mutmut_140(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -28974,7 +32429,7 @@ def x_pretty_print_pandera_errors__mutmut_140(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", ).replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", ).split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29029,7 +32484,10 @@ def x_pretty_print_pandera_errors__mutmut_141(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29042,7 +32500,7 @@ def x_pretty_print_pandera_errors__mutmut_141(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(None, "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(None, "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29097,7 +32555,10 @@ def x_pretty_print_pandera_errors__mutmut_142(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29110,7 +32571,7 @@ def x_pretty_print_pandera_errors__mutmut_142(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", None).replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", None).replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29165,7 +32626,10 @@ def x_pretty_print_pandera_errors__mutmut_143(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29178,7 +32642,7 @@ def x_pretty_print_pandera_errors__mutmut_143(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace("").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace("").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29233,7 +32697,10 @@ def x_pretty_print_pandera_errors__mutmut_144(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29246,7 +32713,7 @@ def x_pretty_print_pandera_errors__mutmut_144(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", ).replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", ).replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29301,7 +32768,10 @@ def x_pretty_print_pandera_errors__mutmut_145(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29314,7 +32784,7 @@ def x_pretty_print_pandera_errors__mutmut_145(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace(None, "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(None, "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29369,7 +32839,10 @@ def x_pretty_print_pandera_errors__mutmut_146(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29382,7 +32855,7 @@ def x_pretty_print_pandera_errors__mutmut_146(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", None).replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", None).replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29437,7 +32910,10 @@ def x_pretty_print_pandera_errors__mutmut_147(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29450,7 +32926,7 @@ def x_pretty_print_pandera_errors__mutmut_147(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace("").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29505,7 +32981,10 @@ def x_pretty_print_pandera_errors__mutmut_148(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29518,7 +32997,7 @@ def x_pretty_print_pandera_errors__mutmut_148(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", ).replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", ).replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29573,7 +33052,10 @@ def x_pretty_print_pandera_errors__mutmut_149(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29586,7 +33068,7 @@ def x_pretty_print_pandera_errors__mutmut_149(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("XXstr_matches('^(XX", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace(None, "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29641,7 +33123,10 @@ def x_pretty_print_pandera_errors__mutmut_150(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29654,7 +33139,7 @@ def x_pretty_print_pandera_errors__mutmut_150(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("STR_MATCHES('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", None).replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29709,7 +33194,10 @@ def x_pretty_print_pandera_errors__mutmut_151(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29722,7 +33210,7 @@ def x_pretty_print_pandera_errors__mutmut_151(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "XXXX").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29777,7 +33265,10 @@ def x_pretty_print_pandera_errors__mutmut_152(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29790,7 +33281,7 @@ def x_pretty_print_pandera_errors__mutmut_152(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"XX\WXX", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", ).replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29845,7 +33336,10 @@ def x_pretty_print_pandera_errors__mutmut_153(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29858,7 +33352,7 @@ def x_pretty_print_pandera_errors__mutmut_153(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "XXXX").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("XXstr_matches('^(XX", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29913,7 +33407,10 @@ def x_pretty_print_pandera_errors__mutmut_154(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29926,7 +33423,7 @@ def x_pretty_print_pandera_errors__mutmut_154(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace("XX)$')XX", "").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("STR_MATCHES('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -29981,7 +33478,10 @@ def x_pretty_print_pandera_errors__mutmut_155(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -29994,7 +33494,7 @@ def x_pretty_print_pandera_errors__mutmut_155(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "XXXX").replace(r"\d*", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "XXXX").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -30049,7 +33549,10 @@ def x_pretty_print_pandera_errors__mutmut_156(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30062,7 +33565,7 @@ def x_pretty_print_pandera_errors__mutmut_156(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"XX\d*XX", "<numeric_values>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"XX\WXX", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -30117,7 +33620,10 @@ def x_pretty_print_pandera_errors__mutmut_157(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30130,7 +33636,7 @@ def x_pretty_print_pandera_errors__mutmut_157(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "XX<numeric_values>XX").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "XXXX").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -30185,7 +33691,10 @@ def x_pretty_print_pandera_errors__mutmut_158(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30198,7 +33707,7 @@ def x_pretty_print_pandera_errors__mutmut_158(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<NUMERIC_VALUES>").split("|")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace("XX)$')XX", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -30253,7 +33762,10 @@ def x_pretty_print_pandera_errors__mutmut_159(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30266,7 +33778,7 @@ def x_pretty_print_pandera_errors__mutmut_159(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("XX|XX")
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "XXXX").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
@@ -30321,7 +33833,10 @@ def x_pretty_print_pandera_errors__mutmut_160(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30334,8 +33849,8 @@ def x_pretty_print_pandera_errors__mutmut_160(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(None, file=sys.stderr)
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"XX\d*XX", "<numeric_values>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30389,7 +33904,10 @@ def x_pretty_print_pandera_errors__mutmut_161(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30402,8 +33920,8 @@ def x_pretty_print_pandera_errors__mutmut_161(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=None)
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "XX<numeric_values>XX").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30457,7 +33975,10 @@ def x_pretty_print_pandera_errors__mutmut_162(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30470,8 +33991,8 @@ def x_pretty_print_pandera_errors__mutmut_162(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(file=sys.stderr)
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<NUMERIC_VALUES>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30525,7 +34046,10 @@ def x_pretty_print_pandera_errors__mutmut_163(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30538,8 +34062,8 @@ def x_pretty_print_pandera_errors__mutmut_163(file: str, error_msgs: list[pander
 			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
-				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", )
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("XX|XX")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30593,7 +34117,10 @@ def x_pretty_print_pandera_errors__mutmut_164(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30607,7 +34134,7 @@ def x_pretty_print_pandera_errors__mutmut_164(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(None, file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30661,7 +34188,10 @@ def x_pretty_print_pandera_errors__mutmut_165(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30675,7 +34205,7 @@ def x_pretty_print_pandera_errors__mutmut_165(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=None)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
@@ -30729,7 +34259,10 @@ def x_pretty_print_pandera_errors__mutmut_166(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30743,9 +34276,9 @@ def x_pretty_print_pandera_errors__mutmut_166(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(file=sys.stderr)
 			# Dates in column are incorrectly formatted
-			elif error.check != "invalid_date_format":
+			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
@@ -30797,7 +34330,10 @@ def x_pretty_print_pandera_errors__mutmut_167(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30811,9 +34347,9 @@ def x_pretty_print_pandera_errors__mutmut_167(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", )
 			# Dates in column are incorrectly formatted
-			elif error.check == "XXinvalid_date_formatXX":
+			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
@@ -30865,7 +34401,10 @@ def x_pretty_print_pandera_errors__mutmut_168(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30879,9 +34418,9 @@ def x_pretty_print_pandera_errors__mutmut_168(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
-			elif error.check == "INVALID_DATE_FORMAT":
+			elif error.check == "invalid_date_format":
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
@@ -30933,7 +34472,10 @@ def x_pretty_print_pandera_errors__mutmut_169(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -30947,10 +34489,10 @@ def x_pretty_print_pandera_errors__mutmut_169(file: str, error_msgs: list[pander
 			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
 			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
-				print(None, file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31001,7 +34543,10 @@ def x_pretty_print_pandera_errors__mutmut_170(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31017,8 +34562,8 @@ def x_pretty_print_pandera_errors__mutmut_170(file: str, error_msgs: list[pander
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
-			elif error.check == "invalid_date_format":
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=None)
+			elif error.check != "invalid_date_format":
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31069,7 +34614,10 @@ def x_pretty_print_pandera_errors__mutmut_171(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31085,8 +34633,8 @@ def x_pretty_print_pandera_errors__mutmut_171(file: str, error_msgs: list[pander
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
-			elif error.check == "invalid_date_format":
-				print(file=sys.stderr)
+			elif error.check == "XXinvalid_date_formatXX":
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31137,7 +34685,10 @@ def x_pretty_print_pandera_errors__mutmut_172(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31153,8 +34704,8 @@ def x_pretty_print_pandera_errors__mutmut_172(file: str, error_msgs: list[pander
 				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
-			elif error.check == "invalid_date_format":
-				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", )
+			elif error.check == "INVALID_DATE_FORMAT":
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31205,7 +34756,10 @@ def x_pretty_print_pandera_errors__mutmut_173(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31222,7 +34776,7 @@ def x_pretty_print_pandera_errors__mutmut_173(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
-				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
+				print(None, file=sys.stderr)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31273,7 +34827,10 @@ def x_pretty_print_pandera_errors__mutmut_174(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31290,7 +34847,7 @@ def x_pretty_print_pandera_errors__mutmut_174(file: str, error_msgs: list[pander
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
 			# Dates in column are incorrectly formatted
 			elif error.check == "invalid_date_format":
-				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=None)
 			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
 			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
 				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
@@ -31341,7 +34898,294 @@ def x_pretty_print_pandera_errors__mutmut_175(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+			# Column submission group, among a group of columns at least one must contain a non null value
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+			# Column has minimum or maximum character length requirements
+			elif re.search(r"str_length\(.*\)", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
+			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+			# Dates in column are incorrectly formatted
+			elif error.check == "invalid_date_format":
+				print(file=sys.stderr)
+			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
+			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
+				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
+			# Check ordered columns
+			elif error.check == "column_ordered":
+				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
+			# Check sra file names
+			elif error.check == r"no_regex_column_match('sra-file_[2-9]\d*')":
+				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
+			# Collect all duplicate values and print them at the end to group index positions together
+			elif error.check == "field_uniqueness":
+				column_key = f"Column '{error.column}' with value '{error.failure_case}'"
+				if column_key not in duplicate_errors:
+					duplicate_errors[column_key] = [(error.index + 1)]
+				else:
+					duplicate_errors[column_key].append((error.index + 1))
+				continue
+			# If unable to parse pandera error message
+			else:
+				print(f"Error: Unable to pretty print pandera error message for data. Error message is:", file=sys.stderr)
+				print(error)
+				print(f"{error.schema_context}: {error.column}", file=sys.stderr)
+				if error.index:
+					print(f"Index: {(error.index + 1)}", file=sys.stderr)
+				print(f"Value: {error.failure_case}", file=sys.stderr)
+				print(f"Validator: {error.check}", file=sys.stderr)
+				print("If you would like to contribute to SeqSender. Make a issue on github reporting this error case to have a descriptive version of this error added.", file=sys.stderr)
+			print("", file=sys.stderr)
+		if duplicate_errors:
+			for column_value_msg, indices in duplicate_errors.items():
+				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
+				print("", file=sys.stderr)
+
+def x_pretty_print_pandera_errors__mutmut_176(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
+	for specific_schema_error in error_msgs:
+		duplicate_errors = dict()
+		for error in specific_schema_error.failure_cases.itertuples():
+			# Missing column
+			if error.check == "column_in_dataframe":
+				print(f"Error: Missing required column '{error.failure_case}', ensure the file has not been modified and retry.", file=sys.stderr)
+			# Column requires specific values capitalization matters
+			elif re.search(r"isin\(\['.*'(, '.*')+\]\)", error.check):
+				print(f"Error: Column '{error.column}' has an incorrect value at index '{(error.index + 1)}'. This field can only contain the values '{(error.check.replace('isin(', '')[:-1])}', you provided '{error.failure_case}'.", file=sys.stderr)
+			# Column cannot have null values or empty strings
+			elif error.check == "str_matches('^(?!\\s*$).+')":
+				print(f"Error: Column '{error.column}' has an empty field at index '{(error.index + 1)}' that is required. This field cannot be left blank.", file=sys.stderr)
+			# Column requires specific values capitalization does not matter
+			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
+				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+			# Column submission group, among a group of columns at least one must contain a non null value
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+			# Column has minimum or maximum character length requirements
+			elif re.search(r"str_length\(.*\)", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
+			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+			# Dates in column are incorrectly formatted
+			elif error.check == "invalid_date_format":
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", )
+			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
+			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
+				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
+			# Check ordered columns
+			elif error.check == "column_ordered":
+				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
+			# Check sra file names
+			elif error.check == r"no_regex_column_match('sra-file_[2-9]\d*')":
+				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
+			# Collect all duplicate values and print them at the end to group index positions together
+			elif error.check == "field_uniqueness":
+				column_key = f"Column '{error.column}' with value '{error.failure_case}'"
+				if column_key not in duplicate_errors:
+					duplicate_errors[column_key] = [(error.index + 1)]
+				else:
+					duplicate_errors[column_key].append((error.index + 1))
+				continue
+			# If unable to parse pandera error message
+			else:
+				print(f"Error: Unable to pretty print pandera error message for data. Error message is:", file=sys.stderr)
+				print(error)
+				print(f"{error.schema_context}: {error.column}", file=sys.stderr)
+				if error.index:
+					print(f"Index: {(error.index + 1)}", file=sys.stderr)
+				print(f"Value: {error.failure_case}", file=sys.stderr)
+				print(f"Validator: {error.check}", file=sys.stderr)
+				print("If you would like to contribute to SeqSender. Make a issue on github reporting this error case to have a descriptive version of this error added.", file=sys.stderr)
+			print("", file=sys.stderr)
+		if duplicate_errors:
+			for column_value_msg, indices in duplicate_errors.items():
+				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
+				print("", file=sys.stderr)
+
+def x_pretty_print_pandera_errors__mutmut_177(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
+	for specific_schema_error in error_msgs:
+		duplicate_errors = dict()
+		for error in specific_schema_error.failure_cases.itertuples():
+			# Missing column
+			if error.check == "column_in_dataframe":
+				print(f"Error: Missing required column '{error.failure_case}', ensure the file has not been modified and retry.", file=sys.stderr)
+			# Column requires specific values capitalization matters
+			elif re.search(r"isin\(\['.*'(, '.*')+\]\)", error.check):
+				print(f"Error: Column '{error.column}' has an incorrect value at index '{(error.index + 1)}'. This field can only contain the values '{(error.check.replace('isin(', '')[:-1])}', you provided '{error.failure_case}'.", file=sys.stderr)
+			# Column cannot have null values or empty strings
+			elif error.check == "str_matches('^(?!\\s*$).+')":
+				print(f"Error: Column '{error.column}' has an empty field at index '{(error.index + 1)}' that is required. This field cannot be left blank.", file=sys.stderr)
+			# Column requires specific values capitalization does not matter
+			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
+				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+			# Column submission group, among a group of columns at least one must contain a non null value
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+			# Column has minimum or maximum character length requirements
+			elif re.search(r"str_length\(.*\)", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
+			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+			# Dates in column are incorrectly formatted
+			elif error.check == "invalid_date_format":
+				print(f"Error: Column '{error.column}' at index '{(error.index - 1)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
+			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
+			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
+				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
+			# Check ordered columns
+			elif error.check == "column_ordered":
+				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
+			# Check sra file names
+			elif error.check == r"no_regex_column_match('sra-file_[2-9]\d*')":
+				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
+			# Collect all duplicate values and print them at the end to group index positions together
+			elif error.check == "field_uniqueness":
+				column_key = f"Column '{error.column}' with value '{error.failure_case}'"
+				if column_key not in duplicate_errors:
+					duplicate_errors[column_key] = [(error.index + 1)]
+				else:
+					duplicate_errors[column_key].append((error.index + 1))
+				continue
+			# If unable to parse pandera error message
+			else:
+				print(f"Error: Unable to pretty print pandera error message for data. Error message is:", file=sys.stderr)
+				print(error)
+				print(f"{error.schema_context}: {error.column}", file=sys.stderr)
+				if error.index:
+					print(f"Index: {(error.index + 1)}", file=sys.stderr)
+				print(f"Value: {error.failure_case}", file=sys.stderr)
+				print(f"Validator: {error.check}", file=sys.stderr)
+				print("If you would like to contribute to SeqSender. Make a issue on github reporting this error case to have a descriptive version of this error added.", file=sys.stderr)
+			print("", file=sys.stderr)
+		if duplicate_errors:
+			for column_value_msg, indices in duplicate_errors.items():
+				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
+				print("", file=sys.stderr)
+
+def x_pretty_print_pandera_errors__mutmut_178(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
+	for specific_schema_error in error_msgs:
+		duplicate_errors = dict()
+		for error in specific_schema_error.failure_cases.itertuples():
+			# Missing column
+			if error.check == "column_in_dataframe":
+				print(f"Error: Missing required column '{error.failure_case}', ensure the file has not been modified and retry.", file=sys.stderr)
+			# Column requires specific values capitalization matters
+			elif re.search(r"isin\(\['.*'(, '.*')+\]\)", error.check):
+				print(f"Error: Column '{error.column}' has an incorrect value at index '{(error.index + 1)}'. This field can only contain the values '{(error.check.replace('isin(', '')[:-1])}', you provided '{error.failure_case}'.", file=sys.stderr)
+			# Column cannot have null values or empty strings
+			elif error.check == "str_matches('^(?!\\s*$).+')":
+				print(f"Error: Column '{error.column}' has an empty field at index '{(error.index + 1)}' that is required. This field cannot be left blank.", file=sys.stderr)
+			# Column requires specific values capitalization does not matter
+			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
+				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
+			# Column submission group, among a group of columns at least one must contain a non null value
+			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
+				column_group = error.check.replace("(lambda df: ~(df[\"", "").replace("\"].isnull() & df[\"", "+").replace("\"].isnull()), ignore_na = False)", "").split("+")
+				print(f"Error: In column group, every sample must have at least one non-null value in at least one of the following columns: '{column_group}'.", file=sys.stderr)
+			# Column has minimum or maximum character length requirements
+			elif re.search(r"str_length\(.*\)", error.check):
+				min_value, max_value = error.check.replace("str_length(", "").replace(")", "").split(", ")
+				print(f"Error: Column '{error.column}' has a character limit of minimum '{min_value}', maximum '{max_value}'. The value '{error.failure_case}' at index '{(error.index + 1)}' does not meet these requirements.", file=sys.stderr)
+			# Unique submission_log.csv column that takes capitalization controlled "PENDING" and "SUBMITTED"
+			# but also takes in a raw value from the NCBI report file generated and accounts for possible whitespace
+			elif error.check == r"str_matches('^(PENDING|SUBMITTED|\WSUB\d*\W)$')":
+				accepted_values = error.check.replace("str_matches('^(", "").replace(r"\W", "").replace(")$')", "").replace(r"\d*", "<numeric_values>").split("|")
+				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has a value '{error.failure_case}'. This field must be one of the accepted values: '{accepted_values}'.", file=sys.stderr)
+			# Dates in column are incorrectly formatted
+			elif error.check == "invalid_date_format":
+				print(f"Error: Column '{error.column}' at index '{(error.index + 2)}' has a value '{error.failure_case}'. This field must be a valid date format based on ISO 8601: '[\"YYYY-MM-DD\", \"YYYY-MM\", or \"YYYY\"]'.", file=sys.stderr)
+			# Check columns that must have identical value (i.e. NCBI GUI submission portal title)
+			elif error.schema_context.lower() == "column" and error.column in ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"]:
+				print(f"Error: Column '{error.column}' must have the same value for every row as it is only used once and applies to the entire submission. This field is an internal NCBI field for the NCBI submission portal website (https://submit.ncbi.nlm.nih.gov/subs/) to aid you in identifying your submissions.", file=sys.stderr)
+			# Check ordered columns
+			elif error.check == "column_ordered":
+				print(f"Error: Column '{error.failure_case}' is incorrectly ordered for file '{file}'.", file=sys.stderr)
+			# Check sra file names
+			elif error.check == r"no_regex_column_match('sra-file_[2-9]\d*')":
+				print("Error: Column 'sra-file_#' is required, where # is the numeric value of the file for the SRA sample. (i.e. sra-file_1)", file=sys.stderr)
+			# Collect all duplicate values and print them at the end to group index positions together
+			elif error.check == "field_uniqueness":
+				column_key = f"Column '{error.column}' with value '{error.failure_case}'"
+				if column_key not in duplicate_errors:
+					duplicate_errors[column_key] = [(error.index + 1)]
+				else:
+					duplicate_errors[column_key].append((error.index + 1))
+				continue
+			# If unable to parse pandera error message
+			else:
+				print(f"Error: Unable to pretty print pandera error message for data. Error message is:", file=sys.stderr)
+				print(error)
+				print(f"{error.schema_context}: {error.column}", file=sys.stderr)
+				if error.index:
+					print(f"Index: {(error.index + 1)}", file=sys.stderr)
+				print(f"Value: {error.failure_case}", file=sys.stderr)
+				print(f"Validator: {error.check}", file=sys.stderr)
+				print("If you would like to contribute to SeqSender. Make a issue on github reporting this error case to have a descriptive version of this error added.", file=sys.stderr)
+			print("", file=sys.stderr)
+		if duplicate_errors:
+			for column_value_msg, indices in duplicate_errors.items():
+				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
+				print("", file=sys.stderr)
+
+def x_pretty_print_pandera_errors__mutmut_179(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
+	for specific_schema_error in error_msgs:
+		duplicate_errors = dict()
+		for error in specific_schema_error.failure_cases.itertuples():
+			# Missing column
+			if error.check == "column_in_dataframe":
+				print(f"Error: Missing required column '{error.failure_case}', ensure the file has not been modified and retry.", file=sys.stderr)
+			# Column requires specific values capitalization matters
+			elif re.search(r"isin\(\['.*'(, '.*')+\]\)", error.check):
+				print(f"Error: Column '{error.column}' has an incorrect value at index '{(error.index + 1)}'. This field can only contain the values '{(error.check.replace('isin(', '')[:-1])}', you provided '{error.failure_case}'.", file=sys.stderr)
+			# Column cannot have null values or empty strings
+			elif error.check == "str_matches('^(?!\\s*$).+')":
+				print(f"Error: Column '{error.column}' has an empty field at index '{(error.index + 1)}' that is required. This field cannot be left blank.", file=sys.stderr)
+			# Column requires specific values capitalization does not matter
+			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
+				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31392,7 +35236,7 @@ def x_pretty_print_pandera_errors__mutmut_175(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_176(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_180(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31409,7 +35253,10 @@ def x_pretty_print_pandera_errors__mutmut_176(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31460,7 +35307,7 @@ def x_pretty_print_pandera_errors__mutmut_176(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_177(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_181(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31477,7 +35324,10 @@ def x_pretty_print_pandera_errors__mutmut_177(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31528,7 +35378,7 @@ def x_pretty_print_pandera_errors__mutmut_177(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_178(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_182(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31545,7 +35395,10 @@ def x_pretty_print_pandera_errors__mutmut_178(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31596,7 +35449,7 @@ def x_pretty_print_pandera_errors__mutmut_178(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_179(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_183(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31613,7 +35466,10 @@ def x_pretty_print_pandera_errors__mutmut_179(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31664,7 +35520,7 @@ def x_pretty_print_pandera_errors__mutmut_179(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_180(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_184(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31681,7 +35537,10 @@ def x_pretty_print_pandera_errors__mutmut_180(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31732,7 +35591,7 @@ def x_pretty_print_pandera_errors__mutmut_180(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_181(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_185(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31749,7 +35608,10 @@ def x_pretty_print_pandera_errors__mutmut_181(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31800,7 +35662,7 @@ def x_pretty_print_pandera_errors__mutmut_181(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_182(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_186(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31817,7 +35679,10 @@ def x_pretty_print_pandera_errors__mutmut_182(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31868,7 +35733,7 @@ def x_pretty_print_pandera_errors__mutmut_182(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_183(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_187(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31885,7 +35750,10 @@ def x_pretty_print_pandera_errors__mutmut_183(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -31936,7 +35804,7 @@ def x_pretty_print_pandera_errors__mutmut_183(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_184(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_188(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -31953,7 +35821,10 @@ def x_pretty_print_pandera_errors__mutmut_184(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32004,7 +35875,7 @@ def x_pretty_print_pandera_errors__mutmut_184(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_185(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_189(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32021,7 +35892,10 @@ def x_pretty_print_pandera_errors__mutmut_185(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32072,7 +35946,7 @@ def x_pretty_print_pandera_errors__mutmut_185(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_186(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_190(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32089,7 +35963,10 @@ def x_pretty_print_pandera_errors__mutmut_186(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32140,7 +36017,7 @@ def x_pretty_print_pandera_errors__mutmut_186(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_187(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_191(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32157,7 +36034,10 @@ def x_pretty_print_pandera_errors__mutmut_187(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32208,7 +36088,7 @@ def x_pretty_print_pandera_errors__mutmut_187(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_188(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_192(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32225,7 +36105,10 @@ def x_pretty_print_pandera_errors__mutmut_188(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32276,7 +36159,7 @@ def x_pretty_print_pandera_errors__mutmut_188(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_189(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_193(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32293,7 +36176,10 @@ def x_pretty_print_pandera_errors__mutmut_189(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32344,7 +36230,7 @@ def x_pretty_print_pandera_errors__mutmut_189(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_190(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_194(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32361,7 +36247,10 @@ def x_pretty_print_pandera_errors__mutmut_190(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32412,7 +36301,7 @@ def x_pretty_print_pandera_errors__mutmut_190(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_191(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_195(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32429,7 +36318,10 @@ def x_pretty_print_pandera_errors__mutmut_191(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32480,7 +36372,7 @@ def x_pretty_print_pandera_errors__mutmut_191(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_192(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_196(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32497,7 +36389,10 @@ def x_pretty_print_pandera_errors__mutmut_192(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32548,7 +36443,7 @@ def x_pretty_print_pandera_errors__mutmut_192(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_193(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_197(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32565,7 +36460,10 @@ def x_pretty_print_pandera_errors__mutmut_193(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32616,7 +36514,7 @@ def x_pretty_print_pandera_errors__mutmut_193(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_194(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_198(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32633,7 +36531,10 @@ def x_pretty_print_pandera_errors__mutmut_194(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32684,7 +36585,7 @@ def x_pretty_print_pandera_errors__mutmut_194(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_195(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_199(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32701,7 +36602,10 @@ def x_pretty_print_pandera_errors__mutmut_195(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32752,7 +36656,7 @@ def x_pretty_print_pandera_errors__mutmut_195(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_196(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_200(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32769,7 +36673,10 @@ def x_pretty_print_pandera_errors__mutmut_196(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32820,7 +36727,7 @@ def x_pretty_print_pandera_errors__mutmut_196(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_197(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_201(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32837,7 +36744,10 @@ def x_pretty_print_pandera_errors__mutmut_197(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32888,7 +36798,7 @@ def x_pretty_print_pandera_errors__mutmut_197(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_198(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_202(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32905,7 +36815,10 @@ def x_pretty_print_pandera_errors__mutmut_198(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -32956,7 +36869,7 @@ def x_pretty_print_pandera_errors__mutmut_198(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_199(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_203(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -32973,7 +36886,10 @@ def x_pretty_print_pandera_errors__mutmut_199(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33024,7 +36940,7 @@ def x_pretty_print_pandera_errors__mutmut_199(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_200(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_204(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33041,7 +36957,10 @@ def x_pretty_print_pandera_errors__mutmut_200(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33092,7 +37011,7 @@ def x_pretty_print_pandera_errors__mutmut_200(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_201(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_205(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33109,7 +37028,10 @@ def x_pretty_print_pandera_errors__mutmut_201(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33160,7 +37082,7 @@ def x_pretty_print_pandera_errors__mutmut_201(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_202(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_206(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33177,7 +37099,10 @@ def x_pretty_print_pandera_errors__mutmut_202(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33228,7 +37153,7 @@ def x_pretty_print_pandera_errors__mutmut_202(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_203(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_207(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33245,7 +37170,10 @@ def x_pretty_print_pandera_errors__mutmut_203(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33296,7 +37224,7 @@ def x_pretty_print_pandera_errors__mutmut_203(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_204(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_208(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33313,7 +37241,10 @@ def x_pretty_print_pandera_errors__mutmut_204(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33364,7 +37295,7 @@ def x_pretty_print_pandera_errors__mutmut_204(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_205(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_209(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33381,7 +37312,10 @@ def x_pretty_print_pandera_errors__mutmut_205(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33432,7 +37366,7 @@ def x_pretty_print_pandera_errors__mutmut_205(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_206(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_210(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33449,7 +37383,10 @@ def x_pretty_print_pandera_errors__mutmut_206(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33500,7 +37437,7 @@ def x_pretty_print_pandera_errors__mutmut_206(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_207(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_211(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33517,7 +37454,10 @@ def x_pretty_print_pandera_errors__mutmut_207(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33568,7 +37508,7 @@ def x_pretty_print_pandera_errors__mutmut_207(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_208(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_212(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33585,7 +37525,10 @@ def x_pretty_print_pandera_errors__mutmut_208(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33636,7 +37579,7 @@ def x_pretty_print_pandera_errors__mutmut_208(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_209(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_213(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33653,7 +37596,10 @@ def x_pretty_print_pandera_errors__mutmut_209(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33704,7 +37650,7 @@ def x_pretty_print_pandera_errors__mutmut_209(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_210(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_214(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33721,7 +37667,10 @@ def x_pretty_print_pandera_errors__mutmut_210(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33772,7 +37721,7 @@ def x_pretty_print_pandera_errors__mutmut_210(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_211(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_215(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33789,7 +37738,10 @@ def x_pretty_print_pandera_errors__mutmut_211(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33840,7 +37792,7 @@ def x_pretty_print_pandera_errors__mutmut_211(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_212(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_216(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33857,7 +37809,10 @@ def x_pretty_print_pandera_errors__mutmut_212(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33908,7 +37863,7 @@ def x_pretty_print_pandera_errors__mutmut_212(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_213(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_217(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33925,7 +37880,10 @@ def x_pretty_print_pandera_errors__mutmut_213(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -33976,7 +37934,7 @@ def x_pretty_print_pandera_errors__mutmut_213(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_214(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_218(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -33993,7 +37951,10 @@ def x_pretty_print_pandera_errors__mutmut_214(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34044,7 +38005,7 @@ def x_pretty_print_pandera_errors__mutmut_214(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_215(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_219(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34061,7 +38022,10 @@ def x_pretty_print_pandera_errors__mutmut_215(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34112,7 +38076,7 @@ def x_pretty_print_pandera_errors__mutmut_215(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_216(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_220(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34129,7 +38093,10 @@ def x_pretty_print_pandera_errors__mutmut_216(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34180,7 +38147,7 @@ def x_pretty_print_pandera_errors__mutmut_216(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_217(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_221(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34197,7 +38164,10 @@ def x_pretty_print_pandera_errors__mutmut_217(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34248,7 +38218,7 @@ def x_pretty_print_pandera_errors__mutmut_217(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_218(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_222(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34265,7 +38235,10 @@ def x_pretty_print_pandera_errors__mutmut_218(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34316,7 +38289,7 @@ def x_pretty_print_pandera_errors__mutmut_218(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_219(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_223(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34333,7 +38306,10 @@ def x_pretty_print_pandera_errors__mutmut_219(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34384,7 +38360,7 @@ def x_pretty_print_pandera_errors__mutmut_219(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_220(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_224(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34401,7 +38377,10 @@ def x_pretty_print_pandera_errors__mutmut_220(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34452,7 +38431,7 @@ def x_pretty_print_pandera_errors__mutmut_220(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_221(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_225(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34469,7 +38448,10 @@ def x_pretty_print_pandera_errors__mutmut_221(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34520,7 +38502,7 @@ def x_pretty_print_pandera_errors__mutmut_221(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_222(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_226(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34537,7 +38519,10 @@ def x_pretty_print_pandera_errors__mutmut_222(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34588,7 +38573,7 @@ def x_pretty_print_pandera_errors__mutmut_222(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_223(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_227(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34605,7 +38590,10 @@ def x_pretty_print_pandera_errors__mutmut_223(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34656,7 +38644,7 @@ def x_pretty_print_pandera_errors__mutmut_223(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_224(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_228(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34673,7 +38661,10 @@ def x_pretty_print_pandera_errors__mutmut_224(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34724,7 +38715,7 @@ def x_pretty_print_pandera_errors__mutmut_224(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_225(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_229(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34741,7 +38732,10 @@ def x_pretty_print_pandera_errors__mutmut_225(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34792,7 +38786,7 @@ def x_pretty_print_pandera_errors__mutmut_225(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_226(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_230(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34809,7 +38803,10 @@ def x_pretty_print_pandera_errors__mutmut_226(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34860,7 +38857,7 @@ def x_pretty_print_pandera_errors__mutmut_226(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_227(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_231(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34877,7 +38874,10 @@ def x_pretty_print_pandera_errors__mutmut_227(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34928,7 +38928,7 @@ def x_pretty_print_pandera_errors__mutmut_227(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_228(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_232(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -34945,7 +38945,10 @@ def x_pretty_print_pandera_errors__mutmut_228(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -34996,7 +38999,7 @@ def x_pretty_print_pandera_errors__mutmut_228(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_229(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_233(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35013,7 +39016,10 @@ def x_pretty_print_pandera_errors__mutmut_229(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35064,7 +39070,7 @@ def x_pretty_print_pandera_errors__mutmut_229(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_230(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_234(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35081,7 +39087,10 @@ def x_pretty_print_pandera_errors__mutmut_230(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35132,7 +39141,7 @@ def x_pretty_print_pandera_errors__mutmut_230(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_231(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_235(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35149,7 +39158,10 @@ def x_pretty_print_pandera_errors__mutmut_231(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35200,7 +39212,7 @@ def x_pretty_print_pandera_errors__mutmut_231(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_232(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_236(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35217,7 +39229,10 @@ def x_pretty_print_pandera_errors__mutmut_232(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35268,7 +39283,7 @@ def x_pretty_print_pandera_errors__mutmut_232(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_233(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_237(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35285,7 +39300,10 @@ def x_pretty_print_pandera_errors__mutmut_233(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35336,7 +39354,7 @@ def x_pretty_print_pandera_errors__mutmut_233(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_234(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_238(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35353,7 +39371,10 @@ def x_pretty_print_pandera_errors__mutmut_234(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35404,7 +39425,7 @@ def x_pretty_print_pandera_errors__mutmut_234(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_235(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_239(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35421,7 +39442,10 @@ def x_pretty_print_pandera_errors__mutmut_235(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35472,7 +39496,7 @@ def x_pretty_print_pandera_errors__mutmut_235(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_236(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_240(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35489,7 +39513,10 @@ def x_pretty_print_pandera_errors__mutmut_236(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35540,7 +39567,7 @@ def x_pretty_print_pandera_errors__mutmut_236(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_237(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_241(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35557,7 +39584,10 @@ def x_pretty_print_pandera_errors__mutmut_237(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35608,7 +39638,7 @@ def x_pretty_print_pandera_errors__mutmut_237(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_238(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_242(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35625,7 +39655,10 @@ def x_pretty_print_pandera_errors__mutmut_238(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35676,7 +39709,7 @@ def x_pretty_print_pandera_errors__mutmut_238(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_239(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_243(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35693,7 +39726,10 @@ def x_pretty_print_pandera_errors__mutmut_239(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35744,7 +39780,7 @@ def x_pretty_print_pandera_errors__mutmut_239(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_240(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_244(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35761,7 +39797,10 @@ def x_pretty_print_pandera_errors__mutmut_240(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35812,7 +39851,7 @@ def x_pretty_print_pandera_errors__mutmut_240(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_241(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_245(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35829,7 +39868,10 @@ def x_pretty_print_pandera_errors__mutmut_241(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35880,7 +39922,7 @@ def x_pretty_print_pandera_errors__mutmut_241(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_242(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_246(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35897,7 +39939,10 @@ def x_pretty_print_pandera_errors__mutmut_242(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -35948,7 +39993,7 @@ def x_pretty_print_pandera_errors__mutmut_242(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_243(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_247(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -35965,7 +40010,10 @@ def x_pretty_print_pandera_errors__mutmut_243(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36016,7 +40064,7 @@ def x_pretty_print_pandera_errors__mutmut_243(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_244(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_248(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36033,7 +40081,10 @@ def x_pretty_print_pandera_errors__mutmut_244(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36084,7 +40135,7 @@ def x_pretty_print_pandera_errors__mutmut_244(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_245(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_249(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36101,7 +40152,10 @@ def x_pretty_print_pandera_errors__mutmut_245(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36152,7 +40206,7 @@ def x_pretty_print_pandera_errors__mutmut_245(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_246(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_250(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36169,7 +40223,10 @@ def x_pretty_print_pandera_errors__mutmut_246(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36220,7 +40277,7 @@ def x_pretty_print_pandera_errors__mutmut_246(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_247(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_251(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36237,7 +40294,10 @@ def x_pretty_print_pandera_errors__mutmut_247(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36288,7 +40348,7 @@ def x_pretty_print_pandera_errors__mutmut_247(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_248(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_252(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36305,7 +40365,10 @@ def x_pretty_print_pandera_errors__mutmut_248(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36356,7 +40419,7 @@ def x_pretty_print_pandera_errors__mutmut_248(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_249(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_253(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36373,7 +40436,10 @@ def x_pretty_print_pandera_errors__mutmut_249(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36424,7 +40490,7 @@ def x_pretty_print_pandera_errors__mutmut_249(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_250(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_254(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36441,7 +40507,10 @@ def x_pretty_print_pandera_errors__mutmut_250(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36492,7 +40561,7 @@ def x_pretty_print_pandera_errors__mutmut_250(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_251(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_255(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36509,7 +40578,10 @@ def x_pretty_print_pandera_errors__mutmut_251(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36560,7 +40632,7 @@ def x_pretty_print_pandera_errors__mutmut_251(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_252(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_256(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36577,7 +40649,10 @@ def x_pretty_print_pandera_errors__mutmut_252(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36628,7 +40703,7 @@ def x_pretty_print_pandera_errors__mutmut_252(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_253(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_257(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36645,7 +40720,10 @@ def x_pretty_print_pandera_errors__mutmut_253(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36696,7 +40774,7 @@ def x_pretty_print_pandera_errors__mutmut_253(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_254(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_258(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36713,7 +40791,10 @@ def x_pretty_print_pandera_errors__mutmut_254(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36764,7 +40845,7 @@ def x_pretty_print_pandera_errors__mutmut_254(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_255(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_259(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36781,7 +40862,10 @@ def x_pretty_print_pandera_errors__mutmut_255(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36832,7 +40916,7 @@ def x_pretty_print_pandera_errors__mutmut_255(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_256(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_260(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36849,7 +40933,10 @@ def x_pretty_print_pandera_errors__mutmut_256(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36900,7 +40987,7 @@ def x_pretty_print_pandera_errors__mutmut_256(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_257(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_261(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36917,7 +41004,10 @@ def x_pretty_print_pandera_errors__mutmut_257(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -36968,7 +41058,7 @@ def x_pretty_print_pandera_errors__mutmut_257(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_258(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_262(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -36985,7 +41075,10 @@ def x_pretty_print_pandera_errors__mutmut_258(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37036,7 +41129,7 @@ def x_pretty_print_pandera_errors__mutmut_258(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_259(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_263(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37053,7 +41146,10 @@ def x_pretty_print_pandera_errors__mutmut_259(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37104,7 +41200,7 @@ def x_pretty_print_pandera_errors__mutmut_259(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_260(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_264(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37121,7 +41217,10 @@ def x_pretty_print_pandera_errors__mutmut_260(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37172,7 +41271,7 @@ def x_pretty_print_pandera_errors__mutmut_260(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_261(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_265(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37189,7 +41288,10 @@ def x_pretty_print_pandera_errors__mutmut_261(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37240,7 +41342,7 @@ def x_pretty_print_pandera_errors__mutmut_261(file: str, error_msgs: list[pander
 				print(None, file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_262(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_266(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37257,7 +41359,10 @@ def x_pretty_print_pandera_errors__mutmut_262(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37308,7 +41413,7 @@ def x_pretty_print_pandera_errors__mutmut_262(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=None)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_263(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_267(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37325,7 +41430,10 @@ def x_pretty_print_pandera_errors__mutmut_263(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37376,7 +41484,7 @@ def x_pretty_print_pandera_errors__mutmut_263(file: str, error_msgs: list[pander
 				print(file=sys.stderr)
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_264(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_268(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37393,7 +41501,10 @@ def x_pretty_print_pandera_errors__mutmut_264(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37444,7 +41555,7 @@ def x_pretty_print_pandera_errors__mutmut_264(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", )
 				print("", file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_265(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_269(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37461,7 +41572,10 @@ def x_pretty_print_pandera_errors__mutmut_265(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37512,7 +41626,7 @@ def x_pretty_print_pandera_errors__mutmut_265(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print(None, file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_266(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_270(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37529,7 +41643,10 @@ def x_pretty_print_pandera_errors__mutmut_266(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37580,7 +41697,7 @@ def x_pretty_print_pandera_errors__mutmut_266(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", file=None)
 
-def x_pretty_print_pandera_errors__mutmut_267(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_271(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37597,7 +41714,10 @@ def x_pretty_print_pandera_errors__mutmut_267(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37648,7 +41768,7 @@ def x_pretty_print_pandera_errors__mutmut_267(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print(file=sys.stderr)
 
-def x_pretty_print_pandera_errors__mutmut_268(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_272(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37665,7 +41785,10 @@ def x_pretty_print_pandera_errors__mutmut_268(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -37716,7 +41839,7 @@ def x_pretty_print_pandera_errors__mutmut_268(file: str, error_msgs: list[pander
 				print(f"Error: {column_value_msg} is duplicated at indices: '{indices}'.", file=sys.stderr)
 				print("", )
 
-def x_pretty_print_pandera_errors__mutmut_269(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
+def x_pretty_print_pandera_errors__mutmut_273(file: str, error_msgs: list[pandera.errors.SchemaErrors]):
 	print(f"Error: file {file} has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n")
 	for specific_schema_error in error_msgs:
 		duplicate_errors = dict()
@@ -37733,7 +41856,10 @@ def x_pretty_print_pandera_errors__mutmut_269(file: str, error_msgs: list[pander
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):
@@ -38053,7 +42179,11 @@ x_pretty_print_pandera_errors__mutmut_mutants : ClassVar[MutantDict] = { # type:
     'x_pretty_print_pandera_errors__mutmut_266': x_pretty_print_pandera_errors__mutmut_266, 
     'x_pretty_print_pandera_errors__mutmut_267': x_pretty_print_pandera_errors__mutmut_267, 
     'x_pretty_print_pandera_errors__mutmut_268': x_pretty_print_pandera_errors__mutmut_268, 
-    'x_pretty_print_pandera_errors__mutmut_269': x_pretty_print_pandera_errors__mutmut_269
+    'x_pretty_print_pandera_errors__mutmut_269': x_pretty_print_pandera_errors__mutmut_269, 
+    'x_pretty_print_pandera_errors__mutmut_270': x_pretty_print_pandera_errors__mutmut_270, 
+    'x_pretty_print_pandera_errors__mutmut_271': x_pretty_print_pandera_errors__mutmut_271, 
+    'x_pretty_print_pandera_errors__mutmut_272': x_pretty_print_pandera_errors__mutmut_272, 
+    'x_pretty_print_pandera_errors__mutmut_273': x_pretty_print_pandera_errors__mutmut_273
 }
 x_pretty_print_pandera_errors__mutmut_orig.__name__ = 'x_pretty_print_pandera_errors'
 

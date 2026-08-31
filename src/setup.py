@@ -28,7 +28,7 @@ import src.tools as tools
 from src.settings import NCBI_FTP_HOST
 
 # Get program directory
-PROG_DIR: str = os.path.dirname(os.path.abspath(__file__))
+PROG_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # BioSample atribute html prefix
 BIOSAMPLE_HTML_PREFIX: str = "https://www.ncbi.nlm.nih.gov/biosample/docs/packages"
 # BioSample atribute html suffix

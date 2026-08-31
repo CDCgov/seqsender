@@ -11,13 +11,15 @@ from pandera import Check
 from datetime import datetime, timedelta
 from cerberus import Validator
 import re
+from getpass import getpass
+from cryptography.fernet import Fernet, InvalidToken
 
 import src.file_handler as file_handler
+import src.ncbi_handler as ncbi_handler
 from config.seqsender.seqsender_schema import schema as seqsender_schema
 from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 
-# Check the config file
-def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
+def determine_parent_database(databases: list[str]) -> set[str]:
 	# Determine required database
 	submission_portals = set()
 	for database in databases:
@@ -29,6 +31,57 @@ def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
+	return submission_portals
+
+def decrypt_passwords(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
+	for parent_db in map(str.upper, submission_portals):
+		encrypted_string = config_dict["Submission"][parent_db]["Password"]
+		try:
+			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			config_dict["Submission"][parent_db]["Password"] = decrypted_string
+		except InvalidToken:
+			if not encrypted_string.endswith("="):
+				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
+			raise(InvalidToken)
+		if parent_db == "GISAID":
+			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
+			try:
+				decrypted_string = Fernet(key).decrypt(encrypted_string)
+				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
+			except InvalidToken:
+				raise(InvalidToken)
+	return config_dict
+
+def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
+	submission_portals = determine_parent_database(databases)
+	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
+	print_key = True
+	if encryption_key:
+		key = encryption_key.encode()
+		print_key = False
+	else:
+		key = Fernet.generate_key()
+	encrypter = Fernet(key)
+	for parent_db in map(str.upper, submission_portals):
+		password = getpass(f"Enter password for {parent_db} account: ")
+		if parent_db == "NCBI":
+			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
+		elif parent_db == "GISAID":
+			client_id = getpass(f"Enter client_id for GISAID account: ")
+			encrypted_client_id = encrypter.encrypt(client_id.encode())
+			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
+		encrypted_password = encrypter.encrypt(password.encode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	if print_key:
+		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(f"key: {key.decode()}")
+	print("Credentials successfully loaded/encrypted into config file.")
+
+# Check the config file
+def get_config(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
+	submission_portals = determine_parent_database(databases)
 	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
 	# Read in user config file
 	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
@@ -36,6 +89,8 @@ def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
 	if type(config_dict) is dict:
 		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
 		database_specific_config_schema_updates(schema, databases)
+		if passwords_validation == False:
+			password_encryption_config_schema_updates(schema, submission_portals)
 		validator = Validator(schema)
 		# Validate based on schema
 		if validator.validate(config_dict, schema) is False:
@@ -46,6 +101,8 @@ def get_config(config_file: str, databases: list[str]) -> dict[str, Any]:
 			if "GENBANK" in databases and "GISAID" in databases:
 				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
+			if decrypt_key:
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -89,6 +146,14 @@ def get_submission_position(config_dict: dict[str, Any], database: str) -> Optio
 		return config_dict["Submission_Position"]
 	else:
 		return None
+
+def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
+	if "NCBI" in submission_portals:
+		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
+	if "GISAID" in submission_portals:
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
+		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
+	return schema
 
 def database_specific_config_schema_updates(schema: dict[str, Any], database: list[str]) -> dict[str, Any]:
 	# Update seqsender base schema to include needed checks
@@ -208,7 +273,10 @@ def pretty_print_pandera_errors(file: str, error_msgs: list[pandera.errors.Schem
 			# Column requires specific values capitalization does not matter
 			elif re.search(r"str_matches\(\'\(\?i\)\(\\\\W\|\^\)\(.*\|.*\)\(\\\\W\|\$\)\'\)", error.check):
 				match = re.search(r"\(([^()]*\|[^()]*)\)\(\\\\W\|\$\)", error.check)
-				accepted_values = match.group(1).split("|")
+				if match:
+					accepted_values = match.group(1).split("|")
+				else:
+					accepted_values = "Unknown"
 				print(f"Error: Column '{error.column}' at index '{(error.index + 1)}' has the value '{error.failure_case}'. This field must be one of the accepted values: {accepted_values}.", file=sys.stderr)
 			# Column submission group, among a group of columns at least one must contain a non null value
 			elif re.search(r"\(lambda df: ~\(df\[\".*\"\].isnull\(\)( & df\[\".*\"\].isnull\(\))+\), ignore_na = False\)", error.check):

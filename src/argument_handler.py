@@ -20,6 +20,10 @@ def args_parser():
 	submission_dir_parser = argparse.ArgumentParser(add_help=False)
 	upload_log_submission_name_parser = argparse.ArgumentParser(add_help=False)
 	config_file_parser = argparse.ArgumentParser(add_help=False)
+	decryption_key_parser = argparse.ArgumentParser(add_help=False)
+	multiple_decryption_key_parser = argparse.ArgumentParser(add_help=False)
+	encrypt_config_file_parser = argparse.ArgumentParser(add_help=False)
+	encrypt_with_key_parser = argparse.ArgumentParser(add_help=False)
 	file_parser = argparse.ArgumentParser(add_help=False)
 	test_parser = argparse.ArgumentParser(add_help=False)
 	publication_parser = argparse.ArgumentParser(add_help=False)
@@ -64,6 +68,20 @@ def args_parser():
 	config_file_parser.add_argument("--config_file",
 		help="Config file to be used in the creation/submission of your samples. SeqSender will store this file location in your 'submission_log.csv' where it will use it to manage your submission, be careful when modifying and ensure SeqSender maintains access to this file. Input either full file path or if just file name it must be stored at '<submission_dir>/<submission_name>/<config_file>'.",
 		required=True)
+	decryption_key_parser.add_argument("--key",
+		help="Key provided to access credentials stored in config file.",
+		required=True)
+	multiple_decryption_key_parser.add_argument("--key",
+		help="Key provided to access credentials stored in config file. Multiple keys may be provided if multiple config files are being checked.",
+		nargs='+',
+		required=True)
+	encrypt_config_file_parser.add_argument("--config_file",
+		help="Config file to be used in the creation/submission of your samples. Input full file path.",
+		required=True)
+	encrypt_with_key_parser.add_argument("--key",
+		help="Encryption key to use when encrypting your credentials. Allows the user to reuse the encryption key for multiple config files for users where multiple config files are needed for different submission criteria.",
+		default=None,
+		required=False)
 	file_parser.add_argument("--metadata_file",
 		help="Metadata file to be used in the creation/submission of your samples. Input either full file path or if just file name it must be stored at '<submission_dir>/<submission_name>/<metadata_file>'.",
 		required=True)
@@ -107,7 +125,7 @@ def args_parser():
 		"submit",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Generate all files required and begin the submission process to databases selected.",
-		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, file_parser, test_parser, validate_parser, publication_parser]
+		parents=[database_parser, organism_parser, submission_name_parser, submission_dir_parser, config_file_parser, decryption_key_parser, file_parser, test_parser, validate_parser, publication_parser]
 	)
 
 	# check_submission_status command
@@ -115,7 +133,14 @@ def args_parser():
 		"submission_status",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 		description="Checks the submission status for (all/specified <submission_name>) submission('s) which will for each database: update the status of the submission('s), download output file('s), submit to subsequent specified databases if linking information requires output of previous database('s).",
-		parents=[submission_dir_parser, upload_log_submission_name_parser]
+		parents=[submission_dir_parser, upload_log_submission_name_parser, multiple_decryption_key_parser]
+	)
+
+	encryption_module = subparser_modules.add_parser(
+		"load_credentials",
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+		description="Loads and encrypts your submission credentials into your submission config file. Provides a secret key to securely access your credentials for submission.",
+		parents=[encrypt_config_file_parser, database_parser, encrypt_with_key_parser]
 	)
 
 	# Generate test data command

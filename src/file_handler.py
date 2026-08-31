@@ -76,6 +76,14 @@ def load_yaml(yaml_type: str, yaml_path: str):
 			sys.exit(1)
 	return config_dict
 
+def save_yaml(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
 # Is a entire pandas row made of just whitespace, empty strings, or None
 def is_row_empty(row: pd.Series) -> bool:
 	return all(cell is None or (isinstance(cell, str) and cell.strip() == "") for cell in row)

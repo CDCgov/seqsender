@@ -255,7 +255,7 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
     def get_submission_position(config_dict, database):
         return tools.positions.get(database)
 
-    def get_config(config_file, databases):
+    def get_config(config_file, databases, decrypt_key):
         return tools.config
 
     tools.pretty_print_pandera_errors = pretty_print_pandera_errors
@@ -1611,7 +1611,7 @@ def test_update_grouped_submission__processes_all_databases_with_gisaid_first(up
     monkeypatch.setattr(upload_log_module, "process_genbank", fake_process_genbank)
     upload_log_module.tools.positions["GISAID"] = 1
     upload_log_module.tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {"g": 1}}
-    upload_log_module.update_grouped_submission(group, "/logs")
+    upload_log_module.update_grouped_submission(group, "/logs", "test-key")
     assert [name for name, _ in calls] == [
         "validate",
         "biosample_sra",
@@ -1703,7 +1703,7 @@ def test_update_grouped_submission__processes_gisaid_after_genbank_when_not_firs
     monkeypatch.setattr(upload_log_module, "process_gisaid", fake_process_gisaid)
     upload_log_module.tools.positions["GISAID"] = 2
     upload_log_module.tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}}
-    upload_log_module.update_grouped_submission(group, "/logs")
+    upload_log_module.update_grouped_submission(group, "/logs", "test-key")
     assert [name for name, _ in calls] == ["genbank", "gisaid"]
     assert calls[0][1]["genbank_type"] == "GENBANK-TBL2ASN"
     assert calls[0][1]["submission_dir"] == "/gb"
@@ -1746,7 +1746,7 @@ def test_update_grouped_submission__invalid_genbank_option_exits(upload_log_modu
     monkeypatch.setattr(upload_log_module, "validate_fields_exist", fake_validate_fields_exist)
 
     with pytest.raises(SystemExit) as exc:
-        upload_log_module.update_grouped_submission(group, "/logs")
+        upload_log_module.update_grouped_submission(group, "/logs", "test-key")
 
     assert exc.value.code == 1
     assert "Error: Incorrect database option for GenBank in 'submission_log.csv' databases '['GENBANK']' for 'sub1'.\n" == capsys.readouterr().out
@@ -1768,16 +1768,16 @@ def test_update_submission_status__updates_incomplete_groups_and_named_completed
 
     calls = []
 
-    def fake_update_grouped_submission(group_df, submission_log_dir):
+    def fake_update_grouped_submission(group_df, submission_log_dir, decrypt_key):
         calls.append(group_df["Submission_Name"].iloc[0])
 
     monkeypatch.setattr(upload_log_module, "load_submission_log", fake_load_submission_log)
     monkeypatch.setattr(upload_log_module, "update_grouped_submission", fake_update_grouped_submission)
 
-    upload_log_module.update_submission_status("/logs", submission_name=None)
+    upload_log_module.update_submission_status("/logs", submission_name=None, decrypt_key={"test-key"})
     assert calls == ["sub1"]
 
-    upload_log_module.update_submission_status("/logs", submission_name="sub2")
+    upload_log_module.update_submission_status("/logs", submission_name="sub2", decrypt_key={"test-key"})
     assert calls == ["sub1", "sub2"]
     assert capsys.readouterr().out == (
         "Checking Submissions:\n"
@@ -1804,11 +1804,11 @@ def test_update_submission_status__skips_groups_that_are_all_processed_or_emaile
     monkeypatch.setattr(upload_log_module, "load_submission_log", lambda submission_dir: df.copy())
     calls: list[str] = []
 
-    def fake_update_grouped_submission(group_df, submission_log_dir):
+    def fake_update_grouped_submission(group_df, submission_log_dir, decrypt_key):
         calls.append(group_df["Submission_Name"].iloc[0])
 
     monkeypatch.setattr(upload_log_module, "update_grouped_submission", fake_update_grouped_submission)
-    upload_log_module.update_submission_status("/logs", submission_name=None)
+    upload_log_module.update_submission_status("/logs", submission_name=None, decrypt_key={"test-key"})
     assert calls == ["todo1"]
     assert capsys.readouterr().out == (
         "Checking Submissions:\n"

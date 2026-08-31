@@ -4507,6 +4507,194 @@ x_load_yaml__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
 }
 x_load_yaml__mutmut_orig.__name__ = 'x_load_yaml'
 
+def save_yaml(config_dict: dict[str, Any], yaml_path: str):
+	args = [config_dict, yaml_path]# type: ignore
+	kwargs = {}# type: ignore
+	return _mutmut_trampoline(x_save_yaml__mutmut_orig, x_save_yaml__mutmut_mutants, args, kwargs, None)
+
+def x_save_yaml__mutmut_orig(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_1(config_dict: dict[str, Any], yaml_path: str):
+	with open(None, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_2(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, None) as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_3(config_dict: dict[str, Any], yaml_path: str):
+	with open("w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_4(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, ) as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_5(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "XXwXX") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_6(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "W") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_7(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(None, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_8(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, None, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_9(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = None)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_10(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_11(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_12(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, )
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_13(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = True)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_14(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(None, file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_15(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=None)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_16(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(file=sys.stderr)
+			sys.exit(1)
+
+def x_save_yaml__mutmut_17(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", )
+			sys.exit(1)
+
+def x_save_yaml__mutmut_18(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(None)
+
+def x_save_yaml__mutmut_19(config_dict: dict[str, Any], yaml_path: str):
+	with open(yaml_path, "w") as file:
+		try:
+			yaml.safe_dump(config_dict, file, sort_keys = False)
+		except:
+			print(f"Error: Config file was unable to be written to {yaml_path}. Please check your file permissions.", file=sys.stderr)
+			sys.exit(2)
+
+x_save_yaml__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
+'x_save_yaml__mutmut_1': x_save_yaml__mutmut_1, 
+    'x_save_yaml__mutmut_2': x_save_yaml__mutmut_2, 
+    'x_save_yaml__mutmut_3': x_save_yaml__mutmut_3, 
+    'x_save_yaml__mutmut_4': x_save_yaml__mutmut_4, 
+    'x_save_yaml__mutmut_5': x_save_yaml__mutmut_5, 
+    'x_save_yaml__mutmut_6': x_save_yaml__mutmut_6, 
+    'x_save_yaml__mutmut_7': x_save_yaml__mutmut_7, 
+    'x_save_yaml__mutmut_8': x_save_yaml__mutmut_8, 
+    'x_save_yaml__mutmut_9': x_save_yaml__mutmut_9, 
+    'x_save_yaml__mutmut_10': x_save_yaml__mutmut_10, 
+    'x_save_yaml__mutmut_11': x_save_yaml__mutmut_11, 
+    'x_save_yaml__mutmut_12': x_save_yaml__mutmut_12, 
+    'x_save_yaml__mutmut_13': x_save_yaml__mutmut_13, 
+    'x_save_yaml__mutmut_14': x_save_yaml__mutmut_14, 
+    'x_save_yaml__mutmut_15': x_save_yaml__mutmut_15, 
+    'x_save_yaml__mutmut_16': x_save_yaml__mutmut_16, 
+    'x_save_yaml__mutmut_17': x_save_yaml__mutmut_17, 
+    'x_save_yaml__mutmut_18': x_save_yaml__mutmut_18, 
+    'x_save_yaml__mutmut_19': x_save_yaml__mutmut_19
+}
+x_save_yaml__mutmut_orig.__name__ = 'x_save_yaml'
+
 # Is a entire pandas row made of just whitespace, empty strings, or None
 def is_row_empty(row: pd.Series) -> bool:
 	args = [row]# type: ignore
