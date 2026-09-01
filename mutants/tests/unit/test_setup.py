@@ -142,18 +142,6 @@ def _make_test_data_tree(root: Path, organism: str = "FLU") -> None:
             "bs-sample_name": ["BS1"],
         }
     ).to_csv(base / f"{lower}_genbank_metadata.csv", index=False)
-    pd.DataFrame(
-        {
-            "gs-sample_name": ["GS1"],
-            "sequence_name": ["seq1"],
-            "sample_name": ["S1"],
-            "organism": ["Influenza A virus"],
-            "collection_date": ["2024-01-01"],
-            "authors": ["Doe, Jane"],
-            "bioproject": ["PRJNA1"],
-            "bs-sample_name": ["BS1"],
-        }
-    ).to_csv(base / f"{lower}_gisaid_metadata.csv", index=False)
 
 #*******************************************************************************
 #                          create_test_data
@@ -275,7 +263,7 @@ def test_create_test_data__uses_exact_paths_read_csv_merge_copy_and_stdout(setup
     monkeypatch.setattr(setup_module.shutil, "copy", fake_copy)
     monkeypatch.setattr(setup_module.pd.DataFrame, "to_csv", fake_to_csv)
     monkeypatch.setattr(setup_module.os, "makedirs", fake_makedirs)
-    setup_module.create_test_data("FLU", ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"], str(tmp_path))
+    setup_module.create_test_data("FLU", ["BIOSAMPLE", "SRA", "GENBANK"], str(tmp_path))
     out_dir = tmp_path / "FLU_TEST_DATA"
     raw_reads = out_dir / "raw_reads"
     assert makedirs_calls == [{"path": str(out_dir), "args": (), "kwargs": {"exist_ok": True}}, {"path": str(raw_reads), "args": (), "kwargs": {"exist_ok": True}}]
@@ -313,26 +301,14 @@ def test_create_test_data__uses_exact_paths_read_csv_merge_copy_and_stdout(setup
                 "na_filter": False,
             },
         },
-        {
-            "args": (str(prog_dir / "test_data" / "FLU" / "flu_gisaid_metadata.csv"),),
-            "kwargs": {
-                "header": 0,
-                "dtype": str,
-                "engine": "python",
-                "encoding": "utf-8",
-                "index_col": False,
-                "na_filter": False,
-            },
-        },
     ]
-    assert len(merge_calls) == 3
+    assert len(merge_calls) == 2
     assert all(call["kwargs"] == {"how": "left", "left_index": True, "right_index": True} for call in merge_calls)
     assert to_csv_calls[-1]["path"] == str(out_dir / "metadata.csv")
     assert to_csv_calls[-1]["kwargs"] == {"index": False}
     assert "bs-sample_name" in to_csv_calls[-1]["columns"]
     assert "sra-sample_name" in to_csv_calls[-1]["columns"]
     assert "gb-sample_name" in to_csv_calls[-1]["columns"]
-    assert "gs-sample_name" in to_csv_calls[-1]["columns"]
     assert "sample_name" in to_csv_calls[-1]["columns"]
     assert to_csv_calls[-1]["columns"].count("sample_name") == 1
     assert copy_calls == [
@@ -366,15 +342,6 @@ def test_create_test_data__uses_exact_paths_read_csv_merge_copy_and_stdout(setup
         "Generating submission test_data\n"
         f"Files are stored at: {out_dir}\n"
     )
-
-def test_create_test_data__gisaid_only_copies_sequence_but_not_raw_reads(setup_module, tmp_path, monkeypatch):
-    prog_dir = tmp_path / "seqsender"
-    _make_test_data_tree(prog_dir, "FLU")
-    monkeypatch.setattr(setup_module, "PROG_DIR", str(prog_dir))
-    setup_module.create_test_data("FLU", ["GISAID"], str(tmp_path))
-    out_dir = tmp_path / "FLU_TEST_DATA"
-    assert (out_dir / "sequence.fasta").is_file()
-    assert not (out_dir / "raw_reads").exists()
 
 #*******************************************************************************
 #                        download_table2asn

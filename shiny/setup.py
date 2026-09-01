@@ -27,7 +27,6 @@ setup_body = [
                 "When submitting to SRA, a BioSample submission is also required.",
                 style="display:inline-block;float:right;"),
             ui.input_checkbox("GenBank_checkbox", "GenBank", width=None),
-            ui.input_checkbox("GISAID_checkbox", "GISAID", width=None),
         ),
         ui.card(
             ui.card_header(
@@ -68,20 +67,11 @@ setup_body = [
                     selected="OTHER",
                 ),
             ),
-            # If GISAID checkbox checked then load GISAID Database Options
-            ui.panel_conditional(
-                "input.GISAID_checkbox",
-                ui.input_select(
-                    "GISAID_databases",
-                    label="Select GISAID Database:",
-                    choices=["FLU", "COV", "POX", "ARBO", "RSV"],
-                ),
-            ),
         ),
     ),
     # Based on choices display config and metadata template
     ui.panel_conditional(
-        "input.BioSample_checkbox || input.SRA_checkbox || input.GenBank_checkbox || input.GISAID_checkbox",
+        "input.BioSample_checkbox || input.SRA_checkbox || input.GenBank_checkbox",
         ui.card(
             ui.card_header(
                 ui.h4("Create Config File:", style="display:inline-block;"),
@@ -146,22 +136,6 @@ setup_body = [
                         ),
                         shiny_tools.create_help_tooltip("ncbi_sub_status", description = ("If a paper is included with your submission then use \"In-press\" or \"Published\". If you haven't or aren't publishing a paper with your samples then use \"Unpublished\"."), position = "none"),
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        ui.panel_conditional(
-                            "input.GenBank_checkbox && input.GISAID_checkbox",
-                            # NCBI submission position
-                            config_indent(2, "Submission_Position:"),
-                            div(ui.input_radio_buttons(
-                                    "ncbi_submission_position",
-                                    label=None,
-                                    choices={1:"1", 2:"2", "":"None"},
-                                    selected=1,
-                                    inline=True,
-                                ),
-                                style="display:inline-block;height:5px;font-size:medium;",
-                            ),
-                            shiny_tools.create_help_tooltip("ncbi_sub_pos", description = ("If submitting to both GISAID and NCBI, then determine the order you want the accessions linked between databases. If you do not want to link accessions and want GenBank and GISAID submissions to be made at the same time then select ", ui.strong("None"), "."), position = "none"),
-                            div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        ),
                         # Specified release date
                         config_indent(2, "Specified_Release_Date:"),
                         config_text_input("ncbi_config_release_date", placeholder = "Release Date", help_msg = "Release date for NCBI submissions. Allows you to specify when should NCBI make your submissions public, allowing you to submit your samples ahead of a planned release. If you want to release samples immediately leave blank or specify a date as \"YYYY-MM-DD\" to release at a specific date. This field also takes the option of a numeric value followed by one of the key words \"days\", \"weeks\", or \"months\", to have SeqSender create a specified release date based on when SeqSender is ran."),
@@ -263,30 +237,6 @@ setup_body = [
                         config_indent(7, "Last:"),
                         config_text_input("ncbi_config_last_name", placeholder = "Submitter Last Name", help_msg = "Who is making the submission: Last Name."),
                     ),
-                    ui.panel_conditional(
-                        "input.GISAID_checkbox",
-                        config_indent(1, "GISAID", custom_style = ""),
-                        config_indent(2, "Username:"),
-                        config_text_input("gisaid_config_username", placeholder = "GISAID Username", help_msg = "Username to login to GISAID."),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        ui.panel_conditional(
-                            "input.GISAID_checkbox && input.GenBank_checkbox",
-                            config_indent(2, "Submission_Position:"),
-                            div(ui.input_radio_buttons(
-                                    "gisaid_submission_position",
-                                    label=None,
-                                    choices={1:"1", 2:"2", "":"None"},
-                                    inline=True,
-                                    selected=2,
-                                ),
-                                style="display:inline-block;height:5px;font-size:medium;",
-                            ),
-                            shiny_tools.create_help_tooltip("gisaid_sub_pos", description = ("If submitting to both GISAID and NCBI, then determine the order you want the accessions linked between databases. If you do not want to link accessions and want GenBank and GISAID submissions to be made at the same time then select ", ui.strong("None"), "."), position = "none"),
-                        ),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        config_indent(2, "File Path:"),
-                        config_text_input("gisaid_cli_path", placeholder = "GISAID CLI File Path", help_msg = "Full file path to GISAID CLI file."),
-                    ),
                 ),
                 style=yaml_css,
             ),
@@ -309,7 +259,7 @@ setup_body = [
             ui.HTML(
                 """
 <h8>Metadata Sections Legend:</h8>
-<p><span style="color:#696969"> SeqSender: No prefix</span> | <span style="color:#b3b300">BioSample: bs-</span> | <span style="color:#b3005c">SRA: sra-</span> | <span style="color:#005cb3">GenBank: gb-</span> | <span style="color:#3f7362">GISAID: gs-</span></p>
+<p><span style="color:#696969"> SeqSender: No prefix</span> | <span style="color:#b3b300">BioSample: bs-</span> | <span style="color:#b3005c">SRA: sra-</span> | <span style="color:#005cb3">GenBank: gb-</span></p>
 """
             ),
             ui.download_button("download_metadata", "Download Metadata Template"),

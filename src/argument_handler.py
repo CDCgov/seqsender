@@ -12,7 +12,7 @@ def args_parser():
 	Argument parser setup and build.
 	"""
 	parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-									description="Genomic tool to simplify/automate the process of submitting organism samples to public repositories. With built-in tools to create/submit/link/log organism samples for the databases: BioSample, SRA, GenBank, and GISAID.")
+									description="Genomic tool to simplify/automate the process of submitting organism samples to public repositories. With built-in tools to create/submit/link/log organism samples for the databases: BioSample, SRA, GenBank.")
 	database_parser = argparse.ArgumentParser(add_help=False)
 	organism_parser = argparse.ArgumentParser(add_help=False)
 	validate_parser = argparse.ArgumentParser(add_help=False)
@@ -41,11 +41,6 @@ def args_parser():
 		help="Create/Submit GenBank data. (requires --fasta_file)",
 		action="store_const",
 		const="GENBANK",
-		default="")
-	database_parser.add_argument("--gisaid", "-g",
-		help="Create/Submit GISAID data. (requires --fasta_file)",
-		action="store_const",
-		const="GISAID",
 		default="")
 	organism_parser.add_argument("--organism",
 		help="Type of organism data. Listed organism options have unique submissions options/processes, if your specific organism is not listed, use 'OTHER' for options available to all organisms.",
@@ -162,7 +157,7 @@ def args_parser():
 	test_network_module = subparser_modules.add_parser(
 		"test_network_connection",
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-		description="Runs a series of test network connections to NCBI and GISAID to troubleshoot submission issues."
+		description="Runs a series of test network connections to troubleshoot submission issues."
 	)
 
 	# version command

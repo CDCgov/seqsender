@@ -89,12 +89,9 @@ def _install_import_stubs() -> None:
     settings_stub.SCHEMA_EXCLUSIONS = [
         "config.seqsender.upload_log_schema",
         "config_file.ncbi_schema",
-        "config_file.ncbi_gisaid_schema",
-        "config_file.gisaid_schema",
     ]
     settings_stub.BIOSAMPLE_REGEX = r"^bs-|^bioproject$|^organism$|^collection_date$"
     settings_stub.SRA_REGEX = r"^sra-|^bioproject$|bs-sample_name|^organism$|^collection_date$"
-    settings_stub.GISAID_REGEX = r"^gs-|^collection_date$|^authors$"
     settings_stub.GENBANK_REGEX = r"^gb-sample_name$"
     settings_stub.GENBANK_REGEX_CMT = r"^gb-sample_name$|^cmt-"
     settings_stub.GENBANK_REGEX_SRC = r"^gb-sample_name$|^src-|^bioproject$|^organism$|^collection_date$"
@@ -118,6 +115,7 @@ def _install_import_stubs() -> None:
     sys.modules["src.settings"] = settings_stub
 
     ncbi_handler_stub: Any = types.ModuleType("src.ncbi_handler")
+    ncbi_handler_stub.ncbi_login = Mock(return_value=True)
     sys.modules["src.ncbi_handler"] = ncbi_handler_stub
     sys.modules["ncbi_handler"] = ncbi_handler_stub
 
@@ -186,13 +184,9 @@ def base_config() -> dict[str, Any]:
     return {
         "Submission": {
             "NCBI": {
-                "Submission_Position": 1,
                 "Specified_Release_Date": None,
                 "BioSample_Package": "Pathogen.cl.1.0",
-            },
-            "GISAID": {
-                "Submission_Position": 2,
-            },
+            }
         }
     }
 
@@ -250,33 +244,22 @@ class DummySchema:
             raise self.raise_on_validate
         return df
 
-
 class FakeSchemaErrors(Exception):
     pass
-
 
 class FixedTimestamp:
     @staticmethod
     def now() -> pd.Timestamp:
         return pd._libs.tslibs.timestamps.Timestamp("2026-05-29")
 
-
 @dataclass
 class FakeSchemaColumn:
     required: bool
     description: str | None
 
-# sys.modules.setdefault("config", types.ModuleType("config"))
-# sys.modules.setdefault("config.seqsender", types.ModuleType("config.seqsender"))
-# _seqsender_schema_module = types.ModuleType("config.seqsender.seqsender_schema")
-# _seqsender_schema_module.schema = _ImportTimeSeqSenderSchema()
-# sys.modules.setdefault("config.seqsender.seqsender_schema", _seqsender_schema_module)
-
-
 #*******************************************************************************
 #                        determine_parent_database
 #*******************************************************************************
-
 
 @pytest.mark.parametrize(
     ("databases", "expected"),
@@ -284,9 +267,7 @@ class FakeSchemaColumn:
         (["BIOSAMPLE"], {"ncbi"}),
         (["SRA"], {"ncbi"}),
         (["GENBANK"], {"ncbi"}),
-        (["GISAID"], {"gisaid"}),
         (["BIOSAMPLE", "SRA", "GENBANK"], {"ncbi"}),
-        (["GENBANK", "GISAID"], {"ncbi", "gisaid"}),
     ],
 )
 def test_determine_parent_database__maps_databases_to_parent_portals(databases: list[str], expected: set[str]) -> None:
@@ -315,18 +296,6 @@ def test_decrypt_passwords__decrypts_ncbi_password() -> None:
     result = tools.decrypt_passwords(config_dict=config, submission_portals={"ncbi"}, key=key.decode())
     assert result["Submission"]["NCBI"]["Password"] == b"secret"
 
-def test_decrypt_passwords__decrypts_gisaid_password_and_client_id() -> None:
-    key = tools.Fernet.generate_key()
-    encrypter = tools.Fernet(key)
-    config = {
-        "Submission": { "GISAID": {
-            "Password": encrypter.encrypt(b"secret"),
-            "Client-Id": encrypter.encrypt(b"client-id"),
-    }}}
-    result = tools.decrypt_passwords(config_dict=config, submission_portals={"gisaid"}, key=key.decode())
-    assert result["Submission"]["GISAID"]["Password"] == b"secret"
-    assert result["Submission"]["GISAID"]["Client-Id"] == b"client-id"
-
 def test_decrypt_passwords__invalid_unencrypted_password_prints_helpful_error(capsys: pytest.CaptureFixture[str]) -> None:
     key = tools.Fernet.generate_key()
     config = {"Submission": {"NCBI": {"Password": "plain-text-password"}}}
@@ -348,35 +317,33 @@ def test_decrypt_passwords__invalid_encrypted_looking_password_does_not_print_pl
 #                             encrypt_passwords
 #*******************************************************************************
 
-def test_encrypt_passwords__uses_supplied_key_and_saves_encrypted_gisaid_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_encrypt_passwords__uses_supplied_key_and_saves_encrypted_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
     key = tools.Fernet.generate_key()
-    config = {"GISAID": {"Username": "user", "Password": None, "Client-Id": None}}
+    config = {"NCBI": {"Username": "user", "Password": None}}
     get_config_mock = Mock(side_effect=[config, config])
     save_yaml_mock = Mock()
 
     monkeypatch.setattr(tools, "get_config", get_config_mock)
-    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
-    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password123", "client123"]))
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"ncbi"}))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password123"]))
     monkeypatch.setattr(tools.file_handler, "save_yaml", save_yaml_mock)
-    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=key.decode())
-    encrypted_password = config["GISAID"]["Password"]
-    encrypted_client_id = config["GISAID"]["Client-Id"]
+    tools.encrypt_passwords(config_file="config.yaml", databases=["GENBANK"], encryption_key=key.decode())
+    encrypted_password = config["NCBI"]["Password"]
 
     assert tools.Fernet(key).decrypt(encrypted_password) == b"password123"
-    assert tools.Fernet(key).decrypt(encrypted_client_id) == b"client123"
     save_yaml_mock.assert_called_once_with(config_dict=config, yaml_path="config.yaml")
     assert get_config_mock.call_args_list == [
-        call(config_file="config.yaml", databases=["GISAID"], passwords_validation=False),
-        call(config_file="config.yaml", databases=["GISAID"], decrypt_key=key.decode())
+        call(config_file="config.yaml", databases=["GENBANK"], passwords_validation=False),
+        call(config_file="config.yaml", databases=["GENBANK"], decrypt_key=key.decode())
     ]
 
 def test_encrypt_passwords__generated_key_is_printed(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    config = {"GISAID": {"Password": None, "Client-Id": None}}
-    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
+    config = {"NCBI": {"Password": None}}
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"ncbi"}))
     monkeypatch.setattr(tools, "get_config", Mock(side_effect=[config, config]))
-    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password", "client-id"]))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password"]))
     monkeypatch.setattr(tools.file_handler, "save_yaml", Mock())
-    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=None)
+    tools.encrypt_passwords(config_file="config.yaml", databases=["GENBANK"], encryption_key=None)
     captured = capsys.readouterr()
     assert ("Save this key somewhere secure. It will be required for performing submission." in captured.out)
     assert "key: " in captured.out
@@ -384,12 +351,12 @@ def test_encrypt_passwords__generated_key_is_printed(monkeypatch: pytest.MonkeyP
 
 def test_encrypt_passwords__supplied_key_is_not_printed(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     key = tools.Fernet.generate_key()
-    config = {"GISAID": {"Password": None, "Client-Id": None}}
-    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"gisaid"}))
+    config = {"NCBI": {"Password": None}}
+    monkeypatch.setattr(tools, "determine_parent_database", Mock(return_value={"ncbi"}))
     monkeypatch.setattr(tools, "get_config", Mock(side_effect=[config, config]))
-    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password", "client-id"]))
+    monkeypatch.setattr(tools, "getpass", Mock(side_effect=["password"]))
     monkeypatch.setattr(tools.file_handler, "save_yaml", Mock())
-    tools.encrypt_passwords(config_file="config.yaml", databases=["GISAID"], encryption_key=key.decode())
+    tools.encrypt_passwords(config_file="config.yaml", databases=["NCBI"], encryption_key=key.decode())
     captured = capsys.readouterr()
     assert "Save this key somewhere secure." not in captured.out
     assert f"key: {key.decode()}" not in captured.out
@@ -403,87 +370,10 @@ def test_encrypt_passwords__supplied_key_is_not_printed(monkeypatch: pytest.Monk
     ("submission_portals", "expected"),
     [
         ({"ncbi"}, "ncbi_schema.py"),
-        ({"gisaid"}, "gisaid_schema.py"),
-        ({"ncbi", "gisaid"}, "ncbi_gisaid_schema.py"),
     ],
 )
 def test_get_submission_schema_config_name__maps_portals_to_schema(submission_portals, expected):
     assert tools.get_submission_schema_config_name(submission_portals) == expected
-
-#*******************************************************************************
-#                         get_submission_position
-#*******************************************************************************
-
-@pytest.mark.parametrize(
-    ("database", "expected"),
-    [
-        ("BIOSAMPLE", 1),
-        ("SRA", 1),
-        ("GENBANK", 1),
-        ("GISAID", 2),
-    ],
-)
-def test_get_submission_position__reads_nested_submission_config(base_config: dict[str, Any], database: str, expected: int) -> None:
-    assert tools.get_submission_position(base_config, database) == expected
-
-def test_get_submission_position__accepts_already_nested_parent_config() -> None:
-    assert tools.get_submission_position({"NCBI": {"Submission_Position": 2}}, "GENBANK") == 2
-    assert tools.get_submission_position({"GISAID": {"Submission_Position": 1}}, "GISAID") == 1
-
-
-@pytest.mark.parametrize(
-    "config_dict",
-    [
-        {"Submission": {"NCBI": {}}},
-        {"Submission": {"NCBI": {"Submission_Position": "1"}}},
-        {"Submission": {"GISAID": {"Submission_Position": None}}},
-    ],
-)
-def test_get_submission_position__returns_none_when_position_missing_or_non_int(config_dict: dict[str, Any]) -> None:
-    assert tools.get_submission_position(config_dict, "GENBANK") is None
-
-
-def test_get_submission_position__invalid_database_exits(capsys: pytest.CaptureFixture[str]) -> None:
-    with pytest.raises(SystemExit) as exc:
-        tools.get_submission_position({"Submission": {}}, "BADDB")
-    assert exc.value.code == 1
-    assert "Error: database BADDB is not a valid selection.\n" == capsys.readouterr().err
-
-@pytest.mark.parametrize(
-    ("config_dict", "expected_message"),
-    [
-        (
-            {"Submission": {"NCBI": {"Submission_Position": 1}, "GISAID": {"Submission_Position": 1}}},
-            "Error: Config file is incorrect. Submission position for GISAID '1' and GenBank '1' must both be either left empty, or set to '1' and '2' based on submission preference.\n",
-        ),
-        (
-            {"Submission": {"NCBI": {"Submission_Position": 1}, "GISAID": {}}},
-            "Error: Config file is incorrect. Submission position for GISAID 'None' and GenBank '1' must both be either left empty, or set to '1' and '2' based on submission preference.\n",
-        ),
-        (
-            {"Submission": {"NCBI": {}, "GISAID": {"Submission_Position": 2}}},
-            "Error: Config file is incorrect. Submission position for GISAID '2' and GenBank 'None' must both be either left empty, or set to '1' and '2' based on submission preference.\n",
-        ),
-    ],
-)
-def test_validate_submission_position__exits_for_inconsistent_or_duplicate_positions(config_dict: dict[str, Any], expected_message: str, capsys: pytest.CaptureFixture[str]) -> None:
-    with pytest.raises(SystemExit) as exc:
-        tools.validate_submission_position(config_dict)
-
-    assert exc.value.code == 1
-    assert capsys.readouterr().err == expected_message
-
-
-@pytest.mark.parametrize(
-    "config_dict",
-    [
-        {"Submission": {"NCBI": {}, "GISAID": {}}},
-        {"Submission": {"NCBI": {"Submission_Position": 1}, "GISAID": {"Submission_Position": 2}}},
-        {"Submission": {"NCBI": {"Submission_Position": 2}, "GISAID": {"Submission_Position": 1}}},
-    ],
-)
-def test_validate_submission_position__accepts_empty_or_distinct_positions(config_dict: dict[str, Any]) -> None:
-    tools.validate_submission_position(config_dict)
 
 #*******************************************************************************
 #                         get_submission_schema
@@ -493,8 +383,6 @@ def test_validate_submission_position__accepts_empty_or_distinct_positions(confi
     ("portals", "expected"),
     [
         ({"ncbi"}, "ncbi_schema.py"),
-        ({"gisaid"}, "gisaid_schema.py"),
-        ({"ncbi", "gisaid"}, "ncbi_gisaid_schema.py"),
         (set(), "schema.py"),
     ],
 )
@@ -553,36 +441,9 @@ def test_check_credentials__ncbi_missing_or_empty_fields_exit(config_dict: dict[
     assert expected_message == capsys.readouterr().err
 
 @pytest.mark.parametrize(
-    ("config_dict", "expected_message"),
-    [
-        (
-            {"Username": "u", "Password": "p"},
-            "Error: there is no Submission > GISAID > Client-Id information in config file.\n",
-        ),
-        (
-            {"Username": "u", "Password": "p", "Client-Id": ""},
-            "Error: Submission > GISAID > Client-Id in the config file cannot be empty.\n",
-        ),
-        (
-            {"Username": "u", "Password": "p", "Client-Id": None},
-            "Error: Submission > GISAID > Client-Id in the config file cannot be empty.\n",
-        ),
-    ],
-)
-def test_check_credentials__gisaid_requires_client_id(
-    config_dict: dict[str, Any], expected_message: str, capsys: pytest.CaptureFixture[str]
-) -> None:
-    with pytest.raises(SystemExit) as exc:
-        tools.check_credentials(config_dict, "GISAID")
-
-    assert exc.value.code == 1
-    assert expected_message == capsys.readouterr().err
-
-@pytest.mark.parametrize(
     ("database", "config_dict"),
     [
         ("NCBI", {"Username": "u", "Password": "p"}),
-        ("GISAID", {"Username": "u", "Password": "p", "Client-Id": "cid"}),
     ],
 )
 def test_check_credentials__valid_configs_do_not_exit(database: str, config_dict: dict[str, Any]) -> None:
@@ -800,7 +661,7 @@ def test_parse_hold_date__invalid_values_exit(value: str, expected_kind: str, ca
     assert capsys.readouterr().err == expected
 
 def test_parse_hold_date__preserves_config_when_ncbi_or_field_missing() -> None:
-    no_ncbi: dict[str, Any] = {"Submission": {"GISAID": {}}}
+    no_ncbi: dict[str, Any] = {"Submission": ""}
     no_field: dict[str, Any] = {"Submission": {"NCBI": {}}}
     assert tools.parse_hold_date(no_ncbi) is no_ncbi
     assert tools.parse_hold_date(no_field) is no_field
@@ -984,7 +845,7 @@ def test_pretty_print_pandera_errors__case_insensitive_accepted_values_are_split
             {
                 "schema_context": "Column",
                 "column": "database",
-                "check": "str_matches('(?i)(\\\\W|^)(BIOSAMPLE|SRA|GENBANK|GISAID)(\\\\W|$)')",
+                "check": "str_matches('(?i)(\\\\W|^)(BIOSAMPLE|SRA|GENBANK)(\\\\W|$)')",
                 "failure_case": "bad",
                 "index": 2,
             }
@@ -993,7 +854,7 @@ def test_pretty_print_pandera_errors__case_insensitive_accepted_values_are_split
     tools.pretty_print_pandera_errors("metadata.csv", [error])
     captured = capsys.readouterr()
     assert captured.out == "Error: file metadata.csv has the following error('s):\n(Note: Index position is calculated excluding column headers and the first row index value starting at '1'.)\n\n"
-    assert captured.err == "Error: Column 'database' at index '3' has the value 'bad'. This field must be one of the accepted values: ['BIOSAMPLE', 'SRA', 'GENBANK', 'GISAID'].\n\n"
+    assert captured.err == "Error: Column 'database' at index '3' has the value 'bad'. This field must be one of the accepted values: ['BIOSAMPLE', 'SRA', 'GENBANK'].\n\n"
 
 @pytest.mark.parametrize("column", ["bs-title", "bs-comment", "sra-title", "sra-comment", "gb-title", "gb-comment"])
 def test_pretty_print_pandera_errors__same_value_columns_are_all_recognized(column: str, capsys: pytest.CaptureFixture[str]) -> None:
@@ -1107,7 +968,6 @@ def patched_get_config_boundaries(monkeypatch: pytest.MonkeyPatch, base_config: 
         return config_dict
 
     monkeypatch.setattr(tools, "parse_hold_date", Mock(side_effect=fake_parse_hold_date))
-    monkeypatch.setattr(tools, "validate_submission_position", Mock())
     monkeypatch.setattr(tools, "password_encryption_config_schema_updates", Mock(side_effect=lambda schema, submission_portals: schema))
     monkeypatch.setattr(tools, "decrypt_passwords", Mock(side_effect=lambda config_dict, submission_portals, key: config_dict))
 
@@ -1138,16 +998,10 @@ def patched_get_config_boundaries(monkeypatch: pytest.MonkeyPatch, base_config: 
     return {
         "load_yaml": tools.file_handler.load_yaml,
         "parse_hold_date": tools.parse_hold_date,
-        "validate_submission_position": tools.validate_submission_position,
         "password_encryption_config_schema_updates": tools.password_encryption_config_schema_updates,
         "decrypt_passwords": tools.decrypt_passwords,
         "open_calls": open_calls,
     }
-
-@pytest.mark.parametrize("databases", [["GENBANK"], ["GISAID"], ["SRA"], ["BIOSAMPLE"]])
-def test_get_config__does_not_validate_submission_position_unless_genbank_and_gisaid_both_selected(databases: list[str], patched_get_config_boundaries: dict[str, Any]) -> None:
-    tools.get_config("config.yaml", databases)
-    patched_get_config_boundaries["validate_submission_position"].assert_not_called()
 
 def test_get_config__empty_database_list_exits(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc:
@@ -1161,8 +1015,6 @@ def test_get_config__empty_database_list_exits(capsys: pytest.CaptureFixture[str
         (["BIOSAMPLE"], "ncbi_schema.py"),
         (["SRA"], "ncbi_schema.py"),
         (["GENBANK"], "ncbi_schema.py"),
-        (["GISAID"], "gisaid_schema.py"),
-        (["GENBANK", "GISAID"], "ncbi_gisaid_schema.py"),
     ],
 )
 def test_get_config__selects_exact_schema_file_and_loads_yaml_with_exact_label(databases: list[str], expected_schema_file: str, patched_get_config_boundaries: dict[str, Any], base_config: dict[str, Any]) -> None:
@@ -1189,7 +1041,7 @@ def test_get_config__selects_exact_schema_file_and_loads_yaml_with_exact_label(d
     assert FakeValidator.calls == [(base_config, expected_schema)]
 
 def test_get_config__opens_schema_file_with_explicit_read_mode(patched_get_config_boundaries: dict[str, Any]):
-    tools.get_config("config.yaml", ["GENBANK", "GISAID"])
+    tools.get_config("config.yaml", ["GENBANK"])
     assert patched_get_config_boundaries["open_calls"] == [
         {
             "file": os.path.join(
@@ -1197,7 +1049,7 @@ def test_get_config__opens_schema_file_with_explicit_read_mode(patched_get_confi
                 "config",
                 "seqsender",
                 "config_file",
-                "ncbi_gisaid_schema.py",
+                "ncbi_schema.py",
             ),
             "mode": "r",
             "args": (),
@@ -1206,22 +1058,22 @@ def test_get_config__opens_schema_file_with_explicit_read_mode(patched_get_confi
     ]
 
 def test_get_config__password_validation_false_updates_schema_for_encryption(patched_get_config_boundaries: dict[str, Any]) -> None:
-    tools.get_config("config.yaml", ["GISAID"], passwords_validation=False)
+    tools.get_config("config.yaml", ["GENBANK"], passwords_validation=False)
     patched_get_config_boundaries["password_encryption_config_schema_updates"].assert_called_once()
     call_args = patched_get_config_boundaries["password_encryption_config_schema_updates"].call_args
-    assert call_args.args[1] == {"gisaid"}
+    assert call_args.args[1] == {"ncbi"}
 
 def test_get_config__password_validation_true_does_not_update_encryption_schema(patched_get_config_boundaries: dict[str, Any]) -> None:
-    tools.get_config("config.yaml", ["GISAID"], passwords_validation=True)
+    tools.get_config("config.yaml", ["GENBANK"], passwords_validation=True)
     patched_get_config_boundaries["password_encryption_config_schema_updates"].assert_not_called()
 
 def test_get_config__decrypt_key_decrypts_credentials(patched_get_config_boundaries: dict[str, Any], base_config: dict[str, Any]) -> None:
-    result = tools.get_config("config.yaml", ["GISAID"], decrypt_key="secret-key")
-    patched_get_config_boundaries["decrypt_passwords"].assert_called_once_with(config_dict=base_config, submission_portals={"gisaid"}, key="secret-key")
+    result = tools.get_config("config.yaml", ["GENBANK"], decrypt_key="secret-key")
+    patched_get_config_boundaries["decrypt_passwords"].assert_called_once_with(config_dict=base_config, submission_portals={"ncbi"}, key="secret-key")
     assert result is base_config["Submission"]
 
 def test_get_config__without_decrypt_key_does_not_decrypt_credentials(patched_get_config_boundaries: dict[str, Any]) -> None:
-    tools.get_config("config.yaml", ["GISAID"])
+    tools.get_config("config.yaml", ["GENBANK"])
     patched_get_config_boundaries["decrypt_passwords"].assert_not_called()
 
 def test_get_config__non_dict_yaml_exits(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
@@ -1251,11 +1103,6 @@ def test_get_config__returns_submission_and_parses_hold_date(patched_get_config_
     result = tools.get_config("config.yaml", ["SRA"])
     assert result is base_config["Submission"]
     patched_get_config_boundaries["parse_hold_date"].assert_called_once_with(config_dict=base_config)
-    patched_get_config_boundaries["validate_submission_position"].assert_not_called()
-
-def test_get_config__validates_submission_position_when_genbank_and_gisaid_selected(patched_get_config_boundaries: dict[str, Any]) -> None:
-    tools.get_config("config.yaml", ["GENBANK", "GISAID"])
-    patched_get_config_boundaries["validate_submission_position"].assert_called_once()
 
 #*******************************************************************************
 #                            get_metadata
@@ -1272,7 +1119,6 @@ def test_get_metadata__validates_all_database_specific_schemas_with_expected_nam
                 "sra-sample_name": "SRA1",
                 "sra-file_1": "reads.fastq.gz",
                 "gb-sample_name": "GB1",
-                "gs-sample_name": "GS1",
                 "sequence_name": "seq1",
                 "src-country": "USA",
             }
@@ -1292,7 +1138,7 @@ def test_get_metadata__validates_all_database_specific_schemas_with_expected_nam
 
     monkeypatch.setattr(tools.importlib, "import_module", fake_import_module)
 
-    result = tools.get_metadata(database=["BIOSAMPLE", "SRA", "GENBANK", "GISAID"],organism="FLU",metadata_file="metadata.csv",config_dict={"NCBI": {"BioSample_Package": "Pathogen.cl.1.0"}},skip_validation=False)
+    result = tools.get_metadata(database=["BIOSAMPLE", "SRA", "GENBANK"],organism="FLU",metadata_file="metadata.csv",config_dict={"NCBI": {"BioSample_Package": "Pathogen.cl.1.0"}},skip_validation=False)
 
     assert result is metadata
     assert list(schemas) == [
@@ -1300,7 +1146,6 @@ def test_get_metadata__validates_all_database_specific_schemas_with_expected_nam
         "config.sra.sra_schema",
         "config.genbank.genbank_schema",
         "config.genbank.genbank_flu_src_schema",
-        "config.gisaid.gisaid_FLU_schema",
     ]
 
     assert len(seqsender.validate_calls) == 1
@@ -1336,11 +1181,6 @@ def test_get_metadata__validates_all_database_specific_schemas_with_expected_nam
         "gb-sample_name",
         "src-country",
     ]
-    assert validated_by_schema["config.gisaid.gisaid_FLU_schema"] == [
-        "collection_date",
-        "gs-sample_name",
-        "sequence_name",
-    ]
     assert all(schema.validate_calls[0][1] is True for schema in schemas.values())
 
 def test_get_metadata__schema_error_preserves_exact_database_schema_display_names(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -1356,7 +1196,6 @@ def test_get_metadata__schema_error_preserves_exact_database_schema_display_name
                 "gb-sample_name": "GB1",
                 "sequence_name": "seq1",
                 "src-country": "USA",
-                "gs-sample_name": "GS1",
             }
         ]
     )
@@ -1389,7 +1228,7 @@ def test_get_metadata__schema_error_preserves_exact_database_schema_display_name
 
     with pytest.raises(SystemExit) as exc:
         tools.get_metadata(
-            database=["BIOSAMPLE", "SRA", "GENBANK", "GISAID"],
+            database=["BIOSAMPLE", "SRA", "GENBANK"],
             organism="FLU",
             metadata_file="metadata.csv",
             config_dict={"NCBI": {"BioSample_Package": "Pathogen.cl.1.0"}},
@@ -1401,7 +1240,6 @@ def test_get_metadata__schema_error_preserves_exact_database_schema_display_name
         "config.sra.sra_schema",
         "config.genbank.genbank_schema",
         "config.genbank.genbank_flu_src_schema",
-        "config.gisaid.gisaid_FLU_schema",
     ]
     assert pretty_calls == [
         {
@@ -1411,7 +1249,6 @@ def test_get_metadata__schema_error_preserves_exact_database_schema_display_name
                 schema_errors["config.sra.sra_schema"],
                 schema_errors["config.genbank.genbank_schema"],
                 schema_errors["config.genbank.genbank_flu_src_schema"],
-                schema_errors["config.gisaid.gisaid_FLU_schema"],
             ],
         }
     ]
@@ -1485,7 +1322,6 @@ def test_get_metadata__skip_validation_loads_metadata_and_imports_needed_schemas
                 "bs-sample_name": "BS1",
                 "sra-sample_name": "SRA1",
                 "gb-sample_name": "GB1",
-                "gs-sample_name": "GS1",
                 "sequence_name": "seq1",
                 "src-country": "USA",
             }
@@ -1504,7 +1340,7 @@ def test_get_metadata__skip_validation_loads_metadata_and_imports_needed_schemas
     monkeypatch.setattr(tools.importlib, "import_module", fake_import_module)
 
     result = tools.get_metadata(
-        database=["BIOSAMPLE", "SRA", "GENBANK", "GISAID"],
+        database=["BIOSAMPLE", "SRA", "GENBANK"],
         organism="FLU",
         metadata_file="metadata.csv",
         config_dict={"NCBI": {"BioSample_Package": "Pathogen.cl.1.0"}},
@@ -1516,7 +1352,6 @@ def test_get_metadata__skip_validation_loads_metadata_and_imports_needed_schemas
     assert "config.sra.sra_schema" in imported
     assert "config.genbank.genbank_schema" in imported
     assert "config.genbank.genbank_flu_src_schema" in imported
-    assert "config.gisaid.gisaid_FLU_schema" in imported
     assert tools.seqsender_schema.update_columns_calls == [
         {
             "bioproject": {
@@ -1563,7 +1398,7 @@ def test_get_metadata__biosample_or_sra_requires_exact_bioproject_schema_update(
     assert payload["bioproject"]["checks"][1] == (r"^(?!\s*$).+",)
     assert payload["bioproject"]["checks"][2] == {}
 
-@pytest.mark.parametrize("database", [["GENBANK"], ["GISAID"], ["GENBANK", "GISAID"]])
+@pytest.mark.parametrize("database", [["GENBANK"]])
 def test_get_metadata__does_not_require_bioproject_update_without_biosample_or_sra(monkeypatch: pytest.MonkeyPatch, database: list[str]) -> None:
     metadata = pd.DataFrame(
         [
@@ -1571,7 +1406,6 @@ def test_get_metadata__does_not_require_bioproject_update_without_biosample_or_s
                 "organism": "Virus",
                 "collection_date": "2026-01-01",
                 "gb-sample_name": "GB1",
-                "gs-sample_name": "GS1",
                 "sequence_name": "seq1",
             }
         ]

@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.4.0 This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.5.0 This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -40,7 +40,6 @@ ui.input_checkbox_group(
         "GenBank": ui.span("GenBank"),
         "SRA": ui.span("SRA"),
         "BioSample": ui.span("BioSample"),
-        "blue": ui.span("GISAID"),
     },
 ),
 
@@ -327,13 +326,12 @@ output_body = [
             ),
             shiny_tools.file_output_column_info(column_name="Organism",
                 description=("Submission organism option ", ui.code("--organism"), " when making your submission which can enable certain additional submission options."),
-                controlled_fields=[((ui.code("FLU"), "|", ui.code("COV")), ("For ", ui.strong("Influenza Virus A"), " or ", ui.strong("Severe Acute Respiratory Syndrome Coronavirus 2"), ", it enables GISAID and GenBank (via FTP) as submission options.")),
-                    ((ui.code("POX"), "|", ui.code("ARBO"), "|", ui.code("RSV")), ("For ", ui.strong("Mpox"), ", ", ui.strong("Arbovirus"), ", or ", ui.strong("Respiratory syncytial virus"), ", it enables GISAID as a submission option.")),
+                controlled_fields=[((ui.code("FLU"), "|", ui.code("COV")), ("For ", ui.strong("Influenza Virus A"), " or ", ui.strong("Severe Acute Respiratory Syndrome Coronavirus 2"), ", it enables GenBank (via FTP) as submission options.")),
                     ((ui.code("OTHER")), ("For any organism without additional submission options. It provides access to the default available databases: BioSample, SRA, and GenBank (table2asn via email)."))]
             ),
             shiny_tools.file_output_column_info(column_name="Database",
                 description="Database being submitted to.",
-                controlled_fields=[((ui.code("BIOSAMPLE"), "|", ui.code("SRA"), "|", ui.code("GENBANK-TBL2ASN"), "|", ui.code("GENBANK-FTP"), "|", ui.code("GISAID")), ("Specifies the database being submitted to. For GenBank, it also includes the submission method for table2asn as \"-TBL2ASN\" or FTP as \"-FTP\"."))]
+                controlled_fields=[((ui.code("BIOSAMPLE"), "|", ui.code("SRA"), "|", ui.code("GENBANK-TBL2ASN"), "|", ui.code("GENBANK-FTP")), ("Specifies the database being submitted to. For GenBank, it also includes the submission method for table2asn as \"-TBL2ASN\" or FTP as \"-FTP\"."))]
             ),
             shiny_tools.file_output_column_info(column_name="Submission_Type",
                 description="Whether the submission you're making is live or a test.",
@@ -344,14 +342,14 @@ output_body = [
                 controlled_fields=[((ui.code("YYYY-MM-DD")), ("ISO-8601 standard date format. (i.e. 2024-01-01, 2024-12-31)"))]
             ),
             shiny_tools.file_output_column_info(column_name="Submission_Status",
-                description=("Current status of the submission to the database specified. \"GISAID\" only uses ", ui.strong("WAITING"), ", ", ui.strong("PROCESSING"), ", ", ui.strong("PROCESSED"), ", and ", ui.strong("ERROR"), ". \"GENBANK-TBL2ASN\" uses ", ui.strong("EMAILED"), " instead of ", ui.strong("PROCESSED"), " to designate the submission is complete."),
+                description=("Current status of the submission to the database specified. \"GENBANK-TBL2ASN\" uses ", ui.strong("EMAILED"), " instead of ", ui.strong("PROCESSED"), " to designate the submission is complete."),
                 controlled_fields=[((ui.code("SUBMITTED")), ("Submission has been uploaded to NCBI database.")),
                     ((ui.code("CREATED")), ("NCBI is currently loading the submission files.")),
                     ((ui.code("QUEUED")), ("NCBI has queued your submission for processing.")),
-                    ((ui.code("PROCESSING")), ("Submission is currently processing for NCBI database. For GISAID this means that when SeqSender attempted to upload your samples, it was unable to completely upload them all. When the ", ui.code("submission_status"), " command is ran again it will attempt to submit the rest of the samples.")),
+                    ((ui.code("PROCESSING")), ("Submission is currently processing for NCBI database. When the ", ui.code("submission_status"), " command is ran again it will attempt to submit the rest of the samples.")),
                     ((ui.code("FAILED")), ("Submission failed processing for NCBI database.")),
-                    ((ui.code("PROCESSED")), ("Submission has been successfully uploaded to NCBI or GISAID database.")),
-                    ((ui.code("ERROR")), ("SeqSender failed to process report for NCBI database. For GISAID, SeqSender is failing to upload or samples are unable to be submitted to GISAID.")),
+                    ((ui.code("PROCESSED")), ("Submission has been successfully uploaded to NCBI.")),
+                    ((ui.code("ERROR")), ("SeqSender failed to process report for NCBI database.")),
                     ((ui.code("WAITING")), ("Submission is waiting on other submissions to complete processing, to correctly link information.")),
                     ((ui.code("DELETED")), ("NCBI has deleted your submission. This could be because your submission remained errored for too long without resolution or you requested to have the submission removed.")),
                     ((ui.code("RETRIED")), ("NCBI has attempted retrying processing of your submission.")),
@@ -360,7 +358,7 @@ output_body = [
             ),
             shiny_tools.file_output_column_info(column_name="Submission_ID",
                 description=("NCBI submission ID tied to the ", ui.code("Submission_Name"), "."),
-                controlled_fields=[((ui.code("PENDING"), "|", ui.code("SUB#"), "|", ui.code("SUBMITTED")), ("Until submission ID is generated it will use ", ui.strong("PENDING"), ". GISAID uses ", ui.strong("SUBMITTED"), " to designate a submission is complete in lieu of a submission ID."))]
+                controlled_fields=[((ui.code("PENDING"), "|", ui.code("SUB#"), "|", ui.code("SUBMITTED")), ("Until submission ID is generated it will use ", ui.strong("PENDING"), "."))]
             ),
             shiny_tools.file_output_column_info(column_name="Submission_Directory",
                 description=("Full file path for the specified ", ui.strong("Submission_Name"), ", ", ui.strong("Database"), ", submission directory."),
@@ -426,26 +424,6 @@ output_body = [
             ),
             shiny_tools.file_output_column_info(column_name="genbank_message",
                 description=("Message related to sample from GenBank."),
-                controlled_fields=None,
-            ),
-            shiny_tools.file_output_column_info(column_name="gs-sample_name",
-                description=("Sample name used for submission to GISAID."),
-                controlled_fields=None,
-            ),
-            shiny_tools.file_output_column_info(column_name="gs-segment_name",
-                description=("Sample name of influenza genome segment used for submission to GISAID."),
-                controlled_fields=None,
-            ),
-            shiny_tools.file_output_column_info(column_name="gisaid_accession_epi_isl_id",
-                description=("Accession assigned to sample by GISAID."),
-                controlled_fields=None,
-            ),
-            shiny_tools.file_output_column_info(column_name="gisaid_accession_epi_isl_id",
-                description=("Accession assigned by GISAID to sample influenza genome segment."),
-                controlled_fields=None,
-            ),
-            shiny_tools.file_output_column_info(column_name="gisaid_message",
-                description=("Message related to sample from GISAID."),
                 controlled_fields=None,
             ),
         ),
@@ -535,29 +513,6 @@ output_body = [
     ui.tags.ul(
         ui.p("Copy of gff file provided via command ", ui.code("--gff_file"), " when submitting via table2asn. It is used by SeqSender to create the table2asn sqn file."),
     ),
-    ui.hr(),
-    ui.h4("GISAID Directory:"),
-    ui.hr(),
-    ui.h6("gisaid_upload_log_#.txt"),
-    ui.tags.ul(
-        ui.p("GISAID CLI output log where \"#\" is the numbered attempt. When SeqSender is attempting to uplo5ad to GISAID, if it fails during the submission it will attempt the submission again ", ui.strong("3"), " times. When SeqSender command ", ui.code("submission_status"), ", is ran, if the GISAID submission is still incomplete, it will attempt the process again, overwriting the previous log files until it reaches ", ui.strong("3"), " again or completes the submission."),
-    ),
-    ui.h6("metadata.csv"),
-    ui.tags.ul(
-        ui.p("GISAID metadata file. Can be used to submit your data to GISAID via their website or it is used by SeqSender to upload it to GISAID."),
-    ),
-    ui.h6("orig_metadata.csv"),
-    ui.tags.ul(
-        ui.p("Unmodified copy of the GISAID metadata file. As SeqSender uploads to GISAID, if it fails during the submission process, the samples successfully loaded to GISAID need to be removed from the ", ui.strong("metadata.csv"), " in order to reattempt uploading the remaining samples.")
-    ),
-    ui.h6("orig_sequence.fsa"),
-    ui.tags.ul(
-        ui.p("Unmodified copy of the GISAID fasta file. As SeqSender uploads to GISAID, if it fails during the submission process, the samples successfully loaded to GISAID need to be removed from the ", ui.strong("sequence.fsa"), " in order to reattempt uploading the remaining samples.")
-    ),
-    ui.h6("sequence.fsa"),
-    ui.tags.ul(
-        ui.p("GISAID fasta file. Can be used to submit your data to GISAID via their website or it is used by SeqSender to upload it to GISAID.")
-    ),
 ]
 
 ####################### COMMANDS PAGE ###################
@@ -589,7 +544,7 @@ commands_body = [
         # Update biosample command
         shiny_tools.command_accordion_panel("update_biosample", description=" command is used to update biosample schema options based on available BioSample Packages."),
         # Update biosample command
-        shiny_tools.command_accordion_panel("test_network_connection", description=" command is used to run a series of test network connections to NCBI and GISAID to troubleshoot submission issues."),
+        shiny_tools.command_accordion_panel("test_network_connection", description=" command is used to run a series of test network connections to troubleshoot submission issues."),
         # version command
         shiny_tools.command_accordion_panel("version", description=" command prints the current seqsender version."),
     ),
@@ -652,9 +607,6 @@ def metadata_database_css(column):
     if "gb-" in column:
         # Set color of GenBank table
         return "background-color: #cce6ff;"
-    elif column.startswith("gs-"):
-        # Set color of GISAID table
-        return "background-color: #deede8;"
     elif column.startswith("bs-"):
         # Set color of BioSample table
         return "background-color: #ffffb3;"
@@ -694,13 +646,6 @@ def server(input, output, session):
         df = df.transpose()
         return df
 
-    @reactive.file_reader(dir / "templates/")
-    def read_gisaid_file():
-        df = pd.read_csv(dir / ("templates/config.gisaid.gisaid." + input.GISAID_databases() + ".schema_template.csv"), index_col = "column_name")
-        df = df.fillna("")
-        df = df.transpose()
-        return df
-
     @render.text
     def BioSample_Package_Name():
         return input.BioSample_packages()
@@ -711,58 +656,6 @@ def server(input, output, session):
         if input.SRA_checkbox() == True and input.BioSample_checkbox() == False:
             with reactive.isolate():
                 ui.update_checkbox("BioSample_checkbox", value = True)
-
-
-    @reactive.effect
-    @reactive.event(input.ncbi_submission_position)
-    def gisaid_submission_position():
-        if input.ncbi_submission_position() == "1":
-            value = "2"
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "gisaid_submission_position",
-                    selected=value,
-                )
-        elif input.ncbi_submission_position() == "2":
-            value = "1"
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "gisaid_submission_position",
-                    selected=value,
-                )
-        else:
-            value = ""
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "gisaid_submission_position",
-                    selected=value,
-                )
-
-    @reactive.effect
-    @reactive.event(input.gisaid_submission_position)
-    def ncbi_submission_position():
-        if input.gisaid_submission_position() == "1":
-            value = "2"
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "ncbi_submission_position",
-                    selected=value,
-                )
-        elif input.gisaid_submission_position() == "2":
-            value = "1"
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "ncbi_submission_position",
-                    selected=value,
-                )
-        else:
-            value = ""
-            with reactive.isolate():
-                ui.update_radio_buttons(
-                    "ncbi_submission_position",
-                    selected=value,
-                )
-
 
     @reactive.Calc
     def initialize_base_dataframe():
@@ -780,10 +673,6 @@ def server(input, output, session):
     def initialize_genbank_dataframes():
         return read_genbank_file()
 
-    @reactive.Calc
-    def initialize_gisaid_dataframes():
-        return read_gisaid_file()
-
     @output
     @render.table
     @reactive.Calc
@@ -792,9 +681,6 @@ def server(input, output, session):
         if input.GenBank_checkbox():
             genbank_df = initialize_genbank_dataframes()
             database_df = pd.concat([database_df, genbank_df], axis=1)
-        if input.GISAID_checkbox():
-            gisaid_df = initialize_gisaid_dataframes()
-            database_df = pd.concat([database_df, gisaid_df], axis=1)
         if input.BioSample_checkbox():
             biosample_df = initialize_biosample_dataframes()
             database_df = pd.concat([database_df, biosample_df], axis=1)
@@ -838,7 +724,6 @@ def server(input, output, session):
                 **({"GenBank_Auto_Remove_Failed_Samples": input.ncbi_config_auto_remove_genbank() or ""} if input.GenBank_checkbox() else {}),
                 "Publication_Title": input.ncbi_config_publication_title() or "",
                 "Publication_Status": input.ncbi_config_publication_status() or "",
-                **({"Submission_Position": input.ncbi_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
                 "Specified_Release_Date": input.ncbi_config_release_date() or "",
                 "Link_Sample_Between_NCBI_Databases": input.ncbi_config_link_samples() or "",
                 "Add_Definition_Line_Accessions": input.ncbi_config_fasta_def_lines() or "",
@@ -868,13 +753,7 @@ def server(input, output, session):
                             }
                         }
                     }
-                }} if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox() else {}),
-            **({"GISAID": {
-                "Client-Id": "",
-                "Username": input.gisaid_config_username() or "",
-                "Password": "",
-                **({"Submission_Position": input.gisaid_submission_position() or ""} if input.GenBank_checkbox() and input.GISAID_checkbox() else {}),
-                }} if input.GISAID_checkbox() else {})
+                }} if input.BioSample_checkbox() or input.SRA_checkbox() or input.GenBank_checkbox() else {})
             }
         }
         config_file = {key: (None if value == "" else value) for key, value in config_file.items()}
@@ -887,9 +766,6 @@ def server(input, output, session):
         if input.GenBank_checkbox():
             genbank_df = initialize_genbank_dataframes()
             database_df = pd.concat([database_df, genbank_df], axis=1)
-        if input.GISAID_checkbox():
-            gisaid_df = initialize_gisaid_dataframes()
-            database_df = pd.concat([database_df, gisaid_df], axis=1)
         if input.BioSample_checkbox():
             biosample_df = initialize_biosample_dataframes()
             database_df = pd.concat([database_df, biosample_df], axis=1)

@@ -7,7 +7,6 @@ Submission:
     GenBank_Auto_Remove_Failed_Samples: True
     Publication_Title: COVID-19 test submission
     Publication_Status: unpublished
-    Submission_Position: 1
     Specified_Release_Date: ""
     Link_Sample_Between_NCBI_Databases: True
     Description:
@@ -31,8 +30,3 @@ Submission:
           Name:
             First: Jane
             Last: Doe
-  GISAID:
-    Client-Id: TEST-EA76875B00C3
-    Username: username
-    Password: password
-    Submission_Position: 2

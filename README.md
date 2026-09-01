@@ -9,7 +9,7 @@
 
 <!-- ![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra) -->
 
-**Beta Version**: 1.4.0. This pipeline is currently in Beta testing, and
+**Beta Version**: 1.5.0 This pipeline is currently in Beta testing, and
 issues could appear during submission. Please use it at your own risk.
 Feedback and suggestions are welcome\!
 
@@ -28,12 +28,8 @@ service, product, or enterprise.
 `seqsender` is a Python program that is developed to automate the
 process of generating necessary submission files and batch uploading
 them to <ins>NCBI archives</ins> (such as **BioSample**, **SRA**, and
-**Genbank**) and <ins>GISAID databases</ins> (e.g. **EpiFlu**,
-**EpiCoV**, **EpiPox**, **EpiArbo**). Presently, the pipeline is capable
-of uploading **Influenza A Virus** (FLU), **SARS-COV-2** (COV),
-**Monkeypox** (POX), **Arbovirus** (ARBO), and a wide variety of other
-organisms. If you’d like to have `seqsender` support your virus create a
-issue.
+**Genbank**). Presently, the pipeline is capable of uploading 
+**Influenza A Virus**, **SARS-COV-2**, and a wide variety of other organisms.
 
 ## Available Versions
 

@@ -32,36 +32,6 @@ def validate_directory(name: str, path: str):
 		print(f"There is no {name} at: {path}", file=sys.stderr)
 		sys.exit(1)
 
-# Validate gisaid cli exists or error out
-def validate_gisaid_installer(submission_dir: str, organism: str, config_dict: dict[str, Any]) -> str:
-	# /<submission_dir>/gisaid_cli/<organism>_CLI
-	gisaid_cli_path_option_one = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI")
-	# /seqsender/gisaid_cli/<organism>_CLI
-	gisaid_cli_path_option_two = os.path.join(PROG_DIR, "gisaid_cli", organism.lower()+"CLI")
-	# /<submission_dir>/gisaid_cli/<organism>_CLI/<organism>_CLI
-	gisaid_cli_path_option_three = os.path.join(submission_dir, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
-	# /seqsender>/gisaid_cli/<organism>_CLI/<organism>_CLI
-	gisaid_cli_path_option_four = os.path.join(PROG_DIR, "gisaid_cli", organism.lower()+"CLI", organism.lower()+"CLI")
-	# gisaid cli path provided by config file
-	if "CLI_Path" in config_dict and config_dict["CLI_Path"] is not None and config_dict["CLI_Path"].strip() != "" and os.path.isfile(config_dict["CLI_Path"].strip()):
-		return config_dict["CLI_Path"].strip()
-	elif os.path.isfile(gisaid_cli_path_option_one):
-		return gisaid_cli_path_option_one
-	elif os.path.isfile(gisaid_cli_path_option_two):
-		return gisaid_cli_path_option_two
-	elif os.path.isfile(gisaid_cli_path_option_three):
-		return gisaid_cli_path_option_three
-	elif os.path.isfile(gisaid_cli_path_option_four):
-		return gisaid_cli_path_option_four
-	else:
-		if "CLI_Path" in config_dict and config_dict["CLI_Path"] is not None and config_dict["CLI_Path"].strip() != "":
-			cli_path_error = config_dict["CLI_Path"]
-			print(f"Error: There is not a GISAID CLI for {organism} provided via config file at: '{cli_path_error}'", file=sys.stderr)
-		print(f"Error: There is not a GISAID CLI for {organism} located at: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'", file=sys.stderr)
-		print(f"Download the GISAID CLI for {organism} from \"https://gisaid.org/\".", file=sys.stderr)
-		print(f"Extract the zip file and place the CLI binary at either: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'", file=sys.stderr)
-		sys.exit(1)
-
 # Create directory and don't error out if it already exists
 def create_directory(path: str):
 	os.makedirs(path, exist_ok = True)

@@ -24,11 +24,11 @@ seqsender_requirements = [
     ui.tags.ul(
         ui.tags.li(ui.strong("sequence_name")),
         ui.tags.ul(
-            ui.p("Required for when submitting to ", ui.strong("GenBank"), " or ", ui.strong("GISAID"), ". ",
+            ui.p("Required for when submitting to ", ui.strong("GenBank"), ". ",
                 "This field should contain the sequence header name of the fasta file you are using with SeqSender. ",
             ),
             ui.p("SeqSender will use this to join your metadata with your fasta file. ",
-                "This is to create the corresponding fasta file's for submission to GISAID/GenBank with their updated submission name based on the name used for ", ui.code(ui.strong("gb-sample_name")), " or ", ui.code(ui.strong("gs-sample_name")), ". ",
+                "This is to create the corresponding fasta file's for submission to GenBank with their updated submission name based on the name used for ", ui.code(ui.strong("gb-sample_name")), ". ",
             ),
         ),
         ui.tags.li(ui.strong("organism")),

@@ -17,7 +17,7 @@ from cryptography.fernet import Fernet, InvalidToken
 import src.file_handler as file_handler
 import src.ncbi_handler as ncbi_handler
 from config.seqsender.seqsender_schema import schema as seqsender_schema
-from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
+from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 from typing import Annotated
 from typing import Callable
 from typing import ClassVar
@@ -61,8 +61,6 @@ def x_determine_parent_database__mutmut_orig(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -75,8 +73,6 @@ def x_determine_parent_database__mutmut_1(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -89,8 +85,6 @@ def x_determine_parent_database__mutmut_2(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database and "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -103,8 +97,6 @@ def x_determine_parent_database__mutmut_3(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database and "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -117,8 +109,6 @@ def x_determine_parent_database__mutmut_4(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "XXBIOSAMPLEXX" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -131,8 +121,6 @@ def x_determine_parent_database__mutmut_5(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "biosample" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -145,8 +133,6 @@ def x_determine_parent_database__mutmut_6(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" not in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -159,8 +145,6 @@ def x_determine_parent_database__mutmut_7(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "XXSRAXX" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -173,8 +157,6 @@ def x_determine_parent_database__mutmut_8(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "sra" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -187,8 +169,6 @@ def x_determine_parent_database__mutmut_9(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" not in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -201,8 +181,6 @@ def x_determine_parent_database__mutmut_10(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "XXGENBANKXX" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -215,8 +193,6 @@ def x_determine_parent_database__mutmut_11(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "genbank" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -229,8 +205,6 @@ def x_determine_parent_database__mutmut_12(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" not in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -243,8 +217,6 @@ def x_determine_parent_database__mutmut_13(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add(None)
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -257,8 +229,6 @@ def x_determine_parent_database__mutmut_14(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("XXncbiXX")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -271,8 +241,6 @@ def x_determine_parent_database__mutmut_15(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("NCBI")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -285,10 +253,8 @@ def x_determine_parent_database__mutmut_16(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "XXGISAIDXX" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
-	if not submission_portals:
+	if submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
@@ -299,11 +265,9 @@ def x_determine_parent_database__mutmut_17(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "gisaid" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		print(None, file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
 
@@ -313,11 +277,9 @@ def x_determine_parent_database__mutmut_18(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" not in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		print("Error: Submission portals list cannot be empty.", file=None)
 		sys.exit(1)
 	return submission_portals
 
@@ -327,11 +289,9 @@ def x_determine_parent_database__mutmut_19(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add(None)
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		print(file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
 
@@ -341,11 +301,9 @@ def x_determine_parent_database__mutmut_20(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("XXgisaidXX")
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		print("Error: Submission portals list cannot be empty.", )
 		sys.exit(1)
 	return submission_portals
 
@@ -355,11 +313,9 @@ def x_determine_parent_database__mutmut_21(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("GISAID")
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		print("XXError: Submission portals list cannot be empty.XX", file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
 
@@ -369,11 +325,9 @@ def x_determine_parent_database__mutmut_22(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
-	if submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+	if not submission_portals:
+		print("error: submission portals list cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
 
@@ -383,11 +337,9 @@ def x_determine_parent_database__mutmut_23(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
-		print(None, file=sys.stderr)
+		print("ERROR: SUBMISSION PORTALS LIST CANNOT BE EMPTY.", file=sys.stderr)
 		sys.exit(1)
 	return submission_portals
 
@@ -397,12 +349,10 @@ def x_determine_parent_database__mutmut_24(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=None)
-		sys.exit(1)
+		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
+		sys.exit(None)
 	return submission_portals
 
 def x_determine_parent_database__mutmut_25(databases: list[str]) -> set[str]:
@@ -411,92 +361,6 @@ def x_determine_parent_database__mutmut_25(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print(file=sys.stderr)
-		sys.exit(1)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_26(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", )
-		sys.exit(1)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_27(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("XXError: Submission portals list cannot be empty.XX", file=sys.stderr)
-		sys.exit(1)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_28(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("error: submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_29(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("ERROR: SUBMISSION PORTALS LIST CANNOT BE EMPTY.", file=sys.stderr)
-		sys.exit(1)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_30(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
-	# Check if list empty
-	if not submission_portals:
-		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
-		sys.exit(None)
-	return submission_portals
-
-def x_determine_parent_database__mutmut_31(databases: list[str]) -> set[str]:
-	# Determine required database
-	submission_portals = set()
-	for database in databases:
-		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
-			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -528,13 +392,7 @@ x_determine_parent_database__mutmut_mutants : ClassVar[MutantDict] = { # type: i
     'x_determine_parent_database__mutmut_22': x_determine_parent_database__mutmut_22, 
     'x_determine_parent_database__mutmut_23': x_determine_parent_database__mutmut_23, 
     'x_determine_parent_database__mutmut_24': x_determine_parent_database__mutmut_24, 
-    'x_determine_parent_database__mutmut_25': x_determine_parent_database__mutmut_25, 
-    'x_determine_parent_database__mutmut_26': x_determine_parent_database__mutmut_26, 
-    'x_determine_parent_database__mutmut_27': x_determine_parent_database__mutmut_27, 
-    'x_determine_parent_database__mutmut_28': x_determine_parent_database__mutmut_28, 
-    'x_determine_parent_database__mutmut_29': x_determine_parent_database__mutmut_29, 
-    'x_determine_parent_database__mutmut_30': x_determine_parent_database__mutmut_30, 
-    'x_determine_parent_database__mutmut_31': x_determine_parent_database__mutmut_31
+    'x_determine_parent_database__mutmut_25': x_determine_parent_database__mutmut_25
 }
 x_determine_parent_database__mutmut_orig.__name__ = 'x_determine_parent_database'
 
@@ -553,13 +411,6 @@ def x_decrypt_passwords__mutmut_orig(config_dict: dict[str, Any], submission_por
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_1(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -572,13 +423,6 @@ def x_decrypt_passwords__mutmut_1(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_2(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -591,13 +435,6 @@ def x_decrypt_passwords__mutmut_2(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_3(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -610,13 +447,6 @@ def x_decrypt_passwords__mutmut_3(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_4(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -629,13 +459,6 @@ def x_decrypt_passwords__mutmut_4(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_5(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -648,13 +471,6 @@ def x_decrypt_passwords__mutmut_5(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_6(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -667,13 +483,6 @@ def x_decrypt_passwords__mutmut_6(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_7(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -686,13 +495,6 @@ def x_decrypt_passwords__mutmut_7(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_8(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -705,13 +507,6 @@ def x_decrypt_passwords__mutmut_8(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_9(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -724,13 +519,6 @@ def x_decrypt_passwords__mutmut_9(config_dict: dict[str, Any], submission_portal
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_10(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -743,13 +531,6 @@ def x_decrypt_passwords__mutmut_10(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_11(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -762,13 +543,6 @@ def x_decrypt_passwords__mutmut_11(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_12(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -781,13 +555,6 @@ def x_decrypt_passwords__mutmut_12(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_13(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -800,13 +567,6 @@ def x_decrypt_passwords__mutmut_13(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_14(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -819,13 +579,6 @@ def x_decrypt_passwords__mutmut_14(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_15(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -838,13 +591,6 @@ def x_decrypt_passwords__mutmut_15(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_16(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -857,13 +603,6 @@ def x_decrypt_passwords__mutmut_16(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_17(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -876,13 +615,6 @@ def x_decrypt_passwords__mutmut_17(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_18(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -895,13 +627,6 @@ def x_decrypt_passwords__mutmut_18(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_19(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -914,13 +639,6 @@ def x_decrypt_passwords__mutmut_19(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_20(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -933,13 +651,6 @@ def x_decrypt_passwords__mutmut_20(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_21(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -952,13 +663,6 @@ def x_decrypt_passwords__mutmut_21(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_22(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -971,13 +675,6 @@ def x_decrypt_passwords__mutmut_22(config_dict: dict[str, Any], submission_porta
 			if encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_23(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -990,13 +687,6 @@ def x_decrypt_passwords__mutmut_23(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith(None):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_24(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1009,13 +699,6 @@ def x_decrypt_passwords__mutmut_24(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("XX=XX"):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_25(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1028,13 +711,6 @@ def x_decrypt_passwords__mutmut_25(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print(None, file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_26(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1047,13 +723,6 @@ def x_decrypt_passwords__mutmut_26(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=None)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_27(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1066,13 +735,6 @@ def x_decrypt_passwords__mutmut_27(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print(file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_28(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1085,13 +747,6 @@ def x_decrypt_passwords__mutmut_28(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", )
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_29(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1104,13 +759,6 @@ def x_decrypt_passwords__mutmut_29(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("XXPasswords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.XX", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_30(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1123,13 +771,6 @@ def x_decrypt_passwords__mutmut_30(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("passwords field does not appear to be encrypted. use seqsender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def x_decrypt_passwords__mutmut_31(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
@@ -1142,469 +783,6 @@ def x_decrypt_passwords__mutmut_31(config_dict: dict[str, Any], submission_porta
 			if not encrypted_string.endswith("="):
 				print("PASSWORDS FIELD DOES NOT APPEAR TO BE ENCRYPTED. USE SEQSENDER COMMAND 'LOAD_CREDENTIALS' TO ENCRYPT YOUR CREDENTIALS BEFORE SUBMISSION.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_32(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db != "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_33(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "XXGISAIDXX":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_34(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "gisaid":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_35(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = None
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_36(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["XXSubmissionXX"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_37(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_38(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["SUBMISSION"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_39(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["XXGISAIDXX"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_40(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["gisaid"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_41(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["XXClient-IdXX"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_42(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["client-id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_43(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["CLIENT-ID"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_44(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = None
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_45(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(None)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_46(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(None).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_47(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = None
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_48(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["XXSubmissionXX"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_49(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_50(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["SUBMISSION"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_51(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["XXGISAIDXX"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_52(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["gisaid"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_53(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["XXClient-IdXX"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_54(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["client-id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-	return config_dict
-
-def x_decrypt_passwords__mutmut_55(config_dict: dict[str, Any], submission_portals: set[str], key: str) -> dict[str, Any]:
-	for parent_db in map(str.upper, submission_portals):
-		encrypted_string = config_dict["Submission"][parent_db]["Password"]
-		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
-			config_dict["Submission"][parent_db]["Password"] = decrypted_string
-		except InvalidToken:
-			if not encrypted_string.endswith("="):
-				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
-			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["CLIENT-ID"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 x_decrypt_passwords__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
@@ -1638,31 +816,7 @@ x_decrypt_passwords__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_decrypt_passwords__mutmut_28': x_decrypt_passwords__mutmut_28, 
     'x_decrypt_passwords__mutmut_29': x_decrypt_passwords__mutmut_29, 
     'x_decrypt_passwords__mutmut_30': x_decrypt_passwords__mutmut_30, 
-    'x_decrypt_passwords__mutmut_31': x_decrypt_passwords__mutmut_31, 
-    'x_decrypt_passwords__mutmut_32': x_decrypt_passwords__mutmut_32, 
-    'x_decrypt_passwords__mutmut_33': x_decrypt_passwords__mutmut_33, 
-    'x_decrypt_passwords__mutmut_34': x_decrypt_passwords__mutmut_34, 
-    'x_decrypt_passwords__mutmut_35': x_decrypt_passwords__mutmut_35, 
-    'x_decrypt_passwords__mutmut_36': x_decrypt_passwords__mutmut_36, 
-    'x_decrypt_passwords__mutmut_37': x_decrypt_passwords__mutmut_37, 
-    'x_decrypt_passwords__mutmut_38': x_decrypt_passwords__mutmut_38, 
-    'x_decrypt_passwords__mutmut_39': x_decrypt_passwords__mutmut_39, 
-    'x_decrypt_passwords__mutmut_40': x_decrypt_passwords__mutmut_40, 
-    'x_decrypt_passwords__mutmut_41': x_decrypt_passwords__mutmut_41, 
-    'x_decrypt_passwords__mutmut_42': x_decrypt_passwords__mutmut_42, 
-    'x_decrypt_passwords__mutmut_43': x_decrypt_passwords__mutmut_43, 
-    'x_decrypt_passwords__mutmut_44': x_decrypt_passwords__mutmut_44, 
-    'x_decrypt_passwords__mutmut_45': x_decrypt_passwords__mutmut_45, 
-    'x_decrypt_passwords__mutmut_46': x_decrypt_passwords__mutmut_46, 
-    'x_decrypt_passwords__mutmut_47': x_decrypt_passwords__mutmut_47, 
-    'x_decrypt_passwords__mutmut_48': x_decrypt_passwords__mutmut_48, 
-    'x_decrypt_passwords__mutmut_49': x_decrypt_passwords__mutmut_49, 
-    'x_decrypt_passwords__mutmut_50': x_decrypt_passwords__mutmut_50, 
-    'x_decrypt_passwords__mutmut_51': x_decrypt_passwords__mutmut_51, 
-    'x_decrypt_passwords__mutmut_52': x_decrypt_passwords__mutmut_52, 
-    'x_decrypt_passwords__mutmut_53': x_decrypt_passwords__mutmut_53, 
-    'x_decrypt_passwords__mutmut_54': x_decrypt_passwords__mutmut_54, 
-    'x_decrypt_passwords__mutmut_55': x_decrypt_passwords__mutmut_55
+    'x_decrypt_passwords__mutmut_31': x_decrypt_passwords__mutmut_31
 }
 x_decrypt_passwords__mutmut_orig.__name__ = 'x_decrypt_passwords'
 
@@ -1685,13 +839,9 @@ def x_encrypt_passwords__mutmut_orig(config_file: str, databases: list[str], enc
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1712,13 +862,9 @@ def x_encrypt_passwords__mutmut_1(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1739,13 +885,9 @@ def x_encrypt_passwords__mutmut_2(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1766,13 +908,9 @@ def x_encrypt_passwords__mutmut_3(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1793,13 +931,9 @@ def x_encrypt_passwords__mutmut_4(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1820,13 +954,9 @@ def x_encrypt_passwords__mutmut_5(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1847,13 +977,9 @@ def x_encrypt_passwords__mutmut_6(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1874,13 +1000,9 @@ def x_encrypt_passwords__mutmut_7(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1901,13 +1023,9 @@ def x_encrypt_passwords__mutmut_8(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1928,13 +1046,9 @@ def x_encrypt_passwords__mutmut_9(config_file: str, databases: list[str], encryp
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1955,13 +1069,9 @@ def x_encrypt_passwords__mutmut_10(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -1982,13 +1092,9 @@ def x_encrypt_passwords__mutmut_11(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2009,13 +1115,9 @@ def x_encrypt_passwords__mutmut_12(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2036,13 +1138,9 @@ def x_encrypt_passwords__mutmut_13(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2063,13 +1161,9 @@ def x_encrypt_passwords__mutmut_14(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2090,13 +1184,9 @@ def x_encrypt_passwords__mutmut_15(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2117,13 +1207,9 @@ def x_encrypt_passwords__mutmut_16(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2144,13 +1230,9 @@ def x_encrypt_passwords__mutmut_17(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2171,13 +1253,9 @@ def x_encrypt_passwords__mutmut_18(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2198,13 +1276,9 @@ def x_encrypt_passwords__mutmut_19(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2225,13 +1299,9 @@ def x_encrypt_passwords__mutmut_20(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2252,13 +1322,9 @@ def x_encrypt_passwords__mutmut_21(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2279,13 +1345,9 @@ def x_encrypt_passwords__mutmut_22(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2306,13 +1368,9 @@ def x_encrypt_passwords__mutmut_23(config_file: str, databases: list[str], encry
 		password = None
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2333,13 +1391,9 @@ def x_encrypt_passwords__mutmut_24(config_file: str, databases: list[str], encry
 		password = getpass(None)
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2360,13 +1414,9 @@ def x_encrypt_passwords__mutmut_25(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db != "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2387,13 +1437,9 @@ def x_encrypt_passwords__mutmut_26(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "XXNCBIXX":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2414,13 +1460,9 @@ def x_encrypt_passwords__mutmut_27(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "ncbi":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2441,13 +1483,9 @@ def x_encrypt_passwords__mutmut_28(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(None, crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2468,13 +1506,9 @@ def x_encrypt_passwords__mutmut_29(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = None)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2495,13 +1529,9 @@ def x_encrypt_passwords__mutmut_30(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2522,13 +1552,9 @@ def x_encrypt_passwords__mutmut_31(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], )
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2549,13 +1575,9 @@ def x_encrypt_passwords__mutmut_32(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["XXNCBIXX"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2576,13 +1598,9 @@ def x_encrypt_passwords__mutmut_33(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["ncbi"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2603,13 +1621,9 @@ def x_encrypt_passwords__mutmut_34(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = False)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2630,13 +1644,9 @@ def x_encrypt_passwords__mutmut_35(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db != "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
+		encrypted_password = None
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2657,13 +1667,9 @@ def x_encrypt_passwords__mutmut_36(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "XXGISAIDXX":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
+		encrypted_password = encrypter.encrypt(None)
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2684,13 +1690,9 @@ def x_encrypt_passwords__mutmut_37(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "gisaid":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["Password"] = None
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2711,13 +1713,9 @@ def x_encrypt_passwords__mutmut_38(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = None
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["XXPasswordXX"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2738,13 +1736,9 @@ def x_encrypt_passwords__mutmut_39(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(None)
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2765,13 +1759,9 @@ def x_encrypt_passwords__mutmut_40(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = None
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["PASSWORD"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2792,13 +1782,9 @@ def x_encrypt_passwords__mutmut_41(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(None)
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = None, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2819,13 +1805,9 @@ def x_encrypt_passwords__mutmut_42(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = None
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = None)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2846,13 +1828,9 @@ def x_encrypt_passwords__mutmut_43(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["XXGISAIDXX"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2873,13 +1851,9 @@ def x_encrypt_passwords__mutmut_44(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["gisaid"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, )
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -2900,14 +1874,10 @@ def x_encrypt_passwords__mutmut_45(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["XXClient-IdXX"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = None
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -2927,14 +1897,10 @@ def x_encrypt_passwords__mutmut_46(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["client-id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = None, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -2954,14 +1920,10 @@ def x_encrypt_passwords__mutmut_47(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["CLIENT-ID"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = None, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -2981,14 +1943,10 @@ def x_encrypt_passwords__mutmut_48(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = None
+		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = None)
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -3008,14 +1966,10 @@ def x_encrypt_passwords__mutmut_49(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(None)
+		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -3035,14 +1989,10 @@ def x_encrypt_passwords__mutmut_50(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = None
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -3062,14 +2012,10 @@ def x_encrypt_passwords__mutmut_51(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["XXPasswordXX"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, )
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
@@ -3089,16 +2035,12 @@ def x_encrypt_passwords__mutmut_52(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
+		print(None)
 		print(f"key: {key.decode()}")
 	print("Credentials successfully loaded/encrypted into config file.")
 
@@ -3116,16 +2058,12 @@ def x_encrypt_passwords__mutmut_53(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["PASSWORD"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+		config_dict[parent_db]["Password"] = encrypted_password
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
+		print("XXSave this key somewhere secure. It will be required for performing submission.XX")
 		print(f"key: {key.decode()}")
 	print("Credentials successfully loaded/encrypted into config file.")
 
@@ -3143,16 +2081,12 @@ def x_encrypt_passwords__mutmut_54(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=None, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
+		print("save this key somewhere secure. it will be required for performing submission.")
 		print(f"key: {key.decode()}")
 	print("Credentials successfully loaded/encrypted into config file.")
 
@@ -3170,16 +2104,12 @@ def x_encrypt_passwords__mutmut_55(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = None)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
+		print("SAVE THIS KEY SOMEWHERE SECURE. IT WILL BE REQUIRED FOR PERFORMING SUBMISSION.")
 		print(f"key: {key.decode()}")
 	print("Credentials successfully loaded/encrypted into config file.")
 
@@ -3197,17 +2127,13 @@ def x_encrypt_passwords__mutmut_56(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
+		print(None)
 	print("Credentials successfully loaded/encrypted into config file.")
 
 def x_encrypt_passwords__mutmut_57(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
@@ -3224,18 +2150,14 @@ def x_encrypt_passwords__mutmut_57(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, )
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
+	print(None)
 
 def x_encrypt_passwords__mutmut_58(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
 	submission_portals = determine_parent_database(databases)
@@ -3251,18 +2173,14 @@ def x_encrypt_passwords__mutmut_58(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = None
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
+	print("XXCredentials successfully loaded/encrypted into config file.XX")
 
 def x_encrypt_passwords__mutmut_59(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
 	submission_portals = determine_parent_database(databases)
@@ -3278,18 +2196,14 @@ def x_encrypt_passwords__mutmut_59(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = None, databases = databases, decrypt_key = key.decode())
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
+	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
 		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
+	print("credentials successfully loaded/encrypted into config file.")
 
 def x_encrypt_passwords__mutmut_60(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
 	submission_portals = determine_parent_database(databases)
@@ -3305,364 +2219,9 @@ def x_encrypt_passwords__mutmut_60(config_file: str, databases: list[str], encry
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = None, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_61(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = None)
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_62(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_63(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_64(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, )
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_65(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print(None)
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_66(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("XXSave this key somewhere secure. It will be required for performing submission.XX")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_67(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("save this key somewhere secure. it will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_68(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("SAVE THIS KEY SOMEWHERE SECURE. IT WILL BE REQUIRED FOR PERFORMING SUBMISSION.")
-		print(f"key: {key.decode()}")
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_69(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(None)
-	print("Credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_70(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print(None)
-
-def x_encrypt_passwords__mutmut_71(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("XXCredentials successfully loaded/encrypted into config file.XX")
-
-def x_encrypt_passwords__mutmut_72(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
-	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
-	if print_key:
-		print("Save this key somewhere secure. It will be required for performing submission.")
-		print(f"key: {key.decode()}")
-	print("credentials successfully loaded/encrypted into config file.")
-
-def x_encrypt_passwords__mutmut_73(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
-	submission_portals = determine_parent_database(databases)
-	config_dict = get_config(config_file = config_file, databases = databases, passwords_validation = False)
-	print_key = True
-	if encryption_key:
-		key = encryption_key.encode()
-		print_key = False
-	else:
-		key = Fernet.generate_key()
-	encrypter = Fernet(key)
-	for parent_db in map(str.upper, submission_portals):
-		password = getpass(f"Enter password for {parent_db} account: ")
-		if parent_db == "NCBI":
-			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-		encrypted_password = encrypter.encrypt(password.encode())
-		config_dict[parent_db]["Password"] = encrypted_password
-	file_handler.save_yaml(config_dict=config_dict, yaml_path = config_file)
+	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:
 		print("Save this key somewhere secure. It will be required for performing submission.")
@@ -3729,20 +2288,7 @@ x_encrypt_passwords__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_encrypt_passwords__mutmut_57': x_encrypt_passwords__mutmut_57, 
     'x_encrypt_passwords__mutmut_58': x_encrypt_passwords__mutmut_58, 
     'x_encrypt_passwords__mutmut_59': x_encrypt_passwords__mutmut_59, 
-    'x_encrypt_passwords__mutmut_60': x_encrypt_passwords__mutmut_60, 
-    'x_encrypt_passwords__mutmut_61': x_encrypt_passwords__mutmut_61, 
-    'x_encrypt_passwords__mutmut_62': x_encrypt_passwords__mutmut_62, 
-    'x_encrypt_passwords__mutmut_63': x_encrypt_passwords__mutmut_63, 
-    'x_encrypt_passwords__mutmut_64': x_encrypt_passwords__mutmut_64, 
-    'x_encrypt_passwords__mutmut_65': x_encrypt_passwords__mutmut_65, 
-    'x_encrypt_passwords__mutmut_66': x_encrypt_passwords__mutmut_66, 
-    'x_encrypt_passwords__mutmut_67': x_encrypt_passwords__mutmut_67, 
-    'x_encrypt_passwords__mutmut_68': x_encrypt_passwords__mutmut_68, 
-    'x_encrypt_passwords__mutmut_69': x_encrypt_passwords__mutmut_69, 
-    'x_encrypt_passwords__mutmut_70': x_encrypt_passwords__mutmut_70, 
-    'x_encrypt_passwords__mutmut_71': x_encrypt_passwords__mutmut_71, 
-    'x_encrypt_passwords__mutmut_72': x_encrypt_passwords__mutmut_72, 
-    'x_encrypt_passwords__mutmut_73': x_encrypt_passwords__mutmut_73
+    'x_encrypt_passwords__mutmut_60': x_encrypt_passwords__mutmut_60
 }
 x_encrypt_passwords__mutmut_orig.__name__ = 'x_encrypt_passwords'
 
@@ -3771,8 +2317,6 @@ def x_get_config__mutmut_orig(config_file: str, databases: list[str], passwords_
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3800,8 +2344,6 @@ def x_get_config__mutmut_1(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3829,8 +2371,6 @@ def x_get_config__mutmut_2(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3858,8 +2398,6 @@ def x_get_config__mutmut_3(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3887,8 +2425,6 @@ def x_get_config__mutmut_4(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3916,8 +2452,6 @@ def x_get_config__mutmut_5(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3945,8 +2479,6 @@ def x_get_config__mutmut_6(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -3974,8 +2506,6 @@ def x_get_config__mutmut_7(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4003,8 +2533,6 @@ def x_get_config__mutmut_8(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4032,8 +2560,6 @@ def x_get_config__mutmut_9(config_file: str, databases: list[str], passwords_val
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4061,8 +2587,6 @@ def x_get_config__mutmut_10(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4090,8 +2614,6 @@ def x_get_config__mutmut_11(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4119,8 +2641,6 @@ def x_get_config__mutmut_12(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4148,8 +2668,6 @@ def x_get_config__mutmut_13(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4177,8 +2695,6 @@ def x_get_config__mutmut_14(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4206,8 +2722,6 @@ def x_get_config__mutmut_15(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4235,8 +2749,6 @@ def x_get_config__mutmut_16(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4264,8 +2776,6 @@ def x_get_config__mutmut_17(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4293,8 +2803,6 @@ def x_get_config__mutmut_18(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4322,8 +2830,6 @@ def x_get_config__mutmut_19(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4351,8 +2857,6 @@ def x_get_config__mutmut_20(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4380,8 +2884,6 @@ def x_get_config__mutmut_21(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4409,8 +2911,6 @@ def x_get_config__mutmut_22(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4438,8 +2938,6 @@ def x_get_config__mutmut_23(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4467,8 +2965,6 @@ def x_get_config__mutmut_24(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4496,8 +2992,6 @@ def x_get_config__mutmut_25(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4525,8 +3019,6 @@ def x_get_config__mutmut_26(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4554,8 +3046,6 @@ def x_get_config__mutmut_27(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4583,8 +3073,6 @@ def x_get_config__mutmut_28(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4612,8 +3100,6 @@ def x_get_config__mutmut_29(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4641,8 +3127,6 @@ def x_get_config__mutmut_30(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4670,8 +3154,6 @@ def x_get_config__mutmut_31(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4699,8 +3181,6 @@ def x_get_config__mutmut_32(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4728,8 +3208,6 @@ def x_get_config__mutmut_33(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4757,8 +3235,6 @@ def x_get_config__mutmut_34(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4786,8 +3262,6 @@ def x_get_config__mutmut_35(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4815,8 +3289,6 @@ def x_get_config__mutmut_36(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4844,8 +3316,6 @@ def x_get_config__mutmut_37(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4873,8 +3343,6 @@ def x_get_config__mutmut_38(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4902,8 +3370,6 @@ def x_get_config__mutmut_39(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4931,8 +3397,6 @@ def x_get_config__mutmut_40(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4960,8 +3424,6 @@ def x_get_config__mutmut_41(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -4989,8 +3451,6 @@ def x_get_config__mutmut_42(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5018,8 +3478,6 @@ def x_get_config__mutmut_43(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5047,8 +3505,6 @@ def x_get_config__mutmut_44(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5076,8 +3532,6 @@ def x_get_config__mutmut_45(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5105,8 +3559,6 @@ def x_get_config__mutmut_46(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5134,8 +3586,6 @@ def x_get_config__mutmut_47(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5163,8 +3613,6 @@ def x_get_config__mutmut_48(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5192,8 +3640,6 @@ def x_get_config__mutmut_49(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5221,8 +3667,6 @@ def x_get_config__mutmut_50(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5250,8 +3694,6 @@ def x_get_config__mutmut_51(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5279,8 +3721,6 @@ def x_get_config__mutmut_52(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5308,8 +3748,6 @@ def x_get_config__mutmut_53(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5337,8 +3775,6 @@ def x_get_config__mutmut_54(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5366,8 +3802,6 @@ def x_get_config__mutmut_55(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5395,8 +3829,6 @@ def x_get_config__mutmut_56(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5424,8 +3856,6 @@ def x_get_config__mutmut_57(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5453,8 +3883,6 @@ def x_get_config__mutmut_58(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5482,8 +3910,6 @@ def x_get_config__mutmut_59(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5511,8 +3937,6 @@ def x_get_config__mutmut_60(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5540,8 +3964,6 @@ def x_get_config__mutmut_61(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5569,8 +3991,6 @@ def x_get_config__mutmut_62(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5598,8 +4018,6 @@ def x_get_config__mutmut_63(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5627,8 +4045,6 @@ def x_get_config__mutmut_64(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5656,8 +4072,6 @@ def x_get_config__mutmut_65(config_file: str, databases: list[str], passwords_va
 			print(None, file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5685,8 +4099,6 @@ def x_get_config__mutmut_66(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=None)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5714,8 +4126,6 @@ def x_get_config__mutmut_67(config_file: str, databases: list[str], passwords_va
 			print(file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5743,8 +4153,6 @@ def x_get_config__mutmut_68(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), )
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5772,8 +4180,6 @@ def x_get_config__mutmut_69(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(None, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5801,8 +4207,6 @@ def x_get_config__mutmut_70(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = None), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5830,8 +4234,6 @@ def x_get_config__mutmut_71(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5859,8 +4261,6 @@ def x_get_config__mutmut_72(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, ), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5888,8 +4288,6 @@ def x_get_config__mutmut_73(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 5), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5917,8 +4315,6 @@ def x_get_config__mutmut_74(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(None)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5946,8 +4342,6 @@ def x_get_config__mutmut_75(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(2)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -5975,9 +4369,7 @@ def x_get_config__mutmut_76(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases or "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
+			config_dict = None
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
@@ -6004,9 +4396,7 @@ def x_get_config__mutmut_77(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "XXGENBANKXX" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
+			config_dict = parse_hold_date(config_dict=None)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
@@ -6033,11 +4423,9 @@ def x_get_config__mutmut_78(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "genbank" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = None
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6062,11 +4450,9 @@ def x_get_config__mutmut_79(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" not in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = None, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6091,11 +4477,9 @@ def x_get_config__mutmut_80(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "XXGISAIDXX" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = None, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6120,11 +4504,9 @@ def x_get_config__mutmut_81(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "gisaid" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = None)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6149,11 +4531,9 @@ def x_get_config__mutmut_82(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" not in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6178,11 +4558,9 @@ def x_get_config__mutmut_83(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=None)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6207,11 +4585,9 @@ def x_get_config__mutmut_84(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = None
+			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, )
 			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
@@ -6236,12 +4612,10 @@ def x_get_config__mutmut_85(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=None)
+			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
+			return config_dict["XXSubmissionXX"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
@@ -6265,12 +4639,10 @@ def x_get_config__mutmut_86(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = None
-			return config_dict["Submission"]
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
@@ -6294,12 +4666,10 @@ def x_get_config__mutmut_87(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = None, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
+			return config_dict["SUBMISSION"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
@@ -6323,14 +4693,12 @@ def x_get_config__mutmut_88(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = None, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print(None, file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
@@ -6352,14 +4720,12 @@ def x_get_config__mutmut_89(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = None)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print("Error: Config file is incorrect. File must be a valid yaml format.", file=None)
 		sys.exit(1)
 
 # Check the config file
@@ -6381,14 +4747,12 @@ def x_get_config__mutmut_90(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(submission_portals = submission_portals, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print(file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
@@ -6410,14 +4774,12 @@ def x_get_config__mutmut_91(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, key = decrypt_key)
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print("Error: Config file is incorrect. File must be a valid yaml format.", )
 		sys.exit(1)
 
 # Check the config file
@@ -6439,14 +4801,12 @@ def x_get_config__mutmut_92(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, )
+				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
 			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print("XXError: Config file is incorrect. File must be a valid yaml format.XX", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
@@ -6468,14 +4828,12 @@ def x_get_config__mutmut_93(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["XXSubmissionXX"]
+			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print("error: config file is incorrect. file must be a valid yaml format.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
@@ -6497,14 +4855,12 @@ def x_get_config__mutmut_94(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["submission"]
+			return config_dict["Submission"]
 	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
+		print("ERROR: CONFIG FILE IS INCORRECT. FILE MUST BE A VALID YAML FORMAT.", file=sys.stderr)
 		sys.exit(1)
 
 # Check the config file
@@ -6526,15 +4882,13 @@ def x_get_config__mutmut_95(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["SUBMISSION"]
+			return config_dict["Submission"]
 	else:
 		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
+		sys.exit(None)
 
 # Check the config file
 def x_get_config__mutmut_96(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
@@ -6555,240 +4909,6 @@ def x_get_config__mutmut_96(config_file: str, databases: list[str], passwords_va
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print(None, file=sys.stderr)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_97(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=None)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_98(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print(file=sys.stderr)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_99(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", )
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_100(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("XXError: Config file is incorrect. File must be a valid yaml format.XX", file=sys.stderr)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_101(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("error: config file is incorrect. file must be a valid yaml format.", file=sys.stderr)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_102(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("ERROR: CONFIG FILE IS INCORRECT. FILE MUST BE A VALID YAML FORMAT.", file=sys.stderr)
-		sys.exit(1)
-
-# Check the config file
-def x_get_config__mutmut_103(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
-			config_dict = parse_hold_date(config_dict=config_dict)
-			if decrypt_key:
-				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
-			return config_dict["Submission"]
-	else:
-		print("Error: Config file is incorrect. File must be a valid yaml format.", file=sys.stderr)
-		sys.exit(None)
-
-# Check the config file
-def x_get_config__mutmut_104(config_file: str, databases: list[str], passwords_validation: bool = True, decrypt_key: Optional[str] = None) -> dict[str, Any]:
-	submission_portals = determine_parent_database(databases)
-	submission_schema_file = get_submission_schema_config_name(submission_portals=submission_portals)
-	# Read in user config file
-	config_dict = file_handler.load_yaml(yaml_type = "Config file", yaml_path = config_file)
-	# Check if yaml forms dictionary
-	if type(config_dict) is dict:
-		schema = eval(open(os.path.join(PROG_DIR, "config", "seqsender", "config_file", submission_schema_file), 'r').read())
-		database_specific_config_schema_updates(schema, databases)
-		if passwords_validation == False:
-			password_encryption_config_schema_updates(schema, submission_portals)
-		validator = Validator(schema)
-		# Validate based on schema
-		if validator.validate(config_dict, schema) is False:
-			print("Error: Config file is not properly setup. Please correct config file based on issue below:", file=sys.stderr)
-			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
-			sys.exit(1)
-		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -6893,15 +5013,7 @@ x_get_config__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_get_config__mutmut_93': x_get_config__mutmut_93, 
     'x_get_config__mutmut_94': x_get_config__mutmut_94, 
     'x_get_config__mutmut_95': x_get_config__mutmut_95, 
-    'x_get_config__mutmut_96': x_get_config__mutmut_96, 
-    'x_get_config__mutmut_97': x_get_config__mutmut_97, 
-    'x_get_config__mutmut_98': x_get_config__mutmut_98, 
-    'x_get_config__mutmut_99': x_get_config__mutmut_99, 
-    'x_get_config__mutmut_100': x_get_config__mutmut_100, 
-    'x_get_config__mutmut_101': x_get_config__mutmut_101, 
-    'x_get_config__mutmut_102': x_get_config__mutmut_102, 
-    'x_get_config__mutmut_103': x_get_config__mutmut_103, 
-    'x_get_config__mutmut_104': x_get_config__mutmut_104
+    'x_get_config__mutmut_96': x_get_config__mutmut_96
 }
 x_get_config__mutmut_orig.__name__ = 'x_get_config'
 
@@ -6914,8 +5026,6 @@ def x_get_submission_schema_config_name__mutmut_orig(submission_portals: set[str
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6923,8 +5033,6 @@ def x_get_submission_schema_config_name__mutmut_1(submission_portals: set[str]) 
 	submission_schema_file_name = None
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6932,8 +5040,6 @@ def x_get_submission_schema_config_name__mutmut_2(submission_portals: set[str]) 
 	submission_schema_file_name = "XXXX"
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6941,8 +5047,6 @@ def x_get_submission_schema_config_name__mutmut_3(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "XXncbiXX" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6950,8 +5054,6 @@ def x_get_submission_schema_config_name__mutmut_4(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "NCBI" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6959,8 +5061,6 @@ def x_get_submission_schema_config_name__mutmut_5(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "ncbi" not in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6968,8 +5068,6 @@ def x_get_submission_schema_config_name__mutmut_6(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name = "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6977,8 +5075,6 @@ def x_get_submission_schema_config_name__mutmut_7(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name -= "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6986,8 +5082,6 @@ def x_get_submission_schema_config_name__mutmut_8(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "XXncbi_XX"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -6995,8 +5089,6 @@ def x_get_submission_schema_config_name__mutmut_9(submission_portals: set[str]) 
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "NCBI_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
@@ -7004,98 +5096,27 @@ def x_get_submission_schema_config_name__mutmut_10(submission_portals: set[str])
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "XXgisaidXX" in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name += "schema.py"
+	submission_schema_file_name = "schema.py"
 	return submission_schema_file_name
 
 def x_get_submission_schema_config_name__mutmut_11(submission_portals: set[str]) -> str:
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "GISAID" in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name += "schema.py"
+	submission_schema_file_name -= "schema.py"
 	return submission_schema_file_name
 
 def x_get_submission_schema_config_name__mutmut_12(submission_portals: set[str]) -> str:
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" not in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name += "schema.py"
+	submission_schema_file_name += "XXschema.pyXX"
 	return submission_schema_file_name
 
 def x_get_submission_schema_config_name__mutmut_13(submission_portals: set[str]) -> str:
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name = "gisaid_"
-	submission_schema_file_name += "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_14(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name -= "gisaid_"
-	submission_schema_file_name += "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_15(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "XXgisaid_XX"
-	submission_schema_file_name += "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_16(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "GISAID_"
-	submission_schema_file_name += "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_17(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name = "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_18(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name -= "schema.py"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_19(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
-	submission_schema_file_name += "XXschema.pyXX"
-	return submission_schema_file_name
-
-def x_get_submission_schema_config_name__mutmut_20(submission_portals: set[str]) -> str:
-	submission_schema_file_name = ""
-	if "ncbi" in submission_portals:
-		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "SCHEMA.PY"
 	return submission_schema_file_name
 
@@ -7112,280 +5133,9 @@ x_get_submission_schema_config_name__mutmut_mutants : ClassVar[MutantDict] = { #
     'x_get_submission_schema_config_name__mutmut_10': x_get_submission_schema_config_name__mutmut_10, 
     'x_get_submission_schema_config_name__mutmut_11': x_get_submission_schema_config_name__mutmut_11, 
     'x_get_submission_schema_config_name__mutmut_12': x_get_submission_schema_config_name__mutmut_12, 
-    'x_get_submission_schema_config_name__mutmut_13': x_get_submission_schema_config_name__mutmut_13, 
-    'x_get_submission_schema_config_name__mutmut_14': x_get_submission_schema_config_name__mutmut_14, 
-    'x_get_submission_schema_config_name__mutmut_15': x_get_submission_schema_config_name__mutmut_15, 
-    'x_get_submission_schema_config_name__mutmut_16': x_get_submission_schema_config_name__mutmut_16, 
-    'x_get_submission_schema_config_name__mutmut_17': x_get_submission_schema_config_name__mutmut_17, 
-    'x_get_submission_schema_config_name__mutmut_18': x_get_submission_schema_config_name__mutmut_18, 
-    'x_get_submission_schema_config_name__mutmut_19': x_get_submission_schema_config_name__mutmut_19, 
-    'x_get_submission_schema_config_name__mutmut_20': x_get_submission_schema_config_name__mutmut_20
+    'x_get_submission_schema_config_name__mutmut_13': x_get_submission_schema_config_name__mutmut_13
 }
 x_get_submission_schema_config_name__mutmut_orig.__name__ = 'x_get_submission_schema_config_name'
-
-def validate_submission_position(config_dict: dict[str, Any]):
-	args = [config_dict]# type: ignore
-	kwargs = {}# type: ignore
-	return _mutmut_trampoline(x_validate_submission_position__mutmut_orig, x_validate_submission_position__mutmut_mutants, args, kwargs, None)
-
-def x_validate_submission_position__mutmut_orig(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_1(config_dict: dict[str, Any]):
-	genbank_position = None
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_2(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=None, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_3(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database=None)
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_4(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_5(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, )
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_6(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="XXGENBANKXX")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_7(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="genbank")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_8(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = None
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_9(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=None, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_10(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database=None)
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_11(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_12(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, )
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_13(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="XXGISAIDXX")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_14(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="gisaid")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_15(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) and (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_16(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) and (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_17(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None or genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_18(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is not None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_19(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_20(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None or genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_21(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_22(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is not None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_23(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) or gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_24(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) or isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_25(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position != genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_26(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(None, file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_27(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=None)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_28(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(file=sys.stderr)
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_29(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", )
-		sys.exit(1)
-
-def x_validate_submission_position__mutmut_30(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(None)
-
-def x_validate_submission_position__mutmut_31(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(2)
-
-x_validate_submission_position__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
-'x_validate_submission_position__mutmut_1': x_validate_submission_position__mutmut_1, 
-    'x_validate_submission_position__mutmut_2': x_validate_submission_position__mutmut_2, 
-    'x_validate_submission_position__mutmut_3': x_validate_submission_position__mutmut_3, 
-    'x_validate_submission_position__mutmut_4': x_validate_submission_position__mutmut_4, 
-    'x_validate_submission_position__mutmut_5': x_validate_submission_position__mutmut_5, 
-    'x_validate_submission_position__mutmut_6': x_validate_submission_position__mutmut_6, 
-    'x_validate_submission_position__mutmut_7': x_validate_submission_position__mutmut_7, 
-    'x_validate_submission_position__mutmut_8': x_validate_submission_position__mutmut_8, 
-    'x_validate_submission_position__mutmut_9': x_validate_submission_position__mutmut_9, 
-    'x_validate_submission_position__mutmut_10': x_validate_submission_position__mutmut_10, 
-    'x_validate_submission_position__mutmut_11': x_validate_submission_position__mutmut_11, 
-    'x_validate_submission_position__mutmut_12': x_validate_submission_position__mutmut_12, 
-    'x_validate_submission_position__mutmut_13': x_validate_submission_position__mutmut_13, 
-    'x_validate_submission_position__mutmut_14': x_validate_submission_position__mutmut_14, 
-    'x_validate_submission_position__mutmut_15': x_validate_submission_position__mutmut_15, 
-    'x_validate_submission_position__mutmut_16': x_validate_submission_position__mutmut_16, 
-    'x_validate_submission_position__mutmut_17': x_validate_submission_position__mutmut_17, 
-    'x_validate_submission_position__mutmut_18': x_validate_submission_position__mutmut_18, 
-    'x_validate_submission_position__mutmut_19': x_validate_submission_position__mutmut_19, 
-    'x_validate_submission_position__mutmut_20': x_validate_submission_position__mutmut_20, 
-    'x_validate_submission_position__mutmut_21': x_validate_submission_position__mutmut_21, 
-    'x_validate_submission_position__mutmut_22': x_validate_submission_position__mutmut_22, 
-    'x_validate_submission_position__mutmut_23': x_validate_submission_position__mutmut_23, 
-    'x_validate_submission_position__mutmut_24': x_validate_submission_position__mutmut_24, 
-    'x_validate_submission_position__mutmut_25': x_validate_submission_position__mutmut_25, 
-    'x_validate_submission_position__mutmut_26': x_validate_submission_position__mutmut_26, 
-    'x_validate_submission_position__mutmut_27': x_validate_submission_position__mutmut_27, 
-    'x_validate_submission_position__mutmut_28': x_validate_submission_position__mutmut_28, 
-    'x_validate_submission_position__mutmut_29': x_validate_submission_position__mutmut_29, 
-    'x_validate_submission_position__mutmut_30': x_validate_submission_position__mutmut_30, 
-    'x_validate_submission_position__mutmut_31': x_validate_submission_position__mutmut_31
-}
-x_validate_submission_position__mutmut_orig.__name__ = 'x_validate_submission_position'
 
 def get_submission_type(test: bool) -> str:
 	args = [test]# type: ignore
@@ -7430,752 +5180,6 @@ x_get_submission_type__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
 }
 x_get_submission_type__mutmut_orig.__name__ = 'x_get_submission_type'
 
-def get_submission_position(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	args = [config_dict, database]# type: ignore
-	kwargs = {}# type: ignore
-	return _mutmut_trampoline(x_get_submission_position__mutmut_orig, x_get_submission_position__mutmut_mutants, args, kwargs, None)
-
-def x_get_submission_position__mutmut_orig(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_1(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database not in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_2(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["XXBIOSAMPLEXX", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_3(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["biosample", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_4(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "XXSRAXX", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_5(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "sra", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_6(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "XXGENBANKXX"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_7(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "genbank"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_8(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = None
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_9(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "XXNCBIXX"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_10(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "ncbi"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_11(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database != "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_12(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "XXGISAIDXX":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_13(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "gisaid":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_14(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = None
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_15(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "XXGISAIDXX"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_16(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "gisaid"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_17(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(None, file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_18(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=None)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_19(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_20(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", )
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_21(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(None)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_22(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(2)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_23(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "XXSubmissionXX" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_24(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_25(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "SUBMISSION" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_26(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" not in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_27(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = None
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_28(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["XXSubmissionXX"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_29(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_30(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["SUBMISSION"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_31(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database not in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_32(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = None
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_33(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict or isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_34(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "XXSubmission_PositionXX" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_35(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "submission_position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_36(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "SUBMISSION_POSITION" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_37(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" not in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_38(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["XXSubmission_PositionXX"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_39(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["submission_position"]
-	else:
-		return None
-
-def x_get_submission_position__mutmut_40(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["SUBMISSION_POSITION"]
-	else:
-		return None
-
-x_get_submission_position__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
-'x_get_submission_position__mutmut_1': x_get_submission_position__mutmut_1, 
-    'x_get_submission_position__mutmut_2': x_get_submission_position__mutmut_2, 
-    'x_get_submission_position__mutmut_3': x_get_submission_position__mutmut_3, 
-    'x_get_submission_position__mutmut_4': x_get_submission_position__mutmut_4, 
-    'x_get_submission_position__mutmut_5': x_get_submission_position__mutmut_5, 
-    'x_get_submission_position__mutmut_6': x_get_submission_position__mutmut_6, 
-    'x_get_submission_position__mutmut_7': x_get_submission_position__mutmut_7, 
-    'x_get_submission_position__mutmut_8': x_get_submission_position__mutmut_8, 
-    'x_get_submission_position__mutmut_9': x_get_submission_position__mutmut_9, 
-    'x_get_submission_position__mutmut_10': x_get_submission_position__mutmut_10, 
-    'x_get_submission_position__mutmut_11': x_get_submission_position__mutmut_11, 
-    'x_get_submission_position__mutmut_12': x_get_submission_position__mutmut_12, 
-    'x_get_submission_position__mutmut_13': x_get_submission_position__mutmut_13, 
-    'x_get_submission_position__mutmut_14': x_get_submission_position__mutmut_14, 
-    'x_get_submission_position__mutmut_15': x_get_submission_position__mutmut_15, 
-    'x_get_submission_position__mutmut_16': x_get_submission_position__mutmut_16, 
-    'x_get_submission_position__mutmut_17': x_get_submission_position__mutmut_17, 
-    'x_get_submission_position__mutmut_18': x_get_submission_position__mutmut_18, 
-    'x_get_submission_position__mutmut_19': x_get_submission_position__mutmut_19, 
-    'x_get_submission_position__mutmut_20': x_get_submission_position__mutmut_20, 
-    'x_get_submission_position__mutmut_21': x_get_submission_position__mutmut_21, 
-    'x_get_submission_position__mutmut_22': x_get_submission_position__mutmut_22, 
-    'x_get_submission_position__mutmut_23': x_get_submission_position__mutmut_23, 
-    'x_get_submission_position__mutmut_24': x_get_submission_position__mutmut_24, 
-    'x_get_submission_position__mutmut_25': x_get_submission_position__mutmut_25, 
-    'x_get_submission_position__mutmut_26': x_get_submission_position__mutmut_26, 
-    'x_get_submission_position__mutmut_27': x_get_submission_position__mutmut_27, 
-    'x_get_submission_position__mutmut_28': x_get_submission_position__mutmut_28, 
-    'x_get_submission_position__mutmut_29': x_get_submission_position__mutmut_29, 
-    'x_get_submission_position__mutmut_30': x_get_submission_position__mutmut_30, 
-    'x_get_submission_position__mutmut_31': x_get_submission_position__mutmut_31, 
-    'x_get_submission_position__mutmut_32': x_get_submission_position__mutmut_32, 
-    'x_get_submission_position__mutmut_33': x_get_submission_position__mutmut_33, 
-    'x_get_submission_position__mutmut_34': x_get_submission_position__mutmut_34, 
-    'x_get_submission_position__mutmut_35': x_get_submission_position__mutmut_35, 
-    'x_get_submission_position__mutmut_36': x_get_submission_position__mutmut_36, 
-    'x_get_submission_position__mutmut_37': x_get_submission_position__mutmut_37, 
-    'x_get_submission_position__mutmut_38': x_get_submission_position__mutmut_38, 
-    'x_get_submission_position__mutmut_39': x_get_submission_position__mutmut_39, 
-    'x_get_submission_position__mutmut_40': x_get_submission_position__mutmut_40
-}
-x_get_submission_position__mutmut_orig.__name__ = 'x_get_submission_position'
-
 def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	args = [schema, submission_portals]# type: ignore
 	kwargs = {}# type: ignore
@@ -8184,441 +5188,101 @@ def password_encryption_config_schema_updates(schema: dict[str, Any], submission
 def x_password_encryption_config_schema_updates__mutmut_orig(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_1(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "XXNCBIXX" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_2(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "ncbi" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_3(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" not in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_4(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = None
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_5(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["XXSubmissionXX"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_6(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_7(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["SUBMISSION"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_8(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["XXschemaXX"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_9(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["SCHEMA"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_10(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["XXNCBIXX"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_11(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["ncbi"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_12(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["XXschemaXX"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_13(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["SCHEMA"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_14(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["XXPasswordXX"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_15(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_16(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["PASSWORD"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_17(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["XXrequiredXX"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_18(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["REQUIRED"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def x_password_encryption_config_schema_updates__mutmut_19(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = True
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_20(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "XXGISAIDXX" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_21(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "gisaid" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_22(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" not in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_23(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = None
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_24(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["XXSubmissionXX"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_25(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_26(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["SUBMISSION"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_27(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["XXschemaXX"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_28(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["SCHEMA"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_29(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["XXGISAIDXX"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_30(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["gisaid"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_31(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["XXschemaXX"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_32(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["SCHEMA"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_33(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["XXPasswordXX"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_34(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_35(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["PASSWORD"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_36(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["XXrequiredXX"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_37(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["REQUIRED"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_38(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = True
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_39(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = None
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_40(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["XXSubmissionXX"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_41(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_42(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["SUBMISSION"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_43(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["XXschemaXX"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_44(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["SCHEMA"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_45(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["XXGISAIDXX"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_46(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["gisaid"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_47(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["XXschemaXX"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_48(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["SCHEMA"]["Client-Id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_49(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["XXClient-IdXX"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_50(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["client-id"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_51(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["CLIENT-ID"]["required"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_52(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["XXrequiredXX"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_53(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["REQUIRED"] = False
-	return schema
-
-def x_password_encryption_config_schema_updates__mutmut_54(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = True
 	return schema
 
 x_password_encryption_config_schema_updates__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
@@ -8640,42 +5304,7 @@ x_password_encryption_config_schema_updates__mutmut_mutants : ClassVar[MutantDic
     'x_password_encryption_config_schema_updates__mutmut_16': x_password_encryption_config_schema_updates__mutmut_16, 
     'x_password_encryption_config_schema_updates__mutmut_17': x_password_encryption_config_schema_updates__mutmut_17, 
     'x_password_encryption_config_schema_updates__mutmut_18': x_password_encryption_config_schema_updates__mutmut_18, 
-    'x_password_encryption_config_schema_updates__mutmut_19': x_password_encryption_config_schema_updates__mutmut_19, 
-    'x_password_encryption_config_schema_updates__mutmut_20': x_password_encryption_config_schema_updates__mutmut_20, 
-    'x_password_encryption_config_schema_updates__mutmut_21': x_password_encryption_config_schema_updates__mutmut_21, 
-    'x_password_encryption_config_schema_updates__mutmut_22': x_password_encryption_config_schema_updates__mutmut_22, 
-    'x_password_encryption_config_schema_updates__mutmut_23': x_password_encryption_config_schema_updates__mutmut_23, 
-    'x_password_encryption_config_schema_updates__mutmut_24': x_password_encryption_config_schema_updates__mutmut_24, 
-    'x_password_encryption_config_schema_updates__mutmut_25': x_password_encryption_config_schema_updates__mutmut_25, 
-    'x_password_encryption_config_schema_updates__mutmut_26': x_password_encryption_config_schema_updates__mutmut_26, 
-    'x_password_encryption_config_schema_updates__mutmut_27': x_password_encryption_config_schema_updates__mutmut_27, 
-    'x_password_encryption_config_schema_updates__mutmut_28': x_password_encryption_config_schema_updates__mutmut_28, 
-    'x_password_encryption_config_schema_updates__mutmut_29': x_password_encryption_config_schema_updates__mutmut_29, 
-    'x_password_encryption_config_schema_updates__mutmut_30': x_password_encryption_config_schema_updates__mutmut_30, 
-    'x_password_encryption_config_schema_updates__mutmut_31': x_password_encryption_config_schema_updates__mutmut_31, 
-    'x_password_encryption_config_schema_updates__mutmut_32': x_password_encryption_config_schema_updates__mutmut_32, 
-    'x_password_encryption_config_schema_updates__mutmut_33': x_password_encryption_config_schema_updates__mutmut_33, 
-    'x_password_encryption_config_schema_updates__mutmut_34': x_password_encryption_config_schema_updates__mutmut_34, 
-    'x_password_encryption_config_schema_updates__mutmut_35': x_password_encryption_config_schema_updates__mutmut_35, 
-    'x_password_encryption_config_schema_updates__mutmut_36': x_password_encryption_config_schema_updates__mutmut_36, 
-    'x_password_encryption_config_schema_updates__mutmut_37': x_password_encryption_config_schema_updates__mutmut_37, 
-    'x_password_encryption_config_schema_updates__mutmut_38': x_password_encryption_config_schema_updates__mutmut_38, 
-    'x_password_encryption_config_schema_updates__mutmut_39': x_password_encryption_config_schema_updates__mutmut_39, 
-    'x_password_encryption_config_schema_updates__mutmut_40': x_password_encryption_config_schema_updates__mutmut_40, 
-    'x_password_encryption_config_schema_updates__mutmut_41': x_password_encryption_config_schema_updates__mutmut_41, 
-    'x_password_encryption_config_schema_updates__mutmut_42': x_password_encryption_config_schema_updates__mutmut_42, 
-    'x_password_encryption_config_schema_updates__mutmut_43': x_password_encryption_config_schema_updates__mutmut_43, 
-    'x_password_encryption_config_schema_updates__mutmut_44': x_password_encryption_config_schema_updates__mutmut_44, 
-    'x_password_encryption_config_schema_updates__mutmut_45': x_password_encryption_config_schema_updates__mutmut_45, 
-    'x_password_encryption_config_schema_updates__mutmut_46': x_password_encryption_config_schema_updates__mutmut_46, 
-    'x_password_encryption_config_schema_updates__mutmut_47': x_password_encryption_config_schema_updates__mutmut_47, 
-    'x_password_encryption_config_schema_updates__mutmut_48': x_password_encryption_config_schema_updates__mutmut_48, 
-    'x_password_encryption_config_schema_updates__mutmut_49': x_password_encryption_config_schema_updates__mutmut_49, 
-    'x_password_encryption_config_schema_updates__mutmut_50': x_password_encryption_config_schema_updates__mutmut_50, 
-    'x_password_encryption_config_schema_updates__mutmut_51': x_password_encryption_config_schema_updates__mutmut_51, 
-    'x_password_encryption_config_schema_updates__mutmut_52': x_password_encryption_config_schema_updates__mutmut_52, 
-    'x_password_encryption_config_schema_updates__mutmut_53': x_password_encryption_config_schema_updates__mutmut_53, 
-    'x_password_encryption_config_schema_updates__mutmut_54': x_password_encryption_config_schema_updates__mutmut_54
+    'x_password_encryption_config_schema_updates__mutmut_19': x_password_encryption_config_schema_updates__mutmut_19
 }
 x_password_encryption_config_schema_updates__mutmut_orig.__name__ = 'x_password_encryption_config_schema_updates'
 
@@ -15976,7 +12605,7 @@ def x_get_metadata__mutmut_orig(database: list[str], organism: str, metadata_fil
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -15992,8 +12621,6 @@ def x_get_metadata__mutmut_orig(database: list[str], organism: str, metadata_fil
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16023,7 +12650,7 @@ def x_get_metadata__mutmut_1(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16039,8 +12666,6 @@ def x_get_metadata__mutmut_1(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16070,7 +12695,7 @@ def x_get_metadata__mutmut_2(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16086,8 +12711,6 @@ def x_get_metadata__mutmut_2(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16117,7 +12740,7 @@ def x_get_metadata__mutmut_3(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16133,8 +12756,6 @@ def x_get_metadata__mutmut_3(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16164,7 +12785,7 @@ def x_get_metadata__mutmut_4(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16180,8 +12801,6 @@ def x_get_metadata__mutmut_4(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16211,7 +12830,7 @@ def x_get_metadata__mutmut_5(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16227,8 +12846,6 @@ def x_get_metadata__mutmut_5(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16258,7 +12875,7 @@ def x_get_metadata__mutmut_6(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16274,8 +12891,6 @@ def x_get_metadata__mutmut_6(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16305,7 +12920,7 @@ def x_get_metadata__mutmut_7(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16321,8 +12936,6 @@ def x_get_metadata__mutmut_7(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16352,7 +12965,7 @@ def x_get_metadata__mutmut_8(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database and "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16368,8 +12981,6 @@ def x_get_metadata__mutmut_8(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16399,7 +13010,7 @@ def x_get_metadata__mutmut_9(database: list[str], organism: str, metadata_file: 
 	# Update seqsender base schema to include needed checks
 	if "XXBIOSAMPLEXX" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16415,8 +13026,6 @@ def x_get_metadata__mutmut_9(database: list[str], organism: str, metadata_file: 
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16446,7 +13055,7 @@ def x_get_metadata__mutmut_10(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "biosample" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16462,8 +13071,6 @@ def x_get_metadata__mutmut_10(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16493,7 +13100,7 @@ def x_get_metadata__mutmut_11(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" not in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16509,8 +13116,6 @@ def x_get_metadata__mutmut_11(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16540,7 +13145,7 @@ def x_get_metadata__mutmut_12(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "XXSRAXX" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16556,8 +13161,6 @@ def x_get_metadata__mutmut_12(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16587,7 +13190,7 @@ def x_get_metadata__mutmut_13(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "sra" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16603,8 +13206,6 @@ def x_get_metadata__mutmut_13(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16634,7 +13235,7 @@ def x_get_metadata__mutmut_14(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" not in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16650,8 +13251,6 @@ def x_get_metadata__mutmut_14(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16681,7 +13280,7 @@ def x_get_metadata__mutmut_15(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns(None)
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16697,8 +13296,6 @@ def x_get_metadata__mutmut_15(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16728,7 +13325,7 @@ def x_get_metadata__mutmut_16(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"XXbioprojectXX":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16744,8 +13341,6 @@ def x_get_metadata__mutmut_16(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16775,7 +13370,7 @@ def x_get_metadata__mutmut_17(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"BIOPROJECT":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16791,8 +13386,6 @@ def x_get_metadata__mutmut_17(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16822,7 +13415,7 @@ def x_get_metadata__mutmut_18(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"XXchecksXX":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16838,8 +13431,6 @@ def x_get_metadata__mutmut_18(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16869,7 +13460,7 @@ def x_get_metadata__mutmut_19(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"CHECKS":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16885,8 +13476,6 @@ def x_get_metadata__mutmut_19(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16916,7 +13505,7 @@ def x_get_metadata__mutmut_20(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(None),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16932,8 +13521,6 @@ def x_get_metadata__mutmut_20(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -16963,7 +13550,7 @@ def x_get_metadata__mutmut_21(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"XX^(?!\s*$).+XX"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -16979,8 +13566,6 @@ def x_get_metadata__mutmut_21(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17010,7 +13595,7 @@ def x_get_metadata__mutmut_22(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"XXnullableXX":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17026,8 +13611,6 @@ def x_get_metadata__mutmut_22(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17057,7 +13640,7 @@ def x_get_metadata__mutmut_23(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"NULLABLE":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17073,8 +13656,6 @@ def x_get_metadata__mutmut_23(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17104,7 +13685,7 @@ def x_get_metadata__mutmut_24(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":True,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17120,8 +13701,6 @@ def x_get_metadata__mutmut_24(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17151,7 +13730,7 @@ def x_get_metadata__mutmut_25(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"XXrequiredXX":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17167,8 +13746,6 @@ def x_get_metadata__mutmut_25(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17198,7 +13775,7 @@ def x_get_metadata__mutmut_26(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"REQUIRED":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17214,8 +13791,6 @@ def x_get_metadata__mutmut_26(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17245,7 +13820,7 @@ def x_get_metadata__mutmut_27(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":False}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17261,8 +13836,6 @@ def x_get_metadata__mutmut_27(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17292,7 +13865,7 @@ def x_get_metadata__mutmut_28(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = ""
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = ""
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17308,8 +13881,6 @@ def x_get_metadata__mutmut_28(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17339,7 +13910,7 @@ def x_get_metadata__mutmut_29(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = None
 	if "BIOSAMPLE" in database:
@@ -17355,8 +13926,6 @@ def x_get_metadata__mutmut_29(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17386,7 +13955,7 @@ def x_get_metadata__mutmut_30(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "XXBIOSAMPLEXX" in database:
@@ -17402,8 +13971,6 @@ def x_get_metadata__mutmut_30(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17433,7 +14000,7 @@ def x_get_metadata__mutmut_31(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "biosample" in database:
@@ -17449,8 +14016,6 @@ def x_get_metadata__mutmut_31(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17480,7 +14045,7 @@ def x_get_metadata__mutmut_32(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" not in database:
@@ -17496,8 +14061,6 @@ def x_get_metadata__mutmut_32(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17527,7 +14090,7 @@ def x_get_metadata__mutmut_33(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17543,8 +14106,6 @@ def x_get_metadata__mutmut_33(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17574,7 +14135,7 @@ def x_get_metadata__mutmut_34(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17590,8 +14151,6 @@ def x_get_metadata__mutmut_34(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17621,7 +14180,7 @@ def x_get_metadata__mutmut_35(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17637,8 +14196,6 @@ def x_get_metadata__mutmut_35(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17668,7 +14225,7 @@ def x_get_metadata__mutmut_36(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17684,8 +14241,6 @@ def x_get_metadata__mutmut_36(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17715,7 +14270,7 @@ def x_get_metadata__mutmut_37(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17731,8 +14286,6 @@ def x_get_metadata__mutmut_37(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17762,7 +14315,7 @@ def x_get_metadata__mutmut_38(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17778,8 +14331,6 @@ def x_get_metadata__mutmut_38(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17809,7 +14360,7 @@ def x_get_metadata__mutmut_39(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17825,8 +14376,6 @@ def x_get_metadata__mutmut_39(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17856,7 +14405,7 @@ def x_get_metadata__mutmut_40(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17872,8 +14421,6 @@ def x_get_metadata__mutmut_40(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17903,7 +14450,7 @@ def x_get_metadata__mutmut_41(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17919,8 +14466,6 @@ def x_get_metadata__mutmut_41(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17950,7 +14495,7 @@ def x_get_metadata__mutmut_42(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -17966,8 +14511,6 @@ def x_get_metadata__mutmut_42(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -17997,7 +14540,7 @@ def x_get_metadata__mutmut_43(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18013,8 +14556,6 @@ def x_get_metadata__mutmut_43(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18044,7 +14585,7 @@ def x_get_metadata__mutmut_44(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18060,8 +14601,6 @@ def x_get_metadata__mutmut_44(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18091,7 +14630,7 @@ def x_get_metadata__mutmut_45(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18107,8 +14646,6 @@ def x_get_metadata__mutmut_45(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18138,7 +14675,7 @@ def x_get_metadata__mutmut_46(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18154,8 +14691,6 @@ def x_get_metadata__mutmut_46(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18185,7 +14720,7 @@ def x_get_metadata__mutmut_47(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18201,8 +14736,6 @@ def x_get_metadata__mutmut_47(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18232,7 +14765,7 @@ def x_get_metadata__mutmut_48(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18248,8 +14781,6 @@ def x_get_metadata__mutmut_48(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18279,7 +14810,7 @@ def x_get_metadata__mutmut_49(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18295,8 +14826,6 @@ def x_get_metadata__mutmut_49(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18326,7 +14855,7 @@ def x_get_metadata__mutmut_50(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18342,8 +14871,6 @@ def x_get_metadata__mutmut_50(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18373,7 +14900,7 @@ def x_get_metadata__mutmut_51(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18389,8 +14916,6 @@ def x_get_metadata__mutmut_51(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18420,7 +14945,7 @@ def x_get_metadata__mutmut_52(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18436,8 +14961,6 @@ def x_get_metadata__mutmut_52(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18467,7 +14990,7 @@ def x_get_metadata__mutmut_53(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18483,8 +15006,6 @@ def x_get_metadata__mutmut_53(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18514,7 +15035,7 @@ def x_get_metadata__mutmut_54(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18530,8 +15051,6 @@ def x_get_metadata__mutmut_54(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18561,7 +15080,7 @@ def x_get_metadata__mutmut_55(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18577,8 +15096,6 @@ def x_get_metadata__mutmut_55(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18608,7 +15125,7 @@ def x_get_metadata__mutmut_56(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18624,8 +15141,6 @@ def x_get_metadata__mutmut_56(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18655,7 +15170,7 @@ def x_get_metadata__mutmut_57(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18671,8 +15186,6 @@ def x_get_metadata__mutmut_57(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18702,7 +15215,7 @@ def x_get_metadata__mutmut_58(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18718,8 +15231,6 @@ def x_get_metadata__mutmut_58(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18749,7 +15260,7 @@ def x_get_metadata__mutmut_59(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18765,8 +15276,6 @@ def x_get_metadata__mutmut_59(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18796,7 +15305,7 @@ def x_get_metadata__mutmut_60(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18812,8 +15321,6 @@ def x_get_metadata__mutmut_60(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18843,7 +15350,7 @@ def x_get_metadata__mutmut_61(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18859,8 +15366,6 @@ def x_get_metadata__mutmut_61(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18890,7 +15395,7 @@ def x_get_metadata__mutmut_62(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18906,8 +15411,6 @@ def x_get_metadata__mutmut_62(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18937,7 +15440,7 @@ def x_get_metadata__mutmut_63(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -18953,8 +15456,6 @@ def x_get_metadata__mutmut_63(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -18984,7 +15485,7 @@ def x_get_metadata__mutmut_64(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19000,8 +15501,6 @@ def x_get_metadata__mutmut_64(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19031,7 +15530,7 @@ def x_get_metadata__mutmut_65(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19047,8 +15546,6 @@ def x_get_metadata__mutmut_65(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19078,7 +15575,7 @@ def x_get_metadata__mutmut_66(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19094,8 +15591,6 @@ def x_get_metadata__mutmut_66(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19125,7 +15620,7 @@ def x_get_metadata__mutmut_67(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19141,8 +15636,6 @@ def x_get_metadata__mutmut_67(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19172,7 +15665,7 @@ def x_get_metadata__mutmut_68(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19188,8 +15681,6 @@ def x_get_metadata__mutmut_68(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19219,7 +15710,7 @@ def x_get_metadata__mutmut_69(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19235,8 +15726,6 @@ def x_get_metadata__mutmut_69(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19266,7 +15755,7 @@ def x_get_metadata__mutmut_70(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19282,8 +15771,6 @@ def x_get_metadata__mutmut_70(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19313,7 +15800,7 @@ def x_get_metadata__mutmut_71(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19329,8 +15816,6 @@ def x_get_metadata__mutmut_71(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19360,7 +15845,7 @@ def x_get_metadata__mutmut_72(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19376,8 +15861,6 @@ def x_get_metadata__mutmut_72(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19407,7 +15890,7 @@ def x_get_metadata__mutmut_73(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19423,8 +15906,6 @@ def x_get_metadata__mutmut_73(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19454,7 +15935,7 @@ def x_get_metadata__mutmut_74(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19470,8 +15951,6 @@ def x_get_metadata__mutmut_74(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19501,7 +15980,7 @@ def x_get_metadata__mutmut_75(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19517,8 +15996,6 @@ def x_get_metadata__mutmut_75(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19548,7 +16025,7 @@ def x_get_metadata__mutmut_76(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19564,8 +16041,6 @@ def x_get_metadata__mutmut_76(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19595,7 +16070,7 @@ def x_get_metadata__mutmut_77(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19611,8 +16086,6 @@ def x_get_metadata__mutmut_77(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19642,7 +16115,7 @@ def x_get_metadata__mutmut_78(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19658,8 +16131,6 @@ def x_get_metadata__mutmut_78(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19689,7 +16160,7 @@ def x_get_metadata__mutmut_79(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19705,8 +16176,6 @@ def x_get_metadata__mutmut_79(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19736,7 +16205,7 @@ def x_get_metadata__mutmut_80(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19752,8 +16221,6 @@ def x_get_metadata__mutmut_80(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19783,7 +16250,7 @@ def x_get_metadata__mutmut_81(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19799,8 +16266,6 @@ def x_get_metadata__mutmut_81(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = None
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19830,7 +16295,7 @@ def x_get_metadata__mutmut_82(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19846,8 +16311,6 @@ def x_get_metadata__mutmut_82(database: list[str], organism: str, metadata_file:
 				schemas_dict["XXGenBank sourceXX"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19877,7 +16340,7 @@ def x_get_metadata__mutmut_83(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19893,8 +16356,6 @@ def x_get_metadata__mutmut_83(database: list[str], organism: str, metadata_file:
 				schemas_dict["genbank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19924,7 +16385,7 @@ def x_get_metadata__mutmut_84(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19940,8 +16401,6 @@ def x_get_metadata__mutmut_84(database: list[str], organism: str, metadata_file:
 				schemas_dict["GENBANK SOURCE"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -19971,7 +16430,7 @@ def x_get_metadata__mutmut_85(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -19987,8 +16446,6 @@ def x_get_metadata__mutmut_85(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module(None).schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20018,7 +16475,7 @@ def x_get_metadata__mutmut_86(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20034,8 +16491,6 @@ def x_get_metadata__mutmut_86(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("XXconfig.genbank.genbank_flu_src_schemaXX").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20065,7 +16520,7 @@ def x_get_metadata__mutmut_87(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20081,8 +16536,6 @@ def x_get_metadata__mutmut_87(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("CONFIG.GENBANK.GENBANK_FLU_SRC_SCHEMA").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20112,7 +16565,7 @@ def x_get_metadata__mutmut_88(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20128,8 +16581,6 @@ def x_get_metadata__mutmut_88(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = None
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20159,7 +16610,7 @@ def x_get_metadata__mutmut_89(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20175,8 +16626,6 @@ def x_get_metadata__mutmut_89(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["XXGenBank sourceXX"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20206,7 +16655,7 @@ def x_get_metadata__mutmut_90(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20222,8 +16671,6 @@ def x_get_metadata__mutmut_90(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["genbank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20253,7 +16700,7 @@ def x_get_metadata__mutmut_91(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20269,8 +16716,6 @@ def x_get_metadata__mutmut_91(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GENBANK SOURCE"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20300,7 +16745,7 @@ def x_get_metadata__mutmut_92(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20316,8 +16761,6 @@ def x_get_metadata__mutmut_92(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module(None).schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20347,7 +16790,7 @@ def x_get_metadata__mutmut_93(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20363,8 +16806,6 @@ def x_get_metadata__mutmut_93(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("XXconfig.genbank.genbank_src_schemaXX").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20394,7 +16835,7 @@ def x_get_metadata__mutmut_94(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20410,8 +16851,6 @@ def x_get_metadata__mutmut_94(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("CONFIG.GENBANK.GENBANK_SRC_SCHEMA").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -20441,7 +16880,7 @@ def x_get_metadata__mutmut_95(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20457,9 +16896,7 @@ def x_get_metadata__mutmut_95(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "XXGISAIDXX" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
+	if skip_validation != False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
@@ -20488,7 +16925,7 @@ def x_get_metadata__mutmut_96(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20504,9 +16941,7 @@ def x_get_metadata__mutmut_96(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "gisaid" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
+	if skip_validation == True:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
@@ -20535,7 +16970,7 @@ def x_get_metadata__mutmut_97(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20551,11 +16986,9 @@ def x_get_metadata__mutmut_97(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" not in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
+		error_msg_list: list[pandera.errors.SchemaErrors] = None
 		# Validate required columns for seqsender
 		try:
 			seqsender_schema.validate(metadata, lazy = True)
@@ -20582,7 +17015,7 @@ def x_get_metadata__mutmut_98(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20598,14 +17031,12 @@ def x_get_metadata__mutmut_98(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = None
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
-			seqsender_schema.validate(metadata, lazy = True)
+			seqsender_schema.validate(None, lazy = True)
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 		# Validate required columns for databases
@@ -20629,7 +17060,7 @@ def x_get_metadata__mutmut_99(database: list[str], organism: str, metadata_file:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20645,14 +17076,12 @@ def x_get_metadata__mutmut_99(database: list[str], organism: str, metadata_file:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["XXGISAIDXX"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
-			seqsender_schema.validate(metadata, lazy = True)
+			seqsender_schema.validate(metadata, lazy = None)
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 		# Validate required columns for databases
@@ -20676,7 +17105,7 @@ def x_get_metadata__mutmut_100(database: list[str], organism: str, metadata_file
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20692,14 +17121,12 @@ def x_get_metadata__mutmut_100(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["gisaid"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
-			seqsender_schema.validate(metadata, lazy = True)
+			seqsender_schema.validate(lazy = True)
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 		# Validate required columns for databases
@@ -20723,7 +17150,7 @@ def x_get_metadata__mutmut_101(database: list[str], organism: str, metadata_file
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20739,14 +17166,12 @@ def x_get_metadata__mutmut_101(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX - "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
-			seqsender_schema.validate(metadata, lazy = True)
+			seqsender_schema.validate(metadata, )
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 		# Validate required columns for databases
@@ -20770,7 +17195,7 @@ def x_get_metadata__mutmut_102(database: list[str], organism: str, metadata_file
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20786,14 +17211,12 @@ def x_get_metadata__mutmut_102(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "XX|^sequence_name$XX"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
 		# Validate required columns for seqsender
 		try:
-			seqsender_schema.validate(metadata, lazy = True)
+			seqsender_schema.validate(metadata, lazy = False)
 		except pandera.errors.SchemaErrors as schema_error:
 			error_msg_list.append(schema_error)
 		# Validate required columns for databases
@@ -20817,7 +17240,7 @@ def x_get_metadata__mutmut_103(database: list[str], organism: str, metadata_file
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -20833,760 +17256,6 @@ def x_get_metadata__mutmut_103(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^SEQUENCE_NAME$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_104(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module(None).schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_105(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism - "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_106(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" - organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_107(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("XXconfig.gisaid.gisaid_XX" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_108(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("CONFIG.GISAID.GISAID_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_109(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "XX_schemaXX").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_110(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_SCHEMA").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_111(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation != False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_112(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == True:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_113(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = None
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_114(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(None, lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_115(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = None)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_116(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(lazy = True)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_117(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, )
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_118(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
-	if skip_validation == False:
-		# Validate metadata on schema's
-		error_msg_list: list[pandera.errors.SchemaErrors] = []
-		# Validate required columns for seqsender
-		try:
-			seqsender_schema.validate(metadata, lazy = False)
-		except pandera.errors.SchemaErrors as schema_error:
-			error_msg_list.append(schema_error)
-		# Validate required columns for databases
-		for schema_name, tuple in schemas_dict.items():
-			try:
-				regex, schema = tuple
-				database_specific_metadata = metadata.filter(regex=regex).copy().drop_duplicates()
-				schema.validate(database_specific_metadata, lazy = True)
-			except pandera.errors.SchemaErrors as schema_error:
-				error_msg_list.append(schema_error)
-		if error_msg_list:
-			pretty_print_pandera_errors(file=metadata_file, error_msgs=error_msg_list)
-			sys.exit(1)
-	return metadata
-
-# Read in metadata file
-def x_get_metadata__mutmut_119(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
-	# Read in metadata file
-	metadata = file_handler.load_csv(metadata_file)
-	warn_deprecated_columns(database = database, metadata = metadata)
-	# Update seqsender base schema to include needed checks
-	if "BIOSAMPLE" in database or "SRA" in database:
-		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
-	# Import schemas
-	schemas_dict = dict()
-	if "BIOSAMPLE" in database:
-		schemas_dict["BioSample"] = (BIOSAMPLE_REGEX, importlib.import_module("config.biosample." + config_dict["NCBI"]["BioSample_Package"].strip().replace(".", "_")).schema)
-	if "SRA" in database:
-		schemas_dict["SRA"] = (SRA_REGEX, importlib.import_module("config.sra.sra_schema").schema)
-	if "GENBANK" in database:
-		schemas_dict["GenBank"] = ((GENBANK_REGEX + "|^sequence_name$"), importlib.import_module("config.genbank.genbank_schema").schema)
-		# if [col_name for col_name in metadata if col_name.startswith("cmt-")]:
-		# 	schemas_dict["GenBank comment"] = (GENBANK_REGEX_CMT, importlib.import_module("config.genbank.genbank_cmt_schema").schema)
-		if [col_name for col_name in metadata if isinstance(col_name, str) and col_name.startswith("src-")]:
-			if organism == "FLU":
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
-			else:
-				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21609,14 +17278,14 @@ def x_get_metadata__mutmut_119(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_120(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_104(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21632,8 +17301,6 @@ def x_get_metadata__mutmut_120(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21656,14 +17323,14 @@ def x_get_metadata__mutmut_120(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_121(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_105(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21679,8 +17346,6 @@ def x_get_metadata__mutmut_121(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21703,14 +17368,14 @@ def x_get_metadata__mutmut_121(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_122(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_106(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21726,8 +17391,6 @@ def x_get_metadata__mutmut_122(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21750,14 +17413,14 @@ def x_get_metadata__mutmut_122(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_123(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_107(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21773,8 +17436,6 @@ def x_get_metadata__mutmut_123(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21797,14 +17458,14 @@ def x_get_metadata__mutmut_123(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_124(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_108(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21820,8 +17481,6 @@ def x_get_metadata__mutmut_124(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21844,14 +17503,14 @@ def x_get_metadata__mutmut_124(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_125(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_109(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21867,8 +17526,6 @@ def x_get_metadata__mutmut_125(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21891,14 +17548,14 @@ def x_get_metadata__mutmut_125(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_126(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_110(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21914,8 +17571,6 @@ def x_get_metadata__mutmut_126(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21938,14 +17593,14 @@ def x_get_metadata__mutmut_126(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_127(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_111(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -21961,8 +17616,6 @@ def x_get_metadata__mutmut_127(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -21985,14 +17638,14 @@ def x_get_metadata__mutmut_127(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_128(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_112(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22008,8 +17661,6 @@ def x_get_metadata__mutmut_128(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22032,14 +17683,14 @@ def x_get_metadata__mutmut_128(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_129(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_113(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22055,8 +17706,6 @@ def x_get_metadata__mutmut_129(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22079,14 +17728,14 @@ def x_get_metadata__mutmut_129(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_130(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_114(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22102,8 +17751,6 @@ def x_get_metadata__mutmut_130(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22126,14 +17773,14 @@ def x_get_metadata__mutmut_130(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_131(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_115(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22149,8 +17796,6 @@ def x_get_metadata__mutmut_131(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22173,14 +17818,14 @@ def x_get_metadata__mutmut_131(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_132(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_116(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22196,8 +17841,6 @@ def x_get_metadata__mutmut_132(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22220,14 +17863,14 @@ def x_get_metadata__mutmut_132(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_133(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_117(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22243,8 +17886,6 @@ def x_get_metadata__mutmut_133(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22267,14 +17908,14 @@ def x_get_metadata__mutmut_133(database: list[str], organism: str, metadata_file
 	return metadata
 
 # Read in metadata file
-def x_get_metadata__mutmut_134(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
+def x_get_metadata__mutmut_118(database: list[str], organism: str, metadata_file: str, config_dict: dict[str, Any], skip_validation: bool = False) -> pd.DataFrame:
 	# Read in metadata file
 	metadata = file_handler.load_csv(metadata_file)
 	warn_deprecated_columns(database = database, metadata = metadata)
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -22290,8 +17931,6 @@ def x_get_metadata__mutmut_134(database: list[str], organism: str, metadata_file
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -22431,23 +18070,7 @@ x_get_metadata__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_get_metadata__mutmut_115': x_get_metadata__mutmut_115, 
     'x_get_metadata__mutmut_116': x_get_metadata__mutmut_116, 
     'x_get_metadata__mutmut_117': x_get_metadata__mutmut_117, 
-    'x_get_metadata__mutmut_118': x_get_metadata__mutmut_118, 
-    'x_get_metadata__mutmut_119': x_get_metadata__mutmut_119, 
-    'x_get_metadata__mutmut_120': x_get_metadata__mutmut_120, 
-    'x_get_metadata__mutmut_121': x_get_metadata__mutmut_121, 
-    'x_get_metadata__mutmut_122': x_get_metadata__mutmut_122, 
-    'x_get_metadata__mutmut_123': x_get_metadata__mutmut_123, 
-    'x_get_metadata__mutmut_124': x_get_metadata__mutmut_124, 
-    'x_get_metadata__mutmut_125': x_get_metadata__mutmut_125, 
-    'x_get_metadata__mutmut_126': x_get_metadata__mutmut_126, 
-    'x_get_metadata__mutmut_127': x_get_metadata__mutmut_127, 
-    'x_get_metadata__mutmut_128': x_get_metadata__mutmut_128, 
-    'x_get_metadata__mutmut_129': x_get_metadata__mutmut_129, 
-    'x_get_metadata__mutmut_130': x_get_metadata__mutmut_130, 
-    'x_get_metadata__mutmut_131': x_get_metadata__mutmut_131, 
-    'x_get_metadata__mutmut_132': x_get_metadata__mutmut_132, 
-    'x_get_metadata__mutmut_133': x_get_metadata__mutmut_133, 
-    'x_get_metadata__mutmut_134': x_get_metadata__mutmut_134
+    'x_get_metadata__mutmut_118': x_get_metadata__mutmut_118
 }
 x_get_metadata__mutmut_orig.__name__ = 'x_get_metadata'
 
@@ -42213,17 +37836,6 @@ def x_check_credentials__mutmut_orig(config_dict: dict[str, Any], database: str)
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_1(config_dict: dict[str, Any], database: str) -> None:
@@ -42244,17 +37856,6 @@ def x_check_credentials__mutmut_1(config_dict: dict[str, Any], database: str) ->
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42277,17 +37878,6 @@ def x_check_credentials__mutmut_2(config_dict: dict[str, Any], database: str) ->
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_3(config_dict: dict[str, Any], database: str) -> None:
@@ -42308,17 +37898,6 @@ def x_check_credentials__mutmut_3(config_dict: dict[str, Any], database: str) ->
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42341,17 +37920,6 @@ def x_check_credentials__mutmut_4(config_dict: dict[str, Any], database: str) ->
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_5(config_dict: dict[str, Any], database: str) -> None:
@@ -42372,17 +37940,6 @@ def x_check_credentials__mutmut_5(config_dict: dict[str, Any], database: str) ->
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42405,17 +37962,6 @@ def x_check_credentials__mutmut_6(config_dict: dict[str, Any], database: str) ->
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_7(config_dict: dict[str, Any], database: str) -> None:
@@ -42436,17 +37982,6 @@ def x_check_credentials__mutmut_7(config_dict: dict[str, Any], database: str) ->
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42469,17 +38004,6 @@ def x_check_credentials__mutmut_8(config_dict: dict[str, Any], database: str) ->
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_9(config_dict: dict[str, Any], database: str) -> None:
@@ -42500,17 +38024,6 @@ def x_check_credentials__mutmut_9(config_dict: dict[str, Any], database: str) ->
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42533,17 +38046,6 @@ def x_check_credentials__mutmut_10(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_11(config_dict: dict[str, Any], database: str) -> None:
@@ -42564,17 +38066,6 @@ def x_check_credentials__mutmut_11(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42597,17 +38088,6 @@ def x_check_credentials__mutmut_12(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_13(config_dict: dict[str, Any], database: str) -> None:
@@ -42628,17 +38108,6 @@ def x_check_credentials__mutmut_13(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42661,17 +38130,6 @@ def x_check_credentials__mutmut_14(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_15(config_dict: dict[str, Any], database: str) -> None:
@@ -42692,17 +38150,6 @@ def x_check_credentials__mutmut_15(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42725,17 +38172,6 @@ def x_check_credentials__mutmut_16(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_17(config_dict: dict[str, Any], database: str) -> None:
@@ -42756,17 +38192,6 @@ def x_check_credentials__mutmut_17(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42789,17 +38214,6 @@ def x_check_credentials__mutmut_18(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_19(config_dict: dict[str, Any], database: str) -> None:
@@ -42820,17 +38234,6 @@ def x_check_credentials__mutmut_19(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42853,17 +38256,6 @@ def x_check_credentials__mutmut_20(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_21(config_dict: dict[str, Any], database: str) -> None:
@@ -42884,17 +38276,6 @@ def x_check_credentials__mutmut_21(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42917,17 +38298,6 @@ def x_check_credentials__mutmut_22(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_23(config_dict: dict[str, Any], database: str) -> None:
@@ -42948,17 +38318,6 @@ def x_check_credentials__mutmut_23(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -42981,17 +38340,6 @@ def x_check_credentials__mutmut_24(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_25(config_dict: dict[str, Any], database: str) -> None:
@@ -43012,17 +38360,6 @@ def x_check_credentials__mutmut_25(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43045,17 +38382,6 @@ def x_check_credentials__mutmut_26(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_27(config_dict: dict[str, Any], database: str) -> None:
@@ -43076,17 +38402,6 @@ def x_check_credentials__mutmut_27(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43109,17 +38424,6 @@ def x_check_credentials__mutmut_28(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_29(config_dict: dict[str, Any], database: str) -> None:
@@ -43140,17 +38444,6 @@ def x_check_credentials__mutmut_29(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43173,17 +38466,6 @@ def x_check_credentials__mutmut_30(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_31(config_dict: dict[str, Any], database: str) -> None:
@@ -43204,17 +38486,6 @@ def x_check_credentials__mutmut_31(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43237,17 +38508,6 @@ def x_check_credentials__mutmut_32(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_33(config_dict: dict[str, Any], database: str) -> None:
@@ -43268,17 +38528,6 @@ def x_check_credentials__mutmut_33(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43301,17 +38550,6 @@ def x_check_credentials__mutmut_34(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_35(config_dict: dict[str, Any], database: str) -> None:
@@ -43332,17 +38570,6 @@ def x_check_credentials__mutmut_35(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43365,17 +38592,6 @@ def x_check_credentials__mutmut_36(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_37(config_dict: dict[str, Any], database: str) -> None:
@@ -43396,17 +38612,6 @@ def x_check_credentials__mutmut_37(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43429,17 +38634,6 @@ def x_check_credentials__mutmut_38(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_39(config_dict: dict[str, Any], database: str) -> None:
@@ -43460,17 +38654,6 @@ def x_check_credentials__mutmut_39(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43493,17 +38676,6 @@ def x_check_credentials__mutmut_40(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_41(config_dict: dict[str, Any], database: str) -> None:
@@ -43524,17 +38696,6 @@ def x_check_credentials__mutmut_41(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43557,17 +38718,6 @@ def x_check_credentials__mutmut_42(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_43(config_dict: dict[str, Any], database: str) -> None:
@@ -43588,17 +38738,6 @@ def x_check_credentials__mutmut_43(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43621,17 +38760,6 @@ def x_check_credentials__mutmut_44(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_45(config_dict: dict[str, Any], database: str) -> None:
@@ -43652,17 +38780,6 @@ def x_check_credentials__mutmut_45(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43685,17 +38802,6 @@ def x_check_credentials__mutmut_46(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_47(config_dict: dict[str, Any], database: str) -> None:
@@ -43716,17 +38822,6 @@ def x_check_credentials__mutmut_47(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43749,17 +38844,6 @@ def x_check_credentials__mutmut_48(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_49(config_dict: dict[str, Any], database: str) -> None:
@@ -43780,17 +38864,6 @@ def x_check_credentials__mutmut_49(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43813,17 +38886,6 @@ def x_check_credentials__mutmut_50(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_51(config_dict: dict[str, Any], database: str) -> None:
@@ -43844,17 +38906,6 @@ def x_check_credentials__mutmut_51(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43877,17 +38928,6 @@ def x_check_credentials__mutmut_52(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_53(config_dict: dict[str, Any], database: str) -> None:
@@ -43908,17 +38948,6 @@ def x_check_credentials__mutmut_53(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -43941,17 +38970,6 @@ def x_check_credentials__mutmut_54(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_55(config_dict: dict[str, Any], database: str) -> None:
@@ -43972,17 +38990,6 @@ def x_check_credentials__mutmut_55(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44005,17 +39012,6 @@ def x_check_credentials__mutmut_56(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_57(config_dict: dict[str, Any], database: str) -> None:
@@ -44036,17 +39032,6 @@ def x_check_credentials__mutmut_57(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44069,17 +39054,6 @@ def x_check_credentials__mutmut_58(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_59(config_dict: dict[str, Any], database: str) -> None:
@@ -44100,17 +39074,6 @@ def x_check_credentials__mutmut_59(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44133,17 +39096,6 @@ def x_check_credentials__mutmut_60(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_61(config_dict: dict[str, Any], database: str) -> None:
@@ -44164,17 +39116,6 @@ def x_check_credentials__mutmut_61(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44197,17 +39138,6 @@ def x_check_credentials__mutmut_62(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_63(config_dict: dict[str, Any], database: str) -> None:
@@ -44228,17 +39158,6 @@ def x_check_credentials__mutmut_63(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44261,17 +39180,6 @@ def x_check_credentials__mutmut_64(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_65(config_dict: dict[str, Any], database: str) -> None:
@@ -44292,17 +39200,6 @@ def x_check_credentials__mutmut_65(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44325,17 +39222,6 @@ def x_check_credentials__mutmut_66(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_67(config_dict: dict[str, Any], database: str) -> None:
@@ -44356,17 +39242,6 @@ def x_check_credentials__mutmut_67(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44389,17 +39264,6 @@ def x_check_credentials__mutmut_68(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_69(config_dict: dict[str, Any], database: str) -> None:
@@ -44420,17 +39284,6 @@ def x_check_credentials__mutmut_69(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44453,17 +39306,6 @@ def x_check_credentials__mutmut_70(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_71(config_dict: dict[str, Any], database: str) -> None:
@@ -44484,17 +39326,6 @@ def x_check_credentials__mutmut_71(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44517,17 +39348,6 @@ def x_check_credentials__mutmut_72(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_73(config_dict: dict[str, Any], database: str) -> None:
@@ -44548,17 +39368,6 @@ def x_check_credentials__mutmut_73(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44581,17 +39390,6 @@ def x_check_credentials__mutmut_74(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_75(config_dict: dict[str, Any], database: str) -> None:
@@ -44612,17 +39410,6 @@ def x_check_credentials__mutmut_75(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44645,17 +39432,6 @@ def x_check_credentials__mutmut_76(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_77(config_dict: dict[str, Any], database: str) -> None:
@@ -44676,17 +39452,6 @@ def x_check_credentials__mutmut_77(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44709,17 +39474,6 @@ def x_check_credentials__mutmut_78(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_79(config_dict: dict[str, Any], database: str) -> None:
@@ -44740,17 +39494,6 @@ def x_check_credentials__mutmut_79(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44773,17 +39516,6 @@ def x_check_credentials__mutmut_80(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_81(config_dict: dict[str, Any], database: str) -> None:
@@ -44804,17 +39536,6 @@ def x_check_credentials__mutmut_81(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print(None, file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44837,17 +39558,6 @@ def x_check_credentials__mutmut_82(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=None)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_83(config_dict: dict[str, Any], database: str) -> None:
@@ -44868,17 +39578,6 @@ def x_check_credentials__mutmut_83(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print(file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44901,17 +39600,6 @@ def x_check_credentials__mutmut_84(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", )
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_85(config_dict: dict[str, Any], database: str) -> None:
@@ -44932,17 +39620,6 @@ def x_check_credentials__mutmut_85(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database - " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -44965,17 +39642,6 @@ def x_check_credentials__mutmut_86(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " - database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_87(config_dict: dict[str, Any], database: str) -> None:
@@ -44996,17 +39662,6 @@ def x_check_credentials__mutmut_87(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("XXError: Submission > XX" + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -45029,17 +39684,6 @@ def x_check_credentials__mutmut_88(config_dict: dict[str, Any], database: str) -
 	else:
 		print("error: submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_89(config_dict: dict[str, Any], database: str) -> None:
@@ -45060,17 +39704,6 @@ def x_check_credentials__mutmut_89(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("ERROR: SUBMISSION > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -45093,17 +39726,6 @@ def x_check_credentials__mutmut_90(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + "XX > Password in the config file cannot be empty.XX", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_91(config_dict: dict[str, Any], database: str) -> None:
@@ -45124,17 +39746,6 @@ def x_check_credentials__mutmut_91(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check user credentials information
@@ -45157,17 +39768,6 @@ def x_check_credentials__mutmut_92(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > PASSWORD IN THE CONFIG FILE CANNOT BE EMPTY.", file=sys.stderr)
 		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_93(config_dict: dict[str, Any], database: str) -> None:
@@ -45189,17 +39789,6 @@ def x_check_credentials__mutmut_93(config_dict: dict[str, Any], database: str) -
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(None)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
 
 # Check user credentials information
 def x_check_credentials__mutmut_94(config_dict: dict[str, Any], database: str) -> None:
@@ -45220,1617 +39809,6 @@ def x_check_credentials__mutmut_94(config_dict: dict[str, Any], database: str) -
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(2)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_95(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database == "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_96(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "XXGISAIDXX":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_97(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "gisaid":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_98(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "XXClient-IdXX" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_99(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "client-id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_100(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "CLIENT-ID" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_101(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_102(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print(None, file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_103(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=None)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_104(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print(file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_105(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", )
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_106(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database - " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_107(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " - database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_108(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("XXError: there is no Submission > XX" + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_109(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("error: there is no submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_110(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("ERROR: THERE IS NO SUBMISSION > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_111(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + "XX > Client-Id information in config file.XX", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_112(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > client-id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_113(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > CLIENT-ID INFORMATION IN CONFIG FILE.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_114(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(None)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_115(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(2)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_116(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() or ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_117(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("XXClient-IdXX" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_118(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("client-id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_119(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("CLIENT-ID" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_120(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" not in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_121(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) or (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_122(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["XXClient-IdXX"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_123(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["client-id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_124(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["CLIENT-ID"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_125(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_126(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["XXClient-IdXX"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_127(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["client-id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_128(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["CLIENT-ID"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_129(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] == ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_130(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != "XXXX"))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_131(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print(None, file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_132(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=None)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_133(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print(file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_134(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", )
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_135(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database - " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_136(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " - database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_137(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("XXError: Submission > XX" + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_138(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("error: submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_139(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("ERROR: SUBMISSION > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_140(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + "XX > Client-Id in the config file cannot be empty.XX", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_141(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > client-id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_142(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > CLIENT-ID IN THE CONFIG FILE CANNOT BE EMPTY.", file=sys.stderr)
-		sys.exit(1)
-
-# Check user credentials information
-def x_check_credentials__mutmut_143(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(None)
-
-# Check user credentials information
-def x_check_credentials__mutmut_144(config_dict: dict[str, Any], database: str) -> None:
-	# Check username
-	if "Username" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Username information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Username" in config_dict.keys()) and ((config_dict["Username"] is not None) and (config_dict["Username"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Username in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check password
-	if "Password" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Password information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Password" in config_dict.keys()) and ((config_dict["Password"] is not None) and (config_dict["Password"] != "")):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(2)
 
 x_check_credentials__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
@@ -46927,57 +39905,7 @@ x_check_credentials__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_check_credentials__mutmut_91': x_check_credentials__mutmut_91, 
     'x_check_credentials__mutmut_92': x_check_credentials__mutmut_92, 
     'x_check_credentials__mutmut_93': x_check_credentials__mutmut_93, 
-    'x_check_credentials__mutmut_94': x_check_credentials__mutmut_94, 
-    'x_check_credentials__mutmut_95': x_check_credentials__mutmut_95, 
-    'x_check_credentials__mutmut_96': x_check_credentials__mutmut_96, 
-    'x_check_credentials__mutmut_97': x_check_credentials__mutmut_97, 
-    'x_check_credentials__mutmut_98': x_check_credentials__mutmut_98, 
-    'x_check_credentials__mutmut_99': x_check_credentials__mutmut_99, 
-    'x_check_credentials__mutmut_100': x_check_credentials__mutmut_100, 
-    'x_check_credentials__mutmut_101': x_check_credentials__mutmut_101, 
-    'x_check_credentials__mutmut_102': x_check_credentials__mutmut_102, 
-    'x_check_credentials__mutmut_103': x_check_credentials__mutmut_103, 
-    'x_check_credentials__mutmut_104': x_check_credentials__mutmut_104, 
-    'x_check_credentials__mutmut_105': x_check_credentials__mutmut_105, 
-    'x_check_credentials__mutmut_106': x_check_credentials__mutmut_106, 
-    'x_check_credentials__mutmut_107': x_check_credentials__mutmut_107, 
-    'x_check_credentials__mutmut_108': x_check_credentials__mutmut_108, 
-    'x_check_credentials__mutmut_109': x_check_credentials__mutmut_109, 
-    'x_check_credentials__mutmut_110': x_check_credentials__mutmut_110, 
-    'x_check_credentials__mutmut_111': x_check_credentials__mutmut_111, 
-    'x_check_credentials__mutmut_112': x_check_credentials__mutmut_112, 
-    'x_check_credentials__mutmut_113': x_check_credentials__mutmut_113, 
-    'x_check_credentials__mutmut_114': x_check_credentials__mutmut_114, 
-    'x_check_credentials__mutmut_115': x_check_credentials__mutmut_115, 
-    'x_check_credentials__mutmut_116': x_check_credentials__mutmut_116, 
-    'x_check_credentials__mutmut_117': x_check_credentials__mutmut_117, 
-    'x_check_credentials__mutmut_118': x_check_credentials__mutmut_118, 
-    'x_check_credentials__mutmut_119': x_check_credentials__mutmut_119, 
-    'x_check_credentials__mutmut_120': x_check_credentials__mutmut_120, 
-    'x_check_credentials__mutmut_121': x_check_credentials__mutmut_121, 
-    'x_check_credentials__mutmut_122': x_check_credentials__mutmut_122, 
-    'x_check_credentials__mutmut_123': x_check_credentials__mutmut_123, 
-    'x_check_credentials__mutmut_124': x_check_credentials__mutmut_124, 
-    'x_check_credentials__mutmut_125': x_check_credentials__mutmut_125, 
-    'x_check_credentials__mutmut_126': x_check_credentials__mutmut_126, 
-    'x_check_credentials__mutmut_127': x_check_credentials__mutmut_127, 
-    'x_check_credentials__mutmut_128': x_check_credentials__mutmut_128, 
-    'x_check_credentials__mutmut_129': x_check_credentials__mutmut_129, 
-    'x_check_credentials__mutmut_130': x_check_credentials__mutmut_130, 
-    'x_check_credentials__mutmut_131': x_check_credentials__mutmut_131, 
-    'x_check_credentials__mutmut_132': x_check_credentials__mutmut_132, 
-    'x_check_credentials__mutmut_133': x_check_credentials__mutmut_133, 
-    'x_check_credentials__mutmut_134': x_check_credentials__mutmut_134, 
-    'x_check_credentials__mutmut_135': x_check_credentials__mutmut_135, 
-    'x_check_credentials__mutmut_136': x_check_credentials__mutmut_136, 
-    'x_check_credentials__mutmut_137': x_check_credentials__mutmut_137, 
-    'x_check_credentials__mutmut_138': x_check_credentials__mutmut_138, 
-    'x_check_credentials__mutmut_139': x_check_credentials__mutmut_139, 
-    'x_check_credentials__mutmut_140': x_check_credentials__mutmut_140, 
-    'x_check_credentials__mutmut_141': x_check_credentials__mutmut_141, 
-    'x_check_credentials__mutmut_142': x_check_credentials__mutmut_142, 
-    'x_check_credentials__mutmut_143': x_check_credentials__mutmut_143, 
-    'x_check_credentials__mutmut_144': x_check_credentials__mutmut_144
+    'x_check_credentials__mutmut_94': x_check_credentials__mutmut_94
 }
 x_check_credentials__mutmut_orig.__name__ = 'x_check_credentials'
 

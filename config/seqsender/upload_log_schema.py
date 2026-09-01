@@ -17,7 +17,7 @@ schema = DataFrameSchema(
 		"Organism": Column(
 			dtype="object",
 			checks=[
-				Check.isin(["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]),
+				Check.isin(["FLU", "COV", "OTHER"]),
 			],
 			nullable=False,
 			unique=False,
@@ -29,7 +29,7 @@ schema = DataFrameSchema(
 		"Database": Column(
 			dtype="object",
 			checks=[
-				Check.isin(["GENBANK-TBL2ASN", "GENBANK-FTP", "BIOSAMPLE", "SRA", "GISAID"]),
+				Check.isin(["GENBANK-TBL2ASN", "GENBANK-FTP", "BIOSAMPLE", "SRA"]),
 			],
 			nullable=False,
 			unique=False,
@@ -83,7 +83,7 @@ schema = DataFrameSchema(
 			unique=False,
 			coerce=False,
 			required=True,
-			description="ID for submission group. Submission ID is only for NCBI databases, GISAID will only have 'PENDING' or 'SUBMITTED' if the submission is entirely complete.",
+			description="ID for submission group. Submission ID is only for NCBI databases.",
 			title="submission id",
 		),
 		"Submission_Directory": Column(

@@ -19,7 +19,6 @@ from src import argument_handler
 from src import ncbi_handler
 from src import genbank_handler
 from src import biosample_sra_handler
-from src import gisaid_handler
 from src import upload_log
 from src import tools
 
@@ -48,8 +47,8 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 	file_handler.validate_directory(name = "submission directory", path = submission_dir)
 	# Validate files
 	for file_type, file_path in file_dict.items():
-		if file_type == "fasta_file" and file_path is None and ("GENBANK" in database or "GISAID" in database):
-			print("Error: Submitting to GenBank or GISAID requires a fasta file for submission. Add a fasta file to your submission with the flag '--fasta_file'. ", file=sys.stderr)
+		if file_type == "fasta_file" and file_path is None and ("GENBANK" in database):
+			print("Error: Submitting to GenBank requires a fasta file for submission. Add a fasta file to your submission with the flag '--fasta_file'. ", file=sys.stderr)
 			sys.exit(1)
 		if file_type in ["fasta_file", "gff_file"] and file_path is None:
 			# If not provided
@@ -89,8 +88,6 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 			biosample_sra_handler.create_biosample_sra_submission(organism=organism, database=database_name, submission_name=submission_name, submission_dir=submission_dir, database_dir=database_dir, config_dict=config_dict["NCBI"], metadata=metadata)
 		elif database_name == "GENBANK":
 			genbank_handler.create_genbank_submission(organism=organism, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], metadata=metadata, gff_file=file_dict["gff_file"], table2asn=table2asn, publication_title=publication_title, publication_status=publication_status)
-		elif database_name == "GISAID":
-			gisaid_handler.create_gisaid_files(organism=organism, database=database_name, submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["GISAID"], metadata=metadata)
 		else:
 			print(f"Error: Database {database_name} is not a valid database selection.", file=sys.stderr)
 			sys.exit(1)
@@ -100,9 +97,6 @@ def prep(database: List[str], organism: str, submission_dir: str, submission_nam
 # Setup needed requirements for running
 def submit(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], publication_title: Optional[str], publication_status: Optional[str], decrypt_key: str, table2asn: bool = False, test: bool = False, skip_validation: bool = False) -> None:
 	config_file_path, config_dict, metadata = prep(database=database, organism=organism, submission_dir=submission_dir, submission_name=submission_name, config_file=config_file, metadata_file=metadata_file, fasta_file=fasta_file, gff_file=gff_file, table2asn=table2asn, decrypt_key=decrypt_key, skip_validation=skip_validation, publication_title=publication_title, publication_status=publication_status, passwords_validation=True)
-	# if database is GISAID, check if CLI is in the correct directory
-	if "GISAID" in database:
-		file_handler.validate_gisaid_installer(submission_dir, organism, config_dict["GISAID"])
 	print("")
 	upload_log.create_submission_status_csv(database=database, metadata=metadata, submission_dir=os.path.join(submission_dir, submission_name, "submission_files"))
 	submission_type = tools.get_submission_type(test=test)
@@ -114,7 +108,6 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 			ncbi_handler.submit_ncbi(submission_name=submission_name, submission_dir=database_dir, database=database_name, config_dict=config_dict["NCBI"], submission_type=submission_type)
 			submission_status = "SUBMITTED"
 		elif "GENBANK" in database_name:
-			sub_pos = tools.get_submission_position(config_dict=config_dict, database="GENBANK")
 			link_ncbi = config_dict["NCBI"]["Link_Sample_Between_NCBI_Databases"]
 			if "BIOSAMPLE" in database or "SRA" in database:
 				ncbi_other_databases = True
@@ -125,16 +118,12 @@ def submit(database: List[str], organism: str, submission_dir: str, submission_n
 				table2asn = True
 			else:
 				database_name = "GENBANK-FTP"
-			if ((sub_pos is None) or (sub_pos == 1) or (sub_pos == 2 and "GISAID" not in database)) and (not ncbi_other_databases or not link_ncbi):
+			if not ncbi_other_databases or not link_ncbi:
 				if table2asn:
 					submission_status = ncbi_handler.email_table2asn(submission_name=submission_name, submission_dir=database_dir, config_dict=config_dict["NCBI"], submission_type=submission_type)
 				else:
 					ncbi_handler.submit_ncbi(submission_name=submission_name, submission_dir=database_dir, database="GENBANK", config_dict=config_dict["NCBI"], submission_type=submission_type)
 					submission_status = "SUBMITTED"
-		elif "GISAID" in database_name:
-			sub_pos = tools.get_submission_position(config_dict=config_dict, database="GISAID")
-			if sub_pos is None or sub_pos == 1 or "GENBANK" not in database:
-				submission_status = gisaid_handler.submit_gisaid(organism=organism, submission_dir=database_dir, submission_name=submission_name, config_dict=config_dict["GISAID"], submission_type=submission_type)
 		else:
 			print(f"Error: Database selection {database_name} is not valid.", file=sys.stderr)
 			sys.exit(1)
@@ -158,8 +147,6 @@ def main():
 			database += [args.sra]
 		if args.genbank:
 			database += [args.genbank]
-		if args.gisaid:
-			database += [args.gisaid]
 		if len(database) == 0:
 			print("ERROR: Missing a required database selection. See USAGE below.", file=sys.stderr)
 			parser.print_help()
@@ -186,7 +173,7 @@ def main():
 		print("Updating BioSample requirements.")
 		setup.download_biosample_xml_list()
 	elif command == "test_network_connection":
-		setup.test_internet_connection(databases=["GENERAL","NCBI","GISAID"])
+		setup.test_internet_connection(databases=["GENERAL","NCBI"])
 	else:
 		# If no command display help
 		parser.print_help()
