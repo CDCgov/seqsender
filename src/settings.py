@@ -11,7 +11,7 @@ import os
 PROG_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SeqSender version
-VERSION: str = "1.3.93 (Beta)"
+VERSION: str = "1.4.0 (Beta)"
 
 # Organism options with unique submission options
 ORGANISM_CHOICES: list[str] = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
