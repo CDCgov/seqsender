@@ -101,10 +101,6 @@ setup_body = [
                         config_indent(2, "Username:"),
                         config_text_input("ncbi_config_username", placeholder = "NCBI FTP Username", help_msg = ui.p("Username for your NCBI FTP account.", ui.strong("Not your NCBI account username."))),
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        # Password
-                        config_indent(2, "Password:"),
-                        config_text_input("ncbi_config_password", placeholder = "NCBI FTP Password", help_msg = ui.p("Password for your NCBI FTP account.", ui.strong("Not your NCBI account password."))),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         # Spuid Namespace
                         config_indent(2, "Spuid_Namespace:"),
                         config_text_input("ncbi_config_spuid_namespace", placeholder = "NCBI SPUID Namespace", help_msg = ui.p("NCBI SPUID namespace. This should have been provided when you set up your submisison group for NCBI FTP submissions.")),
@@ -270,14 +266,8 @@ setup_body = [
                     ui.panel_conditional(
                         "input.GISAID_checkbox",
                         config_indent(1, "GISAID", custom_style = ""),
-                        config_indent(2, "Client-Id:"),
-                        config_text_input("gisaid_config_client", placeholder = "GISAID Client ID", help_msg = "Provided by GISAID when authorized to make FTP submissions."),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         config_indent(2, "Username:"),
                         config_text_input("gisaid_config_username", placeholder = "GISAID Username", help_msg = "Username to login to GISAID."),
-                        div(ui.HTML("<br>"), style="margin-top:-25px;"),
-                        config_indent(2, "Password:"),
-                        config_text_input("gisaid_config_password", placeholder = "GISAID Password", help_msg = "Password to login to GISAID."),
                         div(ui.HTML("<br>"), style="margin-top:-25px;"),
                         ui.panel_conditional(
                             "input.GISAID_checkbox && input.GenBank_checkbox",

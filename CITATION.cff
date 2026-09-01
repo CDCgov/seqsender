@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+title: SeqSender
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Dakota
+    family-names: Howard
+    email: psv4@cdc.gov
+    orcid: 'https://orcid.org/0000-0002-7674-0385'
+    affiliation: (CDC/DDID/NCIRD/ID) (CTR)
+  - given-names: Reina
+    family-names: Chau
+    email: snu3@cdc.gov
+    affiliation: CDC/DDID/NCIRD/ID
+  - given-names: Ben
+    email: nbx0@cdc.gov
+    affiliation: CDC/DDID/NCIRD/ID
+    orcid: 'https://orcid.org/0000-0002-8591-3954'
+    family-names: Rambo-Martin
+  - given-names: Brian
+    family-names: Lee
+    email: fya1@cdc.gov
+    affiliation: CDC/DDID/NCIRD/ID
+  - given-names: Peter
+    family-names: Cook
+    email: ooj4@cdc.gov
+    affiliation: CDC/DDID/NCIRD/CORVD
+  - given-names: Erik
+    family-names: Wolfsohn
+repository-code: 'https://github.com/CDCgov/seqsender/'
+url: 'https://cdcgov.github.io/seqsender/'
+abstract: >-
+  Automated Pipeline to Generate and Manage Submission Files
+  of Sequence Data to Public Repositories
+keywords:
+  - SeqSender
+  - Bioinformatics
+  - CDC
+license: Apache-2.0

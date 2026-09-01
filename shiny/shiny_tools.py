@@ -36,10 +36,10 @@ def software_requirements(version):
 
 def seqsender_help_output_msg(version):
     message = """
-usage: seqsender.py [-h] {prep,submit,check_submission_status,template,update_biosample,version} ...</p>
+usage: seqsender.py [-h] {prep,submit,submission_status,load_credentials,test_data,update_biosample,test_network_connection,version} ...</p>
 <p>Automate the process of batch uploading consensus sequences and metadata to databases of your choices</p>
 <p>positional arguments:<br>
-&nbsp;|&nbsp;{prep,submit,check_submission_status,template,update_biosample,version}</p>
+&nbsp;|&nbsp;{prep,submit,submission_status,load_credentials,test_data,update_biosample,test_network_connection,version}</p>
 <p>optional arguments:<br>
 &nbsp;|&nbsp;-h, --help&nbsp;|&nbsp;&nbsp;show this help message and exit</p>
 """
@@ -198,6 +198,26 @@ config_parameter = ui.div(
     ui.tags.ul("Full path to config file if not stored in ", ui.code("--submission_dir"), " location."),
 )
 
+encrypt_config_parameter = ui.div(
+    ui.strong(ui.code("--config_file")),
+    ui.tags.ul("Config file to be used in the creation/submission of your samples. Input full file path."),
+)
+
+decrypt_key_parameter = ui.div(
+    ui.strong(ui.code("--key")),
+    ui.tags.ul("Key provided to access credentials stored in config file."),
+)
+
+encrypt_key_parameter = ui.div(
+    ui.strong(ui.code("--key")),
+    ui.tags.ul("Encryption key to use when encrypting your credentials. Allows the user to reuse the encryption key for multiple config files for users where multiple config files are needed for different submission criteria."),
+)
+
+multi_decrypt_key_parameter = ui.div(
+    ui.strong(ui.code("--key")),
+    ui.tags.ul("Key provided to access credentials stored in config file. Multiple keys may be provided if multiple config files are being checked."),
+)
+
 metadata_parameter = ui.div(
     ui.strong(ui.code("--metadata_file")),
     ui.tags.ul("Full path to metadata file if not stored in ", ui.code("--submission_dir"), " location."),
@@ -228,11 +248,24 @@ validation_parameter = ui.div(
     ui.tags.ul("Flag to skip pandera validation for ", ui.code("--metadata_file"), ". Warning, skipping validation can cause unexpected errors when missing required data."),
 )
 
+publication_parameter = [
+    ui.div(
+        ui.strong(ui.code("--publication_title")),
+        ui.tags.ul("Publication Title associated with sample submission. For GenBank only, overwrites value given via config file."),
+    ),
+    ui.div(
+        ui.strong(ui.code("--publication_status"), "{ 'Unpublished', 'In-press', 'Published' }"),
+        ui.tags.ul("Status of publication associated with sample submission. For GenBank only, overwrites value given via config file."),
+    )
+]
+
+
 def seqsender_submit_help_output_msg(version):
     message = """
 usage: seqsender.py submit [-h] [--biosample] [--sra] [--genbank] [--gisaid] --organism {FLU,COV,POX,ARBO,RSV,OTHER}
---submission_name SUBMISSION_NAME --submission_dir SUBMISSION_DIR --config_file CONFIG_FILE --metadata_file METADATA_FILE
---fasta_file FASTA_FILE [--table2asn] [--gff_file GFF_FILE] [--test]</p>
+--submission_name SUBMISSION_NAME --submission_dir SUBMISSION_DIR --config_file CONFIG_FILE --key KEY
+--metadata_file METADATA_FILE --fasta_file FASTA_FILE [--table2asn] [--gff_file GFF_FILE] [--test] [--skip_validation]
+[--publication_title PUBLICATION_TITLE] [--publication_status {Unpublished,In-press,Published}]</p>
 <p>Create submission files and then batch uploading them to databases of choices.</p>
 <p>optional arguments:<br>
 &nbsp;-h, --help &nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -253,6 +286,8 @@ Name of the submission (default: None)<br>
 Directory to where all required files (such as metadata, fasta, etc.) are stored (default: None)<br>
 &nbsp;--config_file CONFIG_FILE  <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Config file stored in submission directory (default: None)<br>
+&nbsp;--key KEY  <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
+Key provided to access credentials stored in config file (default: None)<br>
 &nbsp;--metadata_file METADATA_FILE  <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Metadata file stored in submission directory (default: None)<br>
 &nbsp;--fasta_file FASTA_FILE  <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
@@ -300,6 +335,22 @@ def get_parameters(command, output):
     if command in ["prep", "submit"]:
         command_string += " [--config_file &lt;config_file_path&gt;]"
         parameters.append(config_parameter)
+    # Add decrypt_key parameter
+    if command in ["submit"]:
+        command_string += " [--key &lt;key&gt;]"
+        parameters.append(decrypt_key_parameter)
+    # Add multi_decrypt_key parameter
+    if command in ["submission_status"]:
+        command_string += " [--key &lt;key&gt;]"
+        parameters.append(multi_decrypt_key_parameter)
+    # Add encrypt_config parameter
+    if command in ["load_credentials"]:
+        command_string += " [--config_file &lt;config_file_path&gt;]"
+        parameters.append(encrypt_config_parameter)
+    # Add encrypt_key parameter
+    if command in ["load_credentials"]:
+        command_string += " [--key &lt;key&gt;]"
+        parameters.append(encrypt_key_parameter)
     # Add metadata_file parameter
     if command in ["prep", "submit"]:
         command_string += " [--metadata_file &lt;metadata_file_path&gt;]"

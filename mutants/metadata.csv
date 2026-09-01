@@ -1,0 +1,2 @@
+bs-sample_name,sample_name,organism,collection_date,authors,bioproject,gb-sample_name,sequence_name,gb-extra
+BS1,S1,Influenza A virus,2024-01-01,"Doe, Jane",PRJNA1,GB1,seq1,keep-me

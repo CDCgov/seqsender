@@ -1,0 +1,2 @@
+/data/b.fastq.gz
+/data/a.fastq.gz

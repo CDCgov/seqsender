@@ -1,0 +1,15 @@
+[tool.mutmut]
+source_paths = ["src/"]
+debug = true
+pytest_add_cli_args_test_selection = ["tests/"]
+also_copy = ["seqsender.py"]
+do_not_mutate = ["src/argument_parser.py", "tests/test_complete_submission.py"]
+type_check_command = ['mypy', '--python-executable', 'python', '.', '--exclude', '"mutants/"', '--exclude', '"shiny/"', '--exclude', '"tests/"', '--explicit-package-base', '--output', 'json', '--cache-fine-grained', '--disable-error-code', 'unused-ignore']
+
+[tool.mypy]
+exclude = ["^mutants/"]
+ignore_missing_imports = true
+
+
+[pytest]
+norecursedirs = "mutants*"
