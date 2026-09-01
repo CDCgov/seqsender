@@ -41,16 +41,6 @@ def decrypt_passwords(config_dict: dict[str, Any], submission_portals: set[str],
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-<<<<<<< HEAD
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
-=======
->>>>>>> gisaid_removed
 	return config_dict
 
 def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
@@ -67,13 +57,6 @@ def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Op
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-<<<<<<< HEAD
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
-=======
->>>>>>> gisaid_removed
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
 	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
@@ -117,55 +100,17 @@ def get_submission_schema_config_name(submission_portals: set[str]) -> str:
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
 
-<<<<<<< HEAD
-def validate_submission_position(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
-
-=======
->>>>>>> gisaid_removed
 def get_submission_type(test: bool) -> str:
 	if test:
 		return "TEST"
 	else:
 		return "PRODUCTION"
 
-<<<<<<< HEAD
-def get_submission_position(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
-def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
-	if "NCBI" in submission_portals:
-		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
-	return schema
-
-=======
 def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
 	return schema
 
->>>>>>> gisaid_removed
 def database_specific_config_schema_updates(schema: dict[str, Any], database: list[str]) -> dict[str, Any]:
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database:
