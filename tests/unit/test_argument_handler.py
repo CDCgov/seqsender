@@ -34,7 +34,7 @@ if str(SOURCE_DIR) not in sys.path:
 MODULE_PATH = SOURCE_DIR / "argument_handler.py"
 
 settings_stub: Any = types.ModuleType("settings")
-settings_stub.ORGANISM_CHOICES = ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"]
+settings_stub.ORGANISM_CHOICES = ["FLU", "COV", "OTHER"]
 src_pkg: Any = types.ModuleType("src")
 src_pkg.__path__ = [str(SOURCE_DIR)]
 
@@ -80,7 +80,7 @@ def test_prep_requires_config_file(capsys: pytest.CaptureFixture[str]):
 
 def test_args_parser__top_level_parser_metadata_is_exact():
     parser = argument_handler.args_parser()
-    assert parser.description == "Genomic tool to simplify/automate the process of submitting organism samples to public repositories. With built-in tools to create/submit/link/log organism samples for the databases: BioSample, SRA, GenBank, and GISAID."
+    assert parser.description == "Genomic tool to simplify/automate the process of submitting organism samples to public repositories. With built-in tools to create/submit/link/log organism samples for the databases: BioSample, SRA, GenBank."
     assert parser.formatter_class is argparse.ArgumentDefaultsHelpFormatter
 
 
@@ -110,19 +110,12 @@ def test_args_parser__prep_shared_options_have_exact_metadata():
             "default": "",
             "required": False,
         },
-        "gisaid": {
-            "option_strings": ["--gisaid", "-g"],
-            "help": "Create/Submit GISAID data. (requires --fasta_file)",
-            "const": "GISAID",
-            "default": "",
-            "required": False,
-        },
         "organism": {
             "option_strings": ["--organism"],
             "help": "Type of organism data. Listed organism options have unique submissions options/processes, if your specific organism is not listed, use 'OTHER' for options available to all organisms.",
             "default": "",
             "required": True,
-            "choices": ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"],
+            "choices": ["FLU", "COV", "OTHER"],
         },
         "submission_name": {
             "option_strings": ["--submission_name"],
@@ -230,13 +223,12 @@ def test_args_parser__submission_status_submission_name_is_optional_with_exact_h
     assert action.help == "Unique name for the submission of your data. This is an optional field if you want Seqsender to only update the specified submission in the 'submission_log.csv'."
 
 # Test organism flags
-@pytest.mark.parametrize("organism", ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"])
+@pytest.mark.parametrize("organism", ["FLU", "COV", "OTHER"])
 # Test all databases flags
 @pytest.mark.parametrize(("bs_flag", "bs_value"), [("", ""), ("--biosample", "BIOSAMPLE"), ("-b", "BIOSAMPLE")])
 @pytest.mark.parametrize(("sra_flag", "sra_value"), [("", ""), ("--sra", "SRA"), ("-s", "SRA")])
 @pytest.mark.parametrize(("gb_flag", "gb_value"), [("", ""), ("--genbank", "GENBANK"), ("-n", "GENBANK")])
-@pytest.mark.parametrize(("gs_flag", "gs_value"), [("", ""), ("--gisaid", "GISAID"), ("-g", "GISAID")])
-def test_prep_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value, gs_flag, gs_value):
+def test_prep_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value):
     args = parse(
         [
             arg
@@ -245,7 +237,6 @@ def test_prep_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, g
                 bs_flag,
                 sra_flag,
                 gb_flag,
-                gs_flag,
                 "--organism",
                 organism,
                 "--submission_name",
@@ -266,19 +257,16 @@ def test_prep_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, g
         assert args.sra == "SRA"
     if gb_value:
         assert args.genbank == "GENBANK"
-    if gs_value:
-        assert args.gisaid == "GISAID"
     assert args.command == "prep"
     assert args.organism == organism
 
 # Test organism flags
-@pytest.mark.parametrize("organism", ["FLU", "COV", "POX", "ARBO", "RSV", "OTHER"])
+@pytest.mark.parametrize("organism", ["FLU", "COV", "OTHER"])
 # Test all databases flags
 @pytest.mark.parametrize(("bs_flag", "bs_value"), [("", ""), ("--biosample", "BIOSAMPLE"), ("-b", "BIOSAMPLE")])
 @pytest.mark.parametrize(("sra_flag", "sra_value"), [("", ""), ("--sra", "SRA"), ("-s", "SRA")])
 @pytest.mark.parametrize(("gb_flag", "gb_value"), [("", ""), ("--genbank", "GENBANK"), ("-n", "GENBANK")])
-@pytest.mark.parametrize(("gs_flag", "gs_value"), [("", ""), ("--gisaid", "GISAID"), ("-g", "GISAID")])
-def test_submit_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value, gs_flag, gs_value):
+def test_submit_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value, gb_flag, gb_value):
     args = parse(
         [
             arg
@@ -287,7 +275,6 @@ def test_submit_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value,
                 bs_flag,
                 sra_flag,
                 gb_flag,
-                gs_flag,
                 "--organism",
                 organism,
                 "--submission_name",
@@ -310,8 +297,6 @@ def test_submit_database_flags(organism, bs_flag, bs_value, sra_flag, sra_value,
         assert args.sra == "SRA"
     if gb_value:
         assert args.genbank == "GENBANK"
-    if gs_value:
-        assert args.gisaid == "GISAID"
     assert args.command == "submit"
     assert args.organism == organism
     assert args.key == "test-key"
@@ -407,9 +392,9 @@ def test_submission_status_command_has_optional_submission_name():
     assert args.submission_name == "sub1"
 
 def test_generate_test_data_command():
-    args = parse(["test_data", "--gisaid", "--organism", "FLU", "--submission_dir", "/tmp/out"])
+    args = parse(["test_data", "--genbank", "--organism", "FLU", "--submission_dir", "/tmp/out"])
     assert args.command == "test_data"
-    assert args.gisaid == "GISAID"
+    assert args.genbank == "GENBANK"
 
 @pytest.mark.parametrize("command", ["test_network_connection"])
 def test_miscellaneous_commands(command):
@@ -487,7 +472,6 @@ def test_subparser_defaults():
     )
     assert args.biosample == "BIOSAMPLE"
     assert args.sra == "SRA"
-    assert args.gisaid == ""
     assert args.genbank == ""
     assert args.organism == "FLU"
     assert args.skip_validation is False
@@ -504,7 +488,6 @@ def test_subparser_defaults_fasta():
         [
             "prep",
             "--genbank",
-            "--gisaid",
             "--organism",
             "COV",
             "--submission_name",
@@ -521,7 +504,6 @@ def test_subparser_defaults_fasta():
     )
     assert args.biosample == ""
     assert args.sra == ""
-    assert args.gisaid == "GISAID"
     assert args.genbank == "GENBANK"
     assert args.organism == "COV"
     assert args.skip_validation is False

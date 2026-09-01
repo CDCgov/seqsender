@@ -54,7 +54,6 @@ def file_handler_module(monkeypatch):
         "BIOSAMPLE": "bs-",
         "SRA": "sra-",
         "GENBANK": "gb-",
-        "GISAID": "gs-",
     }
     settings_stub.PROG_DIR = str(SOURCE_DIR)
 
@@ -130,123 +129,6 @@ def test_validate_directory__exits_for_missing_directory(file_handler_module, tm
 
     assert f"There is no submission directory at: {missing}\n" == capsys.readouterr().err
     assert exc.value.code == 1
-
-#*******************************************************************************
-#                          validate_gisaid_installer
-#*******************************************************************************
-
-def test_validate_gisaid_installer__prefers_config_cli_path(file_handler_module, tmp_path):
-    file_handler = file_handler_module
-    config_cli = tmp_path / "custom_cli"
-    config_cli.write_text("binary", encoding="utf-8")
-
-    result = file_handler.validate_gisaid_installer(
-        submission_dir=str(tmp_path),
-        organism="COV",
-        config_dict={"CLI_Path": f"  {config_cli}  "},
-    )
-
-    assert result == str(config_cli)
-
-def test_validate_gisaid_installer__uses_submission_dir_direct_cli(file_handler_module, tmp_path):
-    file_handler = file_handler_module
-    cli = tmp_path / "gisaid_cli" / "covCLI"
-    cli.parent.mkdir()
-    cli.write_text("binary", encoding="utf-8")
-
-    result = file_handler.validate_gisaid_installer(
-        submission_dir=str(tmp_path),
-        organism="COV",
-        config_dict={},
-    )
-
-    assert result == str(cli)
-
-def test_validate_gisaid_installer__uses_prog_dir_direct_cli(file_handler_module, tmp_path, monkeypatch):
-    file_handler = file_handler_module
-    prog_dir = tmp_path / "program"
-    cli = prog_dir / "gisaid_cli" / "covCLI"
-    cli.parent.mkdir(parents=True)
-    cli.write_text("binary", encoding="utf-8")
-    monkeypatch.setattr(file_handler, "PROG_DIR", str(prog_dir))
-
-    result = file_handler.validate_gisaid_installer(
-        submission_dir=str(tmp_path / "submission"),
-        organism="COV",
-        config_dict={},
-    )
-
-    assert result == str(cli)
-
-def test_validate_gisaid_installer__uses_submission_dir_nested_cli(file_handler_module, tmp_path):
-    file_handler = file_handler_module
-    cli = tmp_path / "gisaid_cli" / "covCLI" / "covCLI"
-    cli.parent.mkdir(parents=True)
-    cli.write_text("binary", encoding="utf-8")
-    result = file_handler.validate_gisaid_installer(submission_dir=str(tmp_path), organism="COV", config_dict={})
-    assert result == str(cli)
-
-def test_validate_gisaid_installer__uses_prog_dir_nested_cli(file_handler_module, tmp_path, monkeypatch):
-    file_handler = file_handler_module
-    prog_dir = tmp_path / "program"
-    cli = prog_dir / "gisaid_cli" / "covCLI" / "covCLI"
-    cli.parent.mkdir(parents=True)
-    cli.write_text("binary", encoding="utf-8")
-    monkeypatch.setattr(file_handler, "PROG_DIR", str(prog_dir))
-    result = file_handler.validate_gisaid_installer(submission_dir=str(tmp_path / "submission"), organism="COV", config_dict={})
-    assert result == str(cli)
-
-def test_validate_gisaid_installer__blank_config_cli_path_is_ignored(file_handler_module, tmp_path):
-    cli = tmp_path / "gisaid_cli" / "covCLI"
-    cli.parent.mkdir()
-    cli.write_text("binary", encoding="utf-8")
-    result = file_handler_module.validate_gisaid_installer(submission_dir=str(tmp_path), organism="COV", config_dict={"CLI_Path": "   "})
-    assert result == str(cli)
-
-def test_validate_gisaid_installer__blank_config_cli_path_does_not_print_config_error(file_handler_module, tmp_path, monkeypatch, capsys):
-    prog_dir = tmp_path / "program"
-    submission_dir = tmp_path / "submission"
-    monkeypatch.setattr(file_handler_module, "PROG_DIR", str(prog_dir))
-    with pytest.raises(SystemExit) as exc:
-        file_handler_module.validate_gisaid_installer(submission_dir=str(submission_dir), organism="COV", config_dict={"CLI_Path": "   "})
-    assert exc.value.code == 1
-    err = capsys.readouterr().err
-    assert "provided via config file" not in err
-    assert "located at:" in err
-
-def test_validate_gisaid_installer__exits_when_no_cli_found(file_handler_module, tmp_path, monkeypatch, capsys):
-    file_handler = file_handler_module
-    prog_dir = tmp_path / "program"
-    submission_dir = tmp_path / "submission"
-    missing_cli = tmp_path / "missing_cli"
-    monkeypatch.setattr(file_handler, "PROG_DIR", str(tmp_path / "program"))
-    with pytest.raises(SystemExit) as exc:
-        file_handler.validate_gisaid_installer(submission_dir=str(submission_dir), organism="COV", config_dict={"CLI_Path": str(missing_cli)})
-    gisaid_cli_path_option_one = submission_dir / "gisaid_cli" / "covCLI"
-    gisaid_cli_path_option_two = prog_dir / "gisaid_cli" / "covCLI"
-    assert exc.value.code == 1
-    assert capsys.readouterr().err == (
-        f"Error: There is not a GISAID CLI for COV provided via config file at: '{missing_cli}'\n"
-        f"Error: There is not a GISAID CLI for COV located at: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'\n"
-        'Download the GISAID CLI for COV from "https://gisaid.org/".\n'
-        f"Extract the zip file and place the CLI binary at either: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'\n"
-    )
-
-def test_validate_gisaid_installer__exits_when_no_cli_found_without_config_cli_path(file_handler_module, tmp_path, monkeypatch, capsys):
-    file_handler = file_handler_module
-    prog_dir = tmp_path / "program"
-    submission_dir = tmp_path / "submission"
-    monkeypatch.setattr(file_handler, "PROG_DIR", str(prog_dir))
-    with pytest.raises(SystemExit) as exc:
-        file_handler.validate_gisaid_installer(submission_dir=str(submission_dir), organism="COV", config_dict={})
-    gisaid_cli_path_option_one = submission_dir / "gisaid_cli" / "covCLI"
-    gisaid_cli_path_option_two = prog_dir / "gisaid_cli" / "covCLI"
-    assert exc.value.code == 1
-    assert capsys.readouterr().err == (
-        f"Error: There is not a GISAID CLI for COV located at: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'\n"
-        'Download the GISAID CLI for COV from "https://gisaid.org/".\n'
-        f"Extract the zip file and place the CLI binary at either: '{gisaid_cli_path_option_one}' or '{gisaid_cli_path_option_two}'\n"
-    )
 
 #*******************************************************************************
 #                            create_directory
@@ -582,31 +464,6 @@ def test_create_fasta__writes_genbank_headers_with_bioproject_and_modifiers(file
     content = (tmp_path / "sequence.fsa").read_text(encoding="utf-8")
     assert ">GB1 [BioProject=PRJNA123] [country=USA]" in content
     assert "ACTG" in content
-
-
-def test_create_fasta__omits_bioproject_when_flag_is_false(file_handler_module, tmp_path):
-    file_handler = file_handler_module
-    metadata = pd.DataFrame(
-        [
-            {
-                "gs-sample_name": "GS1",
-                "bioproject": "PRJNA123",
-                "fasta_sequence_orig": Seq("TTAA"),
-            }
-        ]
-    )
-
-    file_handler.create_fasta(
-        database="GISAID",
-        metadata=metadata,
-        submission_dir=str(tmp_path),
-        config_dict={"Add_Definition_Line_Accessions": False},
-    )
-
-    content = (tmp_path / "sequence.fsa").read_text(encoding="utf-8")
-    assert ">GS1" in content
-    assert "BioProject" not in content
-    assert "TTAA" in content
 
 def test_create_fasta__omits_blank_bioproject_even_when_flag_true(file_handler_module, tmp_path):
     metadata = pd.DataFrame(

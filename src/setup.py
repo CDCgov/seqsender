@@ -102,8 +102,6 @@ TEST_CONNECTIONS = {"HTTP": {"website":"http://www.google.com", "database": "GEN
 "HTTPS": {"website": "https://www.google.com", "database": "GENERAL", "error_msg": "Possible internet connectivity issues; unable to connect to 'https://www.google.com'."},
 "NCBI": {"website": "https://www.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://www.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
 "NCBI API": {"website": "https://submit.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://submit.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
-"GISAID": {"website": "https://www.epicov.org/epi3/start", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."},
-"GISAID": {"website": "https://gisaid.org/", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."}
 }
 
 # Create example data for testing
@@ -135,7 +133,7 @@ def create_test_data(organism: str, database: list[str], submission_dir: str) ->
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -150,7 +148,7 @@ def create_test_data(organism: str, database: list[str], submission_dir: str) ->
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:

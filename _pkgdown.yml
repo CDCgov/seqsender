@@ -36,11 +36,6 @@ navbar:
         href: articles/sra_submission.html
       - text: GenBank
         href: articles/genbank_submission.html 
-      - text: GISAID
-      - text: EpiFlu
-        href: articles/gisaid_flu_submission.html
-      - text: EpiCoV
-        href: articles/gisaid_cov_submission.html
     - text: Support
       menu:
       - text: FAQs

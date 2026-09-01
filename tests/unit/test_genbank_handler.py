@@ -1110,7 +1110,7 @@ def test_update_genbank_files__missing_source_file_exits(tmp_path, genbank_handl
 
     with pytest.raises(SystemExit) as exc:
         genbank_handler_module.update_genbank_files(
-            {"BIOSAMPLE": True, "SRA": False, "GISAID": False},
+            {"BIOSAMPLE": True, "SRA": False},
             "COV",
             str(submission_dir),
             {"Add_Definition_Line_Accessions": True},
@@ -1133,7 +1133,7 @@ def test_update_genbank_files__adds_biosample_sra_to_source_and_fasta_definition
     pd.DataFrame([{"Sequence_ID": "GB001", "Collection_date": "2024-01-01"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
     write_fasta(submission_dir / "sequence.fsa", [SeqRecord(Seq("ACGT"), id="GB001", description="GB001 [BioSample=OLD] note")])
 
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
 
     source = pd.read_csv(submission_dir / "source.src", sep="\t", dtype=str)
     assert source.loc[0, "BioSample"] == "SAMN1"
@@ -1143,7 +1143,7 @@ def test_update_genbank_files__adds_biosample_sra_to_source_and_fasta_definition
     assert "[SRA=SRR1]" in fasta_text
     assert "OLD" not in fasta_text
 
-def test_update_genbank_files__uses_exact_left_merges_for_source_and_comment(tmp_path, monkeypatch, genbank_handler_module):
+def test_update_genbank_files__uses_exact_left_merges_for_source(tmp_path, monkeypatch, genbank_handler_module):
     submission_dir = tmp_path / "GENBANK"
     submission_dir.mkdir()
     pd.DataFrame(
@@ -1152,8 +1152,6 @@ def test_update_genbank_files__uses_exact_left_merges_for_source_and_comment(tmp
                 "gb-sample_name": "GB001",
                 "biosample_accession": "SAMN1",
                 "sra_accession": "SRR1",
-                "gisaid_accession_epi_isl_id": "EPI_ISL_1",
-                "gisaid_accession_epi_id": "EPI123",
             }
         ]
     ).to_csv(tmp_path / "submission_status_report.csv", index=False)
@@ -1167,16 +1165,16 @@ def test_update_genbank_files__uses_exact_left_merges_for_source_and_comment(tmp
         return original_merge(left, right, *args, **kwargs)
 
     monkeypatch.setattr(genbank_handler_module.pd, "merge", fake_merge)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True, "GISAID": True}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
+    assert len(observed) == 1
     assert observed[0]["kwargs"] == {"how": "left", "on": "Sequence_ID"}
-    assert observed[1]["kwargs"] == {"how": "left", "on": "SeqID"}
 
 def test_update_genbank_files__does_not_link_biosample_when_linking_false_even_if_accession_exists(tmp_path, genbank_handler_module):
     submission_dir = tmp_path / "GENBANK"
     submission_dir.mkdir()
     pd.DataFrame([{"gb-sample_name": "GB001", "biosample_accession": "SAMN1"}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
     assert genbank_handler_module.file_handler.saved_csvs == []
 
 def test_update_genbank_files__does_not_link_sra_when_linking_false_even_if_accession_exists(tmp_path, genbank_handler_module):
@@ -1184,25 +1182,8 @@ def test_update_genbank_files__does_not_link_sra_when_linking_false_even_if_acce
     submission_dir.mkdir()
     pd.DataFrame([{"gb-sample_name": "GB001", "sra_accession": "SRR1"}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
     assert genbank_handler_module.file_handler.saved_csvs == []
-
-def test_update_genbank_files__does_not_link_gisaid_when_linking_false_even_if_accessions_exist(tmp_path, genbank_handler_module):
-    submission_dir = tmp_path / "GENBANK"
-    submission_dir.mkdir()
-    pd.DataFrame(
-        [
-            {
-                "gb-sample_name": "GB001",
-                "gisaid_accession_epi_isl_id": "EPI_ISL_1",
-                "gisaid_accession_epi_id": "EPI123",
-            }
-        ]
-    ).to_csv(tmp_path / "submission_status_report.csv", index=False)
-    pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {})
-    assert genbank_handler_module.file_handler.saved_csvs == []
-    assert not (submission_dir / "comment.cmt").exists()
 
 def test_update_genbank_files__rewrites_fasta_definition_line_exactly(tmp_path, genbank_handler_module):
     submission_dir = tmp_path / "GENBANK"
@@ -1210,7 +1191,7 @@ def test_update_genbank_files__rewrites_fasta_definition_line_exactly(tmp_path, 
     pd.DataFrame([{"gb-sample_name": "GB001","biosample_accession": "SAMN1","sra_accession": "SRR1"}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
     write_fasta(submission_dir / "sequence.fsa", [SeqRecord(Seq("ACGT"), id="GB001", description="GB001 old desc [BioSample=OLD] [SRA=OLD]")])
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
     records = list(SeqIO.parse(submission_dir / "sequence.fsa", "fasta"))
     assert len(records) == 1
     assert records[0].id == "GB001"
@@ -1222,7 +1203,7 @@ def test_update_genbank_files__does_not_save_when_no_linking_accessions_availabl
     pd.DataFrame([{"gb-sample_name": "GB001"}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
     before_saved = list(genbank_handler_module.file_handler.saved_csvs)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
     assert genbank_handler_module.file_handler.saved_csvs == before_saved
 
 def test_update_genbank_files__does_not_rewrite_fasta_when_config_disabled( tmp_path, genbank_handler_module):
@@ -1232,58 +1213,8 @@ def test_update_genbank_files__does_not_rewrite_fasta_when_config_disabled( tmp_
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
     fasta = submission_dir / "sequence.fsa"
     fasta.write_text(">GB001 old description\nACGT\n")
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": False})
     assert fasta.read_text() == ">GB001 old description\nACGT\n"
-
-def test_update_genbank_files__adds_gisaid_accessions_to_existing_comment_file(tmp_path, genbank_handler_module):
-    submission_dir = tmp_path / "GENBANK"
-    submission_dir.mkdir()
-    pd.DataFrame(
-        [
-            {
-                "gb-sample_name": "GB001",
-                "gisaid_accession_epi_isl_id": "EPI_ISL_1",
-                "gisaid_accession_epi_id": "EPI123",
-            }
-        ]
-    ).to_csv(tmp_path / "submission_status_report.csv", index=False)
-    pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    pd.DataFrame(
-        [
-            {
-                "SeqID": "GB001",
-                "StructuredCommentPrefix": "Assembly-Data",
-                "Assembly Method": "iVar",
-                "StructuredCommentSuffix": "Assembly-Data",
-            }
-        ]
-    ).to_csv(submission_dir / "comment.cmt", sep="\t", index=False)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": True}, "COV", str(submission_dir), {})
-    cmt = pd.read_csv(submission_dir / "comment.cmt", sep="\t", dtype=str)
-    assert cmt.columns.tolist() == ["SeqID", "StructuredCommentPrefix", "EPI_ISOLATE_ID", "Assembly Method", "EPI_SEQUENCE_ID", "StructuredCommentSuffix"]
-    assert cmt.loc[0, "EPI_ISOLATE_ID"] == "EPI_ISL_1"
-    assert cmt.loc[0, "EPI_SEQUENCE_ID"] == "EPI123"
-
-@pytest.mark.parametrize(("organism", "expected_prefix"), [("FLU", "FluData"), ("COV", "Assembly-Data")])
-def test_update_genbank_files__creates_comment_file_for_gisaid_when_missing(tmp_path, genbank_handler_module, organism, expected_prefix):
-    submission_dir = tmp_path / "GENBANK"
-    submission_dir.mkdir()
-    pd.DataFrame(
-        [
-            {
-                "gb-sample_name": "GB001",
-                "gisaid_accession_epi_isl_id": "EPI_ISL_1",
-                "gisaid_accession_epi_id": "EPI123",
-            }
-        ]
-    ).to_csv(tmp_path / "submission_status_report.csv", index=False)
-    pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": True}, organism, str(submission_dir), {})
-    cmt = pd.read_csv(submission_dir / "comment.cmt", sep="\t", dtype=str)
-    assert cmt.loc[0, "StructuredCommentPrefix"] == expected_prefix
-    assert cmt.loc[0, "StructuredCommentSuffix"] == expected_prefix
-    assert cmt.loc[0, "EPI_ISOLATE_ID"] == "EPI_ISL_1"
-    assert cmt.loc[0, "EPI_SEQUENCE_ID"] == "EPI123"
 
 def test_update_genbank_files__fasta_write_permission_error_exits(tmp_path, monkeypatch, genbank_handler_module, capsys):
     submission_dir = tmp_path / "GENBANK"
@@ -1300,32 +1231,10 @@ def test_update_genbank_files__fasta_write_permission_error_exits(tmp_path, monk
 
     monkeypatch.setattr(genbank_handler_module, "open", fake_open, raising=False)
     with pytest.raises(SystemExit) as exc:
-        genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+        genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
     assert exc.value.code == 1
     captured = capsys.readouterr()
     assert captured.err == f"Error: Permission error when trying to save 'sequence.fsa' to path: {submission_dir}\nPermissionError\n"
-
-def test_update_genbank_files__loads_existing_comment_file_with_exact_tsv_path(tmp_path, monkeypatch, genbank_handler_module):
-    submission_dir = tmp_path / "GENBANK"
-    submission_dir.mkdir()
-    pd.DataFrame([{"gb-sample_name": "GB001", "gisaid_accession_epi_isl_id": "EPI_ISL_1"}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
-    pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
-    pd.DataFrame([{"SeqID": "GB001", "StructuredCommentPrefix": "Assembly-Data", "StructuredCommentSuffix": "Assembly-Data"}]).to_csv(submission_dir / "comment.cmt", sep="\t", index=False)
-    original_load_csv = genbank_handler_module.file_handler.load_csv
-    load_calls: list[dict[str, Any]] = []
-
-    def fake_load_csv(file_path, sep=","):
-        load_calls.append({"file_path": file_path, "sep": sep})
-        return original_load_csv(file_path=file_path, sep=sep)
-
-    monkeypatch.setattr(genbank_handler_module.file_handler, "load_csv", fake_load_csv)
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": False, "SRA": False, "GISAID": True}, "COV", str(submission_dir), {})
-    assert load_calls == [
-        {"file_path": os.path.join(str(tmp_path), "submission_status_report.csv"), "sep": ","},
-        {"file_path": os.path.join(str(submission_dir), "source.src"), "sep": "\t"},
-        {"file_path": os.path.join(str(submission_dir), "comment.cmt"), "sep": "\t"},
-        {"file_path": os.path.join(str(submission_dir), "comment.cmt"), "sep": "\t"},
-    ]
 
 def test_update_genbank_files__fasta_definition_omits_missing_or_blank_accessions(tmp_path, genbank_handler_module):
     submission_dir = tmp_path / "GENBANK"
@@ -1333,7 +1242,7 @@ def test_update_genbank_files__fasta_definition_omits_missing_or_blank_accession
     pd.DataFrame([{"gb-sample_name": "GB001", "biosample_accession": "", "sra_accession": ""}]).to_csv(tmp_path / "submission_status_report.csv", index=False)
     pd.DataFrame([{"Sequence_ID": "GB001"}]).to_csv(submission_dir / "source.src", sep="\t", index=False)
     write_fasta(submission_dir / "sequence.fsa", [SeqRecord(Seq("ACGT"), id="GB001", description="GB001 original")])
-    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+    genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": True}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
     records = list(SeqIO.parse(submission_dir / "sequence.fsa", "fasta"))
     assert records[0].description == "GB001 original"
     assert "None" not in records[0].description
@@ -1356,7 +1265,7 @@ def test_update_genbank_files__fasta_write_unexpected_error_exits_exactly(tmp_pa
 
     monkeypatch.setattr(genbank_handler_module, "open", fake_open, raising=False)
     with pytest.raises(SystemExit) as exc:
-        genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False, "GISAID": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
+        genbank_handler_module.update_genbank_files({"BIOSAMPLE": True, "SRA": False}, "COV", str(submission_dir), {"Add_Definition_Line_Accessions": True})
 
     assert exc.value.code == 1
     captured = capsys.readouterr()

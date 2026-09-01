@@ -54,17 +54,9 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
     def create_directory(path):
         calls.append(("file_handler.create_directory", {"path": path}))
 
-    def validate_gisaid_installer(*args, **kwargs):
-        calls.append(
-            (
-                "file_handler.validate_gisaid_installer",
-                {"args": args, "kwargs": kwargs},
-            )
-        )
     file_handler.validate_directory = validate_directory
     file_handler.validate_file = validate_file
     file_handler.create_directory = create_directory
-    file_handler.validate_gisaid_installer = validate_gisaid_installer
 
     argument_handler: Any = types.ModuleType("argument_handler")
 
@@ -98,17 +90,6 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
 
     biosample_sra_handler.create_biosample_sra_submission = create_biosample_sra_submission
 
-    gisaid_handler: Any = types.ModuleType("gisaid_handler")
-
-    def create_gisaid_files(**kwargs):
-        calls.append(("gisaid_handler.create_gisaid_files", kwargs))
-
-    def submit_gisaid(**kwargs):
-        calls.append(("gisaid_handler.submit_gisaid", kwargs))
-
-    gisaid_handler.create_gisaid_files = create_gisaid_files
-    gisaid_handler.submit_gisaid = submit_gisaid
-
     upload_log: Any = types.ModuleType("upload_log")
 
     def create_submission_status_csv(**kwargs):
@@ -131,15 +112,13 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
             "NCBI": {
                 "Link_Sample_Between_NCBI_Databases": False,
                 "Username": "ncbi-user",
-            },
-            "GISAID": {"Username": "gisaid-user"},
+            }
         }
     def get_metadata(**kwargs):
         return pd.DataFrame(
             {
                 "sequence_name": ["seq1"],
                 "gb-sample_name": ["gb1"],
-                "gs-sample_name": ["gs1"],
             }
         )
     def process_fasta_samples(**kwargs):
@@ -148,14 +127,10 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
     def get_submission_type(test):
         return "TEST" if test else "PRODUCTION"
 
-    def get_submission_position(config_dict, database):
-        return None
-
     tools.get_config = get_config
     tools.get_metadata = get_metadata
     tools.process_fasta_samples = process_fasta_samples
     tools.get_submission_type = get_submission_type
-    tools.get_submission_position = get_submission_position
 
     settings: Any = types.ModuleType("settings")
     settings.VERSION = "9.9.9-test"
@@ -170,7 +145,6 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
         "src.ncbi_handler",
         "src.genbank_handler",
         "src.biosample_sra_handler",
-        "src.gisaid_handler",
         "src.upload_log",
         "src.tools",
         "src.settings",
@@ -180,7 +154,6 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
         "ncbi_handler",
         "genbank_handler",
         "biosample_sra_handler",
-        "gisaid_handler",
         "upload_log",
         "tools",
         "settings",
@@ -206,7 +179,6 @@ def seqsender_module(monkeypatch: pytest.MonkeyPatch):
         "ncbi_handler": ncbi_handler,
         "genbank_handler": genbank_handler,
         "biosample_sra_handler": biosample_sra_handler,
-        "gisaid_handler": gisaid_handler,
         "upload_log": upload_log,
         "tools": tools,
         "settings": settings,
@@ -277,8 +249,8 @@ def test_prep__sra_without_biosample_warns(seqsender_module, tmp_path, capsys):
     )
     assert "SRA requires a BioSample submission" in capsys.readouterr().out
 
-@pytest.mark.parametrize("database", [["GENBANK"], ["GISAID"]])
-def test_prep_requires_fasta_for_genbank_or_gisaid(seqsender_module, tmp_path, database):
+@pytest.mark.parametrize("database", [["GENBANK"]])
+def test_prep_requires_fasta_for_genbank(seqsender_module, tmp_path, database):
     with pytest.raises(SystemExit):
         seqsender_module.prep(
             database=database,
@@ -295,9 +267,9 @@ def test_prep_requires_fasta_for_genbank_or_gisaid(seqsender_module, tmp_path, d
             decrypt_key="test-key",
         )
 
-def test_prep__genbank_and_gisaid_processes_fasta_and_routes_handlers(seqsender_module, tmp_path):
+def test_prep__genbank_processes_fasta_and_routes_handlers(seqsender_module, tmp_path):
     seqsender_module.prep(
-        database=["GENBANK", "GISAID"],
+        database=["GENBANK"],
         organism="FLU",
         submission_dir=str(tmp_path),
         submission_name="sub1",
@@ -312,7 +284,6 @@ def test_prep__genbank_and_gisaid_processes_fasta_and_routes_handlers(seqsender_
     )
 
     assert len(called(seqsender_module, "genbank_handler.create_genbank_submission")) == 1
-    assert len(called(seqsender_module, "gisaid_handler.create_gisaid_files")) == 1
     genbank_call = called(seqsender_module, "genbank_handler.create_genbank_submission")[0]
     assert genbank_call["gff_file"] == str(tmp_path / "ann.gff")
     assert genbank_call["table2asn"] is True
@@ -362,7 +333,7 @@ def test_submit__biosample_and_sra_submit_to_ncbi_and_log(seqsender_module, tmp_
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}},
+            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -389,7 +360,7 @@ def test_submit__genbank_ftp(seqsender_module, tmp_path, monkeypatch):
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}},
+            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -416,7 +387,7 @@ def test_submit__genbank_table2asn_forced_by_flag(seqsender_module, tmp_path, mo
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}},
+            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -443,7 +414,7 @@ def test_submit__genbank_table2asn_for_non_ftp_organism(seqsender_module, tmp_pa
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}},
+            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -468,7 +439,7 @@ def test_submit__genbank_waits_when_linked_to_ncbi_first(seqsender_module, tmp_p
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": True}, "GISAID": {}},
+            {"NCBI": {"Link_Sample_Between_NCBI_Databases": True}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -490,70 +461,11 @@ def test_submit__genbank_waits_when_linked_to_ncbi_first(seqsender_module, tmp_p
     assert genbank_log["database"] == "GENBANK-FTP"
     assert genbank_log["submission_status"] == "WAITING"
 
-
-def test_submit__gisaid_validates_cli_and_submits(seqsender_module, tmp_path, monkeypatch):
-    def fake_prep(**kwargs):
-        return (
-            "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {"CLI_Path": "/bin/cli"}},
-            pd.DataFrame({"sample": ["x"]}),
-        )
-    monkeypatch.setattr(seqsender_module, "prep", fake_prep)
-    seqsender_module.submit(
-        database=["GISAID"],
-        organism="COV",
-        submission_dir=str(tmp_path),
-        submission_name="sub1",
-        config_file="config.yaml",
-        metadata_file="metadata.csv",
-        fasta_file="seqs.fasta",
-        gff_file=None,
-        publication_title=None,
-        publication_status=None,
-        decrypt_key="test-key",
-    )
-    assert len(called(seqsender_module, "file_handler.validate_gisaid_installer")) == 1
-    assert len(called(seqsender_module, "gisaid_handler.submit_gisaid")) == 1
-    assert called(seqsender_module, "upload_log.create_submission_log")[0]["submission_status"] is None
-
-
-def test_submit__gisaid_waits_if_genbank_first(seqsender_module, tmp_path, monkeypatch):
-    def fake_prep(**kwargs):
-        return (
-            "config.yaml",
-            {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}},
-            pd.DataFrame({"sample": ["x"]}),
-        )
-
-    def fake_get_submission_position(config_dict, database):
-        return 2 if database == "GISAID" else 1
-
-    monkeypatch.setattr(seqsender_module, "prep", fake_prep)
-    monkeypatch.setattr(seqsender_module.tools, "get_submission_position", fake_get_submission_position)
-    seqsender_module.submit(
-        database=["GENBANK", "GISAID"],
-        organism="FLU",
-        submission_dir=str(tmp_path),
-        submission_name="sub1",
-        config_file="config.yaml",
-        metadata_file="metadata.csv",
-        fasta_file="seqs.fasta",
-        gff_file=None,
-        publication_title=None,
-        publication_status=None,
-        decrypt_key="test-key",
-    )
-    assert len(called(seqsender_module, "gisaid_handler.submit_gisaid")) == 0
-    gisaid_log = called(seqsender_module, "upload_log.create_submission_log")[1]
-    assert gisaid_log["database"] == "GISAID"
-    assert gisaid_log["submission_status"] == "WAITING"
-
-
 def test_submit__invalid_database_exits(seqsender_module, tmp_path, monkeypatch):
     def fake_prep(**kwargs):
         return (
             "config.yaml",
-            {"NCBI": {}, "GISAID": {}},
+            {"NCBI": {}},
             pd.DataFrame({"sample": ["x"]}),
         )
     monkeypatch.setattr(seqsender_module, "prep", fake_prep)
@@ -608,7 +520,6 @@ def test_main__dispatches_prep(seqsender_module, tmp_path, monkeypatch):
         biosample="BIOSAMPLE",
         sra="",
         genbank="",
-        gisaid="",
         organism="COV",
         submission_name="sub1",
         submission_dir=str(tmp_path),
@@ -638,7 +549,6 @@ def test_main__dispatches_submit(seqsender_module, tmp_path, monkeypatch):
         biosample="",
         sra="SRA",
         genbank="",
-        gisaid="",
         organism="OTHER",
         submission_name="sub1",
         submission_dir=str(tmp_path),
@@ -665,7 +575,6 @@ def test_main__missing_database_prints_help_and_exits(seqsender_module, tmp_path
         biosample="",
         sra="",
         genbank="",
-        gisaid="",
         organism="COV",
         submission_name="sub1",
         submission_dir=str(tmp_path),
@@ -697,7 +606,6 @@ def test_main__test_data_dispatch(seqsender_module, tmp_path, monkeypatch):
         biosample="BIOSAMPLE",
         sra="SRA",
         genbank="",
-        gisaid="",
         organism="FLU",
         submission_dir=str(tmp_path),
     )
@@ -724,7 +632,7 @@ def test_main__test_network_connection_dispatch(seqsender_module, monkeypatch):
     run_main_with_args(seqsender_module, monkeypatch, args)
     seqsender_module.main()
     call = called(seqsender_module, "setup.test_internet_connection")[0]
-    assert call["databases"] == ["GENERAL", "NCBI", "GISAID"]
+    assert call["databases"] == ["GENERAL", "NCBI"]
 
 def test_main__unknown_command_prints_help_and_exits(seqsender_module, monkeypatch):
     parser = run_main_with_args(seqsender_module, monkeypatch, argparse.Namespace(command=None))

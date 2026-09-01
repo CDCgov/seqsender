@@ -86,7 +86,6 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
         "BIOSAMPLE": "bs-",
         "SRA": "sra-",
         "GENBANK": "gb-",
-        "GISAID": "gs-",
     }
     settings_mod.BIOSAMPLE_SUBMISSION_STATUS_COLUMNS = [
         "biosample_status",
@@ -102,11 +101,6 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
         "genbank_status",
         "genbank_accession",
         "genbank_message",
-    ]
-    settings_mod.GISAID_SUBMISSION_STATUS_COLUMNS = [
-        "gisaid_accession_epi_isl_id",
-        "gisaid_accession_epi_id",
-        "gisaid_message",
     ]
     settings_mod.SUBMISSION_LOG_COLUMNS = [
         "Submission_Name",
@@ -138,7 +132,6 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
         "config.seqsender.submission_status_report.biosample_submission_status_report_schema": "biosample",
         "config.seqsender.submission_status_report.sra_submission_status_report_schema": "sra",
         "config.seqsender.submission_status_report.genbank_submission_status_report_schema": "genbank",
-        "config.seqsender.submission_status_report.gisaid_submission_status_report_schema": "gisaid",
     }
     schemas: dict[str, FakeSchema] = {}
     for module_name, schema_name in schema_modules.items():
@@ -203,16 +196,6 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
     genbank_handler.update_genbank_files = update_genbank_files
     alias_src_module("genbank_handler", genbank_handler)
 
-    gisaid_handler: Any = types.ModuleType("gisaid_handler")
-    gisaid_handler.calls = []
-
-    def submit_gisaid(**kwargs):
-        gisaid_handler.calls.append(("submit_gisaid", kwargs))
-        return "PROCESSED"
-
-    gisaid_handler.submit_gisaid = submit_gisaid
-    alias_src_module("gisaid_handler", gisaid_handler)
-
     biosample_sra_handler: Any = types.ModuleType("biosample_sra_handler")
     biosample_sra_handler.calls = []
 
@@ -245,21 +228,16 @@ def upload_log_module(monkeypatch: pytest.MonkeyPatch):
 
     tools: Any = types.ModuleType("tools")
     tools.pretty_print_calls = []
-    tools.positions = {}
-    tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}}
+    tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}}
 
     def pretty_print_pandera_errors(**kwargs):
         tools.pretty_print_calls.append(kwargs)
         return None
 
-    def get_submission_position(config_dict, database):
-        return tools.positions.get(database)
-
     def get_config(config_file, databases, decrypt_key):
         return tools.config
 
     tools.pretty_print_pandera_errors = pretty_print_pandera_errors
-    tools.get_submission_position = get_submission_position
     tools.get_config = get_config
     alias_src_module("tools", tools)
 
@@ -294,10 +272,6 @@ def status_df() -> pd.DataFrame:
             "genbank_status": [""],
             "genbank_accession": [""],
             "genbank_message": [""],
-            "gs-sample_name": ["gs1"],
-            "gisaid_accession_epi_isl_id": [""],
-            "gisaid_accession_epi_id": [""],
-            "gisaid_message": [""],
         }
     )
 
@@ -321,17 +295,16 @@ def submission_log_df(**overrides: Any) -> pd.DataFrame:
 #                       create_submission_status_csv
 #*******************************************************************************
 
-def test_create_submission_status_csv__all_databases_default_gisaid(upload_log_module):
+def test_create_submission_status_csv__all_databases_default(upload_log_module):
     metadata = pd.DataFrame(
         {
             "bs-sample_name": ["bs1"],
             "sra-sample_name": ["sra1"],
             "gb-sample_name": ["gb1"],
-            "gs-sample_name": ["gs1"],
         }
     )
 
-    upload_log_module.create_submission_status_csv(database=["BIOSAMPLE", "SRA", "GENBANK", "GISAID"], metadata=metadata, submission_dir="/out")
+    upload_log_module.create_submission_status_csv(database=["BIOSAMPLE", "SRA", "GENBANK"], metadata=metadata, submission_dir="/out")
 
     saved = upload_log_module.file_handler.saved_csvs[-1]
     assert saved["path"] == "/out/submission_status_report.csv"
@@ -348,10 +321,6 @@ def test_create_submission_status_csv__all_databases_default_gisaid(upload_log_m
         "genbank_status",
         "genbank_accession",
         "genbank_message",
-        "gs-sample_name",
-        "gisaid_accession_epi_isl_id",
-        "gisaid_accession_epi_id",
-        "gisaid_message",
     ]
     assert saved["df"].to_dict("records") == [
         {
@@ -367,94 +336,11 @@ def test_create_submission_status_csv__all_databases_default_gisaid(upload_log_m
             "genbank_status": "",
             "genbank_accession": "",
             "genbank_message": "",
-            "gs-sample_name": "gs1",
-            "gisaid_accession_epi_isl_id": "",
-            "gisaid_accession_epi_id": "",
-            "gisaid_message": "",
         }
     ]
     assert saved["file_path"] == "/out/submission_status_report.csv"
     assert saved["file_name"] is None
     assert saved["sep"] == ","
-
-def test_create_submission_status_csv__flu_gisaid_renames_isolate_and_segment(upload_log_module):
-    metadata = pd.DataFrame({"gs-Isolate_Name": ["iso1"], "gs-sample_name": ["seg1"]})
-    upload_log_module.create_submission_status_csv(database=["GISAID"], metadata=metadata, submission_dir="/out")
-    saved_df = upload_log_module.file_handler.saved_csvs[-1]["df"]
-    assert saved_df.columns.tolist() == [
-        "gs-sample_name",
-        "gs-segment_name",
-        "gisaid_accession_epi_isl_id",
-        "gisaid_accession_epi_id",
-        "gisaid_message",
-    ]
-    assert saved_df.loc[0, "gs-sample_name"] == "iso1"
-    assert saved_df.loc[0, "gs-segment_name"] == "seg1"
-    assert saved_df.to_dict("records") == [
-        {
-            "gs-sample_name": "iso1",
-            "gs-segment_name": "seg1",
-            "gisaid_accession_epi_isl_id": "",
-            "gisaid_accession_epi_id": "",
-            "gisaid_message": "",
-        }
-    ]
-
-def test_create_submission_status_csv__all_databases_with_flu_gisaid_preserves_all_prior_columns(upload_log_module):
-    metadata = pd.DataFrame(
-        {
-            "bs-sample_name": ["bs1"],
-            "sra-sample_name": ["sra1"],
-            "gb-sample_name": ["gb1"],
-            "gs-Isolate_Name": ["iso1"],
-            "gs-sample_name": ["seg1"],
-        }
-    )
-    upload_log_module.create_submission_status_csv(database=["BIOSAMPLE", "SRA", "GENBANK", "GISAID"], metadata=metadata, submission_dir="/out")
-    saved = upload_log_module.file_handler.saved_csvs[-1]
-    assert saved["file_path"] == "/out/submission_status_report.csv"
-    assert saved["file_name"] is None
-    assert saved["sep"] == ","
-    assert saved["df"].columns.tolist() == [
-        "bs-sample_name",
-        "biosample_status",
-        "biosample_accession",
-        "biosample_message",
-        "sra-sample_name",
-        "sra_status",
-        "sra_accession",
-        "sra_message",
-        "gb-sample_name",
-        "genbank_status",
-        "genbank_accession",
-        "genbank_message",
-        "gs-sample_name",
-        "gs-segment_name",
-        "gisaid_accession_epi_isl_id",
-        "gisaid_accession_epi_id",
-        "gisaid_message",
-    ]
-    assert saved["df"].to_dict("records") == [
-        {
-            "bs-sample_name": "bs1",
-            "biosample_status": "",
-            "biosample_accession": "",
-            "biosample_message": "",
-            "sra-sample_name": "sra1",
-            "sra_status": "",
-            "sra_accession": "",
-            "sra_message": "",
-            "gb-sample_name": "gb1",
-            "genbank_status": "",
-            "genbank_accession": "",
-            "genbank_message": "",
-            "gs-sample_name": "iso1",
-            "gs-segment_name": "seg1",
-            "gisaid_accession_epi_isl_id": "",
-            "gisaid_accession_epi_id": "",
-            "gisaid_message": "",
-        }
-    ]
 
 #*******************************************************************************
 #                     validate_submission_status_df
@@ -462,17 +348,15 @@ def test_create_submission_status_csv__all_databases_with_flu_gisaid_preserves_a
 
 def test_validate_submission_status_df__calls_requested_schemas_with_lazy_true(upload_log_module):
     df = pd.DataFrame({"x": [1]})
-    upload_log_module.validate_submission_status_df(df, ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"])
+    upload_log_module.validate_submission_status_df(df, ["BIOSAMPLE", "SRA", "GENBANK"])
 
     assert len(upload_log_module._schemas["biosample"].calls) == 1
     assert len(upload_log_module._schemas["sra"].calls) == 1
     assert len(upload_log_module._schemas["genbank"].calls) == 1
-    assert len(upload_log_module._schemas["gisaid"].calls) == 1
 
     assert upload_log_module._schemas["biosample"].calls[0][1] is True
     assert upload_log_module._schemas["sra"].calls[0][1] is True
     assert upload_log_module._schemas["genbank"].calls[0][1] is True
-    assert upload_log_module._schemas["gisaid"].calls[0][1] is True
 
 def test_validate_submission_status_df__sra_schema_is_called_with_lazy_true(upload_log_module):
     df = pd.DataFrame({"x": [1]})
@@ -525,14 +409,13 @@ def test_update_submission_status_csv__pops_database_directory(upload_log_module
         "/logs/submission_status_report.csv",
     )
 
-@pytest.mark.parametrize("database_dir", ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"])
+@pytest.mark.parametrize("database_dir", ["BIOSAMPLE", "SRA", "GENBANK"])
 def test_update_submission_status_csv__pops_each_database_directory_exactly(upload_log_module, status_df, database_dir):
     upload_log_module.file_handler.loaded_csvs["/logs/submission_status_report.csv"] = status_df
     prefix = {
         "BIOSAMPLE": "bs",
         "SRA": "sra",
         "GENBANK": "gb",
-        "GISAID": "gs",
     }[database_dir]
 
     update_database = database_dir
@@ -544,8 +427,6 @@ def test_update_submission_status_csv__pops_each_database_directory_exactly(uplo
         update["sra_status"] = "PROCESSED"
     elif database_dir == "GENBANK":
         update["genbank_status"] = "PROCESSED"
-    else:
-        update["gisaid_message"] = "done"
 
     upload_log_module.update_submission_status_csv(f"/logs/{database_dir}", update_database, update)
 
@@ -573,11 +454,11 @@ def test_update_submission_status_csv__detects_all_databases_and_uses_exact_set_
     assert observed_validate_calls == [
         {
             "columns": status_df.columns.tolist(),
-            "database": ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"],
+            "database": ["BIOSAMPLE", "SRA", "GENBANK"],
         },
         {
             "columns": status_df.columns.tolist(),
-            "database": ["BIOSAMPLE", "SRA", "GENBANK", "GISAID"],
+            "database": ["BIOSAMPLE", "SRA", "GENBANK"],
         },
     ]
     assert observed_set_index[0]["keys"] == "bs-sample_name"
@@ -586,18 +467,6 @@ def test_update_submission_status_csv__detects_all_databases_and_uses_exact_set_
     assert observed_set_index[1]["keys"] == "bs-sample_name"
     assert observed_set_index[1]["args"] == ()
     assert observed_set_index[1]["kwargs"] == {}
-
-def test_update_submission_status_csv__updates_gisaid_by_segment_name(upload_log_module, status_df):
-    flu_status = status_df.rename(columns={"gs-sample_name": "gs-segment_name"})
-    upload_log_module.file_handler.loaded_csvs["/logs/submission_status_report.csv"] = flu_status
-    update = pd.DataFrame(
-        {"gs-segment_name": ["gs1"], "gisaid_accession_epi_id": ["EPI123"]}
-    )
-
-    upload_log_module.update_submission_status_csv("/logs", "GISAID", update)
-
-    saved_df = upload_log_module.file_handler.saved_csvs[-1]["df"]
-    assert saved_df.loc[0, "gisaid_accession_epi_id"] == "EPI123"
 
 def test_update_submission_status_csv__empty_update_warns_but_still_processes(upload_log_module, status_df, capsys):
     upload_log_module.file_handler.loaded_csvs["/logs/submission_status_report.csv"] = status_df
@@ -790,7 +659,6 @@ def test_load_submission_log__drops_old_columns_uppercases_and_validates(upload_
         Submission_Type="test",
         Submission_Status="waiting",
         Submission_ID="pending",
-        Submission_Position="1",
         Table2asn="False",
         GFF_File="x.gff",
     )
@@ -798,7 +666,6 @@ def test_load_submission_log__drops_old_columns_uppercases_and_validates(upload_
 
     loaded = upload_log_module.load_submission_log("/logs")
 
-    assert "Submission_Position" not in loaded.columns
     assert loaded.loc[0, "Organism"] == "FLU"
     assert loaded.loc[0, "Database"] == "BIOSAMPLE"
     assert upload_log_module._schemas["upload"].calls[-1][1] is True
@@ -817,7 +684,6 @@ def test_load_submission_log__uses_exact_validate_drop_deduplicate_and_uppercase
                 "Submission_Directory": "/dir/old",
                 "Config_File": "cfg",
                 "Update_Date": "2024-01-01",
-                "Submission_Position": "old",
                 "Table2asn": "old",
                 "GFF_File": "old",
             },
@@ -832,7 +698,6 @@ def test_load_submission_log__uses_exact_validate_drop_deduplicate_and_uppercase
                 "Submission_Directory": "/dir/new",
                 "Config_File": "cfg",
                 "Update_Date": "2024-01-02",
-                "Submission_Position": "old",
                 "Table2asn": "old",
                 "GFF_File": "old",
             },
@@ -860,7 +725,7 @@ def test_load_submission_log__uses_exact_validate_drop_deduplicate_and_uppercase
     assert observed_drop[0] == {
         "args": (),
         "kwargs": {
-            "columns": ["Submission_Position", "Table2asn", "GFF_File"],
+            "columns": ["Table2asn", "GFF_File"],
             "errors": "ignore",
         },
     }
@@ -892,7 +757,6 @@ def test_load_submission_log__uses_exact_validate_drop_deduplicate_and_uppercase
             "Update_Date": "2024-01-02",
         }
     ]
-    assert "Submission_Position" not in loaded.columns
     assert "Table2asn" not in loaded.columns
     assert "GFF_File" not in loaded.columns
     assert "submission_type" not in loaded.columns
@@ -1124,7 +988,7 @@ def test_process_genbank__processed_or_emailed(upload_log_module):
             organism="FLU",
             config_dict={"Link_Sample_Between_NCBI_Databases": True},
             submission_type="TEST",
-            linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+            linking_databases={"BIOSAMPLE": True, "SRA": True},
         ) == (True, curr_status)
 
 def test_process_genbank__uppercase_emailed_is_terminal_exactly(upload_log_module):
@@ -1137,7 +1001,7 @@ def test_process_genbank__uppercase_emailed_is_terminal_exactly(upload_log_modul
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": False, "SRA": False, "GISAID": False},
+        linking_databases={"BIOSAMPLE": False, "SRA": False},
     )
     assert result == (True, "EMAILED")
     assert upload_log_module.genbank_handler.calls == []
@@ -1160,41 +1024,14 @@ def test_process_genbank__waiting_calls_submission_ready_with_exact_genbank_data
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
     assert result == (False, "WAITING")
     assert ready_calls == [
         {
-            "submission_requirements": {"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+            "submission_requirements": {"BIOSAMPLE": True, "SRA": True},
             "config_dict": {"Link_Sample_Between_NCBI_Databases": False},
             "database": "GENBANK",
-        }
-    ]
-
-def test_process_gisaid__waiting_calls_submission_ready_with_exact_gisaid_database(upload_log_module, monkeypatch):
-    ready_calls: list[dict[str, Any]] = []
-
-    def fake_submission_ready(**kwargs):
-        ready_calls.append(kwargs)
-        return False
-
-    monkeypatch.setattr(upload_log_module, "submission_ready", fake_submission_ready)
-    result = upload_log_module.process_gisaid(
-        submission_name="sub1",
-        submission_log_dir="/logs",
-        submission_dir="/gs",
-        organism="COV",
-        curr_status="WAITING",
-        config_dict={"x": 1},
-        submission_type="TEST",
-        submission_requirements={"BIOSAMPLE": False, "SRA": True, "GENBANK": True},
-    )
-    assert result == (False, "WAITING")
-    assert ready_calls == [
-        {
-            "submission_requirements": {"BIOSAMPLE": False, "SRA": True, "GENBANK": True},
-            "config_dict": {"x": 1},
-            "database": "GISAID",
         }
     ]
 
@@ -1217,7 +1054,7 @@ def test_process_genbank__waiting_ready_updates_files_then_submits(upload_log_mo
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": True},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
 
     assert (done, status) == (False, "SUBMITTED")
@@ -1238,7 +1075,7 @@ def test_process_genbank__not_ready_stays_waiting(upload_log_module, monkeypatch
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": False, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": False, "SRA": True},
     ) == (False, "WAITING")
 
 def test_process_genbank__pending_non_tbl2asn_checks_report_not_table2asn(upload_log_module, monkeypatch):
@@ -1257,7 +1094,7 @@ def test_process_genbank__pending_non_tbl2asn_checks_report_not_table2asn(upload
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
     assert result == (True, "PROCESSED")
     assert upload_log_module.genbank_handler.calls == [
@@ -1295,7 +1132,7 @@ def test_process_genbank__pending_table2asn_validated_emails(upload_log_module, 
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
     assert (done, status) == (False, "EMAILED")
     assert updates[-1]["submission_id"] == "VALIDATED"
@@ -1321,7 +1158,7 @@ def test_process_genbank__pending_table2asn_invalid_returns_exact_pending_and_up
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
     assert result == (False, "PENDING")
     assert upload_log_module.ncbi_handler.calls == []
@@ -1364,7 +1201,7 @@ def test_process_genbank__ftp_report_updates_and_returns_processed(upload_log_mo
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
 
     assert (done, status) == (True, "PROCESSED")
@@ -1391,130 +1228,11 @@ def test_process_genbank__no_report_keeps_status(upload_log_module, monkeypatch)
         organism="FLU",
         config_dict={"Link_Sample_Between_NCBI_Databases": False},
         submission_type="TEST",
-        linking_databases={"BIOSAMPLE": True, "SRA": True, "GISAID": True},
+        linking_databases={"BIOSAMPLE": True, "SRA": True},
     )
 
     assert (done, status) == (False, "SUBMITTED")
     assert updates[-1]["submission_id"] == "PENDING"
-
-#*******************************************************************************
-#                         process_gisaid
-#*******************************************************************************
-
-def test_process_gisaid__processed(upload_log_module):
-    assert upload_log_module.process_gisaid(
-        submission_name="sub1",
-        submission_log_dir="/logs",
-        submission_dir="/gs",
-        organism="COV",
-        curr_status="PROCESSED",
-        config_dict={},
-        submission_type="TEST",
-        submission_requirements={"BIOSAMPLE": True, "SRA": True, "GENBANK": True},
-    ) == (True, "PROCESSED")
-
-def test_process_gisaid__not_ready_stays_waiting(upload_log_module, monkeypatch):
-    def fake_submission_ready(**kwargs):
-        return False
-
-    monkeypatch.setattr(upload_log_module, "submission_ready", fake_submission_ready)
-
-    assert upload_log_module.process_gisaid(
-        submission_name="sub1",
-        submission_log_dir="/logs",
-        submission_dir="/gs",
-        organism="COV",
-        curr_status="WAITING",
-        config_dict={},
-        submission_type="TEST",
-        submission_requirements={"BIOSAMPLE": False, "SRA": True, "GENBANK": True},
-    ) == (False, "WAITING")
-
-def test_process_gisaid__submits_and_updates(upload_log_module, monkeypatch):
-    updates = []
-
-    def fake_update_submission_log(**kwargs):
-        return updates.append(kwargs)
-
-    monkeypatch.setattr(upload_log_module, "update_submission_log", fake_update_submission_log)
-
-    assert upload_log_module.process_gisaid(
-        submission_name="sub1",
-        submission_log_dir="/logs",
-        submission_dir="/gs",
-        organism="COV",
-        curr_status="WAITING",
-        config_dict={},
-        submission_type="TEST",
-        submission_requirements={"BIOSAMPLE": True, "SRA": True, "GENBANK": True},
-    ) == (True, "PROCESSED")
-    assert updates[-1] == {
-        "database": "GISAID",
-        "organism": "COV",
-        "submission_name": "sub1",
-        "submission_log_dir": "/logs",
-        "submission_dir": "/gs",
-        "submission_status": "PROCESSED",
-        "submission_id": "SUBMITTED",
-        "submission_type": "TEST",
-    }
-
-def test_process_gisaid__submit_error_returns_false(upload_log_module, monkeypatch):
-    def fake_submit_gisaid(**kwargs):
-        return "ERROR"
-
-    def fake_update_submission_log(**kwargs):
-        return None
-
-    monkeypatch.setattr(upload_log_module.gisaid_handler, "submit_gisaid", fake_submit_gisaid)
-    monkeypatch.setattr(upload_log_module, "update_submission_log", fake_update_submission_log)
-
-    assert upload_log_module.process_gisaid(
-        submission_name="sub1",
-        submission_log_dir="/logs",
-        submission_dir="/gs",
-        organism="COV",
-        curr_status="SUBMITTED",
-        config_dict={},
-        submission_type="TEST",
-        submission_requirements={"BIOSAMPLE": True, "SRA": True, "GENBANK": True},
-    ) == (False, "ERROR")
-
-#*******************************************************************************
-#                            submission_ready
-#*******************************************************************************
-
-def test_submission_ready__none_position_is_ready(upload_log_module):
-    upload_log_module.tools.positions["GENBANK"] = None
-    assert upload_log_module.submission_ready({"BIOSAMPLE": False, "SRA": False, "GISAID": False}, {}, "GENBANK") is True
-
-@pytest.mark.parametrize(
-    "position,requirements,database,expected",
-    [
-        (1, {"BIOSAMPLE": True, "SRA": True, "GISAID": False, "GENBANK": False}, "GENBANK", True),
-        (1, {"BIOSAMPLE": True, "SRA": False, "GISAID": True, "GENBANK": True}, "GISAID", False),
-        (2, {"BIOSAMPLE": True, "SRA": True, "GISAID": True, "GENBANK": False}, "GENBANK", True),
-        (2, {"BIOSAMPLE": True, "SRA": True, "GISAID": False, "GENBANK": True}, "GENBANK", False),
-    ],
-)
-def test_submission_ready__position_logic(upload_log_module, position, requirements, database, expected):
-    upload_log_module.tools.positions[database] = position
-    assert upload_log_module.submission_ready(requirements, {}, database) is expected
-
-def test_submission_ready__position_two_checks_exact_opposite_database_keys(upload_log_module):
-    upload_log_module.tools.positions["GENBANK"] = 2
-    upload_log_module.tools.positions["GISAID"] = 2
-    assert upload_log_module.submission_ready(
-        {"BIOSAMPLE": True, "SRA": True, "GISAID": True, "GENBANK": False},
-        {}, "GENBANK") is True
-
-    assert upload_log_module.submission_ready(
-        {"BIOSAMPLE": True, "SRA": True, "GISAID": False, "GENBANK": True},
-        {}, "GISAID") is True
-
-    assert upload_log_module.submission_ready(
-        {"BIOSAMPLE": True, "SRA": True, "GISAID": True, "GENBANK": False},
-        {}, "GISAID") is False
 
 #*******************************************************************************
 #                    create_submission_requirements_dict
@@ -1531,7 +1249,6 @@ def test_create_submission_requirements_dict__handles_present_and_absent_databas
     assert upload_log_module.create_submission_requirements_dict(group) == {
         "BIOSAMPLE": True,
         "SRA": False,
-        "GISAID": True,
         "GENBANK": True,
     }
 
@@ -1544,7 +1261,6 @@ def test_create_submission_requirements_dict__genbank_ftp_processed_exact_key_an
     assert upload_log_module.create_submission_requirements_dict(group) == {
         "BIOSAMPLE": True,
         "SRA": True,
-        "GISAID": True,
         "GENBANK": True,
     }
 
@@ -1555,13 +1271,11 @@ def test_create_submission_requirements_dict__genbank_tbl2asn_processed_and_fail
     assert upload_log_module.create_submission_requirements_dict(processed) == {
         "BIOSAMPLE": True,
         "SRA": True,
-        "GISAID": True,
         "GENBANK": True,
     }
     assert upload_log_module.create_submission_requirements_dict(failed) == {
         "BIOSAMPLE": True,
         "SRA": True,
-        "GISAID": True,
         "GENBANK": False,
     }
 
@@ -1571,7 +1285,6 @@ def test_create_submission_requirements_dict__no_genbank_exact_default_key_and_v
     assert upload_log_module.create_submission_requirements_dict(group) == {
         "BIOSAMPLE": True,
         "SRA": True,
-        "GISAID": True,
         "GENBANK": True,
     }
 
@@ -1579,16 +1292,16 @@ def test_create_submission_requirements_dict__no_genbank_exact_default_key_and_v
 #                         update_grouped_submission
 #*******************************************************************************
 
-def test_update_grouped_submission__processes_all_databases_with_gisaid_first(upload_log_module, monkeypatch, capsys):
+def test_update_grouped_submission__processes_all_databases(upload_log_module, monkeypatch, capsys):
     group = pd.DataFrame(
         {
-            "Submission_Name": ["sub1", "sub1", "sub1", "sub1"],
-            "Organism": ["FLU"] * 4,
-            "Submission_Type": ["TEST"] * 4,
-            "Config_File": ["/logs/config.yaml"] * 4,
-            "Database": ["BIOSAMPLE", "SRA", "GISAID", "GENBANK-FTP"],
-            "Submission_Status": ["BS-STATUS", "SRA-STATUS", "GS-STATUS", "GB-STATUS"],
-            "Submission_Directory": ["/bs", "/sra", "/gs", "/gb"],
+            "Submission_Name": ["sub1", "sub1", "sub1"],
+            "Organism": ["FLU"] * 3,
+            "Submission_Type": ["TEST"] * 3,
+            "Config_File": ["/logs/config.yaml"] * 3,
+            "Database": ["BIOSAMPLE", "SRA", "GENBANK-FTP"],
+            "Submission_Status": ["BS-STATUS", "SRA-STATUS", "GB-STATUS"],
+            "Submission_Directory": ["/bs", "/sra", "/gb"],
         }
     )
     calls: list[tuple[str, dict[str, Any]]] = []
@@ -1598,25 +1311,18 @@ def test_update_grouped_submission__processes_all_databases_with_gisaid_first(up
         calls.append(("biosample_sra", kwargs))
         return (True, f"{kwargs['database']}-DONE")
 
-    def fake_process_gisaid(**kwargs):
-        calls.append(("gisaid", kwargs))
-        return (True, "GISAID-DONE")
-
     def fake_process_genbank(**kwargs):
         calls.append(("genbank", kwargs))
         return (True, "GENBANK-DONE")
 
     monkeypatch.setattr(upload_log_module, "process_biosample_sra", fake_process_biosample_sra)
-    monkeypatch.setattr(upload_log_module, "process_gisaid", fake_process_gisaid)
     monkeypatch.setattr(upload_log_module, "process_genbank", fake_process_genbank)
-    upload_log_module.tools.positions["GISAID"] = 1
-    upload_log_module.tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {"g": 1}}
+    upload_log_module.tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}}
     upload_log_module.update_grouped_submission(group, "/logs", "test-key")
     assert [name for name, _ in calls] == [
         "validate",
         "biosample_sra",
         "biosample_sra",
-        "gisaid",
         "genbank",
     ]
     assert calls[1][1] == {
@@ -1639,92 +1345,23 @@ def test_update_grouped_submission__processes_all_databases_with_gisaid_first(up
         "config_dict": {"Link_Sample_Between_NCBI_Databases": False},
         "submission_type": "TEST",
     }
+    assert calls[3][1]["genbank_type"] == "GENBANK-FTP"
     assert calls[3][1]["submission_name"] == "sub1"
     assert calls[3][1]["submission_log_dir"] == "/logs"
-    assert calls[3][1]["submission_dir"] == "/gs"
+    assert calls[3][1]["submission_dir"] == "/gb"
+    assert calls[3][1]["curr_status"] == "GB-STATUS"
     assert calls[3][1]["organism"] == "FLU"
-    assert calls[3][1]["curr_status"] == "GS-STATUS"
-    assert calls[3][1]["config_dict"] == {"g": 1}
+    assert calls[3][1]["config_dict"] == {"Link_Sample_Between_NCBI_Databases": False}
     assert calls[3][1]["submission_type"] == "TEST"
-    assert calls[3][1]["submission_requirements"] == {
+    assert calls[3][1]["linking_databases"] == {
         "BIOSAMPLE": True,
         "SRA": True,
-        "GISAID": True,
-        "GENBANK": True,
-    }
-    assert calls[4][1]["genbank_type"] == "GENBANK-FTP"
-    assert calls[4][1]["submission_name"] == "sub1"
-    assert calls[4][1]["submission_log_dir"] == "/logs"
-    assert calls[4][1]["submission_dir"] == "/gb"
-    assert calls[4][1]["curr_status"] == "GB-STATUS"
-    assert calls[4][1]["organism"] == "FLU"
-    assert calls[4][1]["config_dict"] == {"Link_Sample_Between_NCBI_Databases": False}
-    assert calls[4][1]["submission_type"] == "TEST"
-    assert calls[4][1]["linking_databases"] == {
-        "BIOSAMPLE": True,
-        "SRA": True,
-        "GISAID": True,
         "GENBANK": True,
     }
     assert capsys.readouterr().out == (
         "\tBioSample: BIOSAMPLE-DONE\n"
         "\tSRA: SRA-DONE\n"
-        "\tGISAID: GISAID-DONE\n"
         "\tGenBank: GENBANK-DONE\n"
-    )
-
-def test_update_grouped_submission__processes_gisaid_after_genbank_when_not_first(upload_log_module, monkeypatch, capsys):
-    group = pd.DataFrame(
-        {
-            "Submission_Name": ["sub1", "sub1"],
-            "Organism": ["COV", "COV"],
-            "Submission_Type": ["TEST", "TEST"],
-            "Config_File": ["/logs/config.yaml", "/logs/config.yaml"],
-            "Database": ["GENBANK-TBL2ASN", "GISAID"],
-            "Submission_Status": ["GB-WAITING", "GS-WAITING"],
-            "Submission_Directory": ["/gb", "/gs"],
-        }
-    )
-    calls: list[tuple[str, dict[str, Any]]] = []
-
-    def fake_validate_fields_exist(df):
-        return None
-
-    def fake_process_gisaid(**kwargs):
-        calls.append(("gisaid", kwargs))
-        return (True, "PROCESSED")
-
-    def fake_process_genbank(**kwargs):
-        calls.append(("genbank", kwargs))
-        return (True, "PROCESSED")
-
-    monkeypatch.setattr(upload_log_module, "validate_fields_exist", fake_validate_fields_exist)
-    monkeypatch.setattr(upload_log_module, "process_genbank", fake_process_genbank)
-    monkeypatch.setattr(upload_log_module, "process_gisaid", fake_process_gisaid)
-    upload_log_module.tools.positions["GISAID"] = 2
-    upload_log_module.tools.config = {"NCBI": {"Link_Sample_Between_NCBI_Databases": False}, "GISAID": {}}
-    upload_log_module.update_grouped_submission(group, "/logs", "test-key")
-    assert [name for name, _ in calls] == ["genbank", "gisaid"]
-    assert calls[0][1]["genbank_type"] == "GENBANK-TBL2ASN"
-    assert calls[0][1]["submission_dir"] == "/gb"
-    assert calls[0][1]["curr_status"] == "GB-WAITING"
-    assert calls[0][1]["linking_databases"] == {
-        "BIOSAMPLE": True,
-        "SRA": True,
-        "GISAID": True,
-        "GENBANK": True,
-    }
-    assert calls[1][1]["submission_dir"] == "/gs"
-    assert calls[1][1]["curr_status"] == "GS-WAITING"
-    assert calls[1][1]["submission_requirements"] == {
-        "BIOSAMPLE": True,
-        "SRA": True,
-        "GISAID": True,
-        "GENBANK": True,
-    }
-    assert capsys.readouterr().out == (
-        "\tGenBank: PROCESSED\n"
-        "\tGISAID: PROCESSED\n"
     )
 
 def test_update_grouped_submission__invalid_genbank_option_exits(upload_log_module, monkeypatch, capsys):
@@ -1797,7 +1434,7 @@ def test_update_submission_status__skips_groups_that_are_all_processed_or_emaile
             "Organism": ["FLU", "FLU", "FLU"],
             "Submission_Type": ["TEST", "TEST", "TEST"],
             "Config_File": ["cfg", "cfg", "cfg"],
-            "Database": ["GENBANK-TBL2ASN", "GISAID", "BIOSAMPLE"],
+            "Database": ["GENBANK-TBL2ASN", "SRA", "BIOSAMPLE"],
             "Submission_Status": ["EMAILED", "PROCESSED", "WAITING"],
         }
     )

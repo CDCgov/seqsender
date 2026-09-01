@@ -364,21 +364,13 @@ def update_genbank_files(linking_databases: dict[str, bool], organism: str, subm
 	else:
 		print("Error: submission source file does not exist at "+os.path.join(submission_dir, "source.src"), file=sys.stderr)
 		sys.exit(1)
-	# Read in genbank comment file
-	if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
-		cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
 	# Retrieve accession info
-	src_accessions = dict()
-	cmt_accessions = dict()
+	src_accessions: dict[str, Any] = dict()
 	# Pull accessions only if field has valid info
 	if (linking_databases["BIOSAMPLE"] == True) and ("biosample_accession" in submission_status_df) and (submission_status_df["biosample_accession"].isna().all() == False):
 		src_accessions["biosample_accession"] = "BioSample"
 	if (linking_databases["SRA"] == True) and ("sra_accession" in submission_status_df) and (submission_status_df["sra_accession"].isna().all() == False):
 		src_accessions["sra_accession"] = "SRA"
-	if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_isl_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_isl_id"].isna().all() == False):
-		cmt_accessions["gisaid_accession_epi_isl_id"] = "EPI_ISOLATE_ID"
-	if (linking_databases["GISAID"] == True) and ("gisaid_accession_epi_id" in submission_status_df) and (submission_status_df["gisaid_accession_epi_id"].isna().all() == False):
-		cmt_accessions["gisaid_accession_epi_id"] = "EPI_SEQUENCE_ID"
 	# Update NCBI accessions for source df and fasta file
 	if len(src_accessions) > 0:
 		# If accession columns exist drop to overwrite
@@ -428,35 +420,3 @@ def update_genbank_files(linking_databases: dict[str, bool], organism: str, subm
 				print(f"Error: An unexpected error occurred when trying to save 'sequence.fsa' to path: {submission_dir}", file=sys.stderr)
 				print(e, file=sys.stderr)
 				sys.exit(1)
-	# Update CMT file
-	if len(cmt_accessions) > 0:
-		if os.path.isfile(os.path.join(submission_dir, "comment.cmt")):
-			cmt_df = file_handler.load_csv(file_path=os.path.join(submission_dir, "comment.cmt"), sep="\t")
-			# If accession columns exist drop to overwrite
-			cmt_df = cmt_df.drop(columns=cmt_accessions.values(), errors="ignore")
-			cmt_accessions["gb-sample_name"] = "SeqID"
-			# merge fields
-			cmt_accessions_df = submission_status_df[cmt_accessions.keys()].copy()
-			cmt_accessions_df = cmt_accessions_df.rename(columns=cmt_accessions)
-			cmt_df = pd.merge(cmt_df, cmt_accessions_df, how="left", on="SeqID")
-		else:
-			# If cmt field doesn't exist and must to write accessions then create it
-			cmt_df = submission_status_df[cmt_accessions.keys()].copy()
-			cmt_df = cmt_df.rename(columns=cmt_accessions)
-			if "FLU" in organism:
-				cmt_df["StructuredCommentPrefix"] = "FluData"
-				cmt_df["StructuredCommentSuffix"] = "FluData"
-			elif "COV" in organism:
-				cmt_df["StructuredCommentPrefix"] = "Assembly-Data"
-				cmt_df["StructuredCommentSuffix"] = "Assembly-Data"
-		# Correct order of cmt file columns
-		cmt_start = ["SeqID", "StructuredCommentPrefix"]
-		cmt_end = ["StructuredCommentSuffix"]
-		if "EPI_ISOLATE_ID" in cmt_df:
-			cmt_start.append("EPI_ISOLATE_ID")
-		if "EPI_SEQUENCE_ID" in cmt_df:
-			cmt_end.insert(0, "EPI_SEQUENCE_ID")
-		columns_no_prefix_suffix = list(filter(lambda x: (x not in ["SeqID", "StructuredCommentPrefix", "StructuredCommentSuffix", "EPI_ISOLATE_ID", "EPI_SEQUENCE_ID"])==True, cmt_df.columns))
-		ordered_columns = cmt_start + columns_no_prefix_suffix + cmt_end
-		cmt_df = cmt_df.reindex(columns=ordered_columns)
-		file_handler.save_csv(df=cmt_df, file_path=submission_dir, file_name="comment.cmt", sep="\t")

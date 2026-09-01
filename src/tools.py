@@ -17,7 +17,7 @@ from cryptography.fernet import Fernet, InvalidToken
 import src.file_handler as file_handler
 import src.ncbi_handler as ncbi_handler
 from config.seqsender.seqsender_schema import schema as seqsender_schema
-from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GISAID_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
+from src.settings import PROG_DIR, SCHEMA_EXCLUSIONS, BIOSAMPLE_REGEX, SRA_REGEX, GENBANK_REGEX, GENBANK_REGEX_CMT, GENBANK_REGEX_SRC, GENBANK_DEPRECATED_COLUMNS
 
 def determine_parent_database(databases: list[str]) -> set[str]:
 	# Determine required database
@@ -25,8 +25,6 @@ def determine_parent_database(databases: list[str]) -> set[str]:
 	for database in databases:
 		if "BIOSAMPLE" in database or "SRA" in database or "GENBANK" in database:
 			submission_portals.add("ncbi")
-		if "GISAID" in database:
-			submission_portals.add("gisaid")
 	# Check if list empty
 	if not submission_portals:
 		print("Error: Submission portals list cannot be empty.", file=sys.stderr)
@@ -43,13 +41,6 @@ def decrypt_passwords(config_dict: dict[str, Any], submission_portals: set[str],
 			if not encrypted_string.endswith("="):
 				print("Passwords field does not appear to be encrypted. Use SeqSender command 'load_credentials' to encrypt your credentials before submission.", file=sys.stderr)
 			raise(InvalidToken)
-		if parent_db == "GISAID":
-			encrypted_string = config_dict["Submission"]["GISAID"]["Client-Id"]
-			try:
-				decrypted_string = Fernet(key).decrypt(encrypted_string)
-				config_dict["Submission"]["GISAID"]["Client-Id"] = decrypted_string
-			except InvalidToken:
-				raise(InvalidToken)
 	return config_dict
 
 def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Optional[str]) -> None:
@@ -66,10 +57,6 @@ def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Op
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
-		elif parent_db == "GISAID":
-			client_id = getpass(f"Enter client_id for GISAID account: ")
-			encrypted_client_id = encrypter.encrypt(client_id.encode())
-			config_dict["GISAID"]["Client-Id"] = encrypted_client_id
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
 	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
@@ -98,8 +85,6 @@ def get_config(config_file: str, databases: list[str], passwords_validation: boo
 			print(json.dumps(validator.errors, indent = 4), file=sys.stderr)
 			sys.exit(1)
 		else:
-			if "GENBANK" in databases and "GISAID" in databases:
-				validate_submission_position(config_dict=config_dict)
 			config_dict = parse_hold_date(config_dict=config_dict)
 			if decrypt_key:
 				config_dict = decrypt_passwords(config_dict = config_dict, submission_portals = submission_portals, key = decrypt_key)
@@ -112,17 +97,8 @@ def get_submission_schema_config_name(submission_portals: set[str]) -> str:
 	submission_schema_file_name = ""
 	if "ncbi" in submission_portals:
 		submission_schema_file_name += "ncbi_"
-	if "gisaid" in submission_portals:
-		submission_schema_file_name += "gisaid_"
 	submission_schema_file_name += "schema.py"
 	return submission_schema_file_name
-
-def validate_submission_position(config_dict: dict[str, Any]):
-	genbank_position = get_submission_position(config_dict=config_dict, database="GENBANK")
-	gisaid_position = get_submission_position(config_dict=config_dict, database="GISAID")
-	if (gisaid_position is None and genbank_position is not None) or (gisaid_position is not None and genbank_position is None) or (isinstance(gisaid_position, int) and isinstance(genbank_position, int) and gisaid_position == genbank_position):
-		print(f"Error: Config file is incorrect. Submission position for GISAID '{gisaid_position}' and GenBank '{genbank_position}' must both be either left empty, or set to '1' and '2' based on submission preference.", file=sys.stderr)
-		sys.exit(1)
 
 def get_submission_type(test: bool) -> str:
 	if test:
@@ -130,29 +106,9 @@ def get_submission_type(test: bool) -> str:
 	else:
 		return "PRODUCTION"
 
-def get_submission_position(config_dict: dict[str, Any], database: str) -> Optional[int]:
-	if database in ["BIOSAMPLE", "SRA", "GENBANK"]:
-		parent_database = "NCBI"
-	elif database == "GISAID":
-		parent_database = "GISAID"
-	else:
-		print(f"Error: database {database} is not a valid selection.", file=sys.stderr)
-		sys.exit(1)
-	if "Submission" in config_dict:
-		config_dict = config_dict["Submission"]
-	if parent_database in config_dict:
-		config_dict = config_dict[parent_database]
-	if "Submission_Position" in config_dict and isinstance(config_dict["Submission_Position"], int):
-		return config_dict["Submission_Position"]
-	else:
-		return None
-
 def password_encryption_config_schema_updates(schema: dict[str, Any], submission_portals: set[str]) -> dict[str, Any]:
 	if "NCBI" in submission_portals:
 		schema["Submission"]["schema"]["NCBI"]["schema"]["Password"]["required"] = False
-	if "GISAID" in submission_portals:
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Password"]["required"] = False
-		schema["Submission"]["schema"]["GISAID"]["schema"]["Client-Id"]["required"] = False
 	return schema
 
 def database_specific_config_schema_updates(schema: dict[str, Any], database: list[str]) -> dict[str, Any]:
@@ -217,7 +173,7 @@ def get_metadata(database: list[str], organism: str, metadata_file: str, config_
 	# Update seqsender base schema to include needed checks
 	if "BIOSAMPLE" in database or "SRA" in database:
 		seqsender_schema.update_columns({"bioproject":{"checks":Check.str_matches(r"^(?!\s*$).+"),"nullable":False,"required":True}})
-	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = gisaid_schema = None
+	biosample_schema = sra_schema = genbank_schema = genbank_cmt_schema = genbank_src_schema = None
 	# Import schemas
 	schemas_dict = dict()
 	if "BIOSAMPLE" in database:
@@ -233,8 +189,6 @@ def get_metadata(database: list[str], organism: str, metadata_file: str, config_
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_flu_src_schema").schema)
 			else:
 				schemas_dict["GenBank source"] = (GENBANK_REGEX_SRC, importlib.import_module("config.genbank.genbank_src_schema").schema)
-	if "GISAID" in database:
-		schemas_dict["GISAID"] = ((GISAID_REGEX + "|^sequence_name$"), importlib.import_module("config.gisaid.gisaid_" + organism + "_schema").schema)
 	if skip_validation == False:
 		# Validate metadata on schema's
 		error_msg_list: list[pandera.errors.SchemaErrors] = []
@@ -346,17 +300,6 @@ def check_credentials(config_dict: dict[str, Any], database: str) -> None:
 		pass
 	else:
 		print("Error: Submission > " + database + " > Password in the config file cannot be empty.", file=sys.stderr)
-		sys.exit(1)
-	# Check client-id if database is GISAID
-	if database != "GISAID":
-		return
-	elif "Client-Id" not in config_dict.keys():
-		print("Error: there is no Submission > " + database + " > Client-Id information in config file.", file=sys.stderr)
-		sys.exit(1)
-	elif ("Client-Id" in config_dict.keys() and ((config_dict["Client-Id"] is not None) and (config_dict["Client-Id"] != ""))):
-		pass
-	else:
-		print("Error: Submission > " + database + " > Client-Id in the config file cannot be empty.", file=sys.stderr)
 		sys.exit(1)
 
 # Check sample names in metadata file are listed in fasta file

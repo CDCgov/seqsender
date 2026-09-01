@@ -102,8 +102,6 @@ TEST_CONNECTIONS = {"HTTP": {"website":"http://www.google.com", "database": "GEN
 "HTTPS": {"website": "https://www.google.com", "database": "GENERAL", "error_msg": "Possible internet connectivity issues; unable to connect to 'https://www.google.com'."},
 "NCBI": {"website": "https://www.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://www.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
 "NCBI API": {"website": "https://submit.ncbi.nlm.nih.gov", "database": "NCBI", "error_msg": "Unable to connect to 'https://submit.ncbi.nlm.nih.gov'; ensure NCBI services are running and you are able to connect to them before proceeding."},
-"GISAID": {"website": "https://www.epicov.org/epi3/start", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."},
-"GISAID": {"website": "https://gisaid.org/", "database": "GISAID", "error_msg": "Unable to connect to 'https://www.epicov.org/epi3'; ensure GISAID services are running and you are able to connect to them before proceeding."}
 }
 from typing import Annotated
 from typing import Callable
@@ -172,7 +170,7 @@ def x_create_test_data__mutmut_orig(organism: str, database: list[str], submissi
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -187,7 +185,7 @@ def x_create_test_data__mutmut_orig(organism: str, database: list[str], submissi
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -227,7 +225,7 @@ def x_create_test_data__mutmut_1(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -242,7 +240,7 @@ def x_create_test_data__mutmut_1(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -282,7 +280,7 @@ def x_create_test_data__mutmut_2(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -297,7 +295,7 @@ def x_create_test_data__mutmut_2(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -337,7 +335,7 @@ def x_create_test_data__mutmut_3(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -352,7 +350,7 @@ def x_create_test_data__mutmut_3(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -392,7 +390,7 @@ def x_create_test_data__mutmut_4(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -407,7 +405,7 @@ def x_create_test_data__mutmut_4(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -447,7 +445,7 @@ def x_create_test_data__mutmut_5(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -462,7 +460,7 @@ def x_create_test_data__mutmut_5(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -502,7 +500,7 @@ def x_create_test_data__mutmut_6(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -517,7 +515,7 @@ def x_create_test_data__mutmut_6(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -557,7 +555,7 @@ def x_create_test_data__mutmut_7(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -572,7 +570,7 @@ def x_create_test_data__mutmut_7(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -612,7 +610,7 @@ def x_create_test_data__mutmut_8(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -627,7 +625,7 @@ def x_create_test_data__mutmut_8(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -667,7 +665,7 @@ def x_create_test_data__mutmut_9(organism: str, database: list[str], submission_
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -682,7 +680,7 @@ def x_create_test_data__mutmut_9(organism: str, database: list[str], submission_
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -722,7 +720,7 @@ def x_create_test_data__mutmut_10(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -737,7 +735,7 @@ def x_create_test_data__mutmut_10(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -777,7 +775,7 @@ def x_create_test_data__mutmut_11(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -792,7 +790,7 @@ def x_create_test_data__mutmut_11(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -832,7 +830,7 @@ def x_create_test_data__mutmut_12(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -847,7 +845,7 @@ def x_create_test_data__mutmut_12(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -887,7 +885,7 @@ def x_create_test_data__mutmut_13(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -902,7 +900,7 @@ def x_create_test_data__mutmut_13(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -942,7 +940,7 @@ def x_create_test_data__mutmut_14(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -957,7 +955,7 @@ def x_create_test_data__mutmut_14(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -997,7 +995,7 @@ def x_create_test_data__mutmut_15(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1012,7 +1010,7 @@ def x_create_test_data__mutmut_15(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1052,7 +1050,7 @@ def x_create_test_data__mutmut_16(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1067,7 +1065,7 @@ def x_create_test_data__mutmut_16(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1107,7 +1105,7 @@ def x_create_test_data__mutmut_17(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1122,7 +1120,7 @@ def x_create_test_data__mutmut_17(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1162,7 +1160,7 @@ def x_create_test_data__mutmut_18(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1177,7 +1175,7 @@ def x_create_test_data__mutmut_18(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1217,7 +1215,7 @@ def x_create_test_data__mutmut_19(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1232,7 +1230,7 @@ def x_create_test_data__mutmut_19(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1272,7 +1270,7 @@ def x_create_test_data__mutmut_20(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1287,7 +1285,7 @@ def x_create_test_data__mutmut_20(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1327,7 +1325,7 @@ def x_create_test_data__mutmut_21(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1342,7 +1340,7 @@ def x_create_test_data__mutmut_21(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1382,7 +1380,7 @@ def x_create_test_data__mutmut_22(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1397,7 +1395,7 @@ def x_create_test_data__mutmut_22(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1437,7 +1435,7 @@ def x_create_test_data__mutmut_23(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1452,7 +1450,7 @@ def x_create_test_data__mutmut_23(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1492,7 +1490,7 @@ def x_create_test_data__mutmut_24(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1507,7 +1505,7 @@ def x_create_test_data__mutmut_24(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1547,7 +1545,7 @@ def x_create_test_data__mutmut_25(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1562,7 +1560,7 @@ def x_create_test_data__mutmut_25(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1602,7 +1600,7 @@ def x_create_test_data__mutmut_26(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1617,7 +1615,7 @@ def x_create_test_data__mutmut_26(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1657,7 +1655,7 @@ def x_create_test_data__mutmut_27(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1672,7 +1670,7 @@ def x_create_test_data__mutmut_27(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1712,7 +1710,7 @@ def x_create_test_data__mutmut_28(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1727,7 +1725,7 @@ def x_create_test_data__mutmut_28(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1767,7 +1765,7 @@ def x_create_test_data__mutmut_29(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1782,7 +1780,7 @@ def x_create_test_data__mutmut_29(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1822,7 +1820,7 @@ def x_create_test_data__mutmut_30(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1837,7 +1835,7 @@ def x_create_test_data__mutmut_30(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1877,7 +1875,7 @@ def x_create_test_data__mutmut_31(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1892,7 +1890,7 @@ def x_create_test_data__mutmut_31(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1932,7 +1930,7 @@ def x_create_test_data__mutmut_32(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -1947,7 +1945,7 @@ def x_create_test_data__mutmut_32(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -1987,7 +1985,7 @@ def x_create_test_data__mutmut_33(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2002,7 +2000,7 @@ def x_create_test_data__mutmut_33(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2042,7 +2040,7 @@ def x_create_test_data__mutmut_34(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2057,7 +2055,7 @@ def x_create_test_data__mutmut_34(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2097,7 +2095,7 @@ def x_create_test_data__mutmut_35(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2112,7 +2110,7 @@ def x_create_test_data__mutmut_35(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2152,7 +2150,7 @@ def x_create_test_data__mutmut_36(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2167,7 +2165,7 @@ def x_create_test_data__mutmut_36(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2207,7 +2205,7 @@ def x_create_test_data__mutmut_37(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2222,7 +2220,7 @@ def x_create_test_data__mutmut_37(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2262,7 +2260,7 @@ def x_create_test_data__mutmut_38(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2277,7 +2275,7 @@ def x_create_test_data__mutmut_38(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2317,7 +2315,7 @@ def x_create_test_data__mutmut_39(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2332,7 +2330,7 @@ def x_create_test_data__mutmut_39(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2372,7 +2370,7 @@ def x_create_test_data__mutmut_40(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2387,7 +2385,7 @@ def x_create_test_data__mutmut_40(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2427,7 +2425,7 @@ def x_create_test_data__mutmut_41(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2442,7 +2440,7 @@ def x_create_test_data__mutmut_41(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2482,7 +2480,7 @@ def x_create_test_data__mutmut_42(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2497,7 +2495,7 @@ def x_create_test_data__mutmut_42(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2537,7 +2535,7 @@ def x_create_test_data__mutmut_43(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2552,7 +2550,7 @@ def x_create_test_data__mutmut_43(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2592,7 +2590,7 @@ def x_create_test_data__mutmut_44(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2607,7 +2605,7 @@ def x_create_test_data__mutmut_44(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2647,7 +2645,7 @@ def x_create_test_data__mutmut_45(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2662,7 +2660,7 @@ def x_create_test_data__mutmut_45(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2702,7 +2700,7 @@ def x_create_test_data__mutmut_46(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2717,7 +2715,7 @@ def x_create_test_data__mutmut_46(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2757,7 +2755,7 @@ def x_create_test_data__mutmut_47(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2772,7 +2770,7 @@ def x_create_test_data__mutmut_47(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2812,7 +2810,7 @@ def x_create_test_data__mutmut_48(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2827,7 +2825,7 @@ def x_create_test_data__mutmut_48(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2867,7 +2865,7 @@ def x_create_test_data__mutmut_49(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2882,7 +2880,7 @@ def x_create_test_data__mutmut_49(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2922,7 +2920,7 @@ def x_create_test_data__mutmut_50(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2937,7 +2935,7 @@ def x_create_test_data__mutmut_50(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -2977,7 +2975,7 @@ def x_create_test_data__mutmut_51(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -2992,7 +2990,7 @@ def x_create_test_data__mutmut_51(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3032,7 +3030,7 @@ def x_create_test_data__mutmut_52(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3047,7 +3045,7 @@ def x_create_test_data__mutmut_52(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3087,7 +3085,7 @@ def x_create_test_data__mutmut_53(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3102,7 +3100,7 @@ def x_create_test_data__mutmut_53(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3142,7 +3140,7 @@ def x_create_test_data__mutmut_54(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3157,7 +3155,7 @@ def x_create_test_data__mutmut_54(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3197,7 +3195,7 @@ def x_create_test_data__mutmut_55(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3212,7 +3210,7 @@ def x_create_test_data__mutmut_55(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3252,7 +3250,7 @@ def x_create_test_data__mutmut_56(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3267,7 +3265,7 @@ def x_create_test_data__mutmut_56(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3307,7 +3305,7 @@ def x_create_test_data__mutmut_57(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3322,7 +3320,7 @@ def x_create_test_data__mutmut_57(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3362,7 +3360,7 @@ def x_create_test_data__mutmut_58(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3377,7 +3375,7 @@ def x_create_test_data__mutmut_58(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3417,7 +3415,7 @@ def x_create_test_data__mutmut_59(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3432,7 +3430,7 @@ def x_create_test_data__mutmut_59(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3472,7 +3470,7 @@ def x_create_test_data__mutmut_60(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3487,7 +3485,7 @@ def x_create_test_data__mutmut_60(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3527,7 +3525,7 @@ def x_create_test_data__mutmut_61(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3542,7 +3540,7 @@ def x_create_test_data__mutmut_61(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3582,7 +3580,7 @@ def x_create_test_data__mutmut_62(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3597,7 +3595,7 @@ def x_create_test_data__mutmut_62(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3637,7 +3635,7 @@ def x_create_test_data__mutmut_63(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3652,7 +3650,7 @@ def x_create_test_data__mutmut_63(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3692,7 +3690,7 @@ def x_create_test_data__mutmut_64(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3707,7 +3705,7 @@ def x_create_test_data__mutmut_64(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3747,7 +3745,7 @@ def x_create_test_data__mutmut_65(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3762,7 +3760,7 @@ def x_create_test_data__mutmut_65(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3802,7 +3800,7 @@ def x_create_test_data__mutmut_66(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3817,7 +3815,7 @@ def x_create_test_data__mutmut_66(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3857,7 +3855,7 @@ def x_create_test_data__mutmut_67(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3872,7 +3870,7 @@ def x_create_test_data__mutmut_67(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3912,7 +3910,7 @@ def x_create_test_data__mutmut_68(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3927,7 +3925,7 @@ def x_create_test_data__mutmut_68(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -3967,7 +3965,7 @@ def x_create_test_data__mutmut_69(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -3982,7 +3980,7 @@ def x_create_test_data__mutmut_69(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4022,7 +4020,7 @@ def x_create_test_data__mutmut_70(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4037,7 +4035,7 @@ def x_create_test_data__mutmut_70(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4077,7 +4075,7 @@ def x_create_test_data__mutmut_71(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4092,7 +4090,7 @@ def x_create_test_data__mutmut_71(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4132,7 +4130,7 @@ def x_create_test_data__mutmut_72(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4147,7 +4145,7 @@ def x_create_test_data__mutmut_72(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4187,7 +4185,7 @@ def x_create_test_data__mutmut_73(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4202,7 +4200,7 @@ def x_create_test_data__mutmut_73(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4242,7 +4240,7 @@ def x_create_test_data__mutmut_74(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4257,7 +4255,7 @@ def x_create_test_data__mutmut_74(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4297,7 +4295,7 @@ def x_create_test_data__mutmut_75(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4312,7 +4310,7 @@ def x_create_test_data__mutmut_75(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4352,7 +4350,7 @@ def x_create_test_data__mutmut_76(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4367,7 +4365,7 @@ def x_create_test_data__mutmut_76(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4407,7 +4405,7 @@ def x_create_test_data__mutmut_77(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4422,7 +4420,7 @@ def x_create_test_data__mutmut_77(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4462,7 +4460,7 @@ def x_create_test_data__mutmut_78(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4477,7 +4475,7 @@ def x_create_test_data__mutmut_78(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4517,7 +4515,7 @@ def x_create_test_data__mutmut_79(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4532,7 +4530,7 @@ def x_create_test_data__mutmut_79(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4572,7 +4570,7 @@ def x_create_test_data__mutmut_80(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4587,7 +4585,7 @@ def x_create_test_data__mutmut_80(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4627,7 +4625,7 @@ def x_create_test_data__mutmut_81(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4642,7 +4640,7 @@ def x_create_test_data__mutmut_81(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4682,7 +4680,7 @@ def x_create_test_data__mutmut_82(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4697,7 +4695,7 @@ def x_create_test_data__mutmut_82(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4737,7 +4735,7 @@ def x_create_test_data__mutmut_83(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4752,7 +4750,7 @@ def x_create_test_data__mutmut_83(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4792,7 +4790,7 @@ def x_create_test_data__mutmut_84(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4807,7 +4805,7 @@ def x_create_test_data__mutmut_84(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4847,7 +4845,7 @@ def x_create_test_data__mutmut_85(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4862,7 +4860,7 @@ def x_create_test_data__mutmut_85(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4902,7 +4900,7 @@ def x_create_test_data__mutmut_86(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4917,7 +4915,7 @@ def x_create_test_data__mutmut_86(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -4957,7 +4955,7 @@ def x_create_test_data__mutmut_87(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -4972,7 +4970,7 @@ def x_create_test_data__mutmut_87(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5012,7 +5010,7 @@ def x_create_test_data__mutmut_88(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5027,7 +5025,7 @@ def x_create_test_data__mutmut_88(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5067,7 +5065,7 @@ def x_create_test_data__mutmut_89(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5082,7 +5080,7 @@ def x_create_test_data__mutmut_89(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5122,7 +5120,7 @@ def x_create_test_data__mutmut_90(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5137,7 +5135,7 @@ def x_create_test_data__mutmut_90(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5177,7 +5175,7 @@ def x_create_test_data__mutmut_91(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5192,7 +5190,7 @@ def x_create_test_data__mutmut_91(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5232,7 +5230,7 @@ def x_create_test_data__mutmut_92(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5247,7 +5245,7 @@ def x_create_test_data__mutmut_92(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5287,7 +5285,7 @@ def x_create_test_data__mutmut_93(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5302,7 +5300,7 @@ def x_create_test_data__mutmut_93(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5342,7 +5340,7 @@ def x_create_test_data__mutmut_94(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5357,7 +5355,7 @@ def x_create_test_data__mutmut_94(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5397,7 +5395,7 @@ def x_create_test_data__mutmut_95(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5412,7 +5410,7 @@ def x_create_test_data__mutmut_95(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5452,7 +5450,7 @@ def x_create_test_data__mutmut_96(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5467,7 +5465,7 @@ def x_create_test_data__mutmut_96(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5507,7 +5505,7 @@ def x_create_test_data__mutmut_97(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5522,7 +5520,7 @@ def x_create_test_data__mutmut_97(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5562,7 +5560,7 @@ def x_create_test_data__mutmut_98(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5577,7 +5575,7 @@ def x_create_test_data__mutmut_98(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5617,7 +5615,7 @@ def x_create_test_data__mutmut_99(organism: str, database: list[str], submission
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5632,7 +5630,7 @@ def x_create_test_data__mutmut_99(organism: str, database: list[str], submission
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5672,7 +5670,7 @@ def x_create_test_data__mutmut_100(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5687,7 +5685,7 @@ def x_create_test_data__mutmut_100(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5727,7 +5725,7 @@ def x_create_test_data__mutmut_101(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5742,7 +5740,7 @@ def x_create_test_data__mutmut_101(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5782,7 +5780,7 @@ def x_create_test_data__mutmut_102(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5797,7 +5795,7 @@ def x_create_test_data__mutmut_102(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5837,7 +5835,7 @@ def x_create_test_data__mutmut_103(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5852,7 +5850,7 @@ def x_create_test_data__mutmut_103(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5892,7 +5890,7 @@ def x_create_test_data__mutmut_104(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5907,7 +5905,7 @@ def x_create_test_data__mutmut_104(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -5947,7 +5945,7 @@ def x_create_test_data__mutmut_105(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -5962,7 +5960,7 @@ def x_create_test_data__mutmut_105(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6002,7 +6000,7 @@ def x_create_test_data__mutmut_106(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6017,7 +6015,7 @@ def x_create_test_data__mutmut_106(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6057,7 +6055,7 @@ def x_create_test_data__mutmut_107(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6072,7 +6070,7 @@ def x_create_test_data__mutmut_107(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6112,7 +6110,7 @@ def x_create_test_data__mutmut_108(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6127,7 +6125,7 @@ def x_create_test_data__mutmut_108(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6167,7 +6165,7 @@ def x_create_test_data__mutmut_109(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6182,7 +6180,7 @@ def x_create_test_data__mutmut_109(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6222,7 +6220,7 @@ def x_create_test_data__mutmut_110(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6237,7 +6235,7 @@ def x_create_test_data__mutmut_110(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6277,7 +6275,7 @@ def x_create_test_data__mutmut_111(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6292,7 +6290,7 @@ def x_create_test_data__mutmut_111(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6332,7 +6330,7 @@ def x_create_test_data__mutmut_112(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6347,7 +6345,7 @@ def x_create_test_data__mutmut_112(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6387,7 +6385,7 @@ def x_create_test_data__mutmut_113(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6402,7 +6400,7 @@ def x_create_test_data__mutmut_113(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6442,7 +6440,7 @@ def x_create_test_data__mutmut_114(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6457,7 +6455,7 @@ def x_create_test_data__mutmut_114(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6497,7 +6495,7 @@ def x_create_test_data__mutmut_115(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6512,7 +6510,7 @@ def x_create_test_data__mutmut_115(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6552,7 +6550,7 @@ def x_create_test_data__mutmut_116(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6567,7 +6565,7 @@ def x_create_test_data__mutmut_116(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6607,7 +6605,7 @@ def x_create_test_data__mutmut_117(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6622,7 +6620,7 @@ def x_create_test_data__mutmut_117(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6662,7 +6660,7 @@ def x_create_test_data__mutmut_118(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6677,7 +6675,7 @@ def x_create_test_data__mutmut_118(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6717,7 +6715,7 @@ def x_create_test_data__mutmut_119(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6732,7 +6730,7 @@ def x_create_test_data__mutmut_119(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6772,7 +6770,7 @@ def x_create_test_data__mutmut_120(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6787,7 +6785,7 @@ def x_create_test_data__mutmut_120(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6827,7 +6825,7 @@ def x_create_test_data__mutmut_121(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6842,7 +6840,7 @@ def x_create_test_data__mutmut_121(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6882,7 +6880,7 @@ def x_create_test_data__mutmut_122(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6897,7 +6895,7 @@ def x_create_test_data__mutmut_122(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6937,7 +6935,7 @@ def x_create_test_data__mutmut_123(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -6952,7 +6950,7 @@ def x_create_test_data__mutmut_123(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -6992,7 +6990,7 @@ def x_create_test_data__mutmut_124(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7007,7 +7005,7 @@ def x_create_test_data__mutmut_124(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7047,7 +7045,7 @@ def x_create_test_data__mutmut_125(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7062,7 +7060,7 @@ def x_create_test_data__mutmut_125(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7102,7 +7100,7 @@ def x_create_test_data__mutmut_126(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7117,7 +7115,7 @@ def x_create_test_data__mutmut_126(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7157,7 +7155,7 @@ def x_create_test_data__mutmut_127(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7172,7 +7170,7 @@ def x_create_test_data__mutmut_127(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7212,7 +7210,7 @@ def x_create_test_data__mutmut_128(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7227,7 +7225,7 @@ def x_create_test_data__mutmut_128(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7267,7 +7265,7 @@ def x_create_test_data__mutmut_129(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7282,7 +7280,7 @@ def x_create_test_data__mutmut_129(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7322,7 +7320,7 @@ def x_create_test_data__mutmut_130(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7337,7 +7335,7 @@ def x_create_test_data__mutmut_130(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7377,7 +7375,7 @@ def x_create_test_data__mutmut_131(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7392,7 +7390,7 @@ def x_create_test_data__mutmut_131(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7432,7 +7430,7 @@ def x_create_test_data__mutmut_132(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7447,7 +7445,7 @@ def x_create_test_data__mutmut_132(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7487,7 +7485,7 @@ def x_create_test_data__mutmut_133(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7502,7 +7500,7 @@ def x_create_test_data__mutmut_133(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7542,7 +7540,7 @@ def x_create_test_data__mutmut_134(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7557,7 +7555,7 @@ def x_create_test_data__mutmut_134(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7597,7 +7595,7 @@ def x_create_test_data__mutmut_135(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7612,7 +7610,7 @@ def x_create_test_data__mutmut_135(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7652,7 +7650,7 @@ def x_create_test_data__mutmut_136(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7667,7 +7665,7 @@ def x_create_test_data__mutmut_136(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7707,7 +7705,7 @@ def x_create_test_data__mutmut_137(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7722,7 +7720,7 @@ def x_create_test_data__mutmut_137(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7762,7 +7760,7 @@ def x_create_test_data__mutmut_138(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7777,7 +7775,7 @@ def x_create_test_data__mutmut_138(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7817,7 +7815,7 @@ def x_create_test_data__mutmut_139(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7832,7 +7830,7 @@ def x_create_test_data__mutmut_139(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7872,7 +7870,7 @@ def x_create_test_data__mutmut_140(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7887,7 +7885,7 @@ def x_create_test_data__mutmut_140(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7927,7 +7925,7 @@ def x_create_test_data__mutmut_141(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7942,7 +7940,7 @@ def x_create_test_data__mutmut_141(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -7982,7 +7980,7 @@ def x_create_test_data__mutmut_142(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -7997,7 +7995,7 @@ def x_create_test_data__mutmut_142(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8037,7 +8035,7 @@ def x_create_test_data__mutmut_143(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8052,7 +8050,7 @@ def x_create_test_data__mutmut_143(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8092,7 +8090,7 @@ def x_create_test_data__mutmut_144(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8107,7 +8105,7 @@ def x_create_test_data__mutmut_144(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8147,7 +8145,7 @@ def x_create_test_data__mutmut_145(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8162,7 +8160,7 @@ def x_create_test_data__mutmut_145(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8202,7 +8200,7 @@ def x_create_test_data__mutmut_146(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8217,7 +8215,7 @@ def x_create_test_data__mutmut_146(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8257,7 +8255,7 @@ def x_create_test_data__mutmut_147(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8272,7 +8270,7 @@ def x_create_test_data__mutmut_147(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8312,7 +8310,7 @@ def x_create_test_data__mutmut_148(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8327,7 +8325,7 @@ def x_create_test_data__mutmut_148(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8367,7 +8365,7 @@ def x_create_test_data__mutmut_149(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8382,7 +8380,7 @@ def x_create_test_data__mutmut_149(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8422,7 +8420,7 @@ def x_create_test_data__mutmut_150(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8437,7 +8435,7 @@ def x_create_test_data__mutmut_150(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8477,7 +8475,7 @@ def x_create_test_data__mutmut_151(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8492,7 +8490,7 @@ def x_create_test_data__mutmut_151(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8532,7 +8530,7 @@ def x_create_test_data__mutmut_152(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8547,7 +8545,7 @@ def x_create_test_data__mutmut_152(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8587,7 +8585,7 @@ def x_create_test_data__mutmut_153(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8602,7 +8600,7 @@ def x_create_test_data__mutmut_153(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8642,7 +8640,7 @@ def x_create_test_data__mutmut_154(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8657,7 +8655,7 @@ def x_create_test_data__mutmut_154(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8697,7 +8695,7 @@ def x_create_test_data__mutmut_155(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8712,7 +8710,7 @@ def x_create_test_data__mutmut_155(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8752,7 +8750,7 @@ def x_create_test_data__mutmut_156(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8767,7 +8765,7 @@ def x_create_test_data__mutmut_156(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8807,7 +8805,7 @@ def x_create_test_data__mutmut_157(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8822,7 +8820,7 @@ def x_create_test_data__mutmut_157(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8862,7 +8860,7 @@ def x_create_test_data__mutmut_158(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8877,7 +8875,7 @@ def x_create_test_data__mutmut_158(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8917,7 +8915,7 @@ def x_create_test_data__mutmut_159(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8932,7 +8930,7 @@ def x_create_test_data__mutmut_159(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -8972,7 +8970,7 @@ def x_create_test_data__mutmut_160(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -8987,7 +8985,7 @@ def x_create_test_data__mutmut_160(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9027,7 +9025,7 @@ def x_create_test_data__mutmut_161(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9042,7 +9040,7 @@ def x_create_test_data__mutmut_161(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9082,7 +9080,7 @@ def x_create_test_data__mutmut_162(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9097,7 +9095,7 @@ def x_create_test_data__mutmut_162(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9137,7 +9135,7 @@ def x_create_test_data__mutmut_163(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9152,7 +9150,7 @@ def x_create_test_data__mutmut_163(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9192,7 +9190,7 @@ def x_create_test_data__mutmut_164(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9207,7 +9205,7 @@ def x_create_test_data__mutmut_164(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9247,7 +9245,7 @@ def x_create_test_data__mutmut_165(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9262,7 +9260,7 @@ def x_create_test_data__mutmut_165(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9302,7 +9300,7 @@ def x_create_test_data__mutmut_166(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9317,7 +9315,7 @@ def x_create_test_data__mutmut_166(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9357,7 +9355,7 @@ def x_create_test_data__mutmut_167(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9372,7 +9370,7 @@ def x_create_test_data__mutmut_167(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9412,7 +9410,7 @@ def x_create_test_data__mutmut_168(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9427,7 +9425,7 @@ def x_create_test_data__mutmut_168(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9467,7 +9465,7 @@ def x_create_test_data__mutmut_169(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9482,7 +9480,7 @@ def x_create_test_data__mutmut_169(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9522,7 +9520,7 @@ def x_create_test_data__mutmut_170(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9537,7 +9535,7 @@ def x_create_test_data__mutmut_170(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9577,7 +9575,7 @@ def x_create_test_data__mutmut_171(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9592,7 +9590,7 @@ def x_create_test_data__mutmut_171(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9632,7 +9630,7 @@ def x_create_test_data__mutmut_172(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9647,7 +9645,7 @@ def x_create_test_data__mutmut_172(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9687,7 +9685,7 @@ def x_create_test_data__mutmut_173(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9702,7 +9700,7 @@ def x_create_test_data__mutmut_173(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9742,7 +9740,7 @@ def x_create_test_data__mutmut_174(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9757,7 +9755,7 @@ def x_create_test_data__mutmut_174(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9797,7 +9795,7 @@ def x_create_test_data__mutmut_175(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9812,7 +9810,7 @@ def x_create_test_data__mutmut_175(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9852,7 +9850,7 @@ def x_create_test_data__mutmut_176(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9867,7 +9865,7 @@ def x_create_test_data__mutmut_176(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9907,7 +9905,7 @@ def x_create_test_data__mutmut_177(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9922,7 +9920,7 @@ def x_create_test_data__mutmut_177(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -9962,7 +9960,7 @@ def x_create_test_data__mutmut_178(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -9977,7 +9975,7 @@ def x_create_test_data__mutmut_178(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10017,7 +10015,7 @@ def x_create_test_data__mutmut_179(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10032,7 +10030,7 @@ def x_create_test_data__mutmut_179(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10072,7 +10070,7 @@ def x_create_test_data__mutmut_180(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10087,7 +10085,7 @@ def x_create_test_data__mutmut_180(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10127,7 +10125,7 @@ def x_create_test_data__mutmut_181(organism: str, database: list[str], submissio
 	# Print generating message
 	print(None)
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10142,7 +10140,7 @@ def x_create_test_data__mutmut_181(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10182,7 +10180,7 @@ def x_create_test_data__mutmut_182(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n" - "Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10197,7 +10195,7 @@ def x_create_test_data__mutmut_182(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10237,7 +10235,7 @@ def x_create_test_data__mutmut_183(organism: str, database: list[str], submissio
 	# Print generating message
 	print("XX\nXX"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10252,7 +10250,7 @@ def x_create_test_data__mutmut_183(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10292,7 +10290,7 @@ def x_create_test_data__mutmut_184(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"XXGenerating submission test_dataXX")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10307,7 +10305,7 @@ def x_create_test_data__mutmut_184(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10347,7 +10345,7 @@ def x_create_test_data__mutmut_185(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10362,7 +10360,7 @@ def x_create_test_data__mutmut_185(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10402,7 +10400,7 @@ def x_create_test_data__mutmut_186(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"GENERATING SUBMISSION TEST_DATA")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10417,7 +10415,7 @@ def x_create_test_data__mutmut_186(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10472,7 +10470,7 @@ def x_create_test_data__mutmut_187(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10512,7 +10510,7 @@ def x_create_test_data__mutmut_188(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"XXGENBANKXX": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"XXGENBANKXX": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10527,7 +10525,7 @@ def x_create_test_data__mutmut_188(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10567,7 +10565,7 @@ def x_create_test_data__mutmut_189(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"genbank": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"genbank": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10582,7 +10580,7 @@ def x_create_test_data__mutmut_189(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10622,7 +10620,7 @@ def x_create_test_data__mutmut_190(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "XXgb-XX", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "XXgb-XX", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10637,7 +10635,7 @@ def x_create_test_data__mutmut_190(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10677,7 +10675,7 @@ def x_create_test_data__mutmut_191(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "GB-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "GB-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10692,7 +10690,7 @@ def x_create_test_data__mutmut_191(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10732,7 +10730,7 @@ def x_create_test_data__mutmut_192(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "XXGISAIDXX": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "XXSRAXX": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10747,7 +10745,7 @@ def x_create_test_data__mutmut_192(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10787,7 +10785,7 @@ def x_create_test_data__mutmut_193(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "gisaid": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "sra": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10802,7 +10800,7 @@ def x_create_test_data__mutmut_193(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10842,7 +10840,7 @@ def x_create_test_data__mutmut_194(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "XXgs-XX", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "XXsra-XX", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10857,7 +10855,7 @@ def x_create_test_data__mutmut_194(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10897,7 +10895,7 @@ def x_create_test_data__mutmut_195(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "GS-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "SRA-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10912,7 +10910,7 @@ def x_create_test_data__mutmut_195(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -10952,7 +10950,7 @@ def x_create_test_data__mutmut_196(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "XXSRAXX": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "XXBIOSAMPLEXX": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -10967,7 +10965,7 @@ def x_create_test_data__mutmut_196(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11007,7 +11005,7 @@ def x_create_test_data__mutmut_197(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "sra": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "biosample": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -11022,7 +11020,7 @@ def x_create_test_data__mutmut_197(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11062,7 +11060,7 @@ def x_create_test_data__mutmut_198(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "XXsra-XX", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "XXbs-XX"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -11077,7 +11075,7 @@ def x_create_test_data__mutmut_198(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11117,7 +11115,7 @@ def x_create_test_data__mutmut_199(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "SRA-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "BS-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -11132,7 +11130,7 @@ def x_create_test_data__mutmut_199(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11172,8 +11170,8 @@ def x_create_test_data__mutmut_200(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "XXBIOSAMPLEXX": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = None
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11187,7 +11185,7 @@ def x_create_test_data__mutmut_200(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11227,8 +11225,8 @@ def x_create_test_data__mutmut_201(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "biosample": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["XXsample_nameXX", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11242,7 +11240,7 @@ def x_create_test_data__mutmut_201(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11282,8 +11280,8 @@ def x_create_test_data__mutmut_202(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "XXbs-XX"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["SAMPLE_NAME", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11297,7 +11295,7 @@ def x_create_test_data__mutmut_202(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11337,8 +11335,8 @@ def x_create_test_data__mutmut_203(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "BS-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "XXsequence_nameXX", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11352,7 +11350,7 @@ def x_create_test_data__mutmut_203(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11392,8 +11390,8 @@ def x_create_test_data__mutmut_204(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = None
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "SEQUENCE_NAME", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11407,7 +11405,7 @@ def x_create_test_data__mutmut_204(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11447,8 +11445,8 @@ def x_create_test_data__mutmut_205(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["XXsample_nameXX", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "XXcollection_dateXX", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11462,7 +11460,7 @@ def x_create_test_data__mutmut_205(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11502,8 +11500,8 @@ def x_create_test_data__mutmut_206(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["SAMPLE_NAME", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "COLLECTION_DATE", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11517,7 +11515,7 @@ def x_create_test_data__mutmut_206(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11557,8 +11555,8 @@ def x_create_test_data__mutmut_207(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "XXsequence_nameXX", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "XXorganismXX", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11572,7 +11570,7 @@ def x_create_test_data__mutmut_207(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11612,8 +11610,8 @@ def x_create_test_data__mutmut_208(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "SEQUENCE_NAME", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "ORGANISM", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11627,7 +11625,7 @@ def x_create_test_data__mutmut_208(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11667,8 +11665,8 @@ def x_create_test_data__mutmut_209(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "XXcollection_dateXX", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "XXauthorsXX", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11682,7 +11680,7 @@ def x_create_test_data__mutmut_209(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11722,8 +11720,8 @@ def x_create_test_data__mutmut_210(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "COLLECTION_DATE", "organism", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "AUTHORS", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11737,7 +11735,7 @@ def x_create_test_data__mutmut_210(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11777,8 +11775,8 @@ def x_create_test_data__mutmut_211(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "XXorganismXX", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "XXbioprojectXX", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11792,7 +11790,7 @@ def x_create_test_data__mutmut_211(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11832,8 +11830,8 @@ def x_create_test_data__mutmut_212(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "ORGANISM", "authors", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "BIOPROJECT", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11847,7 +11845,7 @@ def x_create_test_data__mutmut_212(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11887,8 +11885,8 @@ def x_create_test_data__mutmut_213(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "XXauthorsXX", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "XXbs-sample_nameXX"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11902,7 +11900,7 @@ def x_create_test_data__mutmut_213(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11942,8 +11940,8 @@ def x_create_test_data__mutmut_214(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "AUTHORS", "bioproject", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "BS-SAMPLE_NAME"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
@@ -11957,7 +11955,7 @@ def x_create_test_data__mutmut_214(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -11997,9 +11995,9 @@ def x_create_test_data__mutmut_215(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "XXbioprojectXX", "bs-sample_name"]
-	for i in range(len(database)):
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
+	for i in range(None):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
@@ -12012,7 +12010,7 @@ def x_create_test_data__mutmut_215(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12052,10 +12050,10 @@ def x_create_test_data__mutmut_216(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "BIOPROJECT", "bs-sample_name"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = None
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12067,7 +12065,7 @@ def x_create_test_data__mutmut_216(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12107,10 +12105,10 @@ def x_create_test_data__mutmut_217(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "XXbs-sample_nameXX"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(None, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12122,7 +12120,7 @@ def x_create_test_data__mutmut_217(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12162,10 +12160,10 @@ def x_create_test_data__mutmut_218(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "BS-SAMPLE_NAME"]
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = None, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12177,7 +12175,7 @@ def x_create_test_data__mutmut_218(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12217,10 +12215,10 @@ def x_create_test_data__mutmut_219(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(None):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+	for i in range(len(database)):
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = None, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12232,7 +12230,7 @@ def x_create_test_data__mutmut_219(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12272,10 +12270,10 @@ def x_create_test_data__mutmut_220(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = None
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = None, encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12287,7 +12285,7 @@ def x_create_test_data__mutmut_220(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12327,10 +12325,10 @@ def x_create_test_data__mutmut_221(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(None, header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding=None, index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12342,7 +12340,7 @@ def x_create_test_data__mutmut_221(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12382,10 +12380,10 @@ def x_create_test_data__mutmut_222(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = None, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=None, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12397,7 +12395,7 @@ def x_create_test_data__mutmut_222(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12437,10 +12435,10 @@ def x_create_test_data__mutmut_223(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = None, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=None)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12452,7 +12450,7 @@ def x_create_test_data__mutmut_223(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12492,10 +12490,10 @@ def x_create_test_data__mutmut_224(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = None, encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12507,7 +12505,7 @@ def x_create_test_data__mutmut_224(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12547,10 +12545,10 @@ def x_create_test_data__mutmut_225(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding=None, index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12562,7 +12560,7 @@ def x_create_test_data__mutmut_225(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12602,10 +12600,10 @@ def x_create_test_data__mutmut_226(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=None, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12617,7 +12615,7 @@ def x_create_test_data__mutmut_226(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12657,10 +12655,10 @@ def x_create_test_data__mutmut_227(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=None)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12672,7 +12670,7 @@ def x_create_test_data__mutmut_227(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12712,10 +12710,10 @@ def x_create_test_data__mutmut_228(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12727,7 +12725,7 @@ def x_create_test_data__mutmut_228(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12767,10 +12765,10 @@ def x_create_test_data__mutmut_229(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12782,7 +12780,7 @@ def x_create_test_data__mutmut_229(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12822,10 +12820,10 @@ def x_create_test_data__mutmut_230(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, )
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12837,7 +12835,7 @@ def x_create_test_data__mutmut_230(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12877,10 +12875,10 @@ def x_create_test_data__mutmut_231(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(None, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12892,7 +12890,7 @@ def x_create_test_data__mutmut_231(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12932,10 +12930,10 @@ def x_create_test_data__mutmut_232(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, None, organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -12947,7 +12945,7 @@ def x_create_test_data__mutmut_232(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -12987,10 +12985,10 @@ def x_create_test_data__mutmut_233(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", None, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13002,7 +13000,7 @@ def x_create_test_data__mutmut_233(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13042,10 +13040,10 @@ def x_create_test_data__mutmut_234(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, )
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, None), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13057,7 +13055,7 @@ def x_create_test_data__mutmut_234(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13097,10 +13095,10 @@ def x_create_test_data__mutmut_235(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(None, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join("test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13112,7 +13110,7 @@ def x_create_test_data__mutmut_235(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13152,10 +13150,10 @@ def x_create_test_data__mutmut_236(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, None, organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13167,7 +13165,7 @@ def x_create_test_data__mutmut_236(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13207,10 +13205,10 @@ def x_create_test_data__mutmut_237(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", None, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13222,7 +13220,7 @@ def x_create_test_data__mutmut_237(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13262,10 +13260,10 @@ def x_create_test_data__mutmut_238(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, None), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, ), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13277,7 +13275,7 @@ def x_create_test_data__mutmut_238(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13317,10 +13315,10 @@ def x_create_test_data__mutmut_239(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join("test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "XXtest_dataXX", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13332,7 +13330,7 @@ def x_create_test_data__mutmut_239(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13372,10 +13370,10 @@ def x_create_test_data__mutmut_240(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "TEST_DATA", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13387,7 +13385,7 @@ def x_create_test_data__mutmut_240(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13427,10 +13425,10 @@ def x_create_test_data__mutmut_241(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower() - "_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13442,7 +13440,7 @@ def x_create_test_data__mutmut_241(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13482,10 +13480,10 @@ def x_create_test_data__mutmut_242(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, ), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_" - database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13497,7 +13495,7 @@ def x_create_test_data__mutmut_242(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13537,10 +13535,10 @@ def x_create_test_data__mutmut_243(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "XXtest_dataXX", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower() - "_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13552,7 +13550,7 @@ def x_create_test_data__mutmut_243(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13592,10 +13590,10 @@ def x_create_test_data__mutmut_244(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "TEST_DATA", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.upper()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13607,7 +13605,7 @@ def x_create_test_data__mutmut_244(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13647,10 +13645,10 @@ def x_create_test_data__mutmut_245(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower() - "_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"XX_XX"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13662,7 +13660,7 @@ def x_create_test_data__mutmut_245(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13702,10 +13700,10 @@ def x_create_test_data__mutmut_246(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_" - database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].upper()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13717,7 +13715,7 @@ def x_create_test_data__mutmut_246(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13757,10 +13755,10 @@ def x_create_test_data__mutmut_247(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower() - "_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"XX_metadata.csvXX"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13772,7 +13770,7 @@ def x_create_test_data__mutmut_247(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13812,10 +13810,10 @@ def x_create_test_data__mutmut_248(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.upper()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_METADATA.CSV"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13827,7 +13825,7 @@ def x_create_test_data__mutmut_248(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13867,10 +13865,10 @@ def x_create_test_data__mutmut_249(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"XX_XX"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 1, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13882,7 +13880,7 @@ def x_create_test_data__mutmut_249(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13922,10 +13920,10 @@ def x_create_test_data__mutmut_250(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].upper()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "XXpythonXX", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13937,7 +13935,7 @@ def x_create_test_data__mutmut_250(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -13977,10 +13975,10 @@ def x_create_test_data__mutmut_251(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"XX_metadata.csvXX"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "PYTHON", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -13992,7 +13990,7 @@ def x_create_test_data__mutmut_251(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14032,10 +14030,10 @@ def x_create_test_data__mutmut_252(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_METADATA.CSV"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="XXutf-8XX", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -14047,7 +14045,7 @@ def x_create_test_data__mutmut_252(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14087,10 +14085,10 @@ def x_create_test_data__mutmut_253(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 1, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="UTF-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -14102,7 +14100,7 @@ def x_create_test_data__mutmut_253(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14142,10 +14140,10 @@ def x_create_test_data__mutmut_254(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "XXpythonXX", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=True, na_filter=False)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -14157,7 +14155,7 @@ def x_create_test_data__mutmut_254(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14197,10 +14195,10 @@ def x_create_test_data__mutmut_255(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "PYTHON", encoding="utf-8", index_col=False, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=True)
 		if i == 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
@@ -14212,7 +14210,7 @@ def x_create_test_data__mutmut_255(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14252,11 +14250,11 @@ def x_create_test_data__mutmut_256(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="XXutf-8XX", index_col=False, na_filter=False)
-		if i == 0:
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		if i != 0:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
@@ -14267,7 +14265,7 @@ def x_create_test_data__mutmut_256(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14307,11 +14305,11 @@ def x_create_test_data__mutmut_257(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="UTF-8", index_col=False, na_filter=False)
-		if i == 0:
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
+		if i == 1:
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
@@ -14322,7 +14320,7 @@ def x_create_test_data__mutmut_257(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14362,12 +14360,12 @@ def x_create_test_data__mutmut_258(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=True, na_filter=False)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
-			combined_metadata = df
+			combined_metadata = None
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
@@ -14377,7 +14375,7 @@ def x_create_test_data__mutmut_258(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14417,13 +14415,13 @@ def x_create_test_data__mutmut_259(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=True)
+		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
+			left_match = None
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
@@ -14432,7 +14430,7 @@ def x_create_test_data__mutmut_259(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14472,13 +14470,13 @@ def x_create_test_data__mutmut_260(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i != 0:
+		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
+			left_match = database_prefix[database[i]] - "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
@@ -14487,7 +14485,7 @@ def x_create_test_data__mutmut_260(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14527,13 +14525,13 @@ def x_create_test_data__mutmut_261(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 1:
+		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
+			left_match = database_prefix[database[i]] + "XXsample_nameXX"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
@@ -14542,7 +14540,7 @@ def x_create_test_data__mutmut_261(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14582,13 +14580,13 @@ def x_create_test_data__mutmut_262(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
-			combined_metadata = None
-			left_match = database_prefix[database[i]] + "sample_name"
+			combined_metadata = df
+			left_match = database_prefix[database[i]] + "SAMPLE_NAME"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
@@ -14597,7 +14595,7 @@ def x_create_test_data__mutmut_262(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14637,22 +14635,22 @@ def x_create_test_data__mutmut_263(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
-			left_match = None
+			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			df = None
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14692,22 +14690,22 @@ def x_create_test_data__mutmut_264(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] - "sample_name"
+			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			df = df.drop(columns = None)
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14747,22 +14745,22 @@ def x_create_test_data__mutmut_265(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] + "XXsample_nameXX"
+			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns or col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14802,22 +14800,22 @@ def x_create_test_data__mutmut_266(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
 		if i == 0:
 			combined_metadata = df
-			left_match = database_prefix[database[i]] + "SAMPLE_NAME"
+			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			df = df.drop(columns = [col for col in repeat_columns if col not in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14857,7 +14855,7 @@ def x_create_test_data__mutmut_267(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -14865,14 +14863,14 @@ def x_create_test_data__mutmut_267(organism: str, database: list[str], submissio
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = None
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col not in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14912,7 +14910,7 @@ def x_create_test_data__mutmut_268(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -14920,14 +14918,14 @@ def x_create_test_data__mutmut_268(organism: str, database: list[str], submissio
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = None)
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			combined_metadata = None
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -14967,7 +14965,7 @@ def x_create_test_data__mutmut_269(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -14975,14 +14973,14 @@ def x_create_test_data__mutmut_269(organism: str, database: list[str], submissio
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns or col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			combined_metadata = pd.merge(None, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15022,7 +15020,7 @@ def x_create_test_data__mutmut_270(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15030,14 +15028,14 @@ def x_create_test_data__mutmut_270(organism: str, database: list[str], submissio
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col not in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			combined_metadata = pd.merge(combined_metadata, None, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15077,7 +15075,7 @@ def x_create_test_data__mutmut_271(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15085,14 +15083,14 @@ def x_create_test_data__mutmut_271(organism: str, database: list[str], submissio
 			combined_metadata = df
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col not in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
+			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
+			combined_metadata = pd.merge(combined_metadata, df, how=None, left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15132,7 +15130,7 @@ def x_create_test_data__mutmut_272(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15141,13 +15139,13 @@ def x_create_test_data__mutmut_272(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = None
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = None, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15187,7 +15185,7 @@ def x_create_test_data__mutmut_273(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15196,13 +15194,13 @@ def x_create_test_data__mutmut_273(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(None, df, how="left", left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = None)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15242,7 +15240,7 @@ def x_create_test_data__mutmut_274(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15251,13 +15249,13 @@ def x_create_test_data__mutmut_274(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, None, how="left", left_index = True, right_index = True)
+			combined_metadata = pd.merge(df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15297,7 +15295,7 @@ def x_create_test_data__mutmut_275(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15306,13 +15304,13 @@ def x_create_test_data__mutmut_275(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how=None, left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15352,7 +15350,7 @@ def x_create_test_data__mutmut_276(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15361,13 +15359,13 @@ def x_create_test_data__mutmut_276(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = None, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15407,7 +15405,7 @@ def x_create_test_data__mutmut_277(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15416,13 +15414,13 @@ def x_create_test_data__mutmut_277(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = None)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15462,7 +15460,7 @@ def x_create_test_data__mutmut_278(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15471,13 +15469,13 @@ def x_create_test_data__mutmut_278(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(df, how="left", left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, )
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15517,7 +15515,7 @@ def x_create_test_data__mutmut_279(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15526,13 +15524,13 @@ def x_create_test_data__mutmut_279(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, how="left", left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="XXleftXX", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15572,7 +15570,7 @@ def x_create_test_data__mutmut_280(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15581,13 +15579,13 @@ def x_create_test_data__mutmut_280(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="LEFT", left_index = True, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15627,7 +15625,7 @@ def x_create_test_data__mutmut_281(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15636,13 +15634,13 @@ def x_create_test_data__mutmut_281(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = False, right_index = True)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15682,7 +15680,7 @@ def x_create_test_data__mutmut_282(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15691,13 +15689,13 @@ def x_create_test_data__mutmut_282(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, )
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = False)
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15737,7 +15735,7 @@ def x_create_test_data__mutmut_283(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15746,13 +15744,13 @@ def x_create_test_data__mutmut_283(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="XXleftXX", left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
+	combined_metadata.to_csv(None, index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15792,7 +15790,7 @@ def x_create_test_data__mutmut_284(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15801,13 +15799,13 @@ def x_create_test_data__mutmut_284(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="LEFT", left_index = True, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
+	combined_metadata.to_csv(out_metadata_file, index = None)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15847,7 +15845,7 @@ def x_create_test_data__mutmut_285(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15856,13 +15854,13 @@ def x_create_test_data__mutmut_285(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = False, right_index = True)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
+	combined_metadata.to_csv(index = False)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15902,7 +15900,7 @@ def x_create_test_data__mutmut_286(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15911,13 +15909,13 @@ def x_create_test_data__mutmut_286(organism: str, database: list[str], submissio
 			left_match = database_prefix[database[i]] + "sample_name"
 		else:
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = False)
+			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
+	combined_metadata.to_csv(out_metadata_file, )
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -15957,7 +15955,7 @@ def x_create_test_data__mutmut_287(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -15968,11 +15966,11 @@ def x_create_test_data__mutmut_287(organism: str, database: list[str], submissio
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(None, index = False)
+	combined_metadata.to_csv(out_metadata_file, index = True)
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16012,7 +16010,7 @@ def x_create_test_data__mutmut_288(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16023,11 +16021,11 @@ def x_create_test_data__mutmut_288(organism: str, database: list[str], submissio
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = None)
+	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
+	shutil.copy(None, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16067,7 +16065,7 @@ def x_create_test_data__mutmut_289(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16078,11 +16076,11 @@ def x_create_test_data__mutmut_289(organism: str, database: list[str], submissio
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(index = False)
+	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
+	shutil.copy(temp_config_file, None)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16122,7 +16120,7 @@ def x_create_test_data__mutmut_290(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16133,11 +16131,11 @@ def x_create_test_data__mutmut_290(organism: str, database: list[str], submissio
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, )
+	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
+	shutil.copy(out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16177,7 +16175,7 @@ def x_create_test_data__mutmut_291(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16188,11 +16186,11 @@ def x_create_test_data__mutmut_291(organism: str, database: list[str], submissio
 			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
 			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
 	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = True)
+	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
+	shutil.copy(temp_config_file, )
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16232,7 +16230,7 @@ def x_create_test_data__mutmut_292(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16245,9 +16243,9 @@ def x_create_test_data__mutmut_292(organism: str, database: list[str], submissio
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(None, out_config_file)
+	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any(None):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16287,7 +16285,7 @@ def x_create_test_data__mutmut_293(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16300,9 +16298,9 @@ def x_create_test_data__mutmut_293(organism: str, database: list[str], submissio
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, None)
+	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x not in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16342,7 +16340,7 @@ def x_create_test_data__mutmut_294(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16355,9 +16353,9 @@ def x_create_test_data__mutmut_294(organism: str, database: list[str], submissio
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(out_config_file)
+	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["XXGENBANKXX"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16397,7 +16395,7 @@ def x_create_test_data__mutmut_295(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16410,9 +16408,9 @@ def x_create_test_data__mutmut_295(organism: str, database: list[str], submissio
 	# Write metadata to output directory
 	combined_metadata.to_csv(out_metadata_file, index = False)
     # Write config file to output directory
-	shutil.copy(temp_config_file, )
+	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["genbank"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -16452,7 +16450,7 @@ def x_create_test_data__mutmut_296(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16467,8 +16465,8 @@ def x_create_test_data__mutmut_296(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any(None):
-		shutil.copy(temp_sequence_file, out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(None, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
@@ -16507,7 +16505,7 @@ def x_create_test_data__mutmut_297(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16522,8 +16520,8 @@ def x_create_test_data__mutmut_297(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x not in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, None)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
@@ -16562,7 +16560,7 @@ def x_create_test_data__mutmut_298(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16577,8 +16575,8 @@ def x_create_test_data__mutmut_298(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["XXGENBANKXX", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
@@ -16617,7 +16615,7 @@ def x_create_test_data__mutmut_299(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16632,8 +16630,8 @@ def x_create_test_data__mutmut_299(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["genbank", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, )
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
@@ -16672,7 +16670,7 @@ def x_create_test_data__mutmut_300(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16687,10 +16685,10 @@ def x_create_test_data__mutmut_300(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "XXGISAIDXX"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "SRA" in database:
+	if "XXSRAXX" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
@@ -16727,7 +16725,7 @@ def x_create_test_data__mutmut_301(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16742,10 +16740,10 @@ def x_create_test_data__mutmut_301(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "gisaid"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "SRA" in database:
+	if "sra" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
@@ -16782,7 +16780,7 @@ def x_create_test_data__mutmut_302(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16797,10 +16795,10 @@ def x_create_test_data__mutmut_302(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(None, out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "SRA" in database:
+	if "SRA" not in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
@@ -16837,7 +16835,7 @@ def x_create_test_data__mutmut_303(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16852,11 +16850,11 @@ def x_create_test_data__mutmut_303(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, None)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
+		os.makedirs(None, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
@@ -16892,7 +16890,7 @@ def x_create_test_data__mutmut_304(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16907,11 +16905,11 @@ def x_create_test_data__mutmut_304(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(out_sequence_file)
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
+		os.makedirs(out_sra_dir, exist_ok = None)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
@@ -16947,7 +16945,7 @@ def x_create_test_data__mutmut_305(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -16962,11 +16960,11 @@ def x_create_test_data__mutmut_305(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, )
+	if any([x in ["GENBANK"] for x in database]):
+		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
+		os.makedirs(exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
@@ -17002,7 +17000,7 @@ def x_create_test_data__mutmut_306(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17017,11 +17015,11 @@ def x_create_test_data__mutmut_306(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "XXSRAXX" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
+	if "SRA" in database:
+		os.makedirs(out_sra_dir, )
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
@@ -17057,7 +17055,7 @@ def x_create_test_data__mutmut_307(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17072,11 +17070,11 @@ def x_create_test_data__mutmut_307(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "sra" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
+	if "SRA" in database:
+		os.makedirs(out_sra_dir, exist_ok = False)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
@@ -17112,7 +17110,7 @@ def x_create_test_data__mutmut_308(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17127,12 +17125,12 @@ def x_create_test_data__mutmut_308(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
-	if "SRA" not in database:
+	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		shutil.copy(None, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
@@ -17167,7 +17165,7 @@ def x_create_test_data__mutmut_309(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17182,12 +17180,12 @@ def x_create_test_data__mutmut_309(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(None, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		os.makedirs(out_sra_dir, exist_ok = True)
+		shutil.copy(temp_fastq_1_r1_file, None)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
@@ -17222,7 +17220,7 @@ def x_create_test_data__mutmut_310(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17237,12 +17235,12 @@ def x_create_test_data__mutmut_310(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = None)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		os.makedirs(out_sra_dir, exist_ok = True)
+		shutil.copy(out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
@@ -17277,7 +17275,7 @@ def x_create_test_data__mutmut_311(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17292,12 +17290,12 @@ def x_create_test_data__mutmut_311(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		os.makedirs(out_sra_dir, exist_ok = True)
+		shutil.copy(temp_fastq_1_r1_file, )
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
@@ -17332,7 +17330,7 @@ def x_create_test_data__mutmut_312(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17347,13 +17345,13 @@ def x_create_test_data__mutmut_312(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, )
+		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(None, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
@@ -17387,7 +17385,7 @@ def x_create_test_data__mutmut_313(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17402,13 +17400,13 @@ def x_create_test_data__mutmut_313(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = False)
+		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(temp_fastq_1_r2_file, None)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
@@ -17442,7 +17440,7 @@ def x_create_test_data__mutmut_314(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17457,13 +17455,13 @@ def x_create_test_data__mutmut_314(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(None, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		shutil.copy(out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
@@ -17497,7 +17495,7 @@ def x_create_test_data__mutmut_315(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17512,13 +17510,13 @@ def x_create_test_data__mutmut_315(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, None)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
+		shutil.copy(temp_fastq_1_r2_file, )
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
@@ -17552,7 +17550,7 @@ def x_create_test_data__mutmut_316(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17567,14 +17565,14 @@ def x_create_test_data__mutmut_316(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(out_fastq_1_r1_file)
+		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(None, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
@@ -17607,7 +17605,7 @@ def x_create_test_data__mutmut_317(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17622,14 +17620,14 @@ def x_create_test_data__mutmut_317(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, )
+		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(temp_fastq_2_r1_file, None)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
@@ -17662,7 +17660,7 @@ def x_create_test_data__mutmut_318(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17677,14 +17675,14 @@ def x_create_test_data__mutmut_318(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(None, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
@@ -17717,7 +17715,7 @@ def x_create_test_data__mutmut_319(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17732,14 +17730,14 @@ def x_create_test_data__mutmut_319(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, None)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
+		shutil.copy(temp_fastq_2_r1_file, )
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
@@ -17772,7 +17770,7 @@ def x_create_test_data__mutmut_320(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17787,15 +17785,15 @@ def x_create_test_data__mutmut_320(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(out_fastq_1_r2_file)
+		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+		shutil.copy(None, out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
 # Create example data for testing
@@ -17827,7 +17825,7 @@ def x_create_test_data__mutmut_321(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17842,15 +17840,15 @@ def x_create_test_data__mutmut_321(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, )
+		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+		shutil.copy(temp_fastq_2_r2_file, None)
 	print("Files are stored at: "+os.path.join(out_dir))
 
 # Create example data for testing
@@ -17882,7 +17880,7 @@ def x_create_test_data__mutmut_322(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17897,15 +17895,15 @@ def x_create_test_data__mutmut_322(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(None, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(out_fastq_2_r2_file)
 	print("Files are stored at: "+os.path.join(out_dir))
 
 # Create example data for testing
@@ -17937,7 +17935,7 @@ def x_create_test_data__mutmut_323(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -17952,15 +17950,15 @@ def x_create_test_data__mutmut_323(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, None)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
+		shutil.copy(temp_fastq_2_r2_file, )
 	print("Files are stored at: "+os.path.join(out_dir))
 
 # Create example data for testing
@@ -17992,7 +17990,7 @@ def x_create_test_data__mutmut_324(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18007,16 +18005,16 @@ def x_create_test_data__mutmut_324(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(out_fastq_2_r1_file)
+		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir))
+	print(None)
 
 # Create example data for testing
 def x_create_test_data__mutmut_325(organism: str, database: list[str], submission_dir: str) -> None:
@@ -18047,7 +18045,7 @@ def x_create_test_data__mutmut_325(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18062,16 +18060,16 @@ def x_create_test_data__mutmut_325(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
 		os.makedirs(out_sra_dir, exist_ok = True)
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, )
+		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
 		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir))
+	print("Files are stored at: " - os.path.join(out_dir))
 
 # Create example data for testing
 def x_create_test_data__mutmut_326(organism: str, database: list[str], submission_dir: str) -> None:
@@ -18102,7 +18100,7 @@ def x_create_test_data__mutmut_326(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18117,7 +18115,7 @@ def x_create_test_data__mutmut_326(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -18125,8 +18123,8 @@ def x_create_test_data__mutmut_326(organism: str, database: list[str], submissio
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(None, out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir))
+		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+	print("XXFiles are stored at: XX"+os.path.join(out_dir))
 
 # Create example data for testing
 def x_create_test_data__mutmut_327(organism: str, database: list[str], submission_dir: str) -> None:
@@ -18157,7 +18155,7 @@ def x_create_test_data__mutmut_327(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18172,7 +18170,7 @@ def x_create_test_data__mutmut_327(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -18180,8 +18178,8 @@ def x_create_test_data__mutmut_327(organism: str, database: list[str], submissio
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, None)
-	print("Files are stored at: "+os.path.join(out_dir))
+		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+	print("files are stored at: "+os.path.join(out_dir))
 
 # Create example data for testing
 def x_create_test_data__mutmut_328(organism: str, database: list[str], submission_dir: str) -> None:
@@ -18212,7 +18210,7 @@ def x_create_test_data__mutmut_328(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18227,7 +18225,7 @@ def x_create_test_data__mutmut_328(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -18235,8 +18233,8 @@ def x_create_test_data__mutmut_328(organism: str, database: list[str], submissio
 		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
 		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
 		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(out_fastq_2_r2_file)
-	print("Files are stored at: "+os.path.join(out_dir))
+		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
+	print("FILES ARE STORED AT: "+os.path.join(out_dir))
 
 # Create example data for testing
 def x_create_test_data__mutmut_329(organism: str, database: list[str], submission_dir: str) -> None:
@@ -18267,7 +18265,7 @@ def x_create_test_data__mutmut_329(organism: str, database: list[str], submissio
 	# Print generating message
 	print("\n"+"Generating submission test_data")
 	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
+	database_prefix = {"GENBANK": "gb-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
 	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
 	for i in range(len(database)):
 		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
@@ -18282,337 +18280,7 @@ def x_create_test_data__mutmut_329(organism: str, database: list[str], submissio
     # Write config file to output directory
 	shutil.copy(temp_config_file, out_config_file)
     # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, )
-	print("Files are stored at: "+os.path.join(out_dir))
-
-# Create example data for testing
-def x_create_test_data__mutmut_330(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print(None)
-
-# Create example data for testing
-def x_create_test_data__mutmut_331(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("Files are stored at: " - os.path.join(out_dir))
-
-# Create example data for testing
-def x_create_test_data__mutmut_332(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("XXFiles are stored at: XX"+os.path.join(out_dir))
-
-# Create example data for testing
-def x_create_test_data__mutmut_333(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("files are stored at: "+os.path.join(out_dir))
-
-# Create example data for testing
-def x_create_test_data__mutmut_334(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
-		shutil.copy(temp_sequence_file, out_sequence_file)
-    # Write raw reads file to output directory
-	if "SRA" in database:
-		os.makedirs(out_sra_dir, exist_ok = True)
-		shutil.copy(temp_fastq_1_r1_file, out_fastq_1_r1_file)
-		shutil.copy(temp_fastq_1_r2_file, out_fastq_1_r2_file)
-		shutil.copy(temp_fastq_2_r1_file, out_fastq_2_r1_file)
-		shutil.copy(temp_fastq_2_r2_file, out_fastq_2_r2_file)
-	print("FILES ARE STORED AT: "+os.path.join(out_dir))
-
-# Create example data for testing
-def x_create_test_data__mutmut_335(organism: str, database: list[str], submission_dir: str) -> None:
-	if organism not in ["FLU", "COV"]:
-		print("SeqSender currently only has test data available for the organisms \"FLU\" and \"COV\" currently, more test sets will be added with later versions. ")
-		sys.exit(0)
-	# Create output directory
-	submission_dir = os.path.abspath(submission_dir)
-	out_dir = os.path.join(submission_dir, organism + "_TEST_DATA")
-	os.makedirs(out_dir, exist_ok = True)
-	# Create sra directory
-	out_sra_dir = os.path.join(out_dir, "raw_reads")
-	# Create a list of files to output
-	out_metadata_file = os.path.join(out_dir, "metadata.csv")
-	out_config_file = os.path.join(out_dir, "config.yaml")
-	out_sequence_file = os.path.join(out_dir, "sequence.fasta")
-	out_fastq_1_r1_file = os.path.join(out_sra_dir, "fastq_1_R1.fastq.gz")
-	out_fastq_1_r2_file = os.path.join(out_sra_dir, "fastq_1_R2.fastq.gz")
-	out_fastq_2_r1_file = os.path.join(out_sra_dir, "fastq_2_R1.fastq.gz")
-	out_fastq_2_r2_file = os.path.join(out_sra_dir, "fastq_2_R2.fastq.gz")
-	# Create a list of test files to output
-	temp_config_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_config.yaml")
-	temp_sequence_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_sequence.fasta")
-	temp_fastq_1_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R1.fastq.gz")
-	temp_fastq_1_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_1_R2.fastq.gz")
-	temp_fastq_2_r1_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R1.fastq.gz")
-	temp_fastq_2_r2_file = os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_fastq_2_R2.fastq.gz")
-	# Print generating message
-	print("\n"+"Generating submission test_data")
-	# Get combined metadata for all given databases
-	database_prefix = {"GENBANK": "gb-", "GISAID": "gs-", "SRA": "sra-", "BIOSAMPLE": "bs-"}
-	repeat_columns = ["sample_name", "sequence_name", "collection_date", "organism", "authors", "bioproject", "bs-sample_name"]
-	for i in range(len(database)):
-		df = pd.read_csv(os.path.join(PROG_DIR, "test_data", organism, organism.lower()+"_"+database[i].lower()+"_metadata.csv"), header = 0, dtype = str, engine = "python", encoding="utf-8", index_col=False, na_filter=False)
-		if i == 0:
-			combined_metadata = df
-			left_match = database_prefix[database[i]] + "sample_name"
-		else:
-			df = df.drop(columns = [col for col in repeat_columns if col in combined_metadata.columns and col in df.columns])
-			combined_metadata = pd.merge(combined_metadata, df, how="left", left_index = True, right_index = True)
-	# Write metadata to output directory
-	combined_metadata.to_csv(out_metadata_file, index = False)
-    # Write config file to output directory
-	shutil.copy(temp_config_file, out_config_file)
-    # Write fasta file to output directory
-	if any([x in ["GENBANK", "GISAID"] for x in database]):
+	if any([x in ["GENBANK"] for x in database]):
 		shutil.copy(temp_sequence_file, out_sequence_file)
     # Write raw reads file to output directory
 	if "SRA" in database:
@@ -18952,13 +18620,7 @@ x_create_test_data__mutmut_mutants : ClassVar[MutantDict] = { # type: ignore
     'x_create_test_data__mutmut_326': x_create_test_data__mutmut_326, 
     'x_create_test_data__mutmut_327': x_create_test_data__mutmut_327, 
     'x_create_test_data__mutmut_328': x_create_test_data__mutmut_328, 
-    'x_create_test_data__mutmut_329': x_create_test_data__mutmut_329, 
-    'x_create_test_data__mutmut_330': x_create_test_data__mutmut_330, 
-    'x_create_test_data__mutmut_331': x_create_test_data__mutmut_331, 
-    'x_create_test_data__mutmut_332': x_create_test_data__mutmut_332, 
-    'x_create_test_data__mutmut_333': x_create_test_data__mutmut_333, 
-    'x_create_test_data__mutmut_334': x_create_test_data__mutmut_334, 
-    'x_create_test_data__mutmut_335': x_create_test_data__mutmut_335
+    'x_create_test_data__mutmut_329': x_create_test_data__mutmut_329
 }
 x_create_test_data__mutmut_orig.__name__ = 'x_create_test_data'
 

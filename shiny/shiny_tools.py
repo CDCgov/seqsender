@@ -98,28 +98,13 @@ databases_parameter = [
                 inline=True,
             ),
         ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("--gisaid"),
-                " | ",
-                ui.code("-g"),
-            ),
-            ui.tags.ul(
-                "  Generate files required for submission to ",
-                ui.strong("GISAID"),
-                ". Not available as an option when using the organism parameter ",
-                ui.code("OTHER"),
-                ".",
-                inline=True,
-            ),
-        ),
     ),
 ]
 
 organisms_parameter = [
     ui.strong("Organism"),
     ui.div(
-        ui.strong(ui.code("--organism "), "{'FLU', 'COV', 'POX', 'ARBO', 'RSV', 'OTHER'}"),
+        ui.strong(ui.code("--organism "), "{'FLU', 'COV', 'OTHER'}"),
         inline=True,
     ),
     ui.p(
@@ -133,7 +118,7 @@ organisms_parameter = [
             ui.tags.ul(
                 " For ",
                 ui.strong("Influenza A virus"),
-                ", enables FTP GenBank submission and GISAID CLI submission.",
+                ", enables FTP GenBank submission.",
             ),
         ),
         ui.tags.li(
@@ -143,33 +128,7 @@ organisms_parameter = [
             ui.tags.ul(
                 " For ",
                 ui.strong("SARS-CoV-2"),
-                ", enables FTP GenBank submission and GISAID CLI submission.",
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("POX"),
-            ),
-            ui.tags.ul(
-                " For ",
-                ui.strong("Mpox"),
-                " (monkeypox), enables GISAID CLI submission.",
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("ARBO"),
-            ),
-            ui.tags.ul(
-                " For ", ui.strong("Arbovirus"), ", enables GISAID CLI submission."
-            ),
-        ),
-        ui.tags.li(
-            ui.strong(
-                ui.code("RSV"),
-            ),
-            ui.tags.ul(
-                " For ", ui.strong("Respiratory syncytial virus"), ", enables GISAID CLI submission."
+                ", enables FTP GenBank submission.",
             ),
         ),
         ui.tags.li(
@@ -262,7 +221,7 @@ publication_parameter = [
 
 def seqsender_submit_help_output_msg(version):
     message = """
-usage: seqsender.py submit [-h] [--biosample] [--sra] [--genbank] [--gisaid] --organism {FLU,COV,POX,ARBO,RSV,OTHER}
+usage: seqsender.py submit [-h] [--biosample] [--sra] [--genbank] --organism {FLU,COV,OTHER}
 --submission_name SUBMISSION_NAME --submission_dir SUBMISSION_DIR --config_file CONFIG_FILE --key KEY
 --metadata_file METADATA_FILE --fasta_file FASTA_FILE [--table2asn] [--gff_file GFF_FILE] [--test] [--skip_validation]
 [--publication_title PUBLICATION_TITLE] [--publication_status {Unpublished,In-press,Published}]</p>
@@ -276,9 +235,7 @@ Submit to BioSample database. (default: )<br>
 Submit to SRA database. (default: )<br>
 &nbsp;--genbank, -n &nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;
 Submit to Genbank database. (default: )<br>
-&nbsp;--gisaid, -g &nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
-Submit to GISAID database. (default: )<br>
-&nbsp;--organism {FLU,COV,POX,ARBO,RSV,OTHER} <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
+&nbsp;--organism {FLU,COV,OTHER} <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Type of organism data (default: FLU)<br>
 &nbsp;--submission_name SUBMISSION_NAME <br>&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;
 Name of the submission (default: None)<br>

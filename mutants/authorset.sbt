@@ -22,26 +22,16 @@ Submit-block ::= {
       names std {
         {
           name name {
-            last "",
-            first "Lovelace"
+            last "Lovelace",
+            first "Ada",
+            middle "Byron"
           }
         },
         {
           name name {
-            last "",
-            first "Ada"
-          }
-        },
-        {
-          name name {
-            last "",
-            first "Hopper"
-          }
-        },
-        {
-          name name {
-            last "",
-            first "Grace"
+            last "Hopper",
+            first "Grace",
+            middle "Murray"
           }
         }
       },
@@ -66,26 +56,16 @@ Seqdesc ::= pub {
         names std {
           {
             name name {
-              last "",
-              first "Lovelace"
+              last "Lovelace",
+              first "Ada",
+              middle "Byron"
             }
           },
           {
             name name {
-              last "",
-              first "Ada"
-            }
-          },
-          {
-            name name {
-              last "",
-              first "Hopper"
-            }
-          },
-          {
-            name name {
-              last "",
-              first "Grace"
+              last "Hopper",
+              first "Grace",
+              middle "Murray"
             }
           }
         }
@@ -99,7 +79,7 @@ Seqdesc ::= user {
   data {
     {
       label str "AdditionalComment",
-      data str "Submission Title: sub2"
+      data str "Submission Title: sub1"
     }
   }
 }
