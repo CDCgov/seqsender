@@ -14,8 +14,7 @@
                     },
                     'Password': {
                         'required': True,
-                        'type': 'string',
-                        'regex': '\s*[\S]+\s*'
+                        'type': 'binary'
                     },
                     'Spuid_Namespace': {
                         'required': True,

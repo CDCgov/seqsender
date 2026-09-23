@@ -35,7 +35,7 @@ def decrypt_passwords(config_dict: dict[str, Any], submission_portals: set[str],
 	for parent_db in map(str.upper, submission_portals):
 		encrypted_string = config_dict["Submission"][parent_db]["Password"]
 		try:
-			decrypted_string = Fernet(key).decrypt(encrypted_string)
+			decrypted_string = Fernet(key).decrypt(encrypted_string).decode("utf-8")
 			config_dict["Submission"][parent_db]["Password"] = decrypted_string
 		except InvalidToken:
 			if not encrypted_string.endswith("="):
@@ -56,9 +56,11 @@ def encrypt_passwords(config_file: str, databases: list[str], encryption_key: Op
 	for parent_db in map(str.upper, submission_portals):
 		password = getpass(f"Enter password for {parent_db} account: ")
 		if parent_db == "NCBI":
+			config_dict[parent_db]["Password"] = password
 			ncbi_handler.ncbi_login(config_dict["NCBI"], crash_on_error = True)
 		encrypted_password = encrypter.encrypt(password.encode())
 		config_dict[parent_db]["Password"] = encrypted_password
+	config_dict = {"Submission": config_dict}
 	file_handler.save_yaml(config_dict = config_dict, yaml_path = config_file)
 	config_dict = get_config(config_file = config_file, databases = databases, decrypt_key = key.decode())
 	if print_key:

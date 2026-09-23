@@ -294,7 +294,7 @@ def test_decrypt_passwords__decrypts_ncbi_password() -> None:
     encrypted_password = tools.Fernet(key).encrypt(b"secret")
     config = {"Submission": {"NCBI": {"Password": encrypted_password}}}
     result = tools.decrypt_passwords(config_dict=config, submission_portals={"ncbi"}, key=key.decode())
-    assert result["Submission"]["NCBI"]["Password"] == b"secret"
+    assert result["Submission"]["NCBI"]["Password"] == "secret"
 
 def test_decrypt_passwords__invalid_unencrypted_password_prints_helpful_error(capsys: pytest.CaptureFixture[str]) -> None:
     key = tools.Fernet.generate_key()
@@ -331,6 +331,7 @@ def test_encrypt_passwords__uses_supplied_key_and_saves_encrypted_credentials(mo
     encrypted_password = config["NCBI"]["Password"]
 
     assert tools.Fernet(key).decrypt(encrypted_password) == b"password123"
+    config = {"Submission": config}
     save_yaml_mock.assert_called_once_with(config_dict=config, yaml_path="config.yaml")
     assert get_config_mock.call_args_list == [
         call(config_file="config.yaml", databases=["GENBANK"], passwords_validation=False),
