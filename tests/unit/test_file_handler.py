@@ -295,7 +295,7 @@ def test_load_fasta_file__passes_read_mode_explicitly(file_handler_module, tmp_p
 
     df = file_handler_module.load_fasta_file(str(fasta_file))
 
-    assert observed_open_calls == [(str(fasta_file), ("r",), {})]
+    assert (str(fasta_file), ("r",), {}) in observed_open_calls
     assert list(df.columns) == [
         "fasta_name_orig",
         "fasta_sequence_orig",

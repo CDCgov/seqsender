@@ -3,6 +3,7 @@
 # Python Libraries
 import pathlib
 import os
+os.environ["DISABLE_PANDERA_IMPORT_WARNING"] = "True"
 import sys
 from datetime import datetime
 import subprocess
@@ -34,7 +35,7 @@ def get_execution_time() -> None:
 	print(f"\nTotal runtime (HRS:MIN:SECS): {str(datetime.now() - STARTTIME)}")
 
 # Setup needed requirements for running
-def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, decrypt_key: str, publication_title: Optional[str], publication_status: Optional[str], passwords_validation: bool = False, skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
+def prep(database: List[str], organism: str, submission_dir: str, submission_name: str, config_file: str, metadata_file: str, fasta_file: Optional[str], gff_file: Optional[str], table2asn: bool, decrypt_key: Optional[str], publication_title: Optional[str], publication_status: Optional[str], passwords_validation: bool = False, skip_validation: bool = False) -> Tuple[str, Dict[str, Any], pd.DataFrame]:
 	# Create the appropriate files
 	File_Dict = TypedDict("File_Dict", {"config_file": str, "metadata_file": str, "fasta_file": Optional[str], "gff_file": Optional[str]})
 	file_dict: File_Dict = {
@@ -157,7 +158,7 @@ def main():
 
 	# Execute the command
 	if command == "prep":
-		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
+		prep(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, decrypt_key=None, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submit":
 		submit(organism=args.organism, database=database, submission_name=args.submission_name, submission_dir=submission_dir, config_file=args.config_file, metadata_file=args.metadata_file, fasta_file=args.fasta_file, gff_file=args.gff_file, table2asn=args.table2asn, decrypt_key=args.key, test=args.test, skip_validation=args.skip_validation, publication_title=args.publication_title, publication_status=args.publication_status)
 	elif command == "submission_status":

@@ -3,7 +3,7 @@ from htmltools import TagList, div
 
 ###################### CSS #######################
 import pandas as pd
-from shinyswatch import theme
+import shinyswatch
 import shiny_tools
 from index import index_body
 from setup import setup_body
@@ -20,7 +20,7 @@ yaml_css = "background-color: #F0F0F0;white-space: nowrap; font-size: 20px ;marg
 header = (
     ui.card_header(
         ui.HTML(
-            """<p><strong>Beta Version</strong>: 1.5.0 This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
+            """<p><strong>Beta Version</strong>: 1.5.2 This pipeline is currently in Beta testing, and issues could appear during submission. Please use it at your own risk. Feedback and suggestions are welcome!</p>"""
         )
     ),
 )
@@ -559,7 +559,6 @@ faq_body = [
 ######################## APP UI ##########################
 
 app_ui = ui.page_fluid(
-    theme.lumen(),
     ui.head_content(ui.include_css(pathlib.Path(__file__).parent / "seqsender.css")),
     ui.page_navbar(
         ui.nav_panel("SeqSender", index_body),
@@ -577,6 +576,7 @@ app_ui = ui.page_fluid(
         header=header,
         footer=footer,
     ),
+    theme=shinyswatch.theme.lumen,
 )
 
 ####################### SERVER #########################

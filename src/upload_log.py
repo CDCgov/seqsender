@@ -6,7 +6,8 @@
 
 import pandas as pd
 from typing import Optional, Any, Union
-from pandera import pandera, DataFrameSchema, Column, Check, Index, MultiIndex
+import pandera
+from pandera import DataFrameSchema, Column, Check, Index, MultiIndex
 import os
 import sys
 from datetime import datetime
